@@ -1,11 +1,55 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Mon site</title>
+  <meta charset="UTF-8" />
+  <title>Abouv</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Google Font élégante -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body>
-  <h1>Bonjour</h1>
-  <p>Mon site arrive bientôt.</p>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="logo">Abouv</div>
+    <nav class="nav">
+      <a href="#works">Œuvres</a>
+      <a href="#about">À propos</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <!-- Galerie -->
+  <main class="gallery" id="works">
+    <img src="images/oeuvre-01.jpg" alt="Œuvre 1">
+    <img src="images/oeuvre-02.jpg" alt="Œuvre 2">
+    <img src="images/oeuvre-03.jpg" alt="Œuvre 3">
+    <img src="images/oeuvre-04.jpg" alt="Œuvre 4">
+  </main>
+
+  <!-- À propos -->
+  <section class="about" id="about">
+    <p>
+      Artiste plasticienne.  
+      Travail autour de la matière, du geste et de la mémoire.
+    </p>
+  </section>
+
+  <!-- Contact -->
+  <section class="contact" id="contact">
+    <a href="mailto:contact@abouv.com">contact@abouv.com</a>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    © Abouv — Tous droits réservés
+  </footer>
+
 </body>
 </html>
