@@ -124,7 +124,7 @@ body {
 }
 
 .dropdown__link.is-active {
-  color: #c00000; /* comme ton screenshot (rouge) */
+  color: #1f6feb; /* comme ton screenshot (rouge) */
   text-decoration: underline;
   text-decoration-thickness: 2px;
   text-underline-offset: 6px;
