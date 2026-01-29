@@ -1,121 +1,98 @@
-(function () {
-  const ROUTES = new Set([
-    "accueil",
-    "galeries",
-    "expositions",
-    "articles",
-    "interviews",
-    "apropos",
-    "contact",
-  ]);
+/* Navigation active + scroll */
+const navLinks = [...document.querySelectorAll("[data-nav]")];
 
-  const pages = Array.from(document.querySelectorAll("[data-page]"));
-  const routeLinks = Array.from(document.querySelectorAll("a[data-route]"));
-  const dropdownLinks = Array.from(document.querySelectorAll(".dropdown__link[data-route]"));
-  const dropdownItems = Array.from(document.querySelectorAll(".nav__item--dropdown"));
-  const dropdownToggles = Array.from(document.querySelectorAll(".nav__toggle"));
+function setActiveByHash() {
+  const hash = window.location.hash || "#services";
+  navLinks.forEach(a => a.classList.toggle("is-active", a.getAttribute("href") === hash));
+}
 
-  function getRouteFromHash() {
-    const raw = (location.hash || "#accueil").replace("#", "").trim();
-    return ROUTES.has(raw) ? raw : "accueil";
-  }
+function smoothScrollTo(selector) {
+  const el = document.querySelector(selector);
+  if (!el) return;
+  el.scrollIntoView({ behavior: "smooth", block: "start" });
+}
 
-  function closeAllDropdowns() {
-    dropdownItems.forEach((item) => {
-      item.classList.remove("is-open");
-      const btn = item.querySelector(".nav__toggle");
-      if (btn) btn.setAttribute("aria-expanded", "false");
-    });
-  }
-
-  function setActive(route) {
-    // pages
-    pages.forEach((p) => {
-      p.classList.toggle("is-visible", p.dataset.page === route);
-    });
-
-    // reset active styles
-    routeLinks.forEach((a) => a.classList.remove("is-active"));
-    dropdownLinks.forEach((a) => a.classList.remove("is-active"));
-    dropdownToggles.forEach((b) => b.classList.remove("is-active"));
-
-    // mark active link
-    const activeLink = document.querySelector(`a[data-route="${route}"]`);
-    if (activeLink) activeLink.classList.add("is-active");
-
-    // if active route is inside a dropdown, mark parent toggle too
-    const parentDropdown = activeLink ? activeLink.closest(".nav__item--dropdown") : null;
-    if (parentDropdown) {
-      const parentToggle = parentDropdown.querySelector(".nav__toggle");
-      if (parentToggle) parentToggle.classList.add("is-active");
+navLinks.forEach(a => {
+  a.addEventListener("click", (e) => {
+    const href = a.getAttribute("href");
+    if (href && href.startsWith("#")) {
+      e.preventDefault();
+      history.pushState(null, "", href);
+      setActiveByHash();
+      smoothScrollTo(href);
     }
-
-    closeAllDropdowns();
-    window.scrollTo({ top: 0, behavior: "instant" });
-  }
-
-  // Dropdown toggle behavior
-  dropdownToggles.forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      e.preventDefault();
-
-      const item = btn.closest(".nav__item--dropdown");
-      const isOpen = item.classList.contains("is-open");
-
-      closeAllDropdowns();
-      if (!isOpen) {
-        item.classList.add("is-open");
-        btn.setAttribute("aria-expanded", "true");
-      }
-    });
   });
+});
 
-  // Clicking a dropdown link -> navigate + close dropdown
-  dropdownLinks.forEach((a) => {
-    a.addEventListener("click", () => {
-      // hashchange will call setActive
-      closeAllDropdowns();
-    });
+document.querySelectorAll("[data-scroll]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const target = btn.getAttribute("data-scroll");
+    if (!target) return;
+    history.pushState(null, "", target);
+    setActiveByHash();
+    smoothScrollTo(target);
   });
+});
 
-  // Close dropdown when clicking outside
-  document.addEventListener("click", (e) => {
-    const insideNav = e.target.closest(".nav");
-    if (!insideNav) closeAllDropdowns();
-  });
+window.addEventListener("popstate", setActiveByHash);
+setActiveByHash();
 
-  // Close on ESC
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") closeAllDropdowns();
-  });
+/* Lightbox galerie */
+const lightbox = document.getElementById("lightbox");
+const lightboxImg = lightbox.querySelector(".lightbox__img");
+const closeBtn = lightbox.querySelector(".lightbox__close");
 
-  window.addEventListener("hashchange", () => {
-    setActive(getRouteFromHash());
-  });
+function openLightbox(src) {
+  lightboxImg.src = src;
+  lightbox.classList.add("is-open");
+  lightbox.setAttribute("aria-hidden", "false");
+  document.body.style.overflow = "hidden";
+}
 
-  // Init
-  setActive(getRouteFromHash());
+function closeLightbox() {
+  lightbox.classList.remove("is-open");
+  lightbox.setAttribute("aria-hidden", "true");
+  lightboxImg.src = "";
+  document.body.style.overflow = "";
+}
 
-  // Formulaire contact (démo)
-  const form = document.getElementById("contactForm");
-  const status = document.getElementById("contactStatus");
+document.getElementById("galleryGrid").addEventListener("click", (e) => {
+  const btn = e.target.closest("button[data-full]");
+  if (!btn) return;
+  openLightbox(btn.getAttribute("data-full"));
+});
 
-  if (form) {
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
+closeBtn.addEventListener("click", closeLightbox);
+lightbox.addEventListener("click", (e) => {
+  // clic en dehors de l'image => fermer
+  if (e.target === lightbox) closeLightbox();
+});
 
-      const data = new FormData(form);
-      const name = String(data.get("name") || "").trim();
-      const email = String(data.get("email") || "").trim();
-      const message = String(data.get("message") || "").trim();
+window.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && lightbox.classList.contains("is-open")) closeLightbox();
+});
 
-      if (!name || !email || !message) {
-        status.textContent = "Merci de remplir au minimum : Nom, E-mail et message.";
-        return;
-      }
+/* Formulaires (UX simple comme sur la capture) */
+const contactForm = document.getElementById("contactForm");
+const formHint = document.getElementById("formHint");
 
-      status.textContent = "Message envoyé (démo). Branche un backend pour l’envoi réel.";
-      form.reset();
-    });
-  }
-})();
+contactForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  formHint.textContent = "Merci — message envoyé (demo).";
+  contactForm.reset();
+  setTimeout(() => (formHint.textContent = ""), 2500);
+});
+
+const newsletterForm = document.getElementById("newsletterForm");
+newsletterForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const btn = newsletterForm.querySelector("button");
+  const old = btn.textContent;
+  btn.textContent = "Inscrit ✓";
+  btn.disabled = true;
+  setTimeout(() => {
+    btn.textContent = old;
+    btn.disabled = false;
+    newsletterForm.reset();
+  }, 1800);
+});
