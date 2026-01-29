@@ -1,56 +1,119 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <link rel="stylesheet" href="styles.css">
   <meta charset="UTF-8" />
-  <title>Abouv</title>
+  <title>Abouv — Artiste peintre</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Portfolio — peintures à l'huile. Galerie, expositions, presse, contact." />
 
-  <!-- Google Font élégante -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
+  <!-- Bandeau haut -->
+  <div class="topbar">
+    En permanence chez Artclub Gallery à Paris et French Art Network aux États-Unis !
+  </div>
 
-  <!-- Header -->
-  <header class="site-header">
-    <div class="logo">Abouv</div>
-    <nav class="nav">
-      <a href="#works">Œuvres</a>
-      <a href="#about">À propos</a>
-      <a href="#contact">Contact</a>
+  <!-- En-tête -->
+  <header class="header">
+    <a class="brand" href="#">
+      <div class="brand__name">Abouv</div>
+      <div class="brand__tag">Artiste peintre</div>
+    </a>
+
+    <nav class="nav" aria-label="Navigation principale">
+      <a class="nav__link is-active" href="#">Accueil</a>
+      <a class="nav__link" href="#portfolio">Portfolio</a>
+      <a class="nav__link" href="#galeries">Galeries</a>
+      <a class="nav__link" href="#expos">Expositions</a>
+      <a class="nav__link" href="#presse">Presse</a>
+      <a class="nav__link" href="#apropos">À propos</a>
+      <a class="nav__link nav__link--strong" href="#contact">Contact</a>
     </nav>
+
+    <div class="header__right">
+      <div class="lang">FR ▾</div>
+      <a class="icon" href="#" aria-label="Facebook" title="Facebook">f</a>
+      <a class="icon" href="#" aria-label="Instagram" title="Instagram">◎</a>
+
+      <button class="burger" aria-label="Ouvrir le menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
   </header>
 
-  <!-- Galerie -->
-  <main class="gallery" id="works">
-    <img src="images/oeuvre-01.jpg" alt="Œuvre 1">
-    <img src="images/oeuvre-02.jpg" alt="Œuvre 2">
-    <img src="images/oeuvre-03.jpg" alt="Œuvre 3">
-    <img src="images/oeuvre-04.jpg" alt="Œuvre 4">
+  <!-- Hero / Portfolio -->
+  <main class="page">
+    <section class="hero" id="portfolio">
+      <div class="hero__grid">
+        <article class="hero__card hero__card--left">
+          <img src="images/oeuvre-01.jpg" alt="Œuvre 1" />
+          <div class="hero__overlay">
+            <div class="hero__overlayTitle">ABOUV</div>
+            <div class="hero__overlaySub">Artiste peintre</div>
+          </div>
+        </article>
+
+        <article class="hero__card">
+          <img src="images/oeuvre-02.jpg" alt="Œuvre 2" />
+        </article>
+
+        <article class="hero__card">
+          <img src="images/oeuvre-03.jpg" alt="Œuvre 3" />
+        </article>
+      </div>
+    </section>
+
+    <!-- Texte -->
+    <section class="statement" id="apropos">
+      <p>
+        Abouv capture le quotidien à travers des peintures à l’huile.
+        Elle retranscrit la caresse de la lumière et les contrastes de l’ombre.
+        Le travail de la matière révèle la peau, les transparences et la présence.
+      </p>
+    </section>
+
+    <!-- Sections placeholder (pour ton futur site) -->
+    <section class="section" id="galeries">
+      <h2>Galeries</h2>
+      <p>Ajoute ici les galeries qui te représentent.</p>
+    </section>
+
+    <section class="section" id="expos">
+      <h2>Expositions</h2>
+      <p>Ajoute ici les dates et lieux d’expositions.</p>
+    </section>
+
+    <section class="section" id="presse">
+      <h2>Presse</h2>
+      <p>Ajoute ici des articles / PDF / liens.</p>
+    </section>
+
+    <section class="section" id="contact">
+      <h2>Contact</h2>
+      <p>
+        <a class="contactLink" href="mailto:contact@abouv.com">contact@abouv.com</a>
+      </p>
+    </section>
+
+    <footer class="footer">
+      © Abouv — Tous droits réservés
+    </footer>
   </main>
 
-  <!-- À propos -->
-  <section class="about" id="about">
-    <p>
-      Artiste plasticienne.  
-      Travail autour de la matière, du geste et de la mémoire.
-    </p>
-  </section>
-
-  <!-- Contact -->
-  <section class="contact" id="contact">
-    <a href="mailto:contact@abouv.com">contact@abouv.com</a>
-  </section>
-
-  <!-- Footer -->
-  <footer class="site-footer">
-    © Abouv — Tous droits réservés
-  </footer>
-
+  <script>
+    // Menu mobile simple
+    const burger = document.querySelector('.burger');
+    const nav = document.querySelector('.nav');
+    burger?.addEventListener('click', () => {
+      const open = nav.classList.toggle('nav--open');
+      burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+  </script>
 </body>
 </html>
