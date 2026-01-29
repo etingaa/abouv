@@ -2,174 +2,244 @@
 <html lang="fr">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Luc Morin</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>RESEDA — Photographie</title>
 
+  <!-- Fonts proches du rendu (tu peux enlever si tu veux 100% local) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Parisienne&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
-  <header class="site-header">
-    <div class="brand">
-      <a href="#accueil" class="brand__title" data-route="accueil">Luc Morin</a>
-    </div>
-
-    <nav class="nav" aria-label="Navigation principale">
-      <!-- Accueil -->
-      <a class="nav__link is-active" href="#accueil" data-route="accueil">Accueil</a>
-
-      <!-- Portfolio (dropdown) -->
-      <div class="nav__item nav__item--dropdown">
-        <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="dd-portfolio">
-          Portfolio <span class="caret" aria-hidden="true">▼</span>
-        </button>
-        <div class="dropdown" id="dd-portfolio" role="menu">
-          <a class="dropdown__link" href="#galeries" data-route="galeries" role="menuitem">Galeries</a>
-          <a class="dropdown__link" href="#expositions" data-route="expositions" role="menuitem">Expositions</a>
-        </div>
+  <div class="page">
+    <!-- Top bar -->
+    <header class="topbar" role="banner">
+      <div class="topbar__dots" aria-hidden="true">
+        <span></span><span></span><span></span>
       </div>
 
-      <!-- Presse (dropdown) -->
-      <div class="nav__item nav__item--dropdown">
-        <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="dd-presse">
-          Presse <span class="caret" aria-hidden="true">▼</span>
-        </button>
-        <div class="dropdown" id="dd-presse" role="menu">
-          <a class="dropdown__link" href="#articles" data-route="articles" role="menuitem">Articles</a>
-          <a class="dropdown__link" href="#interviews" data-route="interviews" role="menuitem">Interviews</a>
-        </div>
+      <div class="topbar__row">
+        <div class="brand">RESEDA PHOTOGRAPHIE</div>
+
+        <nav class="nav" aria-label="Navigation principale">
+          <a class="nav__link" href="#services" data-nav>Services</a>
+          <a class="nav__link" href="#galerie" data-nav>Galerie</a>
+          <a class="nav__link" href="#informations" data-nav>Informations</a>
+
+          <button class="cart" type="button" aria-label="Panier">
+            <svg viewBox="0 0 24 24" class="cart__icon" aria-hidden="true">
+              <path d="M7 6h15l-2 9H8L6 3H2" fill="none" stroke="currentColor" stroke-width="1.5" />
+              <path d="M9 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm10 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                    fill="currentColor"/>
+            </svg>
+            <span class="cart__count" id="cartCount">0</span>
+          </button>
+        </nav>
       </div>
 
-      <!-- À propos / Contact -->
-      <a class="nav__link" href="#apropos" data-route="apropos">À propos</a>
-      <a class="nav__link" href="#contact" data-route="contact">Contact</a>
-    </nav>
-  </header>
+      <div class="topbar__rule" aria-hidden="true"></div>
+    </header>
 
-  <main class="container">
-    <!-- ACCUEIL -->
-    <section class="page is-visible" id="page-accueil" data-page="accueil" aria-label="Accueil">
-      <div class="gallery" aria-label="Galerie">
-        <a class="tile tile--a" href="#" aria-label="Oeuvre 1">
-          <img src="assets/work-1.jpg" alt="Oeuvre 1" loading="lazy" />
-        </a>
-        <a class="tile tile--b" href="#" aria-label="Oeuvre 2">
-          <img src="assets/work-2.jpg" alt="Oeuvre 2" loading="lazy" />
-        </a>
-        <a class="tile tile--c" href="#" aria-label="Oeuvre 3">
-          <img src="assets/work-3.jpg" alt="Oeuvre 3" loading="lazy" />
-        </a>
-        <a class="tile tile--d" href="#" aria-label="Oeuvre 4">
-          <img src="assets/work-4.jpg" alt="Oeuvre 4" loading="lazy" />
-        </a>
-        <a class="tile tile--e" href="#" aria-label="Oeuvre 5">
-          <img src="assets/work-5.jpg" alt="Oeuvre 5" loading="lazy" />
-        </a>
-        <a class="tile tile--f" href="#" aria-label="Oeuvre 6">
-          <img src="assets/work-6.jpg" alt="Oeuvre 6" loading="lazy" />
-        </a>
-      </div>
-    </section>
-
-    <!-- GALERIES -->
-    <section class="page" id="page-galeries" data-page="galeries" aria-label="Galeries">
-      <div class="simple">
-        <h1 class="simple__title">Galeries</h1>
-        <p class="simple__text">Ajoute ici tes galeries (ex: “Série 2025”, “Noir & Blanc”, etc.).</p>
-      </div>
-    </section>
-
-    <!-- EXPOSITIONS -->
-    <section class="page" id="page-expositions" data-page="expositions" aria-label="Expositions">
-      <div class="simple">
-        <h1 class="simple__title">Expositions</h1>
-        <p class="simple__text">Liste tes expositions (lieu, date, description, photos…).</p>
-      </div>
-    </section>
-
-    <!-- ARTICLES -->
-    <section class="page" id="page-articles" data-page="articles" aria-label="Articles">
-      <div class="simple">
-        <h1 class="simple__title">Presse — Articles</h1>
-        <p class="simple__text">Mets ici des liens vers des articles de presse (PDF, sites, citations…).</p>
-      </div>
-    </section>
-
-    <!-- INTERVIEWS -->
-    <section class="page" id="page-interviews" data-page="interviews" aria-label="Interviews">
-      <div class="simple">
-        <h1 class="simple__title">Presse — Interviews</h1>
-        <p class="simple__text">Ajoute des interviews (vidéos, podcasts, texte…).</p>
-      </div>
-    </section>
-
-    <!-- A PROPOS -->
-    <section class="page" id="page-apropos" data-page="apropos" aria-label="À propos">
-      <div class="about">
-        <div class="frame" aria-label="Portrait">
-          <img src="assets/portrait.jpg" alt="Portrait de Luc" loading="lazy" />
+    <!-- MAIN -->
+    <main>
+      <!-- HERO -->
+      <section class="hero" id="home">
+        <div class="hero__title">
+          <h1 class="wordmark">RESEDA</h1>
         </div>
 
-        <h1 class="about__title">Mon histoire</h1>
-
-        <div class="about__text">
-          <p>
-            Paragraphe. Clique ici pour ajouter ton texte. Raconte ton parcours, tes inspirations, tes projets…
-          </p>
-          <p>
-            Tu peux aussi ajouter une timeline, une liste d’expos, des prix, etc.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- CONTACT -->
-    <section class="page" id="page-contact" data-page="contact" aria-label="Contact">
-      <div class="contact">
-        <div class="contact__icon" aria-hidden="true">
-          <svg viewBox="0 0 64 64" role="img" focusable="false">
-            <path d="M61.5 5.7c-.6-.6-1.5-.8-2.3-.5L4.2 26.1c-1 .4-1.7 1.4-1.7 2.5 0 1.1.6 2.1 1.7 2.5l19.7 7.8 7.8 19.7c.4 1 1.4 1.7 2.5 1.7 1.1 0 2.1-.6 2.5-1.7L58.8 7.9c.3-.8.1-1.7-.5-2.2zM25.4 36.3 9.3 30l42.5-16.1L25.4 36.3zm8.6 18.4-6.3-16.1L50 12.2 34 54.7z"/>
-          </svg>
-        </div>
-
-        <h1 class="contact__title">Contact</h1>
-        <p class="contact__meta">info@monsite.fr&nbsp;&nbsp;|&nbsp;&nbsp;Tél : 01 23 45 67 89</p>
-
-        <form class="contact__form" id="contactForm" novalidate>
-          <label class="field">
-            <span class="sr-only">Nom</span>
-            <input type="text" name="name" placeholder="Nom" autocomplete="name" />
-          </label>
-
-          <label class="field">
-            <span class="sr-only">E-mail</span>
-            <input type="email" name="email" placeholder="E-mail" autocomplete="email" />
-          </label>
-
-          <label class="field">
-            <span class="sr-only">Téléphone</span>
-            <input type="tel" name="phone" placeholder="Téléphone" autocomplete="tel" />
-          </label>
-
-          <label class="field field--textarea">
-            <span class="sr-only">Message</span>
-            <textarea name="message" placeholder="Rédigez votre message ici..." rows="6"></textarea>
-          </label>
-
-          <div class="contact__actions">
-            <button class="btn" type="submit">Envoyer</button>
+        <div class="hero__grid">
+          <div class="hero__media">
+            <!-- Remplace par ton image -->
+            <img
+              class="hero__img"
+              src="https://images.unsplash.com/photo-1520975693411-bd2c7f6c8f2b?auto=format&fit=crop&w=1400&q=80"
+              alt="Portrait éditorial"
+              loading="lazy"
+            />
           </div>
 
-          <p class="contact__status" id="contactStatus" aria-live="polite"></p>
-        </form>
-      </div>
-    </section>
-  </main>
+          <div class="hero__text">
+            <p class="hero__kicker">PHOTOGRAPHIE DE SOFIA<br>PARAZI, BASÉE À LOS<br>ANGELES</p>
+          </div>
+        </div>
+      </section>
 
-  <script src="script.js"></script>
+      <!-- SERVICES / COLLECTION -->
+      <section class="collection" id="services" aria-labelledby="servicesTitle">
+        <div class="collection__rule"></div>
+
+        <div class="collection__layout">
+          <div class="collection__copy">
+            <h2 id="servicesTitle" class="sectionTitle">COLLECTION AUTOMNE</h2>
+
+            <p class="muted">
+              Les photos sont des métaphores. L’abstrait devient concret : il traduit
+              l’indicible et réinvente le réel. Entre la clarté et l’obscurité,
+              chaque image capture la beauté du voile.
+            </p>
+
+            <button class="btn" type="button" data-scroll="#galerie">
+              Afficher la galerie complète →
+            </button>
+          </div>
+
+          <div class="collection__shot">
+            <img
+              class="collection__img"
+              src="https://images.unsplash.com/photo-1520975869010-37b48c1aa0b6?auto=format&fit=crop&w=1000&q=80"
+              alt="Portrait mode"
+              loading="lazy"
+            />
+          </div>
+        </div>
+      </section>
+
+      <!-- GALERIE -->
+      <section class="gallery" id="galerie" aria-labelledby="galleryTitle">
+        <h2 id="galleryTitle" class="srOnly">Galerie</h2>
+
+        <div class="gallery__frame">
+          <div class="gallery__grid" id="galleryGrid">
+            <!-- 1 -->
+            <button class="tile" type="button"
+              data-full="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1600&q=80"
+              aria-label="Ouvrir la photo 1">
+              <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=900&q=80" alt="" loading="lazy">
+            </button>
+
+            <!-- 2 -->
+            <button class="tile" type="button"
+              data-full="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1600&q=80"
+              aria-label="Ouvrir la photo 2">
+              <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80" alt="" loading="lazy">
+            </button>
+
+            <!-- 3 -->
+            <button class="tile tile--wide" type="button"
+              data-full="https://images.unsplash.com/photo-1520975958221-aef0f7f2ac5a?auto=format&fit=crop&w=2000&q=80"
+              aria-label="Ouvrir la photo 3">
+              <img src="https://images.unsplash.com/photo-1520975958221-aef0f7f2ac5a?auto=format&fit=crop&w=1400&q=80" alt="" loading="lazy">
+            </button>
+
+            <!-- 4 -->
+            <button class="tile" type="button"
+              data-full="https://images.unsplash.com/photo-1520975869010-37b48c1aa0b6?auto=format&fit=crop&w=1600&q=80"
+              aria-label="Ouvrir la photo 4">
+              <img src="https://images.unsplash.com/photo-1520975869010-37b48c1aa0b6?auto=format&fit=crop&w=900&q=80" alt="" loading="lazy">
+            </button>
+
+            <!-- 5 -->
+            <button class="tile" type="button"
+              data-full="https://images.unsplash.com/photo-1524502397800-2eeaad7c3fe5?auto=format&fit=crop&w=1600&q=80"
+              aria-label="Ouvrir la photo 5">
+              <img src="https://images.unsplash.com/photo-1524502397800-2eeaad7c3fe5?auto=format&fit=crop&w=900&q=80" alt="" loading="lazy">
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- INFORMATIONS (dark) -->
+      <section class="info" id="informations" aria-labelledby="infoTitle">
+        <div class="info__inner">
+          <div class="info__left">
+            <h2 id="infoTitle" class="info__title">À PROPOS DE SOFIA</h2>
+
+            <p class="info__p">
+              Basée à Los Angeles, Sofia Parazi est photographe. Elle explore
+              l’articulation et l’intime. Son enfance dans le sud de l’Italie
+              a façonné sa vision : une douceur brute, une lumière naturelle,
+              et une présence silencieuse.
+            </p>
+
+            <p class="info__p">
+              Besoin d’aide à Los Angeles ? Pour toute demande d’informations,
+              n’hésite pas à la contacter.
+            </p>
+
+            <form class="form" id="contactForm">
+              <div class="form__row">
+                <label class="field">
+                  <span class="field__label">Nom</span>
+                  <input class="field__input" name="prenom" autocomplete="given-name" required />
+                </label>
+
+                <label class="field">
+                  <span class="field__label">Nom de famille</span>
+                  <input class="field__input" name="nom" autocomplete="family-name" required />
+                </label>
+              </div>
+
+              <label class="field">
+                <span class="field__label">E-mail</span>
+                <input class="field__input" type="email" name="email" autocomplete="email" required />
+              </label>
+
+              <label class="field">
+                <span class="field__label">Message</span>
+                <textarea class="field__input field__input--area" name="message" rows="5" required></textarea>
+              </label>
+
+              <button class="btn btn--ghost" type="submit">Envoyer</button>
+              <p class="form__hint" id="formHint" aria-live="polite"></p>
+            </form>
+          </div>
+
+          <div class="info__right">
+            <img
+              class="info__img"
+              src="https://images.unsplash.com/photo-1520975689216-79d1ad63f2d8?auto=format&fit=crop&w=1200&q=80"
+              alt="Portrait noir et blanc"
+              loading="lazy"
+            />
+          </div>
+        </div>
+      </section>
+
+      <!-- FOOTER -->
+      <footer class="footer">
+        <div class="footer__inner">
+          <div class="footer__col footer__newsletter">
+            <h3 class="footer__title">S’ABONNER</h3>
+            <p class="footer__muted">Entrez votre adresse e-mail afin de recevoir les actualités et les mises à jour.</p>
+
+            <form class="newsletter" id="newsletterForm">
+              <input class="newsletter__input" type="email" placeholder="Adresse e-mail" required>
+              <button class="newsletter__btn" type="submit">S’inscrire</button>
+            </form>
+
+            <p class="footer__fine">Nous respectons votre vie privée.</p>
+          </div>
+
+          <div class="footer__col">
+            <h3 class="footer__title">PLAN DU SITE</h3>
+            <a class="footer__link" href="#services" data-nav>Services</a>
+            <a class="footer__link" href="#galerie" data-nav>Galerie</a>
+            <a class="footer__link" href="#informations" data-nav>Informations</a>
+          </div>
+
+          <div class="footer__col">
+            <h3 class="footer__title">NOUS SUIVRE</h3>
+            <a class="footer__link" href="#" onclick="return false;">Instagram</a>
+            <a class="footer__link" href="#" onclick="return false;">Behance</a>
+            <a class="footer__link" href="#" onclick="return false;">Pinterest</a>
+          </div>
+        </div>
+
+        <div class="footer__mark" aria-hidden="true">RESEDA</div>
+      </footer>
+    </main>
+  </div>
+
+  <!-- LIGHTBOX -->
+  <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-label="Aperçu de l’image">
+    <button class="lightbox__close" type="button" aria-label="Fermer">×</button>
+    <img class="lightbox__img" alt="" />
+  </div>
+
+  <script src="app.js"></script>
 </body>
 </html>
