@@ -1,40 +1,92 @@
-// =========================
-// FILE: script.js
-// =========================
-
 (function () {
-  const navLinks = Array.from(document.querySelectorAll("[data-route]"));
+  const ROUTES = new Set([
+    "accueil",
+    "galeries",
+    "expositions",
+    "articles",
+    "interviews",
+    "apropos",
+    "contact",
+  ]);
+
   const pages = Array.from(document.querySelectorAll("[data-page]"));
+  const routeLinks = Array.from(document.querySelectorAll("a[data-route]"));
+  const dropdownLinks = Array.from(document.querySelectorAll(".dropdown__link[data-route]"));
+  const dropdownItems = Array.from(document.querySelectorAll(".nav__item--dropdown"));
+  const dropdownToggles = Array.from(document.querySelectorAll(".nav__toggle"));
+
+  function getRouteFromHash() {
+    const raw = (location.hash || "#accueil").replace("#", "").trim();
+    return ROUTES.has(raw) ? raw : "accueil";
+  }
+
+  function closeAllDropdowns() {
+    dropdownItems.forEach((item) => {
+      item.classList.remove("is-open");
+      const btn = item.querySelector(".nav__toggle");
+      if (btn) btn.setAttribute("aria-expanded", "false");
+    });
+  }
 
   function setActive(route) {
-    // Toggle pages
+    // pages
     pages.forEach((p) => {
       p.classList.toggle("is-visible", p.dataset.page === route);
     });
 
-    // Toggle nav styles
-    navLinks.forEach((a) => {
-      a.classList.toggle("is-active", a.dataset.route === route);
-    });
+    // reset active styles
+    routeLinks.forEach((a) => a.classList.remove("is-active"));
+    dropdownLinks.forEach((a) => a.classList.remove("is-active"));
+    dropdownToggles.forEach((b) => b.classList.remove("is-active"));
 
-    // Scroll top for page change (comme un site simple)
+    // mark active link
+    const activeLink = document.querySelector(`a[data-route="${route}"]`);
+    if (activeLink) activeLink.classList.add("is-active");
+
+    // if active route is inside a dropdown, mark parent toggle too
+    const parentDropdown = activeLink ? activeLink.closest(".nav__item--dropdown") : null;
+    if (parentDropdown) {
+      const parentToggle = parentDropdown.querySelector(".nav__toggle");
+      if (parentToggle) parentToggle.classList.add("is-active");
+    }
+
+    closeAllDropdowns();
     window.scrollTo({ top: 0, behavior: "instant" });
   }
 
-  function getRouteFromHash() {
-    const raw = (location.hash || "#accueil").replace("#", "").trim();
-    const allowed = new Set(["accueil", "apropos", "contact"]);
-    return allowed.has(raw) ? raw : "accueil";
-  }
+  // Dropdown toggle behavior
+  dropdownToggles.forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
 
-  // Intercept clicks (optional — garde le hash propre)
-  navLinks.forEach((link) => {
-    link.addEventListener("click", () => {
-      const route = link.dataset.route;
-      // Laisse le hash se mettre à jour, le handler 'hashchange' fera le reste
-      // (pas besoin de preventDefault)
-      setTimeout(() => setActive(route), 0);
+      const item = btn.closest(".nav__item--dropdown");
+      const isOpen = item.classList.contains("is-open");
+
+      closeAllDropdowns();
+      if (!isOpen) {
+        item.classList.add("is-open");
+        btn.setAttribute("aria-expanded", "true");
+      }
     });
+  });
+
+  // Clicking a dropdown link -> navigate + close dropdown
+  dropdownLinks.forEach((a) => {
+    a.addEventListener("click", () => {
+      // hashchange will call setActive
+      closeAllDropdowns();
+    });
+  });
+
+  // Close dropdown when clicking outside
+  document.addEventListener("click", (e) => {
+    const insideNav = e.target.closest(".nav");
+    if (!insideNav) closeAllDropdowns();
+  });
+
+  // Close on ESC
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeAllDropdowns();
   });
 
   window.addEventListener("hashchange", () => {
@@ -44,7 +96,7 @@
   // Init
   setActive(getRouteFromHash());
 
-  // Formulaire (démo)
+  // Formulaire contact (démo)
   const form = document.getElementById("contactForm");
   const status = document.getElementById("contactStatus");
 
@@ -62,8 +114,7 @@
         return;
       }
 
-      // Ici tu brancheras un backend (Formspree, Netlify Forms, API perso, etc.)
-      status.textContent = "Message envoyé (démo). Branche ton backend pour l’envoi réel.";
+      status.textContent = "Message envoyé (démo). Branche un backend pour l’envoi réel.";
       form.reset();
     });
   }
