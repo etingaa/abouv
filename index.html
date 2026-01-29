@@ -1,127 +1,130 @@
-<!DOCTYPE html>
+<!-- =========================
+FILE: index.html
+========================= -->
+<!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <title>Abouv — Artiste peintre</title>
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <!-- Typo proche (sobre) -->
+  <title>Luc Morin</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-
+  <!-- Une police “script” proche du rendu -->
+  <link href="https://fonts.googleapis.com/css2?family=Parisienne&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
-  <!-- Bandeau noir -->
-  <div class="topbar">
-    En permanence chez Artclub Gallery à Paris et French Art Network aux États-Unis !
-  </div>
+  <header class="site-header">
+    <div class="brand" aria-label="Luc Morin">
+      <a href="#accueil" class="brand__title" data-route="accueil">Luc Morin</a>
+    </div>
 
-  <!-- Header blanc -->
-  <header class="header">
-    <a class="brand" href="#">
-      <span class="brand__script">Abouv</span>
-    </a>
-
-    <nav class="nav" aria-label="Navigation">
-      <a class="nav__link is-active" href="#">Accueil</a>
-      <a class="nav__link" href="#portfolio">Portfolio</a>
-      <a class="nav__link" href="#galeries">Galeries</a>
-      <a class="nav__link" href="#expos">Expositions</a>
-      <a class="nav__link" href="#presse">Presse</a>
-      <a class="nav__link" href="#apropos">À propos</a>
-      <a class="nav__link" href="#contact">Contact</a>
+    <nav class="nav" aria-label="Navigation principale">
+      <a class="nav__link is-active" href="#accueil" data-route="accueil">Accueil</a>
+      <a class="nav__link" href="#apropos" data-route="apropos">À propos</a>
+      <a class="nav__link" href="#contact" data-route="contact">Contact</a>
     </nav>
-
-    <div class="header__right">
-      <button class="lang" type="button" aria-label="Langue">FR ▾</button>
-      <a class="social" href="#" aria-label="Facebook" title="Facebook">f</a>
-      <a class="social" href="#" aria-label="Instagram" title="Instagram">◎</a>
-
-      <button class="burger" aria-label="Ouvrir le menu" aria-expanded="false">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
-
-    <!-- Menu mobile -->
-    <div class="navMobile" id="navMobile">
-      <a class="navMobile__link is-active" href="#">Accueil</a>
-      <a class="navMobile__link" href="#portfolio">Portfolio</a>
-      <a class="navMobile__link" href="#galeries">Galeries</a>
-      <a class="navMobile__link" href="#expos">Expositions</a>
-      <a class="navMobile__link" href="#presse">Presse</a>
-      <a class="navMobile__link" href="#apropos">À propos</a>
-      <a class="navMobile__link" href="#contact">Contact</a>
-    </div>
   </header>
 
-  <!-- Zone images sur fond noir -->
-  <main class="hero" id="portfolio">
-    <div class="hero__wrap">
-      <div class="hero__grid">
-        <figure class="card card--overlay">
-          <img src="images/oeuvre-01.jpg" alt="Œuvre 1">
-          <figcaption class="overlay">
-            <div class="overlay__title">ABOUV</div>
-            <div class="overlay__sub">Artiste peintre</div>
-          </figcaption>
-        </figure>
+  <main class="container">
+    <!-- ACCUEIL -->
+    <section class="page is-visible" id="page-accueil" data-page="accueil" aria-label="Accueil">
+      <div class="gallery" aria-label="Galerie">
+        <!-- Remplace les images par les tiennes -->
+        <a class="tile tile--a" href="#" aria-label="Oeuvre 1">
+          <img src="assets/work-1.jpg" alt="Oeuvre 1" loading="lazy" />
+        </a>
 
-        <figure class="card">
-          <img src="images/oeuvre-02.jpg" alt="Œuvre 2">
-        </figure>
+        <a class="tile tile--b" href="#" aria-label="Oeuvre 2">
+          <img src="assets/work-2.jpg" alt="Oeuvre 2" loading="lazy" />
+        </a>
 
-        <figure class="card">
-          <img src="images/oeuvre-03.jpg" alt="Œuvre 3">
-        </figure>
+        <a class="tile tile--c" href="#" aria-label="Oeuvre 3">
+          <img src="assets/work-3.jpg" alt="Oeuvre 3" loading="lazy" />
+        </a>
+
+        <a class="tile tile--d" href="#" aria-label="Oeuvre 4">
+          <img src="assets/work-4.jpg" alt="Oeuvre 4" loading="lazy" />
+        </a>
+
+        <a class="tile tile--e" href="#" aria-label="Oeuvre 5">
+          <img src="assets/work-5.jpg" alt="Oeuvre 5" loading="lazy" />
+        </a>
+
+        <a class="tile tile--f" href="#" aria-label="Oeuvre 6">
+          <img src="assets/work-6.jpg" alt="Oeuvre 6" loading="lazy" />
+        </a>
       </div>
-    </div>
+    </section>
+
+    <!-- A PROPOS -->
+    <section class="page" id="page-apropos" data-page="apropos" aria-label="À propos">
+      <div class="about">
+        <div class="frame" aria-label="Portrait">
+          <img src="assets/portrait.jpg" alt="Portrait de Luc" loading="lazy" />
+        </div>
+
+        <h1 class="about__title">Mon histoire</h1>
+
+        <div class="about__text">
+          <p>
+            Paragraphe. Cliquez ici pour ajouter votre propre texte. Cliquez sur
+            “Modifier Texte” ou double-cliquez ici pour ajouter votre contenu et
+            personnaliser les polices.
+          </p>
+          <p>
+            Utilisez cet espace pour raconter votre parcours, vos inspirations,
+            vos projets, ou tout ce que vous voulez partager.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="page" id="page-contact" data-page="contact" aria-label="Contact">
+      <div class="contact">
+        <div class="contact__icon" aria-hidden="true">
+          <!-- Icône avion en SVG (style proche de l’exemple) -->
+          <svg viewBox="0 0 64 64" role="img" focusable="false">
+            <path d="M61.5 5.7c-.6-.6-1.5-.8-2.3-.5L4.2 26.1c-1 .4-1.7 1.4-1.7 2.5 0 1.1.6 2.1 1.7 2.5l19.7 7.8 7.8 19.7c.4 1 1.4 1.7 2.5 1.7 1.1 0 2.1-.6 2.5-1.7L58.8 7.9c.3-.8.1-1.7-.5-2.2zM25.4 36.3 9.3 30l42.5-16.1L25.4 36.3zm8.6 18.4-6.3-16.1L50 12.2 34 54.7z"/>
+          </svg>
+        </div>
+
+        <h1 class="contact__title">Contact</h1>
+        <p class="contact__meta">info@monsite.fr&nbsp;&nbsp;|&nbsp;&nbsp;Tél : 01 23 45 67 89</p>
+
+        <form class="contact__form" id="contactForm" novalidate>
+          <label class="field">
+            <span class="sr-only">Nom</span>
+            <input type="text" name="name" placeholder="Nom" autocomplete="name" />
+          </label>
+
+          <label class="field">
+            <span class="sr-only">E-mail</span>
+            <input type="email" name="email" placeholder="E-mail" autocomplete="email" />
+          </label>
+
+          <label class="field">
+            <span class="sr-only">Téléphone</span>
+            <input type="tel" name="phone" placeholder="Téléphone" autocomplete="tel" />
+          </label>
+
+          <label class="field field--textarea">
+            <span class="sr-only">Message</span>
+            <textarea name="message" placeholder="Rédigez votre message ici..." rows="6"></textarea>
+          </label>
+
+          <div class="contact__actions">
+            <button class="btn" type="submit">Envoyer</button>
+          </div>
+
+          <p class="contact__status" id="contactStatus" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
   </main>
 
-  <!-- Texte centré sur fond sombre -->
-  <section class="statement" id="apropos">
-    <div class="statement__wrap">
-      <p>
-        Abouv capture le quotidien des femmes à travers des peintures à l'huile au couteau.<br>
-        Elle aime retranscrire la caresse de la lumière et les contrastes de l'ombre.<br>
-        Son couteau lui facilite la transmission de cette clarté sur la toile, le rendu du velouté de la peau et
-        les transparences.
-      </p>
-    </div>
-  </section>
-
-  <!-- Sections (placeholders) -->
-  <section class="section" id="galeries">
-    <h2>Galeries</h2>
-    <p>À compléter.</p>
-  </section>
-
-  <section class="section" id="expos">
-    <h2>Expositions</h2>
-    <p>À compléter.</p>
-  </section>
-
-  <section class="section" id="presse">
-    <h2>Presse</h2>
-    <p>À compléter.</p>
-  </section>
-
-  <section class="section" id="contact">
-    <h2>Contact</h2>
-    <p><a class="contactLink" href="mailto:contact@abouv.com">contact@abouv.com</a></p>
-  </section>
-
-  <footer class="footer">© Abouv — Tous droits réservés</footer>
-
-  <script>
-    const burger = document.querySelector(".burger");
-    const panel = document.getElementById("navMobile");
-    burger?.addEventListener("click", () => {
-      const open = panel.classList.toggle("is-open");
-      burger.setAttribute("aria-expanded", open ? "true" : "false");
-    });
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
