@@ -77,6 +77,13 @@ body{
   border-bottom-color: rgba(0,0,0,.55);
 }
 
+.nav__link{
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+
 .cart{
   border: 0;
   background: transparent;
