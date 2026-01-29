@@ -1,28 +1,40 @@
-/* Navigation active + scroll */
-const navLinks = [...document.querySelectorAll("[data-nav]")];
+/* Navigation one-page (sans changement de page) */
+const menuBtns = [...document.querySelectorAll(".nav__link[data-target]")];
 
-function setActiveByHash() {
-  const hash = window.location.hash || "#services";
-  navLinks.forEach(a => a.classList.toggle("is-active", a.getAttribute("href") === hash));
-}
-
-function smoothScrollTo(selector) {
+function scrollToTarget(selector) {
   const el = document.querySelector(selector);
   if (!el) return;
   el.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
-navLinks.forEach(a => {
-  a.addEventListener("click", (e) => {
-    const href = a.getAttribute("href");
-    if (href && href.startsWith("#")) {
-      e.preventDefault();
-      history.pushState(null, "", href);
-      setActiveByHash();
-      smoothScrollTo(href);
-    }
+menuBtns.forEach(btn => {
+  btn.addEventListener("click", () => {
+    scrollToTarget(btn.dataset.target);
   });
 });
+
+// Onglet actif selon la section visible
+const sections = menuBtns
+  .map(b => document.querySelector(b.dataset.target))
+  .filter(Boolean);
+
+const observer = new IntersectionObserver((entries) => {
+  const visible = entries
+    .filter(e => e.isIntersecting)
+    .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+  if (!visible) return;
+
+  const id = "#" + visible.target.id;
+  menuBtns.forEach(b => {
+    b.classList.toggle("is-active", b.dataset.target === id);
+  });
+}, {
+  threshold: [0.3, 0.6]
+});
+
+sections.forEach(section => observer.observe(section));
+
 
 document.querySelectorAll("[data-scroll]").forEach(btn => {
   btn.addEventListener("click", () => {
