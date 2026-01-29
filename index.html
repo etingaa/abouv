@@ -1,27 +1,50 @@
-<!-- =========================
-FILE: index.html
-========================= -->
 <!doctype html>
 <html lang="fr">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Annick Bouvattier</title>
+  <title>Luc Morin</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <!-- Une police “script” proche du rendu -->
   <link href="https://fonts.googleapis.com/css2?family=Parisienne&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
   <header class="site-header">
-    <div class="brand" aria-label="Annick Bouvattier">
-      <a href="#accueil" class="brand__title" data-route="accueil">Annick Bouvattier</a>
+    <div class="brand">
+      <a href="#accueil" class="brand__title" data-route="accueil">Luc Morin</a>
     </div>
 
     <nav class="nav" aria-label="Navigation principale">
+      <!-- Accueil -->
       <a class="nav__link is-active" href="#accueil" data-route="accueil">Accueil</a>
+
+      <!-- Portfolio (dropdown) -->
+      <div class="nav__item nav__item--dropdown">
+        <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="dd-portfolio">
+          Portfolio <span class="caret" aria-hidden="true">▼</span>
+        </button>
+        <div class="dropdown" id="dd-portfolio" role="menu">
+          <a class="dropdown__link" href="#galeries" data-route="galeries" role="menuitem">Galeries</a>
+          <a class="dropdown__link" href="#expositions" data-route="expositions" role="menuitem">Expositions</a>
+        </div>
+      </div>
+
+      <!-- Presse (dropdown) -->
+      <div class="nav__item nav__item--dropdown">
+        <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="dd-presse">
+          Presse <span class="caret" aria-hidden="true">▼</span>
+        </button>
+        <div class="dropdown" id="dd-presse" role="menu">
+          <a class="dropdown__link" href="#articles" data-route="articles" role="menuitem">Articles</a>
+          <a class="dropdown__link" href="#interviews" data-route="interviews" role="menuitem">Interviews</a>
+        </div>
+      </div>
+
+      <!-- À propos / Contact -->
       <a class="nav__link" href="#apropos" data-route="apropos">À propos</a>
       <a class="nav__link" href="#contact" data-route="contact">Contact</a>
     </nav>
@@ -31,30 +54,56 @@ FILE: index.html
     <!-- ACCUEIL -->
     <section class="page is-visible" id="page-accueil" data-page="accueil" aria-label="Accueil">
       <div class="gallery" aria-label="Galerie">
-        <!-- Remplace les images par les tiennes -->
         <a class="tile tile--a" href="#" aria-label="Oeuvre 1">
           <img src="assets/work-1.jpg" alt="Oeuvre 1" loading="lazy" />
         </a>
-
         <a class="tile tile--b" href="#" aria-label="Oeuvre 2">
           <img src="assets/work-2.jpg" alt="Oeuvre 2" loading="lazy" />
         </a>
-
         <a class="tile tile--c" href="#" aria-label="Oeuvre 3">
           <img src="assets/work-3.jpg" alt="Oeuvre 3" loading="lazy" />
         </a>
-
         <a class="tile tile--d" href="#" aria-label="Oeuvre 4">
           <img src="assets/work-4.jpg" alt="Oeuvre 4" loading="lazy" />
         </a>
-
         <a class="tile tile--e" href="#" aria-label="Oeuvre 5">
           <img src="assets/work-5.jpg" alt="Oeuvre 5" loading="lazy" />
         </a>
-
         <a class="tile tile--f" href="#" aria-label="Oeuvre 6">
           <img src="assets/work-6.jpg" alt="Oeuvre 6" loading="lazy" />
         </a>
+      </div>
+    </section>
+
+    <!-- GALERIES -->
+    <section class="page" id="page-galeries" data-page="galeries" aria-label="Galeries">
+      <div class="simple">
+        <h1 class="simple__title">Galeries</h1>
+        <p class="simple__text">Ajoute ici tes galeries (ex: “Série 2025”, “Noir & Blanc”, etc.).</p>
+      </div>
+    </section>
+
+    <!-- EXPOSITIONS -->
+    <section class="page" id="page-expositions" data-page="expositions" aria-label="Expositions">
+      <div class="simple">
+        <h1 class="simple__title">Expositions</h1>
+        <p class="simple__text">Liste tes expositions (lieu, date, description, photos…).</p>
+      </div>
+    </section>
+
+    <!-- ARTICLES -->
+    <section class="page" id="page-articles" data-page="articles" aria-label="Articles">
+      <div class="simple">
+        <h1 class="simple__title">Presse — Articles</h1>
+        <p class="simple__text">Mets ici des liens vers des articles de presse (PDF, sites, citations…).</p>
+      </div>
+    </section>
+
+    <!-- INTERVIEWS -->
+    <section class="page" id="page-interviews" data-page="interviews" aria-label="Interviews">
+      <div class="simple">
+        <h1 class="simple__title">Presse — Interviews</h1>
+        <p class="simple__text">Ajoute des interviews (vidéos, podcasts, texte…).</p>
       </div>
     </section>
 
@@ -69,13 +118,10 @@ FILE: index.html
 
         <div class="about__text">
           <p>
-            Paragraphe. Cliquez ici pour ajouter votre propre texte. Cliquez sur
-            “Modifier Texte” ou double-cliquez ici pour ajouter votre contenu et
-            personnaliser les polices.
+            Paragraphe. Clique ici pour ajouter ton texte. Raconte ton parcours, tes inspirations, tes projets…
           </p>
           <p>
-            Utilisez cet espace pour raconter votre parcours, vos inspirations,
-            vos projets, ou tout ce que vous voulez partager.
+            Tu peux aussi ajouter une timeline, une liste d’expos, des prix, etc.
           </p>
         </div>
       </div>
@@ -85,7 +131,6 @@ FILE: index.html
     <section class="page" id="page-contact" data-page="contact" aria-label="Contact">
       <div class="contact">
         <div class="contact__icon" aria-hidden="true">
-          <!-- Icône avion en SVG (style proche de l’exemple) -->
           <svg viewBox="0 0 64 64" role="img" focusable="false">
             <path d="M61.5 5.7c-.6-.6-1.5-.8-2.3-.5L4.2 26.1c-1 .4-1.7 1.4-1.7 2.5 0 1.1.6 2.1 1.7 2.5l19.7 7.8 7.8 19.7c.4 1 1.4 1.7 2.5 1.7 1.1 0 2.1-.6 2.5-1.7L58.8 7.9c.3-.8.1-1.7-.5-2.2zM25.4 36.3 9.3 30l42.5-16.1L25.4 36.3zm8.6 18.4-6.3-16.1L50 12.2 34 54.7z"/>
           </svg>
