@@ -1,110 +1,94 @@
-/* Navigation one-page (sans changement de page) */
-const menuBtns = [...document.querySelectorAll(".nav__link[data-target]")];
+/* app.js
+   Interactions simples : lightbox + scroll doux + accessibilité
+*/
 
-function scrollToTarget(selector) {
-  const el = document.querySelector(selector);
-  if (!el) return;
-  el.scrollIntoView({ behavior: "smooth", block: "start" });
-}
+document.addEventListener("DOMContentLoaded", () => {
+  // ---------
+  // 1) Lightbox (pour la grille .mosaic)
+  // ---------
+  // On ouvre la lightbox quand on clique une image de la mosaïque
+  const mosaicLinks = document.querySelectorAll(".mosaic a");
 
-menuBtns.forEach(btn => {
-  btn.addEventListener("click", () => {
-    scrollToTarget(btn.dataset.target);
+  // On crée la lightbox une fois (si elle n’existe pas déjà)
+  let lightbox = document.querySelector(".lightbox");
+  if (!lightbox) {
+    lightbox = document.createElement("div");
+    lightbox.className = "lightbox";
+    lightbox.setAttribute("aria-hidden", "true");
+    lightbox.setAttribute("role", "dialog");
+    lightbox.setAttribute("aria-label", "Aperçu de l’image");
+    lightbox.innerHTML = `
+      <button class="lightbox__close" type="button" aria-label="Fermer">×</button>
+      <img class="lightbox__img" alt="" />
+    `;
+    document.body.appendChild(lightbox);
+  }
+
+  const lbImg = lightbox.querySelector(".lightbox__img");
+  const lbClose = lightbox.querySelector(".lightbox__close");
+
+  function openLightbox(src, alt = "") {
+    lbImg.src = src;
+    lbImg.alt = alt;
+    lightbox.classList.add("is-open");
+    lightbox.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden"; // évite le scroll derrière
+  }
+
+  function closeLightbox() {
+    lightbox.classList.remove("is-open");
+    lightbox.setAttribute("aria-hidden", "true");
+    lbImg.src = "";
+    document.body.style.overflow = "";
+  }
+
+  // Clic sur une image (dans la mosaïque)
+  mosaicLinks.forEach((a) => {
+    a.addEventListener("click", (e) => {
+      const img = a.querySelector("img");
+      if (!img) return;
+
+      // Si ton lien va vers une autre page (ex: galeries.html),
+      // on ne bloque pas la navigation.
+      // MAIS si tu veux une lightbox sur la page d’accueil,
+      // alors on empêche la navigation uniquement si l'image existe.
+      // -> Ici je choisis d’ouvrir la lightbox ET d’empêcher le lien.
+      e.preventDefault();
+
+      // Utilise une meilleure version si tu veux (w=2000)
+      const bigSrc = img.src.replace("w=1200", "w=2000");
+      openLightbox(bigSrc, img.alt || "");
+    });
   });
-});
 
-// Onglet actif selon la section visible
-const sections = menuBtns
-  .map(b => document.querySelector(b.dataset.target))
-  .filter(Boolean);
+  // Fermeture : bouton X
+  lbClose.addEventListener("click", closeLightbox);
 
-const observer = new IntersectionObserver((entries) => {
-  const visible = entries
-    .filter(e => e.isIntersecting)
-    .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-
-  if (!visible) return;
-
-  const id = "#" + visible.target.id;
-  menuBtns.forEach(b => {
-    b.classList.toggle("is-active", b.dataset.target === id);
+  // Fermeture : clic hors image
+  lightbox.addEventListener("click", (e) => {
+    const clickedOnBackdrop = e.target === lightbox;
+    if (clickedOnBackdrop) closeLightbox();
   });
-}, {
-  threshold: [0.3, 0.6]
-});
 
-sections.forEach(section => observer.observe(section));
-
-
-document.querySelectorAll("[data-scroll]").forEach(btn => {
-  btn.addEventListener("click", () => {
-    const target = btn.getAttribute("data-scroll");
-    if (!target) return;
-    history.pushState(null, "", target);
-    setActiveByHash();
-    smoothScrollTo(target);
+  // Fermeture : touche Échap
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && lightbox.classList.contains("is-open")) {
+      closeLightbox();
+    }
   });
-});
 
-window.addEventListener("popstate", setActiveByHash);
-setActiveByHash();
+  // ---------
+  // 2) Scroll doux (si tu as des liens vers #sections)
+  // ---------
+  const anchorLinks = document.querySelectorAll('a[href^="#"]');
+  anchorLinks.forEach((link) => {
+    link.addEventListener("click", (e) => {
+      const id = link.getAttribute("href");
+      const target = document.querySelector(id);
+      if (!target) return;
 
-/* Lightbox galerie */
-const lightbox = document.getElementById("lightbox");
-const lightboxImg = lightbox.querySelector(".lightbox__img");
-const closeBtn = lightbox.querySelector(".lightbox__close");
-
-function openLightbox(src) {
-  lightboxImg.src = src;
-  lightbox.classList.add("is-open");
-  lightbox.setAttribute("aria-hidden", "false");
-  document.body.style.overflow = "hidden";
-}
-
-function closeLightbox() {
-  lightbox.classList.remove("is-open");
-  lightbox.setAttribute("aria-hidden", "true");
-  lightboxImg.src = "";
-  document.body.style.overflow = "";
-}
-
-document.getElementById("galleryGrid").addEventListener("click", (e) => {
-  const btn = e.target.closest("button[data-full]");
-  if (!btn) return;
-  openLightbox(btn.getAttribute("data-full"));
-});
-
-closeBtn.addEventListener("click", closeLightbox);
-lightbox.addEventListener("click", (e) => {
-  // clic en dehors de l'image => fermer
-  if (e.target === lightbox) closeLightbox();
-});
-
-window.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && lightbox.classList.contains("is-open")) closeLightbox();
-});
-
-/* Formulaires (UX simple comme sur la capture) */
-const contactForm = document.getElementById("contactForm");
-const formHint = document.getElementById("formHint");
-
-contactForm.addEventListener("submit", (e) => {
-  e.preventDefault();
-  formHint.textContent = "Merci — message envoyé (demo).";
-  contactForm.reset();
-  setTimeout(() => (formHint.textContent = ""), 2500);
-});
-
-const newsletterForm = document.getElementById("newsletterForm");
-newsletterForm.addEventListener("submit", (e) => {
-  e.preventDefault();
-  const btn = newsletterForm.querySelector("button");
-  const old = btn.textContent;
-  btn.textContent = "Inscrit ✓";
-  btn.disabled = true;
-  setTimeout(() => {
-    btn.textContent = old;
-    btn.disabled = false;
-    newsletterForm.reset();
-  }, 1800);
+      e.preventDefault();
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  });
 });
