@@ -142,7 +142,7 @@ body{
 .bottom__link:hover,
 .bottom__right:hover{
   color: var(--ink-soft);
-  border-bottom-color: rgba(255,255,255,.75);
+  border-bottom-color: rgba(18,18,18,.55);
 }
 
 /* Responsive */
