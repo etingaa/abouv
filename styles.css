@@ -1,7 +1,9 @@
 :root{
-  --ink: #121212;
-  --ink-soft: rgba(18,18,18,.78);
-  --ink-faint: rgba(18,18,18,.55);
+  --bg: #02253A;                 /* fond principal */
+  --ink: #ffffff;                /* texte principal */
+  --ink-soft: rgba(255,255,255,.82);
+  --ink-faint: rgba(255,255,255,.55);
+  --border: rgba(255,255,255,.18);
 }
 
 *{ box-sizing: border-box; }
@@ -11,6 +13,8 @@ body{
   margin:0;
   font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   color: var(--ink);
+  background: var(--bg);
+}
 
   /* fond gris dégradé comme le site */
   background:
