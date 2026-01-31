@@ -5,240 +5,88 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>ANNICK BOUVATTIER</title>
 
-  <!-- Fonts proches du rendu (tu peux enlever si tu veux 100% local) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
-  <div class="page">
-    <!-- Top bar -->
-   <header class="topbar" role="banner">
-  <div class="topbar__dots" aria-hidden="true">
-    <span></span><span></span><span></span>
-  </div>
+  <div class="shell">
 
-  <div class="topbar__row">
-    <div class="brand">
-      <a href="index.html" style="text-decoration:none; color:inherit;">
-        ANNICK BOUVATTIER
-      </a>
-    </div>
+    <!-- HEADER (à copier-coller sur toutes les pages) -->
+    <header class="topbar" role="banner">
+      <div class="topbar__row">
+        <div class="brand">
+          <a href="index.html" class="brand__link">ANNICK BOUVATTIER</a>
+        </div>
 
-    <nav class="nav" aria-label="Navigation principale">
-      <a class="nav__link" href="index.html">Accueil</a>
-      <a class="nav__link" href="expositions.html">Expositions</a>
-      <a class="nav__link" href="galeries.html">Galeries</a>
-      <a class="nav__link" href="informations.html">Informations</a>
-      <a class="nav__link" href="apropos.html">À propos</a>
-      <a class="nav__link" href="presse.html">Presse</a>
-    </nav>
-  </div>
-
-  <div class="topbar__rule" aria-hidden="true"></div>
-</header>
-
-
+        <nav class="nav" aria-label="Navigation principale">
+          <a class="nav__link is-active" href="index.html">Accueil</a>
+          <a class="nav__link" href="expositions.html">Expositions</a>
+          <a class="nav__link" href="galeries.html">Galeries</a>
+          <a class="nav__link" href="informations.html">Informations</a>
+          <a class="nav__link" href="apropos.html">À propos</a>
+          <a class="nav__link" href="presse.html">Presse</a>
+        </nav>
+      </div>
+    </header>
 
     <!-- MAIN -->
-    <main>
-      <!-- HERO -->
-      <section class="hero" id="home">
-        <div class="hero__title">
-          <h1 class="wordmark">ANNICK BOUVATTIER</h1>
+    <main class="card">
+      <!-- Grille illustrée (style “portfolio”) -->
+      <section class="mosaic" aria-label="Sélection visuelle">
+        <a class="mosaic__tile tile--a" href="galeries.html" aria-label="Ouvrir Galeries">
+          <img src="https://images.unsplash.com/photo-1520975693411-bd2c7f6c8f2b?auto=format&fit=crop&w=1200&q=80" alt="">
+        </a>
+
+        <div class="mosaic__tile tile--b">
+          <div class="shape shape--pink"></div>
+          <div class="shape shape--blue"></div>
+          <div class="shape shape--orange"></div>
         </div>
 
-        <div class="hero__grid">
-          <div class="hero__media">
-            <!-- Remplace par ton image -->
-            <img
-              class="hero__img"
-              src="https://images.unsplash.com/photo-1520975693411-bd2c7f6c8f2b?auto=format&fit=crop&w=1400&q=80"
-              alt="Portrait éditorial"
-              loading="lazy"
-            />
-          </div>
+        <a class="mosaic__tile tile--c" href="expositions.html" aria-label="Ouvrir Expositions">
+          <img src="https://images.unsplash.com/photo-1520975869010-37b48c1aa0b6?auto=format&fit=crop&w=1200&q=80" alt="">
+        </a>
 
-          <div class="hero__text">
-            <p class="hero__kicker">PHOTOGRAPHIE DE SOFIA<br>PARAZI, BASÉE À LOS<br>ANGELES</p>
-          </div>
+        <div class="mosaic__tile tile--d">
+          <div class="lineart">ÉTUDE</div>
         </div>
-      </section>
 
-      <!-- SERVICES / COLLECTION -->
-      <section class="collection" id="services" aria-labelledby="servicesTitle">
-        <div class="collection__rule"></div>
+        <a class="mosaic__tile tile--e" href="galeries.html" aria-label="Ouvrir Galeries">
+          <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1200&q=80" alt="">
+        </a>
 
-        <div class="collection__layout">
-          <div class="collection__copy">
-            <h2 id="servicesTitle" class="sectionTitle">COLLECTION AUTOMNE</h2>
-
-            <p class="muted">
-              Annick Bouvattier capture le quotidien des femmes à travers des peintures à l'huile au couteau.
-Elle aime retranscrire la caresse de la lumière et les contrastes de l'ombre. Son couteau lui facilite la transmission de cette clarté sur la toile, le rendu du velouté de la peau et les transparences.
-            </p>
-
-            <button class="btn" type="button" data-scroll="#galerie">
-              Afficher la galerie complète →
-            </button>
-          </div>
-
-          <div class="collection__shot">
-            <img
-              class="collection__img"
-              src="https://images.unsplash.com/photo-1520975869010-37b48c1aa0b6?auto=format&fit=crop&w=1000&q=80"
-              alt="Portrait mode"
-              loading="lazy"
-            />
-          </div>
+        <div class="mosaic__tile tile--f">
+          <div class="stamp">HUILE<br>AU COUTEAU</div>
         </div>
       </section>
 
-      <!-- GALERIE -->
-      <section class="gallery" id="galerie" aria-labelledby="galleryTitle">
-        <h2 id="galleryTitle" class="srOnly">Galerie</h2>
+      <!-- Intro comme sur ton exemple -->
+      <section class="intro">
+        <h1 class="intro__title">Annick Bouvattier</h1>
 
-        <div class="gallery__frame">
-          <div class="gallery__grid" id="galleryGrid">
-            <!-- 1 -->
-            <button class="tile" type="button"
-              data-full="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1600&q=80"
-              aria-label="Ouvrir la photo 1">
-              <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=900&q=80" alt="" loading="lazy">
-            </button>
+        <div class="intro__right">
+          <p class="intro__text">
+            Peintre à l’huile au couteau. Je capture le quotidien, la lumière
+            et le velouté de la peau par des contrastes doux et une matière
+            vivante.
+          </p>
 
-            <!-- 2 -->
-            <button class="tile" type="button"
-              data-full="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1600&q=80"
-              aria-label="Ouvrir la photo 2">
-              <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80" alt="" loading="lazy">
-            </button>
+          <p class="intro__text">
+            Contact : <a class="link" href="mailto:hello@annickbouvattier.fr">hello@annickbouvattier.fr</a>
+          </p>
 
-            <!-- 3 -->
-            <button class="tile tile--wide" type="button"
-              data-full="https://images.unsplash.com/photo-1520975958221-aef0f7f2ac5a?auto=format&fit=crop&w=2000&q=80"
-              aria-label="Ouvrir la photo 3">
-              <img src="https://images.unsplash.com/photo-1520975958221-aef0f7f2ac5a?auto=format&fit=crop&w=1400&q=80" alt="" loading="lazy">
-            </button>
-
-            <!-- 4 -->
-            <button class="tile" type="button"
-              data-full="https://images.unsplash.com/photo-1520975869010-37b48c1aa0b6?auto=format&fit=crop&w=1600&q=80"
-              aria-label="Ouvrir la photo 4">
-              <img src="https://images.unsplash.com/photo-1520975869010-37b48c1aa0b6?auto=format&fit=crop&w=900&q=80" alt="" loading="lazy">
-            </button>
-
-            <!-- 5 -->
-            <button class="tile" type="button"
-              data-full="https://images.unsplash.com/photo-1524502397800-2eeaad7c3fe5?auto=format&fit=crop&w=1600&q=80"
-              aria-label="Ouvrir la photo 5">
-              <img src="https://images.unsplash.com/photo-1524502397800-2eeaad7c3fe5?auto=format&fit=crop&w=900&q=80" alt="" loading="lazy">
-            </button>
+          <div class="intro__cta">
+            <a class="btn" href="galeries.html">Voir la galerie</a>
+            <a class="btn btn--ghost" href="informations.html">Me contacter</a>
           </div>
         </div>
       </section>
-
-      <!-- INFORMATIONS (dark) -->
-      <section class="info" id="informations" aria-labelledby="infoTitle">
-        <div class="info__inner">
-          <div class="info__left">
-            <h2 id="infoTitle" class="info__title">À PROPOS DE SOFIA</h2>
-
-            <p class="info__p">
-              Basée à Los Angeles, Sofia Parazi est photographe. Elle explore
-              l’articulation et l’intime. Son enfance dans le sud de l’Italie
-              a façonné sa vision : une douceur brute, une lumière naturelle,
-              et une présence silencieuse.
-            </p>
-
-            <p class="info__p">
-              Besoin d’aide à Los Angeles ? Pour toute demande d’informations,
-              n’hésite pas à la contacter.
-            </p>
-
-            <form class="form" id="contactForm">
-              <div class="form__row">
-                <label class="field">
-                  <span class="field__label">Nom</span>
-                  <input class="field__input" name="prenom" autocomplete="given-name" required />
-                </label>
-
-                <label class="field">
-                  <span class="field__label">Nom de famille</span>
-                  <input class="field__input" name="nom" autocomplete="family-name" required />
-                </label>
-              </div>
-
-              <label class="field">
-                <span class="field__label">E-mail</span>
-                <input class="field__input" type="email" name="email" autocomplete="email" required />
-              </label>
-
-              <label class="field">
-                <span class="field__label">Message</span>
-                <textarea class="field__input field__input--area" name="message" rows="5" required></textarea>
-              </label>
-
-              <button class="btn btn--ghost" type="submit">Envoyer</button>
-              <p class="form__hint" id="formHint" aria-live="polite"></p>
-            </form>
-          </div>
-
-          <div class="info__right">
-            <img
-              class="info__img"
-              src="https://images.unsplash.com/photo-1520975689216-79d1ad63f2d8?auto=format&fit=crop&w=1200&q=80"
-              alt="Portrait noir et blanc"
-              loading="lazy"
-            />
-          </div>
-        </div>
-      </section>
-
-      <!-- FOOTER -->
-      <footer class="footer">
-        <div class="footer__inner">
-          <div class="footer__col footer__newsletter">
-            <h3 class="footer__title">S’ABONNER</h3>
-            <p class="footer__muted">Entrez votre adresse e-mail afin de recevoir les actualités et les mises à jour.</p>
-
-            <form class="newsletter" id="newsletterForm">
-              <input class="newsletter__input" type="email" placeholder="Adresse e-mail" required>
-              <button class="newsletter__btn" type="submit">S’inscrire</button>
-            </form>
-
-            <p class="footer__fine">Nous respectons votre vie privée.</p>
-          </div>
-
-          <div class="footer__col">
-            <h3 class="footer__title">PLAN DU SITE</h3>
-            <a class="footer__link" href="#services" data-nav>Services</a>
-            <a class="footer__link" href="#galerie" data-nav>Galerie</a>
-            <a class="footer__link" href="#informations" data-nav>Informations</a>
-          </div>
-
-          <div class="footer__col">
-            <h3 class="footer__title">NOUS SUIVRE</h3>
-            <a class="footer__link" href="#" onclick="return false;">Instagram</a>
-            <a class="footer__link" href="#" onclick="return false;">Behance</a>
-            <a class="footer__link" href="#" onclick="return false;">Pinterest</a>
-          </div>
-        </div>
-
-        <div class="footer__mark" aria-hidden="true">ANNICK BOUVATTIER</div>
-      </footer>
     </main>
-  </div>
 
-  <!-- LIGHTBOX -->
-  <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-label="Aperçu de l’image">
-    <button class="lightbox__close" type="button" aria-label="Fermer">×</button>
-    <img class="lightbox__img" alt="" />
   </div>
-
-  <script src="app.js"></script>
 </body>
 </html>
