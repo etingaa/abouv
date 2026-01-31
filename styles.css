@@ -95,11 +95,11 @@ body{
 }
 
 .nav__link:hover{
-  border-bottom-color: rgba(255,255,255,.45);
+  border-bottom-color: rgba(18,18,18,.55);
 }
 
 .nav__link.is-active{
-  border-bottom-color: rgba(255,255,255,.75);
+  border-bottom-color: rgba(18,18,18,.55);
 }
 
 
@@ -142,7 +142,7 @@ body{
 .bottom__link:hover,
 .bottom__right:hover{
   color: var(--ink-soft);
-  border-bottom-color: rgba(18,18,18,.55);
+  border-bottom-color: rgba(255,255,255,.35);
 }
 
 /* Responsive */
