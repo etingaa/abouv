@@ -27,8 +27,14 @@ body{
   min-height: 100%;
   display: grid;
   grid-template-rows: auto 1fr auto;
-  padding: 18px 18px 14px;
+
+  /* AJOUT IMPORTANT */
+  max-width: 1400px;      /* largeur max confortable */
+  margin: 0 auto;         /* centre la page */
+  padding: 20px 40px 24px;/* espace gauche / droite */
+
 }
+
 
 /* TOP BAR */
 .top{
