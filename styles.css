@@ -7,7 +7,7 @@
 }
 
 *{ box-sizing: border-box; }
-html,body{ height:100%; }
+html, body{ height:100%; }
 
 body{
   margin:0;
@@ -16,47 +16,43 @@ body{
   background: var(--bg);
 }
 
-  /* fond gris dégradé comme le site */
-  background:
-    radial-gradient(1200px 700px at 25% 5%, rgba(255,255,255,.55), rgba(255,255,255,0) 60%),
-    radial-gradient(1200px 700px at 75% 20%, rgba(255,255,255,.35), rgba(255,255,255,0) 55%),
-    linear-gradient(#cfd3d8, #c9ccd2 55%, #c2c5cc);
+/* enlève les soulignements par défaut partout */
+a{
+  color: inherit;
+  text-decoration: none;
 }
 
+/* page + container (marges latérales) */
 .page{
   min-height: 100vh;
-  background: #02253A; /* ton fond */
+  background: var(--bg);
 }
 
-/* le vrai “coussin” à gauche/droite */
 .container{
   width: 100%;
-  max-width: 1400px;   /* tu peux mettre 1280 si tu veux plus “luxe” */
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 20px 48px;  /* AIR sur les côtés */
-  box-sizing: border-box;
+  padding: 20px 48px;
 }
 
-/* mobile */
 @media (max-width: 768px){
   .container{
     padding: 16px 20px;
   }
 }
 
-
-
 /* TOP BAR */
 .top{
   display:flex;
-  align-items:flex-start;
+  align-items:center;            /* ✅ alignement vertical */
   justify-content:space-between;
-  gap: 18px;
+  gap: 24px;
+  padding: 18px 0;
 }
 
 .top__left{
   display:flex;
-  align-items:flex-start;
+  align-items:center;            /* ✅ logo + texte alignés */
   gap: 12px;
   min-width: 280px;
 }
@@ -68,14 +64,17 @@ body{
   align-items:center;
   justify-content:center;
   color: var(--ink);
-  text-decoration:none;
 }
-.logo svg{ width: 44px; height: 30px; }
+.logo svg{
+  width: 44px;
+  height: 30px;
+  display:block;                 /* ✅ évite décalage baseline */
+}
 
 .top__tagline{
-  margin: 2px 0 0;
+  margin: 0;                     /* ✅ enlève le décalage */
   font-size: 16px;
-  line-height: 1.35;
+  line-height: 1.2;
   color: var(--ink-soft);
   max-width: 620px;
 }
@@ -83,25 +82,29 @@ body{
 /* NAV RIGHT */
 .top__nav{
   display:flex;
-  gap: 16px;
+  align-items:center;            /* ✅ menu aligné */
+  gap: 18px;
   flex-wrap: wrap;
-  justify-content: flex-end;
-  padding-top: 6px;
+  justify-content:flex-end;
+  margin: 0;
+  padding: 0;
 }
 
+/* liens du menu : pas underline, trait propre */
 .nav__link{
   color: var(--ink);
-  border-bottom: 1px solid transparent;
+  border-bottom: 2px solid transparent;
+  padding: 6px 2px 4px;
+  line-height: 1;
 }
 
 .nav__link:hover{
-  border-bottom-color: rgba(18,18,18,.55);
+  border-bottom-color: rgba(255,255,255,.55);
 }
 
 .nav__link.is-active{
-  border-bottom-color: rgba(18,18,18,.55);
+  border-bottom-color: rgba(255,255,255,.95);
 }
-
 
 /* MAIN CENTER */
 .center{
@@ -115,7 +118,7 @@ body{
   height: auto;
   display:block;
   filter: drop-shadow(0 18px 35px rgba(0,0,0,.20));
-  border-radius: 2px; /* très léger */
+  border-radius: 2px;
 }
 
 /* BOTTOM BAR */
@@ -124,7 +127,7 @@ body{
   align-items:flex-end;
   justify-content:space-between;
   gap: 12px;
-  padding-top: 10px;
+  padding: 10px 0 0;
 }
 
 .bottom__left{
@@ -133,22 +136,25 @@ body{
   flex-wrap: wrap;
 }
 
+/* liens footer : discrets, trait seulement en hover */
 .bottom__link,
 .bottom__right{
   color: var(--ink-faint);
-  border-bottom: 1px solid rgba(255,255,255,.35);
+  border-bottom: 1px solid transparent;
+  padding-bottom: 2px;
 }
 
 .bottom__link:hover,
 .bottom__right:hover{
   color: var(--ink-soft);
-  border-bottom-color: rgba(255,255,255,.35);
+  border-bottom-color: rgba(255,255,255,.45);
 }
 
 /* Responsive */
 @media (max-width: 860px){
   .top{
     flex-direction: column;
+    align-items:flex-start;
     gap: 10px;
   }
   .top__nav{
