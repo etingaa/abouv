@@ -24,16 +24,26 @@ body{
 }
 
 .page{
-  min-height: 100%;
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-
-  /* AJOUT IMPORTANT */
-  max-width: 1400px;      /* largeur max confortable */
-  margin: 0 auto;         /* centre la page */
-  padding: 20px 40px 24px;/* espace gauche / droite */
-
+  min-height: 100vh;
+  background: #02253A; /* ton fond */
 }
+
+/* le vrai “coussin” à gauche/droite */
+.container{
+  width: 100%;
+  max-width: 1400px;   /* tu peux mettre 1280 si tu veux plus “luxe” */
+  margin: 0 auto;
+  padding: 20px 48px;  /* AIR sur les côtés */
+  box-sizing: border-box;
+}
+
+/* mobile */
+@media (max-width: 768px){
+  .container{
+    padding: 16px 20px;
+  }
+}
+
 
 
 /* TOP BAR */
