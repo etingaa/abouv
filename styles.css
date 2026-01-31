@@ -42,69 +42,50 @@ a{
 }
 
 /* TOP BAR */
+/* HEADER */
 .top{
   display:flex;
-  align-items:center;            /* ✅ alignement vertical */
+  align-items:center;                 /* alignement parfait */
   justify-content:space-between;
-  gap: 24px;
   padding: 18px 0;
 }
 
-.top__left{
-  display:flex;
-  align-items:center;            /* ✅ logo + texte alignés */
-  gap: 12px;
-  min-width: 280px;
+/* NOM ANNICK BOUVATTIER */
+.brand{
+  font-size: 18px;                    /* même hauteur que le menu */
+  font-weight: 800;                   /* BIEN GRAS */
+  letter-spacing: 0.08em;             /* chic / galerie */
+  text-transform: uppercase;
+  color: #fff;
+  line-height: 1;
+  padding-bottom: 6px;                /* aligne visuellement avec le trait du menu */
 }
 
-.logo{
-  width: 44px;
-  height: 30px;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  color: var(--ink);
-}
-.logo svg{
-  width: 44px;
-  height: 30px;
-  display:block;                 /* ✅ évite décalage baseline */
-}
-
-.top__tagline{
-  margin: 0;                     /* ✅ enlève le décalage */
-  font-size: 16px;
-  line-height: 1.2;
-  color: var(--ink-soft);
-  max-width: 620px;
-}
-
-/* NAV RIGHT */
+/* MENU */
 .top__nav{
   display:flex;
-  align-items:center;            /* ✅ menu aligné */
-  gap: 18px;
-  flex-wrap: wrap;
-  justify-content:flex-end;
-  margin: 0;
-  padding: 0;
+  align-items:center;
+  gap: 20px;
 }
 
-/* liens du menu : pas underline, trait propre */
 .nav__link{
-  color: var(--ink);
+  font-size: 18px;
+  font-weight: 500;
+  color: #fff;
+  text-decoration: none;
   border-bottom: 2px solid transparent;
-  padding: 6px 2px 4px;
+  padding-bottom: 6px;
   line-height: 1;
 }
 
 .nav__link:hover{
-  border-bottom-color: rgba(255,255,255,.55);
+  border-bottom-color: rgba(255,255,255,.5);
 }
 
 .nav__link.is-active{
-  border-bottom-color: rgba(255,255,255,.95);
+  border-bottom-color: #fff;
 }
+
 
 /* MAIN CENTER */
 .center{
