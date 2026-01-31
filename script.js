@@ -1,94 +1,54 @@
-/* app.js
-   Interactions simples : lightbox + scroll doux + accessibilité
-*/
+// app.js
+// Objectif : rendre la navigation plus "automatique" et agréable
+// - Met le lien actif (is-active) selon la page actuelle
+// - Ajoute un scroll doux sur les liens d’ancre (#section)
 
 document.addEventListener("DOMContentLoaded", () => {
-  // ---------
-  // 1) Lightbox (pour la grille .mosaic)
-  // ---------
-  // On ouvre la lightbox quand on clique une image de la mosaïque
-  const mosaicLinks = document.querySelectorAll(".mosaic a");
+  // -----------------------------
+  // 1) Lien actif automatique
+  // -----------------------------
+  // Exemple : si l’URL est /galeries.html => le lien href="galeries.html" reçoit .is-active
+  const navLinks = document.querySelectorAll(".top__nav .nav__link");
 
-  // On crée la lightbox une fois (si elle n’existe pas déjà)
-  let lightbox = document.querySelector(".lightbox");
-  if (!lightbox) {
-    lightbox = document.createElement("div");
-    lightbox.className = "lightbox";
-    lightbox.setAttribute("aria-hidden", "true");
-    lightbox.setAttribute("role", "dialog");
-    lightbox.setAttribute("aria-label", "Aperçu de l’image");
-    lightbox.innerHTML = `
-      <button class="lightbox__close" type="button" aria-label="Fermer">×</button>
-      <img class="lightbox__img" alt="" />
-    `;
-    document.body.appendChild(lightbox);
-  }
+  // Chemin de la page actuelle (ex: "/galeries.html")
+  const currentPath = window.location.pathname;
 
-  const lbImg = lightbox.querySelector(".lightbox__img");
-  const lbClose = lightbox.querySelector(".lightbox__close");
+  // On garde seulement le nom du fichier (ex: "galeries.html")
+  const currentFile = currentPath.split("/").pop() || "index.html";
 
-  function openLightbox(src, alt = "") {
-    lbImg.src = src;
-    lbImg.alt = alt;
-    lightbox.classList.add("is-open");
-    lightbox.setAttribute("aria-hidden", "false");
-    document.body.style.overflow = "hidden"; // évite le scroll derrière
-  }
+  navLinks.forEach((link) => {
+    // Nettoie l’état avant d’appliquer le bon
+    link.classList.remove("is-active");
 
-  function closeLightbox() {
-    lightbox.classList.remove("is-open");
-    lightbox.setAttribute("aria-hidden", "true");
-    lbImg.src = "";
-    document.body.style.overflow = "";
-  }
+    const href = link.getAttribute("href") || "";
+    const hrefFile = href.split("/").pop();
 
-  // Clic sur une image (dans la mosaïque)
-  mosaicLinks.forEach((a) => {
-    a.addEventListener("click", (e) => {
-      const img = a.querySelector("img");
-      if (!img) return;
-
-      // Si ton lien va vers une autre page (ex: galeries.html),
-      // on ne bloque pas la navigation.
-      // MAIS si tu veux une lightbox sur la page d’accueil,
-      // alors on empêche la navigation uniquement si l'image existe.
-      // -> Ici je choisis d’ouvrir la lightbox ET d’empêcher le lien.
-      e.preventDefault();
-
-      // Utilise une meilleure version si tu veux (w=2000)
-      const bigSrc = img.src.replace("w=1200", "w=2000");
-      openLightbox(bigSrc, img.alt || "");
-    });
-  });
-
-  // Fermeture : bouton X
-  lbClose.addEventListener("click", closeLightbox);
-
-  // Fermeture : clic hors image
-  lightbox.addEventListener("click", (e) => {
-    const clickedOnBackdrop = e.target === lightbox;
-    if (clickedOnBackdrop) closeLightbox();
-  });
-
-  // Fermeture : touche Échap
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && lightbox.classList.contains("is-open")) {
-      closeLightbox();
+    // Si le lien correspond à la page actuelle => active
+    if (hrefFile === currentFile) {
+      link.classList.add("is-active");
     }
   });
 
-  // ---------
-  // 2) Scroll doux (si tu as des liens vers #sections)
-  // ---------
+  // -----------------------------
+  // 2) Scroll doux sur ancres (#...)
+  // -----------------------------
   const anchorLinks = document.querySelectorAll('a[href^="#"]');
-  anchorLinks.forEach((link) => {
-    link.addEventListener("click", (e) => {
-      const id = link.getAttribute("href");
+
+  anchorLinks.forEach((a) => {
+    a.addEventListener("click", (e) => {
+      const id = a.getAttribute("href");
       const target = document.querySelector(id);
-      if (!target) return;
+
+      if (!target) return; // si la section n’existe pas, on ne bloque pas
 
       e.preventDefault();
       target.scrollIntoView({ behavior: "smooth", block: "start" });
+
+      // Option accessibilité : met le focus sur la section si elle peut le recevoir
+      if (!target.hasAttribute("tabindex")) {
+        target.setAttribute("tabindex", "-1");
+      }
+      target.focus({ preventScroll: true });
     });
   });
 });
