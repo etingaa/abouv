@@ -7,85 +7,63 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
-  <div class="shell">
+  <div class="page">
 
-    <!-- HEADER (à copier-coller sur toutes les pages) -->
-    <header class="topbar" role="banner">
-      <div class="topbar__row">
-        <div class="brand">
-          <a href="index.html" class="brand__link">ANNICK BOUVATTIER</a>
-        </div>
+    <!-- TOP -->
+    <header class="top">
+      <div class="top__left">
+        <a class="logo" href="index.html" aria-label="Accueil">
+          <!-- petit logo type “montagne” -->
+          <svg viewBox="0 0 64 40" aria-hidden="true">
+            <path d="M10 32 L22 14 L34 32 Z" fill="none" stroke="currentColor" stroke-width="3" />
+            <path d="M28 32 L40 10 L54 32 Z" fill="none" stroke="currentColor" stroke-width="3" />
+            <path d="M20 18 L24 22" stroke="currentColor" stroke-width="3" />
+          </svg>
+        </a>
 
-        <nav class="nav" aria-label="Navigation principale">
-          <a class="nav__link is-active" href="index.html">Accueil</a>
-          <a class="nav__link" href="expositions.html">Expositions</a>
-          <a class="nav__link" href="galeries.html">Galeries</a>
-          <a class="nav__link" href="informations.html">Informations</a>
-          <a class="nav__link" href="apropos.html">À propos</a>
-          <a class="nav__link" href="presse.html">Presse</a>
-        </nav>
+        <p class="top__tagline">
+          Annick Bouvattier — peintures à l’huile au couteau, lumière & contrastes.
+        </p>
       </div>
+
+      <nav class="top__nav" aria-label="Navigation principale">
+        <a class="nav__link is-active" href="index.html">Accueil</a>
+        <a class="nav__link" href="expositions.html">Expositions</a>
+        <a class="nav__link" href="galeries.html">Galeries</a>
+        <a class="nav__link" href="informations.html">Informations</a>
+        <a class="nav__link" href="apropos.html">À propos</a>
+        <a class="nav__link" href="presse.html">Presse</a>
+      </nav>
     </header>
 
-    <!-- MAIN -->
-    <main class="card">
-      <!-- Grille illustrée (style “portfolio”) -->
-      <section class="mosaic" aria-label="Sélection visuelle">
-        <a class="mosaic__tile tile--a" href="galeries.html" aria-label="Ouvrir Galeries">
-          <img src="https://images.unsplash.com/photo-1520975693411-bd2c7f6c8f2b?auto=format&fit=crop&w=1200&q=80" alt="">
-        </a>
-
-        <div class="mosaic__tile tile--b">
-          <div class="shape shape--pink"></div>
-          <div class="shape shape--blue"></div>
-          <div class="shape shape--orange"></div>
-        </div>
-
-        <a class="mosaic__tile tile--c" href="expositions.html" aria-label="Ouvrir Expositions">
-          <img src="https://images.unsplash.com/photo-1520975869010-37b48c1aa0b6?auto=format&fit=crop&w=1200&q=80" alt="">
-        </a>
-
-        <div class="mosaic__tile tile--d">
-          <div class="lineart">ÉTUDE</div>
-        </div>
-
-        <a class="mosaic__tile tile--e" href="galeries.html" aria-label="Ouvrir Galeries">
-          <img src="https://www.google.com/search?q=annick+bouvattier&sca_esv=ff6e3792612b1665&udm=2&sxsrf=ANbL-n5_kzGZA11Ak0duAd7aUjK6ANk-Mw:1769897923311&source=lnt&tbs=isz:l&sa=X&ved=2ahUKEwiLvIfI57aSAxXxD1kFHfZvAMUQpwV6BAgGEAY&biw=1296&bih=784&dpr=2&aic=0#sv=CAMSVhoyKhBlLXhONU5rb1NTeXF2R2RNMg54TjVOa29TU3lxdkdkTToOajVhOVpwbnp6eWxsS00gBCocCgZtb3NhaWMSEGUteE41TmtvU1N5cXZHZE0YADABGAcg6svT1w8wAkoKCAEQAhgCIAIoAg" alt="">
-        </a>
-
-        <div class="mosaic__tile tile--f">
-          <div class="stamp">HUILE<br>AU COUTEAU</div>
-        </div>
-      </section>
-
-      <!-- Intro comme sur ton exemple -->
-      <section class="intro">
-        <h1 class="intro__title">Annick Bouvattier</h1>
-
-        <div class="intro__right">
-          <p class="intro__text">
-            Peintre à l’huile au couteau. Je capture le quotidien, la lumière
-            et le velouté de la peau par des contrastes doux et une matière
-            vivante.
-          </p>
-
-          <p class="intro__text">
-            Contact : <a class="link" href="mailto:hello@annickbouvattier.fr">hello@annickbouvattier.fr</a>
-          </p>
-
-          <div class="intro__cta">
-            <a class="btn" href="galeries.html">Voir la galerie</a>
-            <a class="btn btn--ghost" href="informations.html">Me contacter</a>
-          </div>
-        </div>
-      </section>
+    <!-- MAIN CENTER -->
+    <main class="center" role="main">
+      <!-- Remplace par ton image / artwork -->
+      <img
+        class="heroImage"
+        src="https://images.unsplash.com/photo-1541961017774-22349e4a1262?auto=format&fit=crop&w=1600&q=80"
+        alt="Œuvre encadrée"
+        loading="lazy"
+      />
     </main>
+
+    <!-- BOTTOM -->
+    <footer class="bottom">
+      <div class="bottom__left">
+        <a class="bottom__link" href="#" onclick="return false;">instagram</a>
+        <a class="bottom__link" href="#" onclick="return false;">saatchi art</a>
+        <a class="bottom__link" href="#" onclick="return false;">artconnect</a>
+        <a class="bottom__link" href="#" onclick="return false;">linkedin</a>
+      </div>
+
+      <a class="bottom__right" href="#" onclick="return false;">copyright notice</a>
+    </footer>
 
   </div>
 </body>
