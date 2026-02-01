@@ -30,7 +30,11 @@ a{
 /* page + container (marges latérales) */
 .page{
   min-height: 100vh;
-  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+
+  /* voile pour lisibilité sur la photo */
+  background: rgba(2, 37, 58, 0.65);
 }
 
 .container{
@@ -38,6 +42,11 @@ a{
   max-width: 1400px;
   margin: 0 auto;
   padding: 20px 48px;
+
+  /* ✅ pousse le footer en bas */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 @media (max-width: 768px){
