@@ -4,9 +4,11 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Portfolio — Annick Bouvattier</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+
   <style>
     :root{
       --bg:#02253A;
@@ -17,25 +19,25 @@
       --chip:rgba(255,255,255,.08);
       --chip2:rgba(255,255,255,.12);
     }
-    *{box-sizing:border-box}
-    html,body{height:100%}
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
     body{
       margin:0;
       font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
       background:var(--bg);
       color:var(--ink);
     }
-    a{color:inherit;text-decoration:none}
+    a{ color:inherit; text-decoration:none; }
 
-    .page{min-height:100vh}
+    .page{ min-height:100vh; }
     .container{
       width:100%;
       max-width:1400px;
       margin:0 auto;
-      padding:20px 48px 40px;
+      padding:20px 48px 56px;
     }
     @media (max-width:768px){
-      .container{padding:16px 20px 32px}
+      .container{ padding:16px 20px 40px; }
     }
 
     /* HEADER */
@@ -70,10 +72,10 @@
       line-height:1;
       color:var(--ink);
     }
-    .nav__link:hover{border-bottom-color:rgba(255,255,255,.5)}
-    .nav__link.is-active{border-bottom-color:#fff}
+    .nav__link:hover{ border-bottom-color:rgba(255,255,255,.5); }
+    .nav__link.is-active{ border-bottom-color:#fff; }
 
-    /* FILTER BAR (si tu veux garder les filtres dans Portfolio) */
+    /* FILTER BAR */
     .filters{
       position: sticky;
       top: 0;
@@ -85,16 +87,17 @@
       display:grid;
       grid-template-columns: 1.4fr 1fr 1fr 1fr 1fr auto;
       gap: 10px;
+      align-items: end;
       backdrop-filter: blur(8px);
     }
     @media (max-width: 1050px){
-      .filters{grid-template-columns: 1fr 1fr 1fr; }
+      .filters{ grid-template-columns: 1fr 1fr 1fr; }
     }
     @media (max-width: 680px){
-      .filters{grid-template-columns: 1fr; }
+      .filters{ grid-template-columns: 1fr; }
     }
 
-    .field{display:flex;flex-direction:column;gap:6px}
+    .field{ display:flex; flex-direction:column; gap:6px; min-width:0; }
     .label{
       font-size:12px;
       color:var(--ink-faint);
@@ -103,6 +106,7 @@
     }
     input, select{
       width:100%;
+      height:44px;
       border:1px solid var(--border);
       background:var(--chip);
       color:var(--ink);
@@ -111,12 +115,14 @@
       outline:none;
       font-size:14px;
     }
-    input::placeholder{color:rgba(255,255,255,.45)}
-    input:focus, select:focus{border-color:rgba(255,255,255,.35); background:var(--chip2)}
+    input::placeholder{ color:rgba(255,255,255,.45); }
+    input:focus, select:focus{
+      border-color:rgba(255,255,255,.35);
+      background:var(--chip2);
+    }
 
     .btn{
-      align-self:end;
-      height:40px;
+      height:44px;
       padding:0 14px;
       border-radius:12px;
       border:1px solid var(--border);
@@ -126,7 +132,9 @@
       cursor:pointer;
       white-space:nowrap;
     }
-    .btn:hover{background:rgba(255,255,255,.18)}
+    .btn:hover{ background:rgba(255,255,255,.18); }
+
+    /* Title row */
     .metaRow{
       display:flex;
       align-items:baseline;
@@ -152,9 +160,9 @@
       gap: 14px;
       margin-top: 10px;
     }
-    @media (max-width: 1200px){ .grid{grid-template-columns: repeat(3, 1fr);} }
-    @media (max-width: 900px){ .grid{grid-template-columns: repeat(2, 1fr);} }
-    @media (max-width: 520px){ .grid{grid-template-columns: 1fr;} }
+    @media (max-width: 1200px){ .grid{ grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 900px){ .grid{ grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 520px){ .grid{ grid-template-columns: 1fr; } }
 
     .card{
       border:1px solid var(--border);
@@ -162,6 +170,7 @@
       overflow:hidden;
       background:rgba(255,255,255,.04);
       transition: transform .12s ease, background .12s ease, border-color .12s ease;
+      cursor: pointer;
     }
     .card:hover{
       transform: translateY(-2px);
@@ -214,7 +223,7 @@
       color: rgba(255,255,255,.90);
     }
 
-    /* Modal */
+    /* MODAL */
     dialog{
       border:none;
       padding:0;
@@ -223,13 +232,13 @@
       background:rgba(10,20,30,.95);
       color:var(--ink);
     }
-    dialog::backdrop{background:rgba(0,0,0,.6)}
+    dialog::backdrop{ background:rgba(0,0,0,.6); }
     .modal{
       display:grid;
       grid-template-columns: 1.4fr 1fr;
       gap:0;
     }
-    @media (max-width: 900px){ .modal{grid-template-columns:1fr;} }
+    @media (max-width: 900px){ .modal{ grid-template-columns:1fr; } }
     .modal__img{
       width:100%;
       height:100%;
@@ -242,20 +251,31 @@
       padding:16px 16px 18px;
       border-left:1px solid rgba(255,255,255,.12);
     }
-    @media (max-width: 900px){ .modal__side{border-left:none;border-top:1px solid rgba(255,255,255,.12);} }
+    @media (max-width: 900px){
+      .modal__side{ border-left:none; border-top:1px solid rgba(255,255,255,.12); }
+    }
     .modal__h{
       margin:0 0 10px;
       font-size:18px;
       font-weight:800;
     }
-    .modal__p{margin:0 0 10px; color:var(--ink-soft); line-height:1.5; font-size:14px}
-    .modal__close{margin-top:10px;width:100%}
+    .modal__p{
+      margin:0 0 10px;
+      color:var(--ink-soft);
+      line-height:1.5;
+      font-size:14px
+    }
+    .modal__close{
+      margin-top:10px;
+      width:100%;
+    }
   </style>
 </head>
 
 <body>
   <div class="page">
     <div class="container">
+
       <header class="top">
         <div class="top__left">
           <a href="index.html" class="brand" aria-label="Accueil">ANNICK&nbsp;BOUVATTIER</a>
@@ -272,9 +292,236 @@
         </nav>
       </header>
 
-      <!-- Si tu veux garder les filtres dans Portfolio, laisse ce bloc.
-           Sinon dis-moi et je te le supprime. -->
-      <section class="filters" aria-label="Filtres">
+      <section class="filters" aria-label="Filtres portfolio">
         <div class="field">
           <div class="label">Rechercher</div>
-          <input id="q" type="search" placehol
+          <input id="q" type="search" placeholder="Titre, technique, taille…" />
+        </div>
+
+        <div class="field">
+          <div class="label">Statut</div>
+          <select id="status">
+            <option value="all">Tous</option>
+            <option value="available">Disponible</option>
+            <option value="sold">Vendu</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <div class="label">Technique</div>
+          <select id="technique">
+            <option value="all">Toutes</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <div class="label">Année</div>
+          <select id="year">
+            <option value="all">Toutes</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <div class="label">Tri</div>
+          <select id="sort">
+            <option value="newest">Plus récent</option>
+            <option value="oldest">Plus ancien</option>
+            <option value="title">Titre (A→Z)</option>
+          </select>
+        </div>
+
+        <button class="btn" id="reset" type="button">Réinitialiser</button>
+      </section>
+
+      <div class="metaRow">
+        <h1 class="title">Portfolio</h1>
+        <div class="count" id="count"></div>
+      </div>
+
+      <section class="grid" id="grid" aria-label="Œuvres portfolio"></section>
+    </div>
+  </div>
+
+  <dialog id="modal">
+    <div class="modal">
+      <img class="modal__img" id="modalImg" alt="">
+      <div class="modal__side">
+        <h2 class="modal__h" id="modalTitle"></h2>
+        <p class="modal__p" id="modalMeta"></p>
+        <p class="modal__p" id="modalDesc"></p>
+        <button class="btn modal__close" id="modalClose" type="button">Fermer</button>
+      </div>
+    </div>
+  </dialog>
+
+  <script>
+    // Portfolio = sélection (tu changes ici)
+    const artworks = [
+      {
+        title: "Sans titre I",
+        year: 2024,
+        technique: "Huile au couteau",
+        size: "80×60 cm",
+        status: "available",
+        image: "https://images.unsplash.com/photo-1541961017774-22349e4a1262?auto=format&fit=crop&w=1200&q=80",
+        desc: "Description courte de l’œuvre (optionnel)."
+      },
+      {
+        title: "Étude de peau",
+        year: 2025,
+        technique: "Huile au pinceau",
+        size: "90×70 cm",
+        status: "available",
+        image: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=1200&q=80",
+        desc: "Transparences et velouté."
+      },
+      {
+        title: "Lumière douce",
+        year: 2023,
+        technique: "Huile au couteau",
+        size: "70×50 cm",
+        status: "sold",
+        image: "https://images.unsplash.com/photo-1526318472351-c75fcf070305?auto=format&fit=crop&w=1200&q=80",
+        desc: "Jeu de matière et contraste."
+      }
+    ];
+
+    const els = {
+      q: document.getElementById("q"),
+      status: document.getElementById("status"),
+      technique: document.getElementById("technique"),
+      year: document.getElementById("year"),
+      sort: document.getElementById("sort"),
+      reset: document.getElementById("reset"),
+      grid: document.getElementById("grid"),
+      count: document.getElementById("count"),
+      modal: document.getElementById("modal"),
+      modalImg: document.getElementById("modalImg"),
+      modalTitle: document.getElementById("modalTitle"),
+      modalMeta: document.getElementById("modalMeta"),
+      modalDesc: document.getElementById("modalDesc"),
+      modalClose: document.getElementById("modalClose"),
+    };
+
+    function uniq(arr){ return [...new Set(arr)].sort((a,b)=> (""+a).localeCompare(""+b)); }
+
+    function hydrateFilters(){
+      const techniques = uniq(artworks.map(a=>a.technique));
+      const years = uniq(artworks.map(a=>a.year)).sort((a,b)=>b-a);
+
+      techniques.forEach(t=>{
+        const opt = document.createElement("option");
+        opt.value = t;
+        opt.textContent = t;
+        els.technique.appendChild(opt);
+      });
+
+      years.forEach(y=>{
+        const opt = document.createElement("option");
+        opt.value = String(y);
+        opt.textContent = String(y);
+        els.year.appendChild(opt);
+      });
+    }
+
+    function match(a, filters){
+      const q = filters.q.trim().toLowerCase();
+      const hay = `${a.title} ${a.technique} ${a.size} ${a.year}`.toLowerCase();
+      if (q && !hay.includes(q)) return false;
+
+      if (filters.status !== "all" && a.status !== filters.status) return false;
+      if (filters.technique !== "all" && a.technique !== filters.technique) return false;
+      if (filters.year !== "all" && String(a.year) !== filters.year) return false;
+
+      return true;
+    }
+
+    function sortList(list, mode){
+      const copy = [...list];
+      if (mode === "newest") copy.sort((a,b)=> b.year - a.year || a.title.localeCompare(b.title));
+      if (mode === "oldest") copy.sort((a,b)=> a.year - b.year || a.title.localeCompare(b.title));
+      if (mode === "title")  copy.sort((a,b)=> a.title.localeCompare(b.title));
+      return copy;
+    }
+
+    function render(){
+      const filters = {
+        q: els.q.value || "",
+        status: els.status.value,
+        technique: els.technique.value,
+        year: els.year.value,
+        sort: els.sort.value
+      };
+
+      let list = artworks.filter(a => match(a, filters));
+      list = sortList(list, filters.sort);
+
+      els.grid.innerHTML = "";
+      list.forEach(a=>{
+        const card = document.createElement("article");
+        card.className = "card";
+        card.innerHTML = `
+          <img class="thumb" src="${a.image}" alt="${escapeHtml(a.title)}" loading="lazy">
+          <div class="info">
+            <p class="name">${escapeHtml(a.title)}</p>
+            <p class="sub">${escapeHtml(a.technique)} · ${escapeHtml(a.size)} · ${a.year}</p>
+            <div class="chips">
+              <span class="chip ${a.status === "sold" ? "sold" : ""}">
+                ${a.status === "sold" ? "Vendu" : "Disponible"}
+              </span>
+            </div>
+          </div>
+        `;
+        card.addEventListener("click", () => openModal(a));
+        els.grid.appendChild(card);
+      });
+
+      els.count.textContent = `${list.length} œuvre${list.length>1 ? "s" : ""}`;
+    }
+
+    function openModal(a){
+      els.modalImg.src = a.image.replace("w=1200","w=2000");
+      els.modalImg.alt = a.title;
+      els.modalTitle.textContent = a.title;
+      els.modalMeta.textContent = `${a.technique} · ${a.size} · ${a.year} · ${a.status === "sold" ? "Vendu" : "Disponible"}`;
+      els.modalDesc.textContent = a.desc || "";
+      els.modal.showModal();
+    }
+
+    function closeModal(){ els.modal.close(); }
+
+    function escapeHtml(s){
+      return String(s)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    ["input","change"].forEach(evt=>{
+      els.q.addEventListener(evt, render);
+      els.status.addEventListener(evt, render);
+      els.technique.addEventListener(evt, render);
+      els.year.addEventListener(evt, render);
+      els.sort.addEventListener(evt, render);
+    });
+
+    els.reset.addEventListener("click", ()=>{
+      els.q.value = "";
+      els.status.value = "all";
+      els.technique.value = "all";
+      els.year.value = "all";
+      els.sort.value = "newest";
+      render();
+    });
+
+    els.modalClose.addEventListener("click", closeModal);
+    els.modal.addEventListener("click", (e)=>{ if(e.target === els.modal) closeModal(); });
+    document.addEventListener("keydown", (e)=>{ if(e.key === "Escape" && els.modal.open) closeModal(); });
+
+    hydrateFilters();
+    render();
+  </script>
+</body>
+</html>
