@@ -1,30 +1,34 @@
-// app.js
-// Objectif : rendre la navigation plus "automatique" et agréable
-// - Met le lien actif (is-active) selon la page actuelle
-// - Ajoute un scroll doux sur les liens d’ancre (#section)
-
 document.addEventListener("DOMContentLoaded", () => {
   // -----------------------------
-  // 1) Lien actif automatique
+  // 1) Lien actif automatique (robuste)
   // -----------------------------
-  // Exemple : si l’URL est /galeries.html => le lien href="galeries.html" reçoit .is-active
   const navLinks = document.querySelectorAll(".top__nav .nav__link");
 
-  // Chemin de la page actuelle (ex: "/galeries.html")
-  const currentPath = window.location.pathname;
-
-  // On garde seulement le nom du fichier (ex: "galeries.html")
+  // URL actuelle, normalisée
+  const currentUrl = new URL(window.location.href);
+  const currentPath = currentUrl.pathname.replace(/\/$/, ""); // enlève trailing slash
   const currentFile = currentPath.split("/").pop() || "index.html";
 
   navLinks.forEach((link) => {
-    // Nettoie l’état avant d’appliquer le bon
     link.classList.remove("is-active");
 
-    const href = link.getAttribute("href") || "";
-    const hrefFile = href.split("/").pop();
+    const href = link.getAttribute("href");
+    if (!href) return;
 
-    // Si le lien correspond à la page actuelle => active
-    if (hrefFile === currentFile) {
+    // Ignore les ancres pures du menu (#section)
+    if (href.startsWith("#")) return;
+
+    // Résout le href en URL absolue (gère relatifs + absolus)
+    const linkUrl = new URL(href, window.location.origin);
+    const linkPath = linkUrl.pathname.replace(/\/$/, "");
+    const linkFile = linkPath.split("/").pop() || "index.html";
+
+    // Cas spécial : "/" doit activer "index.html" si tu as un lien vers index.html
+    const isIndex =
+      (currentFile === "" || currentFile === "index.html") &&
+      (linkFile === "" || linkFile === "index.html");
+
+    if (linkFile === currentFile || isIndex) {
       link.classList.add("is-active");
     }
   });
@@ -32,22 +36,29 @@ document.addEventListener("DOMContentLoaded", () => {
   // -----------------------------
   // 2) Scroll doux sur ancres (#...)
   // -----------------------------
+  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const anchorLinks = document.querySelectorAll('a[href^="#"]');
 
   anchorLinks.forEach((a) => {
     a.addEventListener("click", (e) => {
       const id = a.getAttribute("href");
-      const target = document.querySelector(id);
+      if (!id || id === "#") return;
 
-      if (!target) return; // si la section n’existe pas, on ne bloque pas
+      const target = document.querySelector(id);
+      if (!target) return;
 
       e.preventDefault();
-      target.scrollIntoView({ behavior: "smooth", block: "start" });
 
-      // Option accessibilité : met le focus sur la section si elle peut le recevoir
-      if (!target.hasAttribute("tabindex")) {
-        target.setAttribute("tabindex", "-1");
-      }
+      target.scrollIntoView({
+        behavior: prefersReducedMotion ? "auto" : "smooth",
+        block: "start",
+      });
+
+      // Met à jour l'URL (pratique pour partager + back)
+      history.pushState(null, "", id);
+
+      // Accessibilité : focus
+      if (!target.hasAttribute("tabindex")) target.setAttribute("tabindex", "-1");
       target.focus({ preventScroll: true });
     });
   });
