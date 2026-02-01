@@ -139,48 +139,47 @@
     }
 
     /* Badge avec point */
-.badge{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  margin-top:6px;
-  padding:4px 10px;
-  border:1px solid var(--border);
-  background:rgba(255,255,255,.06);
-  font-size:12px;
-  font-weight:800;
-  text-transform:uppercase;
-  letter-spacing:.05em;
-}
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      margin-top:6px;
+      padding:4px 10px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.06);
+      font-size:12px;
+      font-weight:800;
+      text-transform:uppercase;
+      letter-spacing:.05em;
+    }
 
-/* Point */
-.badge::before{
-  content:"";
-  width:8px;
-  height:8px;
-  border-radius:50%;
-  display:inline-block;
-}
+    /* Point */
+    .badge::before{
+      content:"";
+      width:8px;
+      height:8px;
+      border-radius:50%;
+      display:inline-block;
+    }
 
-/* DISPONIBLE */
-.badge.disponible{
-  color:#3ddc84;
-  border-color:rgba(61,220,132,.5);
-}
-.badge.disponible::before{
-  background:#3ddc84;
-}
+    /* DISPONIBLE */
+    .badge.disponible{
+      color:#3ddc84;
+      border-color:rgba(61,220,132,.5);
+    }
+    .badge.disponible::before{
+      background:#3ddc84;
+    }
 
-/* VENDUE */
-.badge.vendue{
-  color:#ff5c5c;
-  border-color:rgba(255,92,92,.5);
-  opacity:.85;
-}
-.badge.vendue::before{
-  background:#ff5c5c;
-}
-
+    /* VENDUE */
+    .badge.vendue{
+      color:#ff5c5c;
+      border-color:rgba(255,92,92,.5);
+      opacity:.85;
+    }
+    .badge.vendue::before{
+      background:#ff5c5c;
+    }
 
     /* Modal */
     dialog{
@@ -219,7 +218,6 @@
       </nav>
     </header>
 
-    <!-- ✅ Filtres Notion -->
     <section class="filters" aria-label="Filtres">
       <div class="field">
         <div class="label">Nom</div>
@@ -280,7 +278,6 @@
   </dialog>
 
   <script>
-    // ✅ Exemple : adapte avec tes vraies infos (et plus tard: injecter depuis Notion)
     const artworks = [
       { title:"Dimanche", year:2024, technique:"HST", size:"46 x 38 cm", status:"disponible", image:"https://images.unsplash.com/photo-1541961017774-22349e4a1262?auto=format&fit=crop&w=1600&q=80", desc:"" },
       { title:"Saint-Germain Express", year:2024, technique:"HST", size:"73 x 92 cm", status:"disponible", image:"https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=1600&q=80", desc:"" },
@@ -318,7 +315,6 @@
         .replaceAll("'","&#039;");
     }
 
-    // normalise "46×38 cm" / "46 x 38 cm" / "46x38cm"
     function normSize(s){
       return String(s)
         .toLowerCase()
@@ -390,7 +386,7 @@
           <div class="cap">
             <p class="capTitle">${escapeHtml(a.title)}</p>
             <p class="capMeta">${escapeHtml(a.technique)} · ${escapeHtml(a.size)} · ${a.year}</p>
-            <span class="badge ${a.status === "vendue" ? "sold" : ""}">
+            <span class="badge ${a.status}">
               ${a.status === "vendue" ? "VENDUE" : "DISPONIBLE"}
             </span>
           </div>
@@ -438,4 +434,3 @@
   </script>
 </body>
 </html>
-
