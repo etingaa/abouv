@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Galeries — Annick Bouvattier</title>
+  <title>Portfolio — Annick Bouvattier</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
@@ -38,7 +38,7 @@
       .container{padding:16px 20px 32px}
     }
 
-    /* HEADER (même esprit que ton site) */
+    /* HEADER */
     .top{
       display:flex;
       align-items:center;
@@ -73,7 +73,7 @@
     .nav__link:hover{border-bottom-color:rgba(255,255,255,.5)}
     .nav__link.is-active{border-bottom-color:#fff}
 
-    /* FILTER BAR */
+    /* FILTER BAR (si tu veux garder les filtres dans Portfolio) */
     .filters{
       position: sticky;
       top: 0;
@@ -249,10 +249,7 @@
       font-weight:800;
     }
     .modal__p{margin:0 0 10px; color:var(--ink-soft); line-height:1.5; font-size:14px}
-    .modal__close{
-      margin-top:10px;
-      width:100%;
-    }
+    .modal__close{margin-top:10px;width:100%}
   </style>
 </head>
 
@@ -266,254 +263,18 @@
 
         <nav class="top__nav" aria-label="Navigation principale">
           <a class="nav__link" href="index.html">Accueil</a>
+          <a class="nav__link is-active" href="portfolio.html">Portfolio</a>
+          <a class="nav__link" href="galeries.html">Galeries</a>
           <a class="nav__link" href="expositions.html">Expositions</a>
-          <a class="nav__link is-active" href="galeries.html">Galeries</a>
           <a class="nav__link" href="informations.html">Informations</a>
           <a class="nav__link" href="apropos.html">À propos</a>
           <a class="nav__link" href="presse.html">Presse</a>
         </nav>
       </header>
 
+      <!-- Si tu veux garder les filtres dans Portfolio, laisse ce bloc.
+           Sinon dis-moi et je te le supprime. -->
       <section class="filters" aria-label="Filtres">
         <div class="field">
           <div class="label">Rechercher</div>
-          <input id="q" type="search" placeholder="Titre, technique, taille…" />
-        </div>
-
-        <div class="field">
-          <div class="label">Statut</div>
-          <select id="status">
-            <option value="all">Tous</option>
-            <option value="available">Disponible</option>
-            <option value="sold">Vendu</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <div class="label">Technique</div>
-          <select id="technique">
-            <option value="all">Toutes</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <div class="label">Année</div>
-          <select id="year">
-            <option value="all">Toutes</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <div class="label">Tri</div>
-          <select id="sort">
-            <option value="newest">Plus récent</option>
-            <option value="oldest">Plus ancien</option>
-            <option value="title">Titre (A→Z)</option>
-          </select>
-        </div>
-
-        <button class="btn" id="reset" type="button">Réinitialiser</button>
-      </section>
-
-      <div class="metaRow">
-        <h1 class="title">Galeries</h1>
-        <div class="count" id="count"></div>
-      </div>
-
-      <section class="grid" id="grid" aria-label="Œuvres"></section>
-    </div>
-  </div>
-
-  <dialog id="modal">
-    <div class="modal">
-      <img class="modal__img" id="modalImg" alt="">
-      <div class="modal__side">
-        <h2 class="modal__h" id="modalTitle"></h2>
-        <p class="modal__p" id="modalMeta"></p>
-        <p class="modal__p" id="modalDesc"></p>
-        <button class="btn modal__close" id="modalClose" type="button">Fermer</button>
-      </div>
-    </div>
-  </dialog>
-
-  <script>
-    // 1) Mets tes œuvres ici (plus tard: brancher Notion)
-    const artworks = [
-      {
-        title: "Sans titre I",
-        year: 2024,
-        technique: "Huile au couteau",
-        size: "80×60 cm",
-        status: "available", // available | sold
-        image: "https://images.unsplash.com/photo-1541961017774-22349e4a1262?auto=format&fit=crop&w=1200&q=80",
-        desc: "Description courte de l’œuvre (optionnel)."
-      },
-      {
-        title: "Lumière douce",
-        year: 2023,
-        technique: "Huile au couteau",
-        size: "70×50 cm",
-        status: "sold",
-        image: "https://images.unsplash.com/photo-1526318472351-c75fcf070305?auto=format&fit=crop&w=1200&q=80",
-        desc: "Jeu de matière et contraste."
-      },
-      {
-        title: "Étude de peau",
-        year: 2025,
-        technique: "Huile au pinceau",
-        size: "90×70 cm",
-        status: "available",
-        image: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=1200&q=80",
-        desc: "Transparences et velouté."
-      },
-      {
-        title: "Nuit claire",
-        year: 2022,
-        technique: "Huile au couteau",
-        size: "100×80 cm",
-        status: "available",
-        image: "https://images.unsplash.com/photo-1549880338-65ddcdfd017b?auto=format&fit=crop&w=1200&q=80",
-        desc: "Lumière/ombre, matière vive."
-      }
-    ];
-
-    const els = {
-      q: document.getElementById("q"),
-      status: document.getElementById("status"),
-      technique: document.getElementById("technique"),
-      year: document.getElementById("year"),
-      sort: document.getElementById("sort"),
-      reset: document.getElementById("reset"),
-      grid: document.getElementById("grid"),
-      count: document.getElementById("count"),
-      modal: document.getElementById("modal"),
-      modalImg: document.getElementById("modalImg"),
-      modalTitle: document.getElementById("modalTitle"),
-      modalMeta: document.getElementById("modalMeta"),
-      modalDesc: document.getElementById("modalDesc"),
-      modalClose: document.getElementById("modalClose"),
-    };
-
-    function uniq(arr){ return [...new Set(arr)].sort((a,b)=> (""+a).localeCompare(""+b)); }
-
-    function hydrateFilters(){
-      const techniques = uniq(artworks.map(a=>a.technique));
-      const years = uniq(artworks.map(a=>a.year)).sort((a,b)=>b-a);
-
-      techniques.forEach(t=>{
-        const opt = document.createElement("option");
-        opt.value = t;
-        opt.textContent = t;
-        els.technique.appendChild(opt);
-      });
-
-      years.forEach(y=>{
-        const opt = document.createElement("option");
-        opt.value = String(y);
-        opt.textContent = String(y);
-        els.year.appendChild(opt);
-      });
-    }
-
-    function match(a, filters){
-      const q = filters.q.trim().toLowerCase();
-      const hay = `${a.title} ${a.technique} ${a.size} ${a.year}`.toLowerCase();
-      if (q && !hay.includes(q)) return false;
-
-      if (filters.status !== "all" && a.status !== filters.status) return false;
-      if (filters.technique !== "all" && a.technique !== filters.technique) return false;
-      if (filters.year !== "all" && String(a.year) !== filters.year) return false;
-
-      return true;
-    }
-
-    function sortList(list, mode){
-      const copy = [...list];
-      if (mode === "newest") copy.sort((a,b)=> b.year - a.year || a.title.localeCompare(b.title));
-      if (mode === "oldest") copy.sort((a,b)=> a.year - b.year || a.title.localeCompare(b.title));
-      if (mode === "title")  copy.sort((a,b)=> a.title.localeCompare(b.title));
-      return copy;
-    }
-
-    function render(){
-      const filters = {
-        q: els.q.value || "",
-        status: els.status.value,
-        technique: els.technique.value,
-        year: els.year.value,
-        sort: els.sort.value
-      };
-
-      let list = artworks.filter(a => match(a, filters));
-      list = sortList(list, filters.sort);
-
-      els.grid.innerHTML = "";
-      list.forEach(a=>{
-        const card = document.createElement("article");
-        card.className = "card";
-        card.innerHTML = `
-          <img class="thumb" src="${a.image}" alt="${escapeHtml(a.title)}" loading="lazy">
-          <div class="info">
-            <p class="name">${escapeHtml(a.title)}</p>
-            <p class="sub">${escapeHtml(a.technique)} · ${escapeHtml(a.size)} · ${a.year}</p>
-            <div class="chips">
-              <span class="chip ${a.status === "sold" ? "sold" : ""}">
-                ${a.status === "sold" ? "Vendu" : "Disponible"}
-              </span>
-            </div>
-          </div>
-        `;
-        card.addEventListener("click", () => openModal(a));
-        els.grid.appendChild(card);
-      });
-
-      els.count.textContent = `${list.length} œuvre${list.length>1 ? "s" : ""}`;
-    }
-
-    function openModal(a){
-      els.modalImg.src = a.image.replace("w=1200","w=2000");
-      els.modalImg.alt = a.title;
-      els.modalTitle.textContent = a.title;
-      els.modalMeta.textContent = `${a.technique} · ${a.size} · ${a.year} · ${a.status === "sold" ? "Vendu" : "Disponible"}`;
-      els.modalDesc.textContent = a.desc || "";
-      els.modal.showModal();
-    }
-
-    function closeModal(){ els.modal.close(); }
-
-    function escapeHtml(s){
-      return String(s)
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
-    }
-
-    // events
-    ["input","change"].forEach(evt=>{
-      els.q.addEventListener(evt, render);
-      els.status.addEventListener(evt, render);
-      els.technique.addEventListener(evt, render);
-      els.year.addEventListener(evt, render);
-      els.sort.addEventListener(evt, render);
-    });
-
-    els.reset.addEventListener("click", ()=>{
-      els.q.value = "";
-      els.status.value = "all";
-      els.technique.value = "all";
-      els.year.value = "all";
-      els.sort.value = "newest";
-      render();
-    });
-
-    els.modalClose.addEventListener("click", closeModal);
-    els.modal.addEventListener("click", (e)=>{ if(e.target === els.modal) closeModal(); });
-    document.addEventListener("keydown", (e)=>{ if(e.key === "Escape" && els.modal.open) closeModal(); });
-
-    hydrateFilters();
-    render();
-  </script>
-</body>
-</html>
+          <input id="q" type="search" placehol
