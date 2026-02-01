@@ -1,1 +1,376 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Expositions — Annick Bouvattier</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#02253A;
+      --ink:#fff;
+      --soft:rgba(255,255,255,.82);
+      --faint:rgba(255,255,255,.55);
+      --border:rgba(255,255,255,.18);
+      --chip:rgba(255,255,255,.08);
+      --chip2:rgba(255,255,255,.12);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(""),}
+    body{background:var(--bg);color:var(--ink)}
+    a{color:inherit;text-decoration:none}
+
+    .container{max-width:1400px;margin:0 auto;padding:20px 48px 56px}
+    @media (max-width:768px){.container{padding:16px 20px 40px}}
+
+    /* Header */
+    .top{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:18px 0}
+    .brand{font-size:18px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;line-height:1;padding-bottom:6px;white-space:nowrap}
+    .top__nav{display:flex;align-items:center;gap:20px;flex-wrap:wrap;justify-content:flex-end}
+    .nav__link{font-size:16px;font-weight:500;border-bottom:2px solid transparent;padding:6px 2px 4px;line-height:1}
+    .nav__link:hover{border-bottom-color:rgba(255,255,255,.5)}
+    .nav__link.is-active{border-bottom-color:#fff}
+
+    /* Page head */
+    .headRow{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin:18px 0 10px}
+    h1{margin:0;font-size:28px;font-weight:800;letter-spacing:-.02em}
+    .meta{color:var(--faint);font-size:14px}
+
+    /* "En ce moment" */
+    .now{
+      border:1px solid var(--border);
+      border-radius:18px;
+      overflow:hidden;
+      background:rgba(255,255,255,.04);
+      display:grid;
+      grid-template-columns: 1.2fr 1fr;
+      min-height: 220px;
+    }
+    @media (max-width:900px){.now{grid-template-columns:1fr}}
+    .now__img{
+      background:
+        radial-gradient(900px 520px at 30% 20%, rgba(255,255,255,.20), rgba(255,255,255,0) 60%),
+        linear-gradient(120deg, rgba(255,255,255,.10), rgba(255,255,255,.02));
+      min-height:220px;
+    }
+    .now__body{padding:18px 18px 16px;display:flex;flex-direction:column;gap:10px}
+    .kicker{font-size:12px;letter-spacing:.10em;text-transform:uppercase;color:var(--faint)}
+    .now__title{margin:0;font-size:18px;font-weight:800}
+    .now__line{color:var(--soft);line-height:1.55}
+    .btn{
+      width:max-content;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.14);
+      color:var(--ink);
+      font-weight:700;
+      padding:10px 12px;
+      border-radius:12px;
+    }
+    .btn:hover{background:rgba(255,255,255,.18)}
+
+    /* Filters */
+    .filters{
+      margin-top:14px;
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:12px;
+      background:rgba(255,255,255,.04);
+      display:grid;
+      grid-template-columns: 1.2fr 1fr 1fr 1fr auto;
+      gap:10px;
+      align-items:end;
+    }
+    @media (max-width:1050px){.filters{grid-template-columns:1fr 1fr 1fr}}
+    @media (max-width:680px){.filters{grid-template-columns:1fr}}
+
+    .field{display:flex;flex-direction:column;gap:6px;min-width:0}
+    .label{font-size:12px;color:var(--faint);letter-spacing:.06em;text-transform:uppercase}
+    input,select{
+      height:44px;width:100%;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.08);
+      color:var(--ink);
+      border-radius:12px;
+      padding:10px 12px;
+      outline:none;
+      font-size:14px;
+    }
+    input::placeholder{color:rgba(255,255,255,.45)}
+    input:focus,select:focus{border-color:rgba(255,255,255,.35);background:rgba(255,255,255,.12)}
+
+    /* Timeline */
+    .timeline{margin-top:18px;display:flex;flex-direction:column;gap:18px}
+    .yearBlock{
+      border:1px solid var(--border);
+      border-radius:18px;
+      background:rgba(255,255,255,.04);
+      overflow:hidden;
+    }
+    .yearHead{
+      display:flex;justify-content:space-between;align-items:baseline;
+      padding:14px 16px;
+      border-bottom:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.02);
+    }
+    .year{font-size:18px;font-weight:800}
+    .yearCount{color:var(--faint);font-size:14px}
+
+    .items{padding:10px 12px 12px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    @media (max-width:900px){.items{grid-template-columns:1fr}}
+
+    .expo{
+      border:1px solid rgba(255,255,255,.14);
+      border-radius:16px;
+      padding:12px 12px 11px;
+      background:rgba(255,255,255,.03);
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+    .expo:hover{border-color:rgba(255,255,255,.26);background:rgba(255,255,255,.05)}
+    .expoTitle{margin:0;font-weight:800;font-size:14px;letter-spacing:.02em}
+    .expoMeta{margin:0;color:var(--soft);font-size:13px;line-height:1.5}
+    .tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:2px}
+    .tag{
+      font-size:12px;padding:6px 8px;border-radius:999px;
+      border:1px solid rgba(255,255,255,.18);
+      background:rgba(255,255,255,.06);
+      color:var(--soft);
+    }
+
+    .empty{margin-top:14px;color:var(--faint)}
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header class="top">
+      <a class="brand" href="index.html">ANNICK&nbsp;BOUVATTIER</a>
+      <nav class="top__nav">
+        <a class="nav__link" href="index.html">Accueil</a>
+        <a class="nav__link" href="portfolio.html">Portfolio</a>
+        <a class="nav__link" href="galeries.html">Galeries</a>
+        <a class="nav__link is-active" href="expositions.html">Expositions</a>
+        <a class="nav__link" href="informations.html">Informations</a>
+        <a class="nav__link" href="apropos.html">À propos</a>
+        <a class="nav__link" href="presse.html">Presse</a>
+      </nav>
+    </header>
+
+    <div class="headRow">
+      <h1>Expositions</h1>
+      <div class="meta" id="meta"></div>
+    </div>
+
+    <!-- En ce moment (optionnel) -->
+    <section class="now" id="now" hidden>
+      <div class="now__img" aria-hidden="true"></div>
+      <div class="now__body">
+        <div class="kicker">En ce moment</div>
+        <h2 class="now__title" id="nowTitle"></h2>
+        <div class="now__line" id="nowLine"></div>
+        <a class="btn" id="nowBtn" href="#" target="_blank" rel="noopener noreferrer">Voir les infos</a>
+      </div>
+    </section>
+
+    <!-- Filtres -->
+    <section class="filters" aria-label="Filtres">
+      <div class="field">
+        <div class="label">Rechercher</div>
+        <input id="q" type="search" placeholder="Galerie, ville, pays…" />
+      </div>
+      <div class="field">
+        <div class="label">Type</div>
+        <select id="type">
+          <option value="all">Tous</option>
+          <option value="solo">Personnelle</option>
+          <option value="group">Collective</option>
+          <option value="fair">Salon / Art fair</option>
+        </select>
+      </div>
+      <div class="field">
+        <div class="label">Pays</div>
+        <select id="country">
+          <option value="all">Tous</option>
+        </select>
+      </div>
+      <div class="field">
+        <div class="label">Année</div>
+        <select id="year">
+          <option value="all">Toutes</option>
+        </select>
+      </div>
+      <button class="btn" id="reset" type="button">Réinitialiser</button>
+    </section>
+
+    <section class="timeline" id="timeline"></section>
+    <p class="empty" id="empty" hidden>Aucune exposition ne correspond aux filtres.</p>
+  </div>
+
+  <script>
+    // ✅ Tu remplaces ces données par tes vraies expositions
+    // (Exemples inspirés de ta page actuelle : Galerie Rue Toulouse, Galerie Page, Artclub Paris, etc.) :contentReference[oaicite:1]{index=1}
+    const expos = [
+      { year: 2024, title: "French Art Network — Galerie Rue Toulouse", city: "Laguna Beach, Carmel", country: "États-Unis", type: "solo" },
+      { year: 2024, title: "Galerie Page", city: "Biarritz", country: "France", type: "solo" },
+      { year: 2020, title: "French Art Network — Galerie Rue Toulouse", city: "New Orleans", country: "États-Unis", type: "solo", note:"Depuis 2020" },
+      { year: 2005, title: "Galerie Artclub", city: "Paris", country: "France", type: "solo", note:"2005–2024" },
+      { year: 2018, title: "Galerie ArtAddict", city: "Mougins", country: "France", type: "group" },
+      { year: 2018, title: "Art3F", city: "Cannes", country: "France", type: "fair" },
+      { year: 2017, title: "ArtShopping", city: "Paris", country: "France", type: "fair" },
+      { year: 2017, title: "ArtFair", city: "Lausanne", country: "Suisse", type: "fair" },
+      { year: 2017, title: "Art3F", city: "Paris", country: "France", type: "fair" },
+    ];
+
+    // Optionnel : "en ce moment"
+    const nowExpo = null;
+    // Exemple:
+    // const nowExpo = { title:"Nom de l’expo", line:"Galerie X — Paris · jusqu’au 12 mars", url:"https://..." };
+
+    const els = {
+      meta: document.getElementById("meta"),
+      now: document.getElementById("now"),
+      nowTitle: document.getElementById("nowTitle"),
+      nowLine: document.getElementById("nowLine"),
+      nowBtn: document.getElementById("nowBtn"),
+      q: document.getElementById("q"),
+      type: document.getElementById("type"),
+      country: document.getElementById("country"),
+      year: document.getElementById("year"),
+      reset: document.getElementById("reset"),
+      timeline: document.getElementById("timeline"),
+      empty: document.getElementById("empty"),
+    };
+
+    function uniq(arr){ return [...new Set(arr)].sort((a,b)=> (""+a).localeCompare(""+b)); }
+
+    function hydrate(){
+      // meta count
+      els.meta.textContent = `${expos.length} expositions`;
+
+      // now
+      if(nowExpo){
+        els.now.hidden = false;
+        els.nowTitle.textContent = nowExpo.title;
+        els.nowLine.textContent = nowExpo.line;
+        els.nowBtn.href = nowExpo.url;
+      }
+
+      // countries
+      uniq(expos.map(e=>e.country)).forEach(c=>{
+        const o=document.createElement("option");
+        o.value=c; o.textContent=c;
+        els.country.appendChild(o);
+      });
+
+      // years (desc)
+      const years = uniq(expos.map(e=>e.year)).sort((a,b)=>b-a);
+      years.forEach(y=>{
+        const o=document.createElement("option");
+        o.value=String(y); o.textContent=String(y);
+        els.year.appendChild(o);
+      });
+    }
+
+    function matches(e, f){
+      const q = f.q.trim().toLowerCase();
+      const hay = `${e.title} ${e.city} ${e.country} ${e.year} ${e.note||""}`.toLowerCase();
+      if(q && !hay.includes(q)) return false;
+      if(f.type !== "all" && e.type !== f.type) return false;
+      if(f.country !== "all" && e.country !== f.country) return false;
+      if(f.year !== "all" && String(e.year) !== f.year) return false;
+      return true;
+    }
+
+    function groupByYear(list){
+      const m = new Map();
+      list.forEach(e=>{
+        const y = e.year;
+        if(!m.has(y)) m.set(y, []);
+        m.get(y).push(e);
+      });
+      return [...m.entries()].sort((a,b)=> b[0]-a[0]);
+    }
+
+    function typeLabel(t){
+      if(t==="solo") return "Personnelle";
+      if(t==="group") return "Collective";
+      return "Salon / Art fair";
+    }
+
+    function render(){
+      const f = {
+        q: els.q.value || "",
+        type: els.type.value,
+        country: els.country.value,
+        year: els.year.value,
+      };
+
+      const filtered = expos.filter(e=>matches(e,f));
+      els.timeline.innerHTML = "";
+      els.empty.hidden = filtered.length !== 0;
+
+      const blocks = groupByYear(filtered);
+
+      blocks.forEach(([year, items])=>{
+        const block = document.createElement("article");
+        block.className = "yearBlock";
+        block.innerHTML = `
+          <header class="yearHead">
+            <div class="year">${year}</div>
+            <div class="yearCount">${items.length} exposition${items.length>1?"s":""}</div>
+          </header>
+          <div class="items"></div>
+        `;
+        const wrap = block.querySelector(".items");
+
+        items.forEach(e=>{
+          const card = document.createElement("div");
+          card.className = "expo";
+          card.innerHTML = `
+            <p class="expoTitle">${escapeHtml(e.title)}</p>
+            <p class="expoMeta">${escapeHtml(e.city)} · ${escapeHtml(e.country)}${e.note ? " · " + escapeHtml(e.note) : ""}</p>
+            <div class="tags">
+              <span class="tag">${typeLabel(e.type)}</span>
+            </div>
+          `;
+          wrap.appendChild(card);
+        });
+
+        els.timeline.appendChild(block);
+      });
+    }
+
+    function escapeHtml(s){
+      return String(s)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    ["input","change"].forEach(evt=>{
+      els.q.addEventListener(evt, render);
+      els.type.addEventListener(evt, render);
+      els.country.addEventListener(evt, render);
+      els.year.addEventListener(evt, render);
+    });
+
+    els.reset.addEventListener("click", ()=>{
+      els.q.value="";
+      els.type.value="all";
+      els.country.value="all";
+      els.year.value="all";
+      render();
+    });
+
+    hydrate();
+    render();
+  </script>
+</body>
+</html>
 
