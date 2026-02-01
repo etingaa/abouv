@@ -268,19 +268,18 @@
   </dialog>
 
   <script>
-    // ✅ 10 images différentes (Unsplash)
-    const artworks = [
-      { title:"L'Envol", year:2025, technique:"Huile", size:"146×97 cm", image:"https://images.unsplash.com/photo-1541961017774-22349e4a1262?auto=format&fit=crop&w=1400&q=80", desc:"" },
-      { title:"Billie", year:2024, technique:"Huile", size:"89×130 cm", image:"https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=1400&q=80", desc:"" },
-      { title:"Sans titre I", year:2024, technique:"Huile au couteau", size:"80×60 cm", image:"https://images.unsplash.com/photo-1549880338-65ddcdfd017b?auto=format&fit=crop&w=1400&q=80", desc:"" },
-      { title:"Lumière douce", year:2023, technique:"Huile au couteau", size:"70×50 cm", image:"https://images.unsplash.com/photo-1526318472351-c75fcf070305?auto=format&fit=crop&w=1400&q=80", desc:"" },
-      { title:"Petit Swan", year:2023, technique:"Huile", size:"80×80 cm", image:"https://images.unsplash.com/photo-1511765224389-37f0e77cf0eb?auto=format&fit=crop&w=1400&q=80", desc:"" },
-      { title:"Les Pointes", year:2022, technique:"Huile", size:"100×100 cm", image:"https://images.unsplash.com/photo-1526498460520-4c246339dccb?auto=format&fit=crop&w=1400&q=80", desc:"" },
-      { title:"L'Oiseau de feu", year:2022, technique:"Huile", size:"146×89 cm", image:"https://images.unsplash.com/photo-1545239351-1141bd82e8a6?auto=format&fit=crop&w=1400&q=80", desc:"" },
-      { title:"La Flèche", year:2021, technique:"Huile", size:"89×130 cm", image:"https://images.unsplash.com/photo-1549490349-8643362247b5?auto=format&fit=crop&w=1400&q=80", desc:"" },
-      { title:"Ballerina", year:2021, technique:"Huile", size:"116×89 cm", image:"https://images.unsplash.com/photo-1520975689216-79d1ad63f2d8?auto=format&fit=crop&w=1400&q=80", desc:"" },
-      { title:"Repos", year:2020, technique:"Huile", size:"81×116 cm", image:"https://images.unsplash.com/photo-1520975693411-bd2c7f6c8f2b?auto=format&fit=crop&w=1400&q=80", desc:"" }
-    ];
+
+    let artworks = [];
+
+async function loadArtworks(){
+  const res = await fetch("data/artworks.json", { cache: "no-store" });
+  artworks = await res.json();
+}
+
+(async function init(){
+  await loadArtworks();
+})();
+
 
     const els = {
       q: document.getElementById("q"),
