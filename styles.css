@@ -1,5 +1,5 @@
 :root{
-  --bg: #02253A;                 /* fond principal */
+  --bg: transparent;                 /* fond principal */
   --ink: #ffffff;                /* texte principal */
   --ink-soft: rgba(255,255,255,.82);
   --ink-faint: rgba(255,255,255,.55);
