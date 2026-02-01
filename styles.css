@@ -293,67 +293,84 @@ body.portfolio .badge.disponible::before{ background:#3ddc84; }
 body.portfolio .badge.vendue{ color:#ff5c5c; border-color:rgba(255,92,92,.5); opacity:.9; }
 body.portfolio .badge.vendue::before{ background:#ff5c5c; }
 
-/* Modal : photo max + texte dessus + blur léger */
+/* =========================
+   MODAL : image entière max + texte dessous
+   ========================= */
+
 body.portfolio dialog{
-  border:none;
-  padding:0;
+  border: none;
+  padding: 0;
   background: transparent;
   max-width: 96vw;
   max-height: 92vh;
 }
+
 body.portfolio dialog::backdrop{
   background: rgba(0,0,0,.55);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
 }
+
+/* Le modal prend presque tout l’écran */
 body.portfolio .modal{
   position: relative;
   width: min(1200px, 96vw);
-  height: min(86vh, 900px);
-  display: grid;
-  place-items: center;
+  height: min(92vh, 900px);
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
 }
+
+/* Zone image = prend tout l’espace dispo */
+body.portfolio .modal__media{
+  flex: 1;
+  min-height: 0; /* super important pour que l'image puisse se réduire */
+  display: grid;
+  place-items: center;
+  background: rgba(0,0,0,.08);
+}
+
+/* Image entière, au max de la place */
 body.portfolio .modal__img{
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  background: rgba(255,255,255,.02);
+  object-fit: contain; /* ✅ pas rognée */
+  display: block;
 }
-body.portfolio .modal__overlay{
-  position: absolute;
-  top: 16px;
-  left: 16px;
-  right: 60px;
+
+/* Texte dessous (avec léger blur) */
+body.portfolio .modal__info{
+  padding: 14px 16px 16px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  pointer-events: none;
+  gap: 6px;
 }
-body.portfolio .modal__h,
+
+body.portfolio .modal__h{
+  margin: 0;
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: #fff;
+}
+
 body.portfolio .modal__meta{
+  margin: 0;
+  font-size: 14px;
+  color: rgba(255,255,255,.9);
+
+  /* petit blur “autour” du texte */
   width: fit-content;
   max-width: 100%;
-  padding: 8px 12px;
+  padding: 6px 10px;
   border-radius: 999px;
   background: rgba(0,0,0,.22);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 0 18px rgba(0,0,0,.20);
 }
-body.portfolio .modal__h{
-  margin:0;
-  font-size:22px;
-  font-weight:900;
-  letter-spacing:.05em;
-  text-transform: uppercase;
-  color:#fff;
-}
-body.portfolio .modal__meta{
-  margin:0;
-  font-size:14px;
-  color: rgba(255,255,255,.9);
-}
+
+/* Statut coloré */
 body.portfolio .statusText{
   font-weight: 900;
   letter-spacing: .06em;
@@ -363,10 +380,11 @@ body.portfolio .statusText{
 body.portfolio .statusText.disponible{ color:#3ddc84; }
 body.portfolio .statusText.vendue{ color:#ff5c5c; }
 
+/* Bouton fermer */
 body.portfolio .modal__closeBtn{
   position: absolute;
-  top: 14px;
-  right: 14px;
+  top: 12px;
+  right: 12px;
   width: 40px;
   height: 40px;
   border-radius: 999px;
@@ -380,4 +398,3 @@ body.portfolio .modal__closeBtn{
   -webkit-backdrop-filter: blur(10px);
 }
 body.portfolio .modal__closeBtn:hover{ background: rgba(0,0,0,.35); }
-
