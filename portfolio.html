@@ -79,15 +79,20 @@
 
   <!-- ✅ Modal lightbox (photo max + texte dessus) -->
   <dialog id="modal">
-    <div class="modal">
+  <div class="modal">
+    <div class="modal__media">
       <img class="modal__img" id="modalImg" alt="">
-      <div class="modal__overlay">
-        <h2 class="modal__h" id="modalTitle"></h2>
-        <p class="modal__meta" id="modalMeta"></p>
-      </div>
-      <button class="modal__closeBtn" id="modalClose" type="button" aria-label="Fermer">×</button>
     </div>
-  </dialog>
+
+    <div class="modal__info">
+      <h2 class="modal__h" id="modalTitle"></h2>
+      <p class="modal__meta" id="modalMeta"></p>
+    </div>
+
+    <button class="modal__closeBtn" id="modalClose" type="button" aria-label="Fermer">×</button>
+  </div>
+</dialog>
+
 
   <script>
     const artworks = [
