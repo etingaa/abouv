@@ -103,8 +103,9 @@ a{
 
 /* MAIN CENTER */
 .center{
-  display:grid;
-  place-items:center;
+  flex: 1;
+  display: grid;
+  place-items: center;
   padding: 32px 0 28px;
 }
 
@@ -118,12 +119,10 @@ a{
 
 /* BOTTOM BAR */
 .bottom{
-  display:flex;
-  align-items:flex-end;
-  justify-content:space-between;
-  gap: 12px;
-  padding: 10px 0 0;
+  margin-top: auto;
+  padding: 16px 0 24px;
 }
+
 
 .bottom__left{
   display:flex;
