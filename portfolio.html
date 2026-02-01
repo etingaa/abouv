@@ -55,20 +55,20 @@
     .nav__link:hover{border-bottom-color:rgba(255,255,255,.5)}
     .nav__link.is-active{border-bottom-color:#fff}
 
-    /* FILTER BAR (coins carrés) */
+    /* FILTER BAR (Notion-like) */
     .filters{
       margin-top: 10px;
       border: 0;
-      border-radius: 0;              /* ✅ plus d'arrondi */
-      padding: 12px;
+      border-radius: 0;
+      padding: 12px 0;
       background: transparent;
       display:grid;
-      grid-template-columns: 1.4fr 1fr 1fr 1fr auto;
+      grid-template-columns: 1.4fr 1fr 1fr 1fr 1fr auto;
       gap: 10px;
       align-items:end;
     }
-    @media (max-width: 1050px){ .filters{grid-template-columns: 1fr 1fr 1fr;} }
-    @media (max-width: 680px){ .filters{grid-template-columns: 1fr;} }
+    @media (max-width: 1100px){ .filters{grid-template-columns: 1fr 1fr 1fr; } }
+    @media (max-width: 700px){ .filters{grid-template-columns: 1fr; } }
 
     .field{display:flex;flex-direction:column;gap:6px;min-width:0}
     .label{
@@ -80,7 +80,7 @@
       border:1px solid var(--border);
       background:var(--chip);
       color:var(--ink);
-      border-radius:0;              /* ✅ plus d'arrondi */
+      border-radius:0;
       padding:10px 12px;
       outline:none;
       font-size:14px;
@@ -90,7 +90,7 @@
     .btn{
       height:44px;
       padding:0 14px;
-      border-radius:0;              /* ✅ plus d'arrondi */
+      border-radius:0;
       border:1px solid var(--border);
       background:rgba(255,255,255,.14);
       color:var(--ink);
@@ -108,23 +108,16 @@
     .title{margin:0;font-size:22px;font-weight:800;letter-spacing:-.01em}
     .count{color:var(--faint);font-size:14px}
 
-    /* ✅ MASONRY via CSS columns */
-    .masonry{
-      column-gap: 14px;
-      columns: 4;
-    }
+    /* Masonry */
+    .masonry{column-gap: 14px; columns: 4;}
     @media (max-width:1200px){ .masonry{columns:3;} }
     @media (max-width:900px){ .masonry{columns:2;} }
     @media (max-width:520px){ .masonry{columns:1;} }
 
-    .piece{
-      break-inside: avoid;
-      margin: 0 0 14px;
-      cursor: pointer;
-    }
+    .piece{break-inside: avoid;margin: 0 0 14px;cursor:pointer;}
     .imgWrap{
       border:1px solid rgba(255,255,255,.18);
-      border-radius:0;             /* ✅ plus d'arrondi */
+      border-radius:0;
       overflow:hidden;
       background: rgba(255,255,255,.03);
       transition: transform .12s ease, border-color .12s ease, background .12s ease;
@@ -134,65 +127,47 @@
       border-color: rgba(255,255,255,.35);
       background: rgba(255,255,255,.05);
     }
+    .piece img{width:100%;height:auto;display:block;}
 
-    .piece img{
-      width:100%;
-      height:auto;
-      display:block;
-    }
-
-    /* Caption */
-    .cap{
-      padding: 8px 6px 0;
-      text-align:center;
-    }
+    .cap{padding: 8px 6px 0;text-align:center;}
     .capTitle{
-      margin:0;
-      font-weight:900;
-      letter-spacing:.06em;
-      text-transform:uppercase;
-      font-size:12px;
-      color:#fff;
+      margin:0;font-weight:900;letter-spacing:.06em;text-transform:uppercase;
+      font-size:12px;color:#fff;
     }
     .capMeta{
-      margin:6px 0 0;
-      font-size:12px;
-      color: var(--faint);
-      letter-spacing:.02em;
+      margin:6px 0 0;font-size:12px;color: var(--faint);letter-spacing:.02em;
     }
 
-    /* Lightbox modal */
+    .badge{
+      display:inline-block;
+      margin-top:6px;
+      padding:4px 8px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.06);
+      color:var(--soft);
+      font-size:12px;
+      font-weight:800;
+      text-transform:uppercase;
+      letter-spacing:.05em;
+    }
+    .badge.sold{ opacity: .75; }
+
+    /* Modal */
     dialog{
-      border:none;
-      padding:0;
-      border-radius:0;            /* ✅ plus d'arrondi */
+      border:none;padding:0;border-radius:0;
       max-width:min(1100px, 94vw);
       background: rgba(10,20,30,.96);
       color: var(--ink);
     }
     dialog::backdrop{background:rgba(0,0,0,.7)}
-    .modal{
-      display:grid;
-      grid-template-columns: 1.4fr 1fr;
-      gap:0;
-    }
+    .modal{display:grid;grid-template-columns: 1.4fr 1fr;gap:0;}
     @media (max-width: 900px){ .modal{grid-template-columns:1fr;} }
-
     .modal__img{
-      width:100%;
-      height:100%;
-      object-fit:contain;
-      max-height: 86vh;
-      display:block;
-      background: rgba(255,255,255,.04);
+      width:100%;height:100%;object-fit:contain;
+      max-height: 86vh;display:block;background: rgba(255,255,255,.04);
     }
-    .modal__side{
-      padding:16px;
-      border-left:1px solid rgba(255,255,255,.12);
-    }
-    @media (max-width: 900px){
-      .modal__side{border-left:none;border-top:1px solid rgba(255,255,255,.12);}
-    }
+    .modal__side{padding:16px;border-left:1px solid rgba(255,255,255,.12);}
+    @media (max-width: 900px){ .modal__side{border-left:none;border-top:1px solid rgba(255,255,255,.12);} }
     .modal__h{margin:0 0 10px;font-size:18px;font-weight:900;letter-spacing:.02em}
     .modal__p{margin:0 0 10px;color:var(--soft);line-height:1.5;font-size:14px}
     .modal__close{margin-top:10px;width:100%}
@@ -203,7 +178,6 @@
   <div class="container">
     <header class="top">
       <a class="brand" href="index.html">ANNICK&nbsp;BOUVATTIER</a>
-
       <nav class="top__nav" aria-label="Navigation principale">
         <a class="nav__link" href="index.html">Accueil</a>
         <a class="nav__link is-active" href="portfolio.html">Portfolio</a>
@@ -215,17 +189,11 @@
       </nav>
     </header>
 
+    <!-- ✅ Filtres Notion -->
     <section class="filters" aria-label="Filtres">
       <div class="field">
-        <div class="label">Rechercher</div>
-        <input id="q" type="search" placeholder="Titre, technique, taille…" />
-      </div>
-
-      <div class="field">
-        <div class="label">Technique</div>
-        <select id="technique">
-          <option value="all">Toutes</option>
-        </select>
+        <div class="label">Nom</div>
+        <input id="q" type="search" placeholder="Rechercher une œuvre…" />
       </div>
 
       <div class="field">
@@ -236,11 +204,25 @@
       </div>
 
       <div class="field">
-        <div class="label">Tri</div>
-        <select id="sort">
-          <option value="newest">Plus récent</option>
-          <option value="oldest">Plus ancien</option>
-          <option value="title">Titre (A→Z)</option>
+        <div class="label">Technique</div>
+        <select id="technique">
+          <option value="all">Toutes</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <div class="label">Taille</div>
+        <select id="size">
+          <option value="all">Toutes</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <div class="label">Disponible / Vendue</div>
+        <select id="status">
+          <option value="all">Toutes</option>
+          <option value="disponible">Disponible</option>
+          <option value="vendue">Vendue</option>
         </select>
       </div>
 
@@ -268,24 +250,22 @@
   </dialog>
 
   <script>
-
-    let artworks = [];
-
-async function loadArtworks(){
-  const res = await fetch("data/artworks.json", { cache: "no-store" });
-  artworks = await res.json();
-}
-
-(async function init(){
-  await loadArtworks();
-})();
-
+    // ✅ Exemple : adapte avec tes vraies infos (et plus tard: injecter depuis Notion)
+    const artworks = [
+      { title:"Dimanche", year:2024, technique:"HST", size:"46 x 38 cm", status:"disponible", image:"https://images.unsplash.com/photo-1541961017774-22349e4a1262?auto=format&fit=crop&w=1600&q=80", desc:"" },
+      { title:"Saint-Germain Express", year:2024, technique:"HST", size:"73 x 92 cm", status:"disponible", image:"https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=1600&q=80", desc:"" },
+      { title:"Portrait en bleu", year:2024, technique:"HST", size:"46 x 55 cm", status:"disponible", image:"https://images.unsplash.com/photo-1549880338-65ddcdfd017b?auto=format&fit=crop&w=1600&q=80", desc:"" },
+      { title:"Premiers soleils", year:2024, technique:"HST", size:"38 x 46 cm", status:"vendue", image:"https://images.unsplash.com/photo-1526318472351-c75fcf070305?auto=format&fit=crop&w=1600&q=80", desc:"" },
+      { title:"Incognito", year:2024, technique:"HST", size:"81 x 116 cm", status:"disponible", image:"https://images.unsplash.com/photo-1526498460520-4c246339dccb?auto=format&fit=crop&w=1600&q=80", desc:"" },
+      { title:"Museum", year:2024, technique:"HST", size:"120 x 120 cm", status:"disponible", image:"https://images.unsplash.com/photo-1545239351-1141bd82e8a6?auto=format&fit=crop&w=1600&q=80", desc:"" }
+    ];
 
     const els = {
       q: document.getElementById("q"),
-      technique: document.getElementById("technique"),
       year: document.getElementById("year"),
-      sort: document.getElementById("sort"),
+      technique: document.getElementById("technique"),
+      size: document.getElementById("size"),
+      status: document.getElementById("status"),
       reset: document.getElementById("reset"),
       masonry: document.getElementById("masonry"),
       count: document.getElementById("count"),
@@ -298,6 +278,7 @@ async function loadArtworks(){
     };
 
     function uniq(arr){ return [...new Set(arr)].sort((a,b)=> (""+a).localeCompare(""+b)); }
+
     function escapeHtml(s){
       return String(s)
         .replaceAll("&","&amp;")
@@ -307,9 +288,28 @@ async function loadArtworks(){
         .replaceAll("'","&#039;");
     }
 
+    // normalise "46×38 cm" / "46 x 38 cm" / "46x38cm"
+    function normSize(s){
+      return String(s)
+        .toLowerCase()
+        .replaceAll("×","x")
+        .replace(/\s+/g," ")
+        .replace(/\s*x\s*/g," x ")
+        .replace(/\s*cm\s*/g," cm")
+        .trim();
+    }
+
     function hydrateFilters(){
-      const techniques = uniq(artworks.map(a=>a.technique));
       const years = uniq(artworks.map(a=>a.year)).sort((a,b)=>b-a);
+      const techniques = uniq(artworks.map(a=>a.technique));
+      const sizes = uniq(artworks.map(a=>normSize(a.size)));
+
+      years.forEach(y=>{
+        const opt = document.createElement("option");
+        opt.value = String(y);
+        opt.textContent = String(y);
+        els.year.appendChild(opt);
+      });
 
       techniques.forEach(t=>{
         const opt = document.createElement("option");
@@ -318,41 +318,36 @@ async function loadArtworks(){
         els.technique.appendChild(opt);
       });
 
-      years.forEach(y=>{
+      sizes.forEach(s=>{
         const opt = document.createElement("option");
-        opt.value = String(y);
-        opt.textContent = String(y);
-        els.year.appendChild(opt);
+        opt.value = s;
+        opt.textContent = s;
+        els.size.appendChild(opt);
       });
     }
 
     function match(a, f){
       const q = (f.q||"").trim().toLowerCase();
-      const hay = `${a.title} ${a.technique} ${a.size} ${a.year}`.toLowerCase();
-      if(q && !hay.includes(q)) return false;
-      if(f.technique !== "all" && a.technique !== f.technique) return false;
-      if(f.year !== "all" && String(a.year) !== f.year) return false;
-      return true;
-    }
+      if(q && !a.title.toLowerCase().includes(q)) return false;
 
-    function sortList(list, mode){
-      const copy = [...list];
-      if(mode === "newest") copy.sort((a,b)=> b.year - a.year || a.title.localeCompare(b.title));
-      if(mode === "oldest") copy.sort((a,b)=> a.year - b.year || a.title.localeCompare(b.title));
-      if(mode === "title")  copy.sort((a,b)=> a.title.localeCompare(b.title));
-      return copy;
+      if(f.year !== "all" && String(a.year) !== f.year) return false;
+      if(f.technique !== "all" && a.technique !== f.technique) return false;
+      if(f.size !== "all" && normSize(a.size) !== f.size) return false;
+      if(f.status !== "all" && a.status !== f.status) return false;
+
+      return true;
     }
 
     function render(){
       const f = {
         q: els.q.value || "",
-        technique: els.technique.value,
         year: els.year.value,
-        sort: els.sort.value
+        technique: els.technique.value,
+        size: els.size.value,
+        status: els.status.value
       };
 
-      let list = artworks.filter(a => match(a, f));
-      list = sortList(list, f.sort);
+      const list = artworks.filter(a => match(a, f));
 
       els.masonry.innerHTML = "";
       list.forEach(a=>{
@@ -365,6 +360,9 @@ async function loadArtworks(){
           <div class="cap">
             <p class="capTitle">${escapeHtml(a.title)}</p>
             <p class="capMeta">${escapeHtml(a.technique)} · ${escapeHtml(a.size)} · ${a.year}</p>
+            <span class="badge ${a.status === "vendue" ? "sold" : ""}">
+              ${a.status === "vendue" ? "VENDUE" : "DISPONIBLE"}
+            </span>
           </div>
         `;
         item.addEventListener("click", ()=> openModal(a));
@@ -375,10 +373,10 @@ async function loadArtworks(){
     }
 
     function openModal(a){
-      els.modalImg.src = a.image.replace("w=1400","w=2200");
+      els.modalImg.src = a.image.replace("w=1600","w=2400");
       els.modalImg.alt = a.title;
       els.modalTitle.textContent = a.title.toUpperCase();
-      els.modalMeta.textContent = `${a.technique} · ${a.size} · ${a.year}`;
+      els.modalMeta.textContent = `${a.technique} · ${a.size} · ${a.year} · ${a.status === "vendue" ? "VENDUE" : "DISPONIBLE"}`;
       els.modalDesc.textContent = a.desc || "";
       els.modal.showModal();
     }
@@ -386,16 +384,18 @@ async function loadArtworks(){
 
     ["input","change"].forEach(evt=>{
       els.q.addEventListener(evt, render);
-      els.technique.addEventListener(evt, render);
       els.year.addEventListener(evt, render);
-      els.sort.addEventListener(evt, render);
+      els.technique.addEventListener(evt, render);
+      els.size.addEventListener(evt, render);
+      els.status.addEventListener(evt, render);
     });
 
     els.reset.addEventListener("click", ()=>{
       els.q.value = "";
-      els.technique.value = "all";
       els.year.value = "all";
-      els.sort.value = "newest";
+      els.technique.value = "all";
+      els.size.value = "all";
+      els.status.value = "all";
       render();
     });
 
@@ -408,3 +408,4 @@ async function loadArtworks(){
   </script>
 </body>
 </html>
+
