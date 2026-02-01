@@ -1,1 +1,450 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Galeries — Annick Bouvattier</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+
+  <!-- Leaflet (carte) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+
+  <style>
+    :root{
+      --bg:#02253A;
+      --ink:#fff;
+      --soft:rgba(255,255,255,.82);
+      --faint:rgba(255,255,255,.55);
+      --border:rgba(255,255,255,.18);
+      --chip:rgba(255,255,255,.08);
+      --chip2:rgba(255,255,255,.12);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background:var(--bg);
+      color:var(--ink);
+    }
+    a{color:inherit;text-decoration:none}
+
+    .container{
+      width:100%;
+      max-width:1400px;
+      margin:0 auto;
+      padding:20px 48px 56px;
+    }
+    @media (max-width:768px){ .container{padding:16px 20px 40px} }
+
+    /* Header (comme ton site) */
+    .top{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:24px; padding:18px 0;
+    }
+    .brand{
+      font-size:18px; font-weight:800; letter-spacing:.08em;
+      text-transform:uppercase; line-height:1; padding-bottom:6px;
+      white-space:nowrap;
+    }
+    .top__nav{display:flex; align-items:center; gap:20px; flex-wrap:wrap; justify-content:flex-end;}
+    .nav__link{font-size:16px; font-weight:500; border-bottom:2px solid transparent; padding:6px 2px 4px; line-height:1;}
+    .nav__link:hover{border-bottom-color:rgba(255,255,255,.5)}
+    .nav__link.is-active{border-bottom-color:#fff}
+
+    /* Page header */
+    .headRow{
+      display:flex; align-items:baseline; justify-content:space-between;
+      gap:16px; margin: 14px 0 10px;
+    }
+    h1{margin:0;font-size:28px;font-weight:800;letter-spacing:-.02em}
+    .meta{color:var(--faint);font-size:14px}
+
+    /* Layout */
+    .layout{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 14px;
+      align-items:start;
+      margin-top: 12px;
+    }
+    @media (max-width: 1050px){
+      .layout{grid-template-columns:1fr; }
+    }
+
+    /* Map card */
+    .mapCard{
+      border:1px solid var(--border);
+      border-radius:18px;
+      overflow:hidden;
+      background:rgba(255,255,255,.04);
+      position:relative;
+    }
+    #map{
+      width:100%;
+      height: 520px;
+    }
+    @media (max-width:1050px){ #map{height: 420px;} }
+
+    /* Small side panel */
+    .panel{
+      border:1px solid var(--border);
+      border-radius:18px;
+      background:rgba(255,255,255,.04);
+      padding:12px;
+      position: sticky;
+      top: 14px;
+    }
+    .panelTitle{
+      margin:4px 4px 10px;
+      font-size:14px;
+      font-weight:800;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color:var(--faint);
+    }
+    .searchRow{
+      display:flex;
+      gap:10px;
+      margin: 0 4px 10px;
+    }
+    input, select{
+      width:100%;
+      height:44px;
+      border:1px solid var(--border);
+      background:var(--chip);
+      color:var(--ink);
+      border-radius:12px;
+      padding:10px 12px;
+      outline:none;
+      font-size:14px;
+    }
+    input::placeholder{color:rgba(255,255,255,.45)}
+    input:focus, select:focus{border-color:rgba(255,255,255,.35); background:var(--chip2)}
+
+    .btn{
+      height:44px;
+      padding:0 14px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.14);
+      color:var(--ink);
+      font-weight:700;
+      cursor:pointer;
+      white-space:nowrap;
+    }
+    .btn:hover{background:rgba(255,255,255,.18)}
+
+    .list{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      margin-top: 10px;
+      max-height: 520px;
+      overflow:auto;
+      padding-right: 4px;
+    }
+    @media (max-width:1050px){ .list{max-height:none} }
+
+    .item{
+      border:1px solid rgba(255,255,255,.14);
+      border-radius:16px;
+      padding:12px;
+      background:rgba(255,255,255,.03);
+      cursor:pointer;
+      transition: background .12s ease, border-color .12s ease, transform .12s ease;
+    }
+    .item:hover{
+      background:rgba(255,255,255,.05);
+      border-color:rgba(255,255,255,.26);
+      transform: translateY(-1px);
+    }
+    .item.is-active{
+      border-color:rgba(255,255,255,.40);
+      background:rgba(255,255,255,.06);
+    }
+    .name{
+      margin:0;
+      font-weight:800;
+      font-size:14px;
+      letter-spacing:.02em;
+    }
+    .sub{
+      margin:6px 0 0;
+      color:var(--soft);
+      font-size:13px;
+      line-height:1.45;
+    }
+    .row{
+      display:flex; gap:10px; flex-wrap:wrap;
+      margin-top:10px;
+    }
+    .link{
+      color:var(--soft);
+      border-bottom:1px solid rgba(255,255,255,.35);
+    }
+    .link:hover{color:#fff;border-bottom-color:#fff}
+
+    /* Leaflet tweaks (dark UI friendly) */
+    .leaflet-control-attribution,
+    .leaflet-control-zoom a{
+      filter: invert(1) hue-rotate(180deg);
+      opacity:.85;
+    }
+    .leaflet-popup-content-wrapper{
+      background: rgba(10,20,30,.95);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 14px;
+    }
+    .leaflet-popup-tip{
+      background: rgba(10,20,30,.95);
+    }
+    .popupTitle{margin:0 0 6px;font-weight:800}
+    .popupMeta{margin:0;color:rgba(255,255,255,.82);font-size:13px;line-height:1.4}
+    .popupActions{margin-top:10px;display:flex;gap:10px;flex-wrap:wrap}
+    .popupBtn{
+      display:inline-block;
+      padding:8px 10px;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.12);
+      color:#fff;
+      font-weight:700;
+      font-size:12px;
+    }
+    .popupBtn:hover{background: rgba(255,255,255,.16)}
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header class="top">
+      <a class="brand" href="index.html">ANNICK&nbsp;BOUVATTIER</a>
+
+      <nav class="top__nav" aria-label="Navigation principale">
+        <a class="nav__link" href="index.html">Accueil</a>
+        <a class="nav__link" href="portfolio.html">Portfolio</a>
+        <a class="nav__link is-active" href="galeries.html">Galeries</a>
+        <a class="nav__link" href="expositions.html">Expositions</a>
+        <a class="nav__link" href="informations.html">Informations</a>
+        <a class="nav__link" href="apropos.html">À propos</a>
+        <a class="nav__link" href="presse.html">Presse</a>
+      </nav>
+    </header>
+
+    <div class="headRow">
+      <h1>Galeries</h1>
+      <div class="meta" id="meta"></div>
+    </div>
+
+    <div class="layout">
+      <section class="mapCard" aria-label="Carte des galeries">
+        <div id="map"></div>
+      </section>
+
+      <aside class="panel" aria-label="Liste des galeries">
+        <div class="panelTitle">Rechercher</div>
+        <div class="searchRow">
+          <input id="q" type="search" placeholder="Nom, ville, pays…" />
+          <button class="btn" id="reset" type="button">Reset</button>
+        </div>
+
+        <div class="panelTitle">Galeries</div>
+        <div class="list" id="list"></div>
+      </aside>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <script>
+    // ✅ Mets ici toutes tes galeries avec GPS (lat/lng)
+    // IMPORTANT : remplace les lat/lng si tu as les coordonnées exactes
+    const galleries = [
+      {
+        name: "Galerie Rue Toulouse (French Art Network)",
+        city: "Laguna Beach",
+        country: "USA",
+        phone: "(949) 549-4546",
+        address: "390 S. Coast Hwy, Laguna Beach, CA 92651",
+        website: "https://www.frenchart.net",
+        lat: 33.5427,
+        lng: -117.7831
+      },
+      {
+        name: "Galerie Page",
+        city: "Biarritz",
+        country: "France",
+        phone: "05 59 24 97 52",
+        address: "37 Rue Mazagran, 64200 Biarritz",
+        website: "https://www.galeriepage-biarritz.com",
+        lat: 43.4832,
+        lng: -1.5586
+      },
+      {
+        name: "Artclub Gallery",
+        city: "Lyon",
+        country: "France",
+        phone: "+33 (0)4 78 37 47 37",
+        address: "22 Place Bellecour, 69002 Lyon",
+        website: "https://www.artclub.fr",
+        lat: 45.7579,
+        lng: 4.8320
+      },
+      {
+        name: "Artclub Gallery",
+        city: "Paris",
+        country: "France",
+        phone: "+33 (0)1 47 03 42 20",
+        address: "172 Rue de Rivoli, 75001 Paris",
+        website: "https://www.artclub.fr",
+        lat: 48.8619,
+        lng: 2.3341
+      },
+      {
+        name: "French Art Network — New Orleans",
+        city: "New Orleans",
+        country: "USA",
+        phone: "(504) 581-5881",
+        address: "509 Rue Royale, New Orleans, LA 70130",
+        website: "https://www.frenchart.net",
+        lat: 29.9574,
+        lng: -90.0620
+      },
+      {
+        name: "French Art Network — Carmel-by-the-Sea",
+        city: "Carmel-by-the-Sea",
+        country: "USA",
+        phone: "(931) 625-3456",
+        address: "San Carlos St, Carmel-by-the-Sea, CA 93921",
+        website: "https://www.frenchart.net",
+        lat: 36.5552,
+        lng: -121.9233
+      }
+    ];
+
+    const els = {
+      meta: document.getElementById("meta"),
+      q: document.getElementById("q"),
+      reset: document.getElementById("reset"),
+      list: document.getElementById("list"),
+    };
+
+    function escapeHtml(s){
+      return String(s)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    function googleMapsLink(lat, lng, label){
+      const q = encodeURIComponent(label || `${lat},${lng}`);
+      return `https://www.google.com/maps/search/?api=1&query=${lat},${lng}&query_place_id=${q}`;
+    }
+
+    // --- MAP INIT ---
+    const map = L.map("map", { scrollWheelZoom: true });
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 18,
+      attribution: "&copy; OpenStreetMap"
+    }).addTo(map);
+
+    const markers = [];
+    const group = L.featureGroup().addTo(map);
+
+    function makePopup(g){
+      const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${g.lat},${g.lng}`;
+      const site = g.website ? `<a class="popupBtn" href="${g.website}" target="_blank" rel="noopener noreferrer">Site</a>` : "";
+      return `
+        <div>
+          <p class="popupTitle">${escapeHtml(g.name)}</p>
+          <p class="popupMeta">${escapeHtml(g.address)}<br>${escapeHtml(g.city)} · ${escapeHtml(g.country)}</p>
+          <div class="popupActions">
+            <a class="popupBtn" href="${mapsUrl}" target="_blank" rel="noopener noreferrer">Itinéraire</a>
+            ${site}
+          </div>
+        </div>
+      `;
+    }
+
+    function addMarkers(list){
+      group.clearLayers();
+      markers.length = 0;
+
+      list.forEach((g, idx)=>{
+        const m = L.marker([g.lat, g.lng]).addTo(group);
+        m.bindPopup(makePopup(g));
+        m.__id = idx;
+        markers.push(m);
+      });
+
+      if(list.length){
+        map.fitBounds(group.getBounds().pad(0.18));
+      }else{
+        map.setView([20,0], 2);
+      }
+    }
+
+    function renderList(list){
+      els.list.innerHTML = "";
+      list.forEach((g, idx)=>{
+        const div = document.createElement("div");
+        div.className = "item";
+        div.innerHTML = `
+          <p class="name">${escapeHtml(g.name)}</p>
+          <p class="sub">
+            ${escapeHtml(g.city)} · ${escapeHtml(g.country)}<br>
+            ${escapeHtml(g.address)}<br>
+            ${g.phone ? escapeHtml(g.phone) + "<br>" : ""}
+            ${g.website ? `<a class="link" href="${g.website}" target="_blank" rel="noopener noreferrer">site</a>` : ""}
+            <span> · </span>
+            <a class="link" href="https://www.google.com/maps/dir/?api=1&destination=${g.lat},${g.lng}" target="_blank" rel="noopener noreferrer">itinéraire</a>
+          </p>
+        `;
+        div.addEventListener("click", ()=>{
+          // highlight
+          [...els.list.querySelectorAll(".item")].forEach(x=>x.classList.remove("is-active"));
+          div.classList.add("is-active");
+
+          // open marker popup
+          const m = markers[idx];
+          if(m){
+            map.setView(m.getLatLng(), Math.max(map.getZoom(), 6), { animate:true });
+            m.openPopup();
+          }
+        });
+        els.list.appendChild(div);
+      });
+    }
+
+    function apply(){
+      const q = (els.q.value || "").trim().toLowerCase();
+      const filtered = galleries.filter(g=>{
+        const hay = `${g.name} ${g.city} ${g.country} ${g.address}`.toLowerCase();
+        return !q || hay.includes(q);
+      });
+
+      els.meta.textContent = `${filtered.length} galerie${filtered.length>1?"s":""}`;
+
+      renderList(filtered);
+      addMarkers(filtered);
+    }
+
+    els.q.addEventListener("input", apply);
+    els.reset.addEventListener("click", ()=>{
+      els.q.value = "";
+      apply();
+    });
+
+    apply();
+  </script>
+</body>
+</html>
 
