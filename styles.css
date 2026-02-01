@@ -32,9 +32,7 @@ a{
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-
-  /* voile pour lisibilité sur la photo */
-  background: rgba(2, 37, 58, 0.65);
+  background: transparent;
 }
 
 .container{
