@@ -1,1 +1,33 @@
+name: Update artworks from Notion
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 * * * *"  # toutes les heures
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Run export script
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
+        run: |
+          node scripts/notion-to-json.js
+
+      - name: Commit & push if changed
+        run: |
+          git config user.name "notion-bot"
+          git config user.email "notion-bot@users.noreply.github.com"
+          git add data/artworks.json
+          git diff --cached --quiet || (git commit -m "Update artworks from Notion" && git push)
 
