@@ -14,7 +14,7 @@ body{
   font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   color: var(--ink);
 
-  background-image: url("images/cover.jpg");
+  background-image: url("images/couverture.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
