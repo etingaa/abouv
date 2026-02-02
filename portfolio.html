@@ -103,7 +103,7 @@
 
     // ✅ Images dans ton repo :
     // images/portfolio/2011/Oeillade.jpg
-    const IMG_BASE = "images";
+    const IMG_BASE = "images/portfolio";
 
     /* =========================
        DOM
@@ -236,20 +236,20 @@
       return rows
         .filter(r => r[col("nom")])
         .map(r => {
-          const title = cleanNA(r[col("Nom")]);
-          const yearRaw = cleanNA(r[col("Année")]);
+          const title = cleanNA(r[col("nom")]);
+          const yearRaw = cleanNA(r[col("annee")]);
           const year = yearRaw ? Number(yearRaw) : "";
-          const category = cleanNA(r[col("Catégorie")]);
-          const technique = cleanNA(r[col("Technique")]) || "N/A";
-          const format = cleanNA(r[col("Format")]);
-          const dispo = statusFromSheet(r[col("Disponible")]);
-          const jpg = cleanNA(r[col("Jpg")]);
+          const category = cleanNA(r[col("categorie")]);
+          const technique = cleanNA(r[col("technique")]) || "N/A";
+          const format = cleanNA(r[col("format")]);
+          const dispo = statusFromSheet(r[col("disponible")]);
+          const jpg = cleanNA(r[col("jpg")]);
 
           // Format affiché : "60 x 120 cm" (si fourni)
           const size = format ? `${format} cm` : "N/A";
 
           // Image : images/portfolio/2011/Oeillade.jpg
-          const image = (yearRaw && jpg) ? `${IMG_BASE}/${jpg}` : "";
+          const image = (yearRaw && jpg) ? `${IMG_BASE}/${yearRaw}/${jpg}` : "";
 
           return {
             title,
