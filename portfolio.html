@@ -103,7 +103,7 @@
 
     // ✅ Images dans ton repo :
     // images/portfolio/2011/Oeillade.jpg
-    const IMG_BASE = "images/portfolio";
+    const IMG_BASE = "images";
 
     /* =========================
        DOM
@@ -249,7 +249,7 @@
           const size = format ? `${format} cm` : "N/A";
 
           // Image : images/portfolio/2011/Oeillade.jpg
-          const image = (yearRaw && jpg) ? `${IMG_BASE}/${yearRaw}/${jpg}` : "";
+          const image = (yearRaw && jpg) ? `${IMG_BASE}/${jpg}` : "";
 
           return {
             title,
