@@ -50,7 +50,7 @@
         </div>
 
         <div class="field">
-          <div class="label">Taille</div>
+          <div class="label">Format</div>
           <select id="size">
             <option value="all">Toutes</option>
           </select>
@@ -77,27 +77,37 @@
     </div>
   </div>
 
-  <!-- ✅ Modal lightbox (photo max + texte dessus) -->
- <dialog id="modal">
-  <div class="modal">
-    <div class="modal__media">
-      <img class="modal__img" id="modalImg" alt="">
+  <!-- ✅ Modal (image max + texte dessous, centré) -->
+  <dialog id="modal">
+    <div class="modal">
+      <div class="modal__media">
+        <img class="modal__img" id="modalImg" alt="">
+        <button class="modal__closeBtn" id="modalClose" type="button" aria-label="Fermer">×</button>
+      </div>
+
+      <div class="modal__info">
+        <h2 class="modal__h" id="modalTitle"></h2>
+        <p class="modal__meta" id="modalMeta"></p>
+      </div>
     </div>
-
-    <div class="modal__info">
-      <h2 class="modal__h" id="modalTitle"></h2>
-      <p class="modal__meta" id="modalMeta"></p>
-    </div>
-
-    <button class="modal__closeBtn" id="modalClose" type="button" aria-label="Fermer">×</button>
-  </div>
-</dialog>
-
+  </dialog>
 
   <script>
-    const artworks = [
-  { title:"Black & White And Colors", year:2011, technique:"HST", size:"N/A", status:"disponible", image:"images/BlackWhiteAndColors.jpg" },
-];
+    /* =========================
+       CONFIG
+       ========================= */
+
+    // ✅ Colle ici le lien "Publier sur le Web" en CSV
+    // Exemple : https://docs.google.com/spreadsheets/d/<ID>/pub?gid=<GID>&single=true&output=csv
+    const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSmK-RAKlpq_VMnhd78eWdWeMTnCkU3_-411IzeTyzO9j0zbJdkkhzfxlRDZpqzKixpoUgTtAAI_Auw/pub?output=csv";
+
+    // ✅ Images dans ton repo :
+    // images/portfolio/2011/Oeillade.jpg
+    const IMG_BASE = "images";
+
+    /* =========================
+       DOM
+       ========================= */
 
     const els = {
       q: document.getElementById("q"),
@@ -108,6 +118,7 @@
       reset: document.getElementById("reset"),
       masonry: document.getElementById("masonry"),
       count: document.getElementById("count"),
+
       modal: document.getElementById("modal"),
       modalImg: document.getElementById("modalImg"),
       modalTitle: document.getElementById("modalTitle"),
@@ -115,10 +126,16 @@
       modalClose: document.getElementById("modalClose"),
     };
 
+    let artworks = [];
+
+    /* =========================
+       HELPERS
+       ========================= */
+
     function uniq(arr){ return [...new Set(arr)].sort((a,b)=> (""+a).localeCompare(""+b)); }
 
     function escapeHtml(s){
-      return String(s)
+      return String(s ?? "")
         .replaceAll("&","&amp;")
         .replaceAll("<","&lt;")
         .replaceAll(">","&gt;")
@@ -127,7 +144,7 @@
     }
 
     function normSize(s){
-      return String(s)
+      return String(s ?? "")
         .toLowerCase()
         .replaceAll("×","x")
         .replace(/\s+/g," ")
@@ -136,10 +153,135 @@
         .trim();
     }
 
+    function normalizeHeader(h){
+      return String(h ?? "")
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "") // enlève accents
+        .trim();
+    }
+
+    // Parse CSV robuste (gère les guillemets + virgules)
+    function parseCSV(text){
+      const rows = [];
+      let row = [];
+      let value = "";
+      let inQuotes = false;
+
+      for(let i=0;i<text.length;i++){
+        const c = text[i];
+        const next = text[i+1];
+
+        if(c === '"' && next === '"'){
+          value += '"';
+          i++;
+          continue;
+        }
+        if(c === '"'){
+          inQuotes = !inQuotes;
+          continue;
+        }
+        if(c === "," && !inQuotes){
+          row.push(value.trim());
+          value = "";
+          continue;
+        }
+        if((c === "\n" || c === "\r") && !inQuotes){
+          if(value.length || row.length){
+            row.push(value.trim());
+            rows.push(row);
+            row = [];
+            value = "";
+          }
+          continue;
+        }
+        value += c;
+      }
+
+      if(value.length || row.length){
+        row.push(value.trim());
+        rows.push(row);
+      }
+
+      return rows;
+    }
+
+    function cleanNA(v){
+      const s = String(v ?? "").trim();
+      if(!s) return "";
+      if(s.toUpperCase() === "N/A") return "";
+      return s;
+    }
+
+    function statusFromSheet(v){
+      const s = String(v ?? "").trim().toUpperCase();
+      return (s === "VENDUE") ? "vendue" : "disponible";
+    }
+
+    /* =========================
+       LOAD FROM GOOGLE SHEET
+       ========================= */
+
+    async function loadArtworksFromSheet(){
+      const res = await fetch(SHEET_CSV_URL, { cache: "no-store" });
+      if(!res.ok) throw new Error("Impossible de charger la Google Sheet");
+
+      const csv = await res.text();
+      const rows = parseCSV(csv);
+
+      const header = rows.shift().map(normalizeHeader);
+      const col = (name) => header.indexOf(normalizeHeader(name));
+
+      // Ton sheet : Nom | Année | Catégorie | Technique | Format | Disponible | Jpg
+      return rows
+        .filter(r => r[col("nom")])
+        .map(r => {
+          const title = cleanNA(r[col("nom")]);
+          const yearRaw = cleanNA(r[col("annee")]);
+          const year = yearRaw ? Number(yearRaw) : "";
+          const category = cleanNA(r[col("categorie")]);
+          const technique = cleanNA(r[col("technique")]) || "N/A";
+          const format = cleanNA(r[col("format")]);
+          const dispo = statusFromSheet(r[col("disponible")]);
+          const jpg = cleanNA(r[col("jpg")]);
+
+          // Format affiché : "60 x 120 cm" (si fourni)
+          const size = format ? `${format} cm` : "N/A";
+
+          // Image : images/portfolio/2011/Oeillade.jpg
+          const image = (yearRaw && jpg) ? `${IMG_BASE}/${yearRaw}/${jpg}` : "";
+
+          return {
+            title,
+            year,
+            category,
+            technique,
+            size,
+            status: dispo,
+            image,
+            desc: ""
+          };
+        })
+        .filter(a => a.title && a.image); // garde uniquement les lignes valides
+    }
+
+    /* =========================
+       FILTERS
+       ========================= */
+
+    function resetFilterSelect(selectEl){
+      // garde uniquement la première option ("Toutes")
+      while(selectEl.options.length > 1) selectEl.remove(1);
+    }
+
     function hydrateFilters(){
-      const years = uniq(artworks.map(a=>a.year)).sort((a,b)=>b-a);
-      const techniques = uniq(artworks.map(a=>a.technique));
-      const sizes = uniq(artworks.map(a=>normSize(a.size)));
+      resetFilterSelect(els.year);
+      resetFilterSelect(els.technique);
+      resetFilterSelect(els.size);
+
+      const years = uniq(artworks.map(a=>a.year).filter(Boolean)).sort((a,b)=>b-a);
+      const techniques = uniq(artworks.map(a=>a.technique).filter(Boolean));
+      const sizes = uniq(artworks.map(a=>normSize(a.size)).filter(Boolean));
 
       years.forEach(y=>{
         const opt = document.createElement("option");
@@ -175,6 +317,10 @@
       return true;
     }
 
+    /* =========================
+       RENDER GRID
+       ========================= */
+
     function render(){
       const f = {
         q: els.q.value || "",
@@ -185,8 +331,8 @@
       };
 
       const list = artworks.filter(a => match(a, f));
-      els.masonry.innerHTML = "";
 
+      els.masonry.innerHTML = "";
       list.forEach(a=>{
         const item = document.createElement("article");
         item.className = "piece";
@@ -209,17 +355,27 @@
       els.count.textContent = `${list.length} œuvre${list.length>1 ? "s" : ""}`;
     }
 
+    /* =========================
+       MODAL
+       ========================= */
+
     function openModal(a){
-      els.modalImg.src = a.image.replace("w=1600","w=2400");
+      els.modalImg.src = a.image;
       els.modalImg.alt = a.title;
+
       els.modalTitle.textContent = a.title.toUpperCase();
 
       const label = (a.status === "vendue") ? "VENDUE" : "DISPONIBLE";
-      els.modalMeta.innerHTML = `${a.technique} · ${a.size} · ${a.year} · <span class="statusText ${a.status}">${label}</span>`;
+      els.modalMeta.innerHTML = `${escapeHtml(a.technique)} · ${escapeHtml(a.size)} · ${a.year} · <span class="statusText ${a.status}">${label}</span>`;
 
       els.modal.showModal();
     }
+
     function closeModal(){ els.modal.close(); }
+
+    /* =========================
+       EVENTS
+       ========================= */
 
     ["input","change"].forEach(evt=>{
       els.q.addEventListener(evt, render);
@@ -242,8 +398,32 @@
     els.modal.addEventListener("click", (e)=>{ if(e.target === els.modal) closeModal(); });
     document.addEventListener("keydown", (e)=>{ if(e.key === "Escape" && els.modal.open) closeModal(); });
 
-    hydrateFilters();
-    render();
+    /* =========================
+       INIT
+       ========================= */
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      try{
+        artworks = await loadArtworksFromSheet();
+        hydrateFilters();
+        render();
+      } catch(err){
+        console.error(err);
+        els.count.textContent = "Erreur de chargement (Sheet/Images)";
+      }
+    });
+
+    // Option "auto refresh" (toutes les 2 minutes)
+    // setInterval(async ()=>{
+    //   try{
+    //     artworks = await loadArtworksFromSheet();
+    //     hydrateFilters();
+    //     render();
+    //   }catch(e){
+    //     console.warn("refresh failed", e);
+    //   }
+    // }, 120000);
+
   </script>
 </body>
 </html>
