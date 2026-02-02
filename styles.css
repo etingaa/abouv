@@ -21,6 +21,16 @@ body{
   background-attachment: fixed;
 }
 
+/* CURSEUR (global) */
+html, body{
+  cursor: url("images/cursor.svg") 8 8, auto;
+}
+
+/* Sur les éléments cliquables */
+a, button, [role="button"]{
+  cursor: url("images/cursor-pointer.svg") 8 8, pointer;
+}
+
 /* liens */
 a{
   color: inherit;
