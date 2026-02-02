@@ -160,16 +160,76 @@ body.portfolio .container{
 }
 
 /* =========================
-   NOUVEAUX FILTRES — chips + dropdown multi
-   (remplace l'ancien .filters)
+   ✅ STICKY HEADER + FILTRES
+   (ce que tu m’as demandé)
    ========================= */
 
-/* Chips actives */
+/* Header collant */
+body.portfolio .top{
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  padding: 18px 0 12px;
+
+  background: rgba(2,37,58,.88);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  border-bottom: 1px solid rgba(255,255,255,.10);
+}
+
+/*
+  Les filtres (chips + barre) collent SOUS le header.
+  On met une variable de hauteur de header (desktop vs mobile).
+*/
+body.portfolio{
+  --header-h: 78px; /* desktop (ajuste si besoin) */
+}
+
+@media (max-width: 860px){
+  body.portfolio{
+    --header-h: 118px; /* mobile/tablette (header plus haut car menu wrap) */
+  }
+}
+
+/* Chips actives collantes */
+body.portfolio .filterChips{
+  position: sticky;
+  top: var(--header-h);
+  z-index: 90;
+
+  padding: 10px 0 8px;
+  margin: 0;
+
+  background: rgba(2,37,58,.78);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* Barre de filtres collante */
+body.portfolio .filterBar{
+  position: sticky;
+  top: calc(var(--header-h) + 44px); /* chips (~44px) */
+  z-index: 80;
+
+  padding: 8px 0 12px;
+
+  background: rgba(2,37,58,.78);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  border-bottom: 1px solid rgba(255,255,255,.10);
+}
+
+/* =========================
+   NOUVEAUX FILTRES — chips + dropdown multi
+   ========================= */
+
+/* Chips actives (layout) */
 body.portfolio .filterChips{
   display:flex;
   flex-wrap:wrap;
   gap:8px;
-  margin: 10px 0 10px;
 }
 
 body.portfolio .chip{
@@ -201,10 +261,9 @@ body.portfolio .filterBar{
   flex-wrap:wrap;
   gap:10px;
   align-items:center;
-  padding: 6px 0 12px;
 }
 
-/* Champ recherche (Nom) */
+/* Champ recherche */
 body.portfolio .field--search{
   flex: 1 1 260px;
   min-width: 240px;
@@ -251,7 +310,7 @@ body.portfolio .pillBtn--ghost{
   background: rgba(255,255,255,0);
 }
 
-/* petit badge compteur (nombre de choix) */
+/* badge compteur */
 body.portfolio .pillCount{
   display:inline-flex;
   align-items:center;
@@ -287,7 +346,7 @@ body.portfolio .ddPanel{
   -webkit-backdrop-filter: blur(10px);
   box-shadow: 0 18px 50px rgba(0,0,0,.35);
   display:none;
-  z-index: 50;
+  z-index: 200; /* au dessus des sticky */
 }
 
 body.portfolio .dd.is-open .ddPanel{ display:block; }
@@ -350,7 +409,7 @@ body.portfolio .piece{
 
 /* Image wrap */
 body.portfolio .imgWrap{
-  position: relative; /* ✅ pour filigrane */
+  position: relative;
   border:1px solid rgba(255,255,255,.18);
   overflow:hidden;
   background: rgba(255,255,255,.03);
@@ -469,7 +528,7 @@ body.portfolio .modal{
 }
 
 body.portfolio .modal__media{
-  position: relative; /* ✅ pour croix + filigrane */
+  position: relative;
   flex: 1;
   min-height: 0;
   display:flex;
