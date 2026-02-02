@@ -29,44 +29,54 @@
         </nav>
       </header>
 
-      <section class="filters" aria-label="Filtres">
-        <div class="field">
-          <div class="label">Nom</div>
-          <input id="q" type="search" placeholder="Rechercher une œuvre…" />
-        </div>
+      <!-- Chips actives (sélections) -->
+<div class="filterChips" id="chips"></div>
 
-        <div class="field">
-          <div class="label">Année</div>
-          <select id="year">
-            <option value="all">Toutes</option>
-          </select>
-        </div>
+<!-- Barre de filtres (style dropdown) -->
+<section class="filterBar" aria-label="Filtres">
+  <div class="field field--search">
+    <input id="q" class="pillInput" type="search" placeholder="Rechercher une œuvre…" />
+  </div>
 
-        <div class="field">
-          <div class="label">Technique</div>
-          <select id="technique">
-            <option value="all">Toutes</option>
-          </select>
-        </div>
+  <!-- Année -->
+  <div class="dd" data-key="year">
+    <button class="pillBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
+      Année <span class="pillCount" data-count="year"></span>
+      <span class="pillCaret">▾</span>
+    </button>
+    <div class="ddPanel" role="listbox" aria-label="Année" data-panel="year"></div>
+  </div>
 
-        <div class="field">
-          <div class="label">Format</div>
-          <select id="size">
-            <option value="all">Toutes</option>
-          </select>
-        </div>
+  <!-- Technique -->
+  <div class="dd" data-key="technique">
+    <button class="pillBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
+      Technique <span class="pillCount" data-count="technique"></span>
+      <span class="pillCaret">▾</span>
+    </button>
+    <div class="ddPanel" role="listbox" aria-label="Technique" data-panel="technique"></div>
+  </div>
 
-        <div class="field">
-          <div class="label">Disponible / Vendue</div>
-          <select id="status">
-            <option value="all">Toutes</option>
-            <option value="disponible">Disponible</option>
-            <option value="vendue">Vendue</option>
-          </select>
-        </div>
+  <!-- Format -->
+  <div class="dd" data-key="size">
+    <button class="pillBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
+      Format <span class="pillCount" data-count="size"></span>
+      <span class="pillCaret">▾</span>
+    </button>
+    <div class="ddPanel" role="listbox" aria-label="Format" data-panel="size"></div>
+  </div>
 
-        <button class="btn" id="reset" type="button">Réinitialiser</button>
-      </section>
+  <!-- Disponible -->
+  <div class="dd" data-key="status">
+    <button class="pillBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
+      Disponible <span class="pillCount" data-count="status"></span>
+      <span class="pillCaret">▾</span>
+    </button>
+    <div class="ddPanel" role="listbox" aria-label="Disponible" data-panel="status"></div>
+  </div>
+
+  <button class="pillBtn pillBtn--ghost" id="reset" type="button">Tout effacer</button>
+</section>
+
 
       <div class="metaRow">
         <h1 class="title">Portfolio</h1>
