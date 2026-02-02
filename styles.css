@@ -50,7 +50,10 @@ a{
   .container{ padding: 16px 20px; }
 }
 
-/* HEADER */
+/* =========================
+   HEADER
+   ========================= */
+
 .top{
   display:flex;
   align-items:center;
@@ -87,7 +90,10 @@ a{
 .nav__link:hover{ border-bottom-color: rgba(255,255,255,.5); }
 .nav__link.is-active{ border-bottom-color: #fff; }
 
-/* HOME CENTER */
+/* =========================
+   HOME CENTER
+   ========================= */
+
 .center{
   flex: 1;
   display: grid;
@@ -103,7 +109,10 @@ a{
   border-radius: 2px;
 }
 
-/* FOOTER */
+/* =========================
+   FOOTER
+   ========================= */
+
 .bottom{
   margin-top: auto;
   padding: 16px 0 24px;
@@ -159,7 +168,7 @@ body.portfolio .container{
   body.portfolio .container{ padding:16px 20px 40px; }
 }
 
-/* Filters */
+/* Filters (si tu gardes les selects) */
 body.portfolio .filters{
   margin-top: 10px;
   padding: 12px 0;
@@ -249,7 +258,7 @@ body.portfolio .piece{
 
 /* Image wrap */
 body.portfolio .imgWrap{
-  position: relative; /* ✅ nécessaire pour filigrane */
+  position: relative; /* ✅ filigrane */
   border:1px solid rgba(255,255,255,.18);
   overflow:hidden;
   background: rgba(255,255,255,.03);
@@ -339,7 +348,6 @@ body.portfolio .imgWrap::after{
 
   color: rgba(255,255,255,.10);
   pointer-events: none;
-
   transform: rotate(-25deg);
 }
 
@@ -371,8 +379,9 @@ body.portfolio .modal{
   border: none;
 }
 
+/* Zone image */
 body.portfolio .modal__media{
-  position: relative; /* ✅ pour croix + filigrane */
+  position: relative; /* ✅ croix + filigrane */
   flex: 1;
   min-height: 0;
   display:flex;
@@ -380,6 +389,7 @@ body.portfolio .modal__media{
   justify-content:center;
 }
 
+/* Image entière, jamais rognée */
 body.portfolio .modal__img{
   max-width: 100%;
   max-height: 100%;
@@ -389,7 +399,7 @@ body.portfolio .modal__img{
   display:block;
 }
 
-/* Filigrane dans le modal */
+/* Filigrane modal */
 body.portfolio .modal__media::after{
   content: "ANNICK BOUVATTIER";
   position: absolute;
@@ -406,10 +416,10 @@ body.portfolio .modal__media::after{
 
   color: rgba(255,255,255,.14);
   pointer-events: none;
-
   transform: rotate(-25deg);
 }
 
+/* Texte en dessous, centré */
 body.portfolio .modal__info{
   padding: 14px 0 6px;
   display:flex;
@@ -443,7 +453,7 @@ body.portfolio .statusText{
 body.portfolio .statusText.disponible{ color:#3ddc84; }
 body.portfolio .statusText.vendue{ color:#ff5c5c; }
 
-/* Croix */
+/* Croix (dans l'angle haut droit de la zone image) */
 body.portfolio .modal__closeBtn{
   position:absolute;
   top:10px;
@@ -460,6 +470,7 @@ body.portfolio .modal__closeBtn{
   display:flex;
   align-items:center;
   justify-content:center;
+  z-index: 2; /* ✅ au-dessus du filigrane */
 }
 body.portfolio .modal__closeBtn:hover{
   background: rgba(0,0,0,.65);
@@ -470,4 +481,3 @@ body.portfolio img{
   user-select: none;
   -webkit-user-drag: none;
 }
-
