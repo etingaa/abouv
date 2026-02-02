@@ -351,7 +351,7 @@
       const years = uniq(artworks.map(a => a.year).filter(Boolean)).sort((a,b)=>b-a).map(String);
       const techniques = uniq(artworks.map(a => a.technique).filter(Boolean));
       const sizes = uniq(artworks.map(a => normSize(a.size)).filter(Boolean));
-      const statuses = ["disponible","vendue"];
+      const statuses = ["Disponible","Vendue"];
 
       buildPanel("year", years);
       buildPanel("technique", techniques);
