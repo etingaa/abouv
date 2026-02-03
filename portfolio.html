@@ -8,13 +8,31 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="styles.css">
+
+  <!-- mini styles pour sous-titres dans le dropdown "Format" -->
+  <style>
+    body.portfolio .ddHeading{
+      margin: 8px 6px 6px;
+      font-size: 12px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.65);
+      font-weight: 900;
+    }
+    body.portfolio .ddSep{
+      height:1px;
+      background: rgba(255,255,255,.14);
+      margin: 10px 6px;
+      border-radius: 99px;
+    }
+  </style>
 </head>
 
 <body class="portfolio">
   <div class="page">
     <div class="container">
-
       <header class="top">
         <a class="brand" href="index.html">ANNICK&nbsp;BOUVATTIER</a>
         <nav class="top__nav" aria-label="Navigation principale">
@@ -28,7 +46,7 @@
         </nav>
       </header>
 
-      <!-- Chips -->
+      <!-- Chips actives -->
       <div class="filterChips" id="chips"></div>
 
       <!-- Barre de filtres -->
@@ -37,14 +55,16 @@
           <input id="q" class="pillInput" type="search" placeholder="Rechercher une œuvre…" />
         </div>
 
-        <div class="dd" data-key="year">
+        <!-- Catégorie (colonne C) -->
+        <div class="dd" data-key="category">
           <button class="pillBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
-            Année <span class="pillCount" data-count="year"></span>
+            Catégorie <span class="pillCount" data-count="category"></span>
             <span class="pillCaret">▾</span>
           </button>
-          <div class="ddPanel" role="listbox" aria-label="Année" data-panel="year"></div>
+          <div class="ddPanel" role="listbox" aria-label="Catégorie" data-panel="category"></div>
         </div>
 
+        <!-- Technique -->
         <div class="dd" data-key="technique">
           <button class="pillBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
             Technique <span class="pillCount" data-count="technique"></span>
@@ -53,14 +73,16 @@
           <div class="ddPanel" role="listbox" aria-label="Technique" data-panel="technique"></div>
         </div>
 
-        <div class="dd" data-key="size">
+        <!-- Format (Forme + tailles) -->
+        <div class="dd" data-key="format">
           <button class="pillBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
-            Format <span class="pillCount" data-count="size"></span>
+            Format <span class="pillCount" data-count="format"></span>
             <span class="pillCaret">▾</span>
           </button>
-          <div class="ddPanel" role="listbox" aria-label="Format" data-panel="size"></div>
+          <div class="ddPanel" role="listbox" aria-label="Format" data-panel="format"></div>
         </div>
 
+        <!-- Disponible -->
         <div class="dd" data-key="status">
           <button class="pillBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
             Disponible <span class="pillCount" data-count="status"></span>
@@ -96,432 +118,583 @@
     </div>
   </dialog>
 
-<script>
-/* =========================
-   CONFIG
-   ========================= */
+  <script>
+    /* =========================
+       CONFIG
+       ========================= */
 
-const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSmK-RAKlpq_VMnhd78eWdWeMTnCkU3_-411IzeTyzO9j0zbJdkkhzfxlRDZpqzKixpoUgTtAAI_Auw/pub?output=csv";
-const IMG_BASE = "images";
+    const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSmK-RAKlpq_VMnhd78eWdWeMTnCkU3_-411IzeTyzO9j0zbJdkkhzfxlRDZpqzKixpoUgTtAAI_Auw/pub?output=csv";
+    const IMG_BASE = "images";
 
-/* =========================
-   DOM
-   ========================= */
+    /* =========================
+       DOM
+       ========================= */
 
-const els = {
-  q: document.getElementById("q"),
-  reset: document.getElementById("reset"),
-  masonry: document.getElementById("masonry"),
-  count: document.getElementById("count"),
-  chips: document.getElementById("chips"),
+    const els = {
+      q: document.getElementById("q"),
+      reset: document.getElementById("reset"),
+      masonry: document.getElementById("masonry"),
+      count: document.getElementById("count"),
+      chips: document.getElementById("chips"),
 
-  modal: document.getElementById("modal"),
-  modalImg: document.getElementById("modalImg"),
-  modalTitle: document.getElementById("modalTitle"),
-  modalMeta: document.getElementById("modalMeta"),
-  modalClose: document.getElementById("modalClose"),
-};
+      modal: document.getElementById("modal"),
+      modalImg: document.getElementById("modalImg"),
+      modalTitle: document.getElementById("modalTitle"),
+      modalMeta: document.getElementById("modalMeta"),
+      modalClose: document.getElementById("modalClose"),
+    };
 
-const ddEls = {
-  year: document.querySelector('.dd[data-key="year"]'),
-  technique: document.querySelector('.dd[data-key="technique"]'),
-  size: document.querySelector('.dd[data-key="size"]'),
-  status: document.querySelector('.dd[data-key="status"]'),
-};
+    const ddEls = {
+      category: document.querySelector('.dd[data-key="category"]'),
+      technique: document.querySelector('.dd[data-key="technique"]'),
+      format: document.querySelector('.dd[data-key="format"]'),
+      status: document.querySelector('.dd[data-key="status"]'),
+    };
 
-const panels = {
-  year: document.querySelector('[data-panel="year"]'),
-  technique: document.querySelector('[data-panel="technique"]'),
-  size: document.querySelector('[data-panel="size"]'),
-  status: document.querySelector('[data-panel="status"]'),
-};
+    const panels = {
+      category: document.querySelector('[data-panel="category"]'),
+      technique: document.querySelector('[data-panel="technique"]'),
+      format: document.querySelector('[data-panel="format"]'),
+      status: document.querySelector('[data-panel="status"]'),
+    };
 
-const countBadges = {
-  year: document.querySelector('[data-count="year"]'),
-  technique: document.querySelector('[data-count="technique"]'),
-  size: document.querySelector('[data-count="size"]'),
-  status: document.querySelector('[data-count="status"]'),
-};
+    const countBadges = {
+      category: document.querySelector('[data-count="category"]'),
+      technique: document.querySelector('[data-count="technique"]'),
+      format: document.querySelector('[data-count="format"]'),
+      status: document.querySelector('[data-count="status"]'),
+    };
 
-/* =========================
-   STATE
-   ========================= */
+    let artworks = [];
 
-let artworks = [];
+    // filtres multi
+    const filters = {
+      q: "",
+      category: new Set(),
+      technique: new Set(),
+      // format = 2 sous-filtres dans le même dropdown
+      shape: new Set(),    // "carre" | "paysage" | "portrait"
+      size: new Set(),     // ex: "100 x 81 cm" normalisé
+      status: new Set(),   // "disponible" | "vendue"
+    };
 
-const filters = {
-  q: "",
-  year: new Set(),
-  technique: new Set(),
-  size: new Set(),
-  status: new Set(),
-};
+    /* =========================
+       HELPERS
+       ========================= */
 
-/* =========================
-   HELPERS
-   ========================= */
+    function uniq(arr){ return [...new Set(arr)].sort((a,b)=> (""+a).localeCompare(""+b, "fr")); }
 
-function uniq(arr){ return [...new Set(arr)].sort((a,b)=> (""+a).localeCompare(""+b, "fr")); }
-
-function escapeHtml(s){
-  return String(s ?? "")
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
-}
-
-function normSize(s){
-  return String(s ?? "")
-    .toLowerCase()
-    .replaceAll("×","x")
-    .replace(/\s+/g," ")
-    .replace(/\s*x\s*/g," x ")
-    .replace(/\s*cm\s*/g," cm")
-    .trim();
-}
-
-function normalizeHeader(h){
-  return String(h ?? "")
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .trim();
-}
-
-// CSV robuste (guillemets + virgules)
-function parseCSV(text){
-  const rows = [];
-  let row = [];
-  let value = "";
-  let inQuotes = false;
-
-  for(let i=0;i<text.length;i++){
-    const c = text[i];
-    const next = text[i+1];
-
-    if(c === '"' && next === '"'){
-      value += '"';
-      i++;
-      continue;
+    function escapeHtml(s){
+      return String(s ?? "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
     }
-    if(c === '"'){
-      inQuotes = !inQuotes;
-      continue;
+
+    function normalizeHeader(h){
+      return String(h ?? "")
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim();
     }
-    if(c === "," && !inQuotes){
-      row.push(value.trim());
-      value = "";
-      continue;
+
+    function normSize(s){
+      return String(s ?? "")
+        .toLowerCase()
+        .replaceAll("×","x")
+        .replace(/\s+/g," ")
+        .replace(/\s*x\s*/g," x ")
+        .replace(/\s*cm\s*/g," cm")
+        .trim();
     }
-    if((c === "\n" || c === "\r") && !inQuotes){
+
+    function parseDims(sizeStr){
+      // attend un truc du style "100 x 81 cm" ou "100×81" ou "100 x 81"
+      const s = normSize(sizeStr);
+      const m = s.match(/(\d+(?:[.,]\d+)?)\s*x\s*(\d+(?:[.,]\d+)?)/i);
+      if(!m) return null;
+      const w = parseFloat(m[1].replace(",", "."));
+      const h = parseFloat(m[2].replace(",", "."));
+      if(!isFinite(w) || !isFinite(h)) return null;
+      return { w, h };
+    }
+
+    function shapeFromSize(sizeStr){
+      const d = parseDims(sizeStr);
+      if(!d) return "unknown";
+      if(Math.abs(d.w - d.h) < 0.0001) return "carre";
+      return (d.w > d.h) ? "paysage" : "portrait";
+    }
+
+    function shapeLabel(key){
+      if(key === "carre") return "Carré";
+      if(key === "paysage") return "Paysage";
+      if(key === "portrait") return "Portrait";
+      return "Autre";
+    }
+
+    // CSV robuste (gère guillemets + virgules)
+    function parseCSV(text){
+      const rows = [];
+      let row = [];
+      let value = "";
+      let inQuotes = false;
+
+      for(let i=0;i<text.length;i++){
+        const c = text[i];
+        const next = text[i+1];
+
+        if(c === '"' && next === '"'){
+          value += '"';
+          i++;
+          continue;
+        }
+        if(c === '"'){
+          inQuotes = !inQuotes;
+          continue;
+        }
+        if(c === "," && !inQuotes){
+          row.push(value.trim());
+          value = "";
+          continue;
+        }
+        if((c === "\n" || c === "\r") && !inQuotes){
+          if(value.length || row.length){
+            row.push(value.trim());
+            rows.push(row);
+            row = [];
+            value = "";
+          }
+          continue;
+        }
+        value += c;
+      }
+
       if(value.length || row.length){
         row.push(value.trim());
         rows.push(row);
-        row = [];
-        value = "";
       }
-      continue;
+
+      return rows;
     }
-    value += c;
-  }
 
-  if(value.length || row.length){
-    row.push(value.trim());
-    rows.push(row);
-  }
+    function cleanNA(v){
+      const s = String(v ?? "").trim();
+      if(!s) return "";
+      if(s.toUpperCase() === "N/A") return "";
+      return s;
+    }
 
-  return rows;
-}
+    function statusFromSheet(v){
+      const s = String(v ?? "").trim().toUpperCase();
+      return (s === "VENDUE") ? "vendue" : "disponible";
+    }
 
-function cleanNA(v){
-  const s = String(v ?? "").trim();
-  if(!s) return "";
-  if(s.toUpperCase() === "N/A") return "";
-  return s;
-}
+    function buildImagePath(jpg){
+      let p = String(jpg || "").trim();
+      p = p.replace(/^images\//i, "");
+      p = p.replace(/^\/+/, "");
+      return encodeURI(`${IMG_BASE}/${p}`);
+    }
 
-function statusFromSheet(v){
-  const s = String(v ?? "").trim().toUpperCase();
-  return (s === "VENDUE") ? "vendue" : "disponible";
-}
+    function setBadgeCount(key){
+      let n = 0;
+      if(key === "format"){
+        n = filters.shape.size + filters.size.size;
+      }else{
+        n = filters[key].size;
+      }
+      countBadges[key].textContent = n ? String(n) : "";
+    }
 
-function buildImagePath(jpg){
-  let p = String(jpg || "").trim();
-  p = p.replace(/^images\//i, ""); // évite images/images/...
-  p = p.replace(/^\/+/, "");       // évite images//...
-  return encodeURI(`${IMG_BASE}/${p}`); // encode espaces/accents
-}
+    function closeAllDropdowns(){
+      Object.values(ddEls).forEach(dd => {
+        dd.classList.remove("is-open");
+        const btn = dd.querySelector("button[aria-expanded]");
+        if(btn) btn.setAttribute("aria-expanded", "false");
+      });
+    }
 
-function setBadgeCount(key){
-  const n = filters[key].size;
-  countBadges[key].textContent = n ? String(n) : "";
-}
+    /* =========================
+       LOAD
+       ========================= */
 
-function closeAllDropdowns(){
-  Object.values(ddEls).forEach(dd => {
-    dd.classList.remove("is-open");
-    const btn = dd.querySelector("button[aria-expanded]");
-    if(btn) btn.setAttribute("aria-expanded", "false");
-  });
-}
+    async function loadArtworksFromSheet(){
+      const res = await fetch(SHEET_CSV_URL, { cache: "no-store" });
+      if(!res.ok) throw new Error("Impossible de charger la Google Sheet");
 
-/* =========================
-   LOAD FROM GOOGLE SHEET
-   ========================= */
+      const csv = await res.text();
+      const rows = parseCSV(csv);
 
-async function loadArtworksFromSheet(){
-  const res = await fetch(SHEET_CSV_URL, { cache: "no-store" });
-  if(!res.ok) throw new Error("Impossible de charger la Google Sheet");
+      const header = rows.shift().map(normalizeHeader);
+      const col = (name) => header.indexOf(normalizeHeader(name));
 
-  const csv = await res.text();
-  const rows = parseCSV(csv);
+      // Ton sheet : Nom | Année | Catégorie | Technique | Format | Disponible | Jpg
+      // => On charge Catégorie, Technique, Format, Disponible, Jpg
+      return rows
+        .filter(r => r[col("nom")])
+        .map(r => {
+          const title = cleanNA(r[col("nom")]);
+          const category = cleanNA(r[col("categorie")]);        // ✅ colonne C
+          const technique = cleanNA(r[col("technique")]) || "N/A";
+          const formatRaw = cleanNA(r[col("format")]);
+          const dispo = statusFromSheet(r[col("disponible")]);
+          const jpg = cleanNA(r[col("jpg")]);
 
-  const header = rows.shift().map(normalizeHeader);
-  const col = (name) => header.indexOf(normalizeHeader(name));
+          const size = formatRaw ? `${formatRaw} cm` : "N/A";
+          const sizeNorm = normSize(size);
+          const shape = shapeFromSize(sizeNorm);
 
-  return rows
-    .filter(r => r[col("nom")])
-    .map(r => {
-      const title = cleanNA(r[col("nom")]);
-      const yearRaw = cleanNA(r[col("annee")]);
-      const year = yearRaw ? Number(yearRaw) : "";
-      const technique = cleanNA(r[col("technique")]) || "N/A";
-      const format = cleanNA(r[col("format")]);
-      const dispo = statusFromSheet(r[col("disponible")]);
-      const jpg = cleanNA(r[col("jpg")]);
+          const image = jpg ? buildImagePath(jpg) : "";
 
-      const size = format ? `${format} cm` : "N/A";
-      const image = jpg ? buildImagePath(jpg) : "";
+          return { title, category, technique, size, sizeNorm, shape, status: dispo, image };
+        })
+        .filter(a => a.title && a.image);
+    }
 
-      return { title, year, technique, size, status: dispo, image };
-    })
-    .filter(a => a.title && a.image);
-}
+    /* =========================
+       PANELS (Category / Technique / Status)
+       ========================= */
 
-/* =========================
-   DROPDOWNS + CHIPS
-   ========================= */
+    function buildSimplePanel(key, options){
+      const panel = panels[key];
+      panel.innerHTML = "";
 
-function buildPanel(key, options, normalizer){
-  const panel = panels[key];
-  panel.innerHTML = "";
+      options.forEach(v => {
+        const row = document.createElement("label");
+        row.className = "ddRow";
 
-  options.forEach(optValue => {
-    const raw = String(optValue);
-    const val = normalizer ? normalizer(raw) : raw;
+        const input = document.createElement("input");
+        input.type = "checkbox";
+        input.value = v;
+        input.checked = filters[key].has(v);
 
-    const row = document.createElement("label");
-    row.className = "ddRow";
+        const label = document.createElement("span");
+        label.className = "ddLabel";
+        label.textContent = v;
 
-    const input = document.createElement("input");
-    input.type = "checkbox";
-    input.value = raw;
-    input.checked = filters[key].has(val);
+        input.addEventListener("change", () => {
+          if(input.checked) filters[key].add(v);
+          else filters[key].delete(v);
 
-    const label = document.createElement("span");
-    label.className = "ddLabel";
-    label.textContent = raw;
+          setBadgeCount(key);
+          renderChips();
+          render();
+        });
 
-    input.addEventListener("change", () => {
-      if(input.checked) filters[key].add(val);
-      else filters[key].delete(val);
+        row.appendChild(input);
+        row.appendChild(label);
+        panel.appendChild(row);
+      });
 
       setBadgeCount(key);
-      renderChips();
-      render();
-    });
-
-    row.appendChild(input);
-    row.appendChild(label);
-    panel.appendChild(row);
-  });
-
-  setBadgeCount(key);
-}
-
-function hydrateDropdowns(){
-  const years = uniq(artworks.map(a => a.year).filter(Boolean)).sort((a,b)=>b-a).map(String);
-  const techniques = uniq(artworks.map(a => a.technique).filter(Boolean));
-  const sizes = uniq(artworks.map(a => normSize(a.size)).filter(Boolean));
-  const statuses = ["disponible","vendue"];
-
-  buildPanel("year", years);
-  buildPanel("technique", techniques);
-  buildPanel("size", sizes, normSize);
-  buildPanel("status", statuses);
-}
-
-function syncCheckboxesForKey(key){
-  const panel = panels[key];
-  const inputs = panel.querySelectorAll('input[type="checkbox"]');
-  inputs.forEach(inp => {
-    const raw = inp.value;
-    const val = (key === "size") ? normSize(raw) : raw;
-    inp.checked = filters[key].has(val);
-  });
-}
-
-function renderChips(){
-  const chips = [];
-
-  filters.year.forEach(v => chips.push({ key:"year", label:v }));
-  filters.technique.forEach(v => chips.push({ key:"technique", label:v }));
-  filters.size.forEach(v => chips.push({ key:"size", label:v }));
-  filters.status.forEach(v => chips.push({ key:"status", label:v }));
-
-  els.chips.innerHTML = "";
-
-  chips.forEach(c => {
-    const chip = document.createElement("span");
-    chip.className = "chip";
-    chip.innerHTML = `
-      <span>${escapeHtml(c.label)}</span>
-      <button type="button" aria-label="Retirer">×</button>
-    `;
-
-    chip.querySelector("button").addEventListener("click", () => {
-      filters[c.key].delete(c.label);
-      syncCheckboxesForKey(c.key);
-      setBadgeCount(c.key);
-      renderChips();
-      render();
-    });
-
-    els.chips.appendChild(chip);
-  });
-}
-
-/* =========================
-   FILTERING + RENDER
-   ========================= */
-
-function matchArtwork(a){
-  const q = (filters.q || "").trim().toLowerCase();
-  if(q && !a.title.toLowerCase().includes(q)) return false;
-
-  if(filters.year.size && !filters.year.has(String(a.year))) return false;
-  if(filters.technique.size && !filters.technique.has(a.technique)) return false;
-
-  const s = normSize(a.size);
-  if(filters.size.size && !filters.size.has(s)) return false;
-
-  if(filters.status.size && !filters.status.has(a.status)) return false;
-
-  return true;
-}
-
-function render(){
-  const list = artworks.filter(matchArtwork);
-
-  els.masonry.innerHTML = "";
-  list.forEach(a=>{
-    const item = document.createElement("article");
-    item.className = "piece";
-    item.innerHTML = `
-      <div class="imgWrap">
-        <img src="${a.image}" alt="${escapeHtml(a.title)}" loading="lazy">
-      </div>
-      <div class="cap">
-        <p class="capTitle">${escapeHtml(a.title)}</p>
-        <p class="capMeta">${escapeHtml(a.technique)} · ${escapeHtml(a.size)} · ${a.year}</p>
-        <span class="badge ${a.status}">
-          ${a.status === "vendue" ? "VENDUE" : "DISPONIBLE"}
-        </span>
-      </div>
-    `;
-    item.addEventListener("click", ()=> openModal(a));
-    els.masonry.appendChild(item);
-  });
-
-  els.count.textContent = `${list.length} œuvre${list.length>1 ? "s" : ""}`;
-}
-
-/* =========================
-   MODAL
-   ========================= */
-
-function openModal(a){
-  els.modalImg.src = a.image;
-  els.modalImg.alt = a.title;
-  els.modalTitle.textContent = a.title.toUpperCase();
-
-  const label = (a.status === "vendue") ? "VENDUE" : "DISPONIBLE";
-  els.modalMeta.innerHTML =
-    `${escapeHtml(a.technique)} · ${escapeHtml(a.size)} · ${a.year} · ` +
-    `<span class="statusText ${a.status}">${label}</span>`;
-
-  els.modal.showModal();
-}
-
-function closeModal(){ els.modal.close(); }
-
-/* =========================
-   EVENTS
-   ========================= */
-
-els.q.addEventListener("input", () => {
-  filters.q = els.q.value || "";
-  render();
-});
-
-els.reset.addEventListener("click", ()=>{
-  filters.q = "";
-  filters.year.clear();
-  filters.technique.clear();
-  filters.size.clear();
-  filters.status.clear();
-
-  els.q.value = "";
-
-  ["year","technique","size","status"].forEach(k => {
-    syncCheckboxesForKey(k);
-    setBadgeCount(k);
-  });
-
-  renderChips();
-  render();
-});
-
-Object.values(ddEls).forEach(dd => {
-  const btn = dd.querySelector(".pillBtn");
-  btn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    const isOpen = dd.classList.contains("is-open");
-    closeAllDropdowns();
-    if(!isOpen){
-      dd.classList.add("is-open");
-      btn.setAttribute("aria-expanded", "true");
     }
-  });
-});
 
-document.addEventListener("click", () => closeAllDropdowns());
-Object.values(panels).forEach(p => p.addEventListener("click", (e) => e.stopPropagation()));
+    /* =========================
+       PANEL FORMAT (Forme + Tailles)
+       ========================= */
 
-els.modalClose.addEventListener("click", closeModal);
-els.modal.addEventListener("click", (e)=>{ if(e.target === els.modal) closeModal(); });
-document.addEventListener("keydown", (e)=>{ if(e.key === "Escape" && els.modal.open) closeModal(); });
+    function addHeading(panel, text){
+      const h = document.createElement("div");
+      h.className = "ddHeading";
+      h.textContent = text;
+      panel.appendChild(h);
+    }
 
-/* =========================
-   INIT
-   ========================= */
+    function addSeparator(panel){
+      const sep = document.createElement("div");
+      sep.className = "ddSep";
+      panel.appendChild(sep);
+    }
 
-document.addEventListener("DOMContentLoaded", async () => {
-  try{
-    artworks = await loadArtworksFromSheet();
-    hydrateDropdowns();
-    renderChips();
-    render();
-  } catch(err){
-    console.error(err);
-    els.count.textContent = "Erreur de chargement (Sheet/Images)";
-  }
-});
-</script>
+    function addCheckboxRow(panel, checked, labelText, onChange){
+      const row = document.createElement("label");
+      row.className = "ddRow";
 
+      const input = document.createElement("input");
+      input.type = "checkbox";
+      input.checked = checked;
+
+      const label = document.createElement("span");
+      label.className = "ddLabel";
+      label.textContent = labelText;
+
+      input.addEventListener("change", () => onChange(input.checked));
+
+      row.appendChild(input);
+      row.appendChild(label);
+      panel.appendChild(row);
+    }
+
+    function buildFormatPanel(){
+      const panel = panels.format;
+      panel.innerHTML = "";
+
+      // 1) Forme
+      addHeading(panel, "Forme");
+      ["carre","paysage","portrait"].forEach(k => {
+        addCheckboxRow(
+          panel,
+          filters.shape.has(k),
+          shapeLabel(k),
+          (isOn) => {
+            if(isOn) filters.shape.add(k); else filters.shape.delete(k);
+            setBadgeCount("format");
+            renderChips();
+            render();
+          }
+        );
+      });
+
+      addSeparator(panel);
+
+      // 2) Tailles par forme (sous-titres)
+      const sizesCarre = uniq(artworks.filter(a => a.shape === "carre").map(a => a.sizeNorm).filter(Boolean));
+      const sizesPaysage = uniq(artworks.filter(a => a.shape === "paysage").map(a => a.sizeNorm).filter(Boolean));
+      const sizesPortrait = uniq(artworks.filter(a => a.shape === "portrait").map(a => a.sizeNorm).filter(Boolean));
+
+      function blockSizes(title, list){
+        addHeading(panel, title);
+        list.forEach(sizeNorm => {
+          // affichage plus joli : remettre "cm" et "x" espacés
+          const display = sizeNorm.replace(/\s*x\s*/g," × ").replace(/\s*cm\s*/g," cm");
+          addCheckboxRow(
+            panel,
+            filters.size.has(sizeNorm),
+            display,
+            (isOn) => {
+              if(isOn) filters.size.add(sizeNorm); else filters.size.delete(sizeNorm);
+              setBadgeCount("format");
+              renderChips();
+              render();
+            }
+          );
+        });
+      }
+
+      blockSizes("Tailles — Carré", sizesCarre);
+      blockSizes("Tailles — Paysage", sizesPaysage);
+      blockSizes("Tailles — Portrait", sizesPortrait);
+
+      setBadgeCount("format");
+    }
+
+    function hydrateDropdowns(){
+      const categories = uniq(artworks.map(a => a.category).filter(Boolean));
+      const techniques = uniq(artworks.map(a => a.technique).filter(Boolean));
+      const statuses = ["disponible","vendue"];
+
+      buildSimplePanel("category", categories);
+      buildSimplePanel("technique", techniques);
+      buildFormatPanel();
+      buildSimplePanel("status", statuses.map(s => s)); // labels gérés au rendu
+    }
+
+    /* =========================
+       CHIPS
+       ========================= */
+
+    function renderChips(){
+      const chips = [];
+
+      filters.category.forEach(v => chips.push({ key:"category", label: v }));
+      filters.technique.forEach(v => chips.push({ key:"technique", label: v }));
+
+      filters.shape.forEach(v => chips.push({ key:"shape", label: shapeLabel(v) }));
+      filters.size.forEach(v => {
+        const display = v.replace(/\s*x\s*/g," × ").replace(/\s*cm\s*/g," cm");
+        chips.push({ key:"size", label: display, raw: v });
+      });
+
+      filters.status.forEach(v => chips.push({ key:"status", label: (v==="vendue"?"VENDUE":"DISPONIBLE"), raw: v }));
+
+      els.chips.innerHTML = "";
+
+      chips.forEach(c => {
+        const chip = document.createElement("span");
+        chip.className = "chip";
+        chip.innerHTML = `
+          <span>${escapeHtml(c.label)}</span>
+          <button type="button" aria-label="Retirer">×</button>
+        `;
+
+        chip.querySelector("button").addEventListener("click", () => {
+          if(c.key === "shape"){
+            // enlever forme
+            const inv = Object.entries({Carré:"carre", Paysage:"paysage", Portrait:"portrait"})
+              .find(([lab]) => lab === c.label);
+            const val = inv ? inv[1] : null;
+            if(val) filters.shape.delete(val);
+          }else if(c.key === "size"){
+            filters.size.delete(c.raw);
+          }else if(c.key === "status"){
+            filters.status.delete(c.raw);
+          }else{
+            filters[c.key].delete(c.label);
+          }
+
+          setBadgeCount("category");
+          setBadgeCount("technique");
+          setBadgeCount("format");
+          setBadgeCount("status");
+
+          // rebuild format panel to sync checkboxes
+          buildFormatPanel();
+
+          // rebuild other panels to sync checkboxes
+          syncSimplePanel("category");
+          syncSimplePanel("technique");
+          syncSimplePanel("status");
+
+          renderChips();
+          render();
+        });
+
+        els.chips.appendChild(chip);
+      });
+    }
+
+    function syncSimplePanel(key){
+      const panel = panels[key];
+      const inputs = panel.querySelectorAll('input[type="checkbox"]');
+      inputs.forEach(inp => {
+        const v = inp.value;
+        inp.checked = filters[key].has(v);
+      });
+    }
+
+    /* =========================
+       FILTERING + RENDER
+       ========================= */
+
+    function matchArtwork(a){
+      const q = (filters.q||"").trim().toLowerCase();
+      if(q && !a.title.toLowerCase().includes(q)) return false;
+
+      if(filters.category.size && !filters.category.has(a.category)) return false;
+      if(filters.technique.size && !filters.technique.has(a.technique)) return false;
+
+      // Format : forme + tailles (AND)
+      if(filters.shape.size && !filters.shape.has(a.shape)) return false;
+      if(filters.size.size && !filters.size.has(a.sizeNorm)) return false;
+
+      if(filters.status.size && !filters.status.has(a.status)) return false;
+
+      return true;
+    }
+
+    function render(){
+      const list = artworks.filter(matchArtwork);
+
+      els.masonry.innerHTML = "";
+      list.forEach(a=>{
+        const item = document.createElement("article");
+        item.className = "piece";
+        item.innerHTML = `
+          <div class="imgWrap">
+            <img src="${a.image}" alt="${escapeHtml(a.title)}" loading="lazy">
+          </div>
+          <div class="cap">
+            <p class="capTitle">${escapeHtml(a.title)}</p>
+            <!-- ✅ on enlève l'année : plus de date -->
+            <p class="capMeta">${escapeHtml(a.technique)} · ${escapeHtml(a.size)}</p>
+            <span class="badge ${a.status}">
+              ${a.status === "vendue" ? "VENDUE" : "DISPONIBLE"}
+            </span>
+          </div>
+        `;
+        item.addEventListener("click", ()=> openModal(a));
+        els.masonry.appendChild(item);
+      });
+
+      els.count.textContent = `${list.length} œuvre${list.length>1 ? "s" : ""}`;
+    }
+
+    /* =========================
+       MODAL
+       ========================= */
+
+    function openModal(a){
+      els.modalImg.src = a.image;
+      els.modalImg.alt = a.title;
+
+      els.modalTitle.textContent = a.title.toUpperCase();
+
+      // ✅ on enlève l'année : pas de date dans le modal
+      const label = (a.status === "vendue") ? "VENDUE" : "DISPONIBLE";
+      els.modalMeta.innerHTML =
+        `${escapeHtml(a.technique)} · ${escapeHtml(a.size)} · ` +
+        `<span class="statusText ${a.status}">${label}</span>`;
+
+      els.modal.showModal();
+    }
+
+    function closeModal(){ els.modal.close(); }
+
+    /* =========================
+       EVENTS
+       ========================= */
+
+    els.q.addEventListener("input", () => {
+      filters.q = els.q.value || "";
+      render();
+    });
+
+    els.reset.addEventListener("click", ()=>{
+      filters.q = "";
+      filters.category.clear();
+      filters.technique.clear();
+      filters.shape.clear();
+      filters.size.clear();
+      filters.status.clear();
+
+      els.q.value = "";
+
+      // rebuild panels to reset checks
+      hydrateDropdowns();
+
+      renderChips();
+      render();
+    });
+
+    Object.values(ddEls).forEach(dd => {
+      const btn = dd.querySelector(".pillBtn");
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const isOpen = dd.classList.contains("is-open");
+        closeAllDropdowns();
+        if(!isOpen){
+          dd.classList.add("is-open");
+          btn.setAttribute("aria-expanded", "true");
+        }
+      });
+    });
+
+    document.addEventListener("click", () => closeAllDropdowns());
+    Object.values(panels).forEach(p => p.addEventListener("click", (e) => e.stopPropagation()));
+
+    els.modalClose.addEventListener("click", closeModal);
+    els.modal.addEventListener("click", (e)=>{ if(e.target === els.modal) closeModal(); });
+    document.addEventListener("keydown", (e)=>{ if(e.key === "Escape" && els.modal.open) closeModal(); });
+
+    /* =========================
+       INIT
+       ========================= */
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      try{
+        artworks = await loadArtworksFromSheet();
+        hydrateDropdowns();
+        renderChips();
+        render();
+      } catch(err){
+        console.error(err);
+        els.count.textContent = "Erreur de chargement (Sheet/Images)";
+      }
+    });
+  </script>
 </body>
-</html>
-
 </html>
