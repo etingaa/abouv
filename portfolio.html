@@ -8,7 +8,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
-
   <link rel="stylesheet" href="styles.css">
 </head>
 
@@ -16,10 +15,9 @@
   <div class="page">
     <div class="container">
 
-      <!-- HEADER -->
       <header class="top">
         <a class="brand" href="index.html">ANNICK&nbsp;BOUVATTIER</a>
-        <nav class="top__nav">
+        <nav class="top__nav" aria-label="Navigation principale">
           <a class="nav__link" href="index.html">Accueil</a>
           <a class="nav__link is-active" href="portfolio.html">Portfolio</a>
           <a class="nav__link" href="galeries.html">Galeries</a>
@@ -30,179 +28,500 @@
         </nav>
       </header>
 
-      <!-- CHIPS -->
+      <!-- Chips -->
       <div class="filterChips" id="chips"></div>
 
-      <!-- FILTRES -->
-      <section class="filterBar">
-        <input id="q" class="pillInput" type="search" placeholder="Rechercher une œuvre…" />
+      <!-- Barre de filtres -->
+      <section class="filterBar" aria-label="Filtres">
+        <div class="field field--search">
+          <input id="q" class="pillInput" type="search" placeholder="Rechercher une œuvre…" />
+        </div>
 
         <div class="dd" data-key="year">
-          <button class="pillBtn">Année <span class="pillCount" data-count="year"></span> ▾</button>
-          <div class="ddPanel" data-panel="year"></div>
+          <button class="pillBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
+            Année <span class="pillCount" data-count="year"></span>
+            <span class="pillCaret">▾</span>
+          </button>
+          <div class="ddPanel" role="listbox" aria-label="Année" data-panel="year"></div>
         </div>
 
         <div class="dd" data-key="technique">
-          <button class="pillBtn">Technique <span class="pillCount" data-count="technique"></span> ▾</button>
-          <div class="ddPanel" data-panel="technique"></div>
+          <button class="pillBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
+            Technique <span class="pillCount" data-count="technique"></span>
+            <span class="pillCaret">▾</span>
+          </button>
+          <div class="ddPanel" role="listbox" aria-label="Technique" data-panel="technique"></div>
         </div>
 
         <div class="dd" data-key="size">
-          <button class="pillBtn">Format <span class="pillCount" data-count="size"></span> ▾</button>
-          <div class="ddPanel" data-panel="size"></div>
+          <button class="pillBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
+            Format <span class="pillCount" data-count="size"></span>
+            <span class="pillCaret">▾</span>
+          </button>
+          <div class="ddPanel" role="listbox" aria-label="Format" data-panel="size"></div>
         </div>
 
         <div class="dd" data-key="status">
-          <button class="pillBtn">Disponible <span class="pillCount" data-count="status"></span> ▾</button>
-          <div class="ddPanel" data-panel="status"></div>
+          <button class="pillBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
+            Disponible <span class="pillCount" data-count="status"></span>
+            <span class="pillCaret">▾</span>
+          </button>
+          <div class="ddPanel" role="listbox" aria-label="Disponible" data-panel="status"></div>
         </div>
 
-        <button id="reset" class="pillBtn pillBtn--ghost">Tout effacer</button>
+        <button class="pillBtn pillBtn--ghost" id="reset" type="button">Tout effacer</button>
       </section>
 
-      <!-- TITRE -->
       <div class="metaRow">
         <h1 class="title">Portfolio</h1>
         <div class="count" id="count"></div>
       </div>
 
-      <!-- GRILLE -->
-      <section class="masonry" id="masonry"></section>
-
+      <section class="masonry" id="masonry" aria-label="Œuvres"></section>
     </div>
   </div>
 
-  <!-- MODAL -->
+  <!-- Modal -->
   <dialog id="modal">
     <div class="modal">
       <div class="modal__media">
-        <img id="modalImg" class="modal__img">
-        <button id="modalClose" class="modal__closeBtn">×</button>
+        <img class="modal__img" id="modalImg" alt="">
+        <button class="modal__closeBtn" id="modalClose" type="button" aria-label="Fermer">×</button>
       </div>
+
       <div class="modal__info">
-        <h2 id="modalTitle" class="modal__h"></h2>
-        <p id="modalMeta" class="modal__meta"></p>
+        <h2 class="modal__h" id="modalTitle"></h2>
+        <p class="modal__meta" id="modalMeta"></p>
       </div>
     </div>
   </dialog>
 
 <script>
-/* ================= CONFIG ================= */
+/* =========================
+   CONFIG
+   ========================= */
 
 const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSmK-RAKlpq_VMnhd78eWdWeMTnCkU3_-411IzeTyzO9j0zbJdkkhzfxlRDZpqzKixpoUgTtAAI_Auw/pub?output=csv";
 const IMG_BASE = "images";
 
-/* ================= HELPERS ================= */
+/* =========================
+   DOM
+   ========================= */
+
+const els = {
+  q: document.getElementById("q"),
+  reset: document.getElementById("reset"),
+  masonry: document.getElementById("masonry"),
+  count: document.getElementById("count"),
+  chips: document.getElementById("chips"),
+
+  modal: document.getElementById("modal"),
+  modalImg: document.getElementById("modalImg"),
+  modalTitle: document.getElementById("modalTitle"),
+  modalMeta: document.getElementById("modalMeta"),
+  modalClose: document.getElementById("modalClose"),
+};
+
+const ddEls = {
+  year: document.querySelector('.dd[data-key="year"]'),
+  technique: document.querySelector('.dd[data-key="technique"]'),
+  size: document.querySelector('.dd[data-key="size"]'),
+  status: document.querySelector('.dd[data-key="status"]'),
+};
+
+const panels = {
+  year: document.querySelector('[data-panel="year"]'),
+  technique: document.querySelector('[data-panel="technique"]'),
+  size: document.querySelector('[data-panel="size"]'),
+  status: document.querySelector('[data-panel="status"]'),
+};
+
+const countBadges = {
+  year: document.querySelector('[data-count="year"]'),
+  technique: document.querySelector('[data-count="technique"]'),
+  size: document.querySelector('[data-count="size"]'),
+  status: document.querySelector('[data-count="status"]'),
+};
+
+/* =========================
+   STATE
+   ========================= */
+
+let artworks = [];
+
+const filters = {
+  q: "",
+  year: new Set(),
+  technique: new Set(),
+  size: new Set(),
+  status: new Set(),
+};
+
+/* =========================
+   HELPERS
+   ========================= */
+
+function uniq(arr){ return [...new Set(arr)].sort((a,b)=> (""+a).localeCompare(""+b, "fr")); }
+
+function escapeHtml(s){
+  return String(s ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+function normSize(s){
+  return String(s ?? "")
+    .toLowerCase()
+    .replaceAll("×","x")
+    .replace(/\s+/g," ")
+    .replace(/\s*x\s*/g," x ")
+    .replace(/\s*cm\s*/g," cm")
+    .trim();
+}
+
+function normalizeHeader(h){
+  return String(h ?? "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim();
+}
+
+// CSV robuste (guillemets + virgules)
+function parseCSV(text){
+  const rows = [];
+  let row = [];
+  let value = "";
+  let inQuotes = false;
+
+  for(let i=0;i<text.length;i++){
+    const c = text[i];
+    const next = text[i+1];
+
+    if(c === '"' && next === '"'){
+      value += '"';
+      i++;
+      continue;
+    }
+    if(c === '"'){
+      inQuotes = !inQuotes;
+      continue;
+    }
+    if(c === "," && !inQuotes){
+      row.push(value.trim());
+      value = "";
+      continue;
+    }
+    if((c === "\n" || c === "\r") && !inQuotes){
+      if(value.length || row.length){
+        row.push(value.trim());
+        rows.push(row);
+        row = [];
+        value = "";
+      }
+      continue;
+    }
+    value += c;
+  }
+
+  if(value.length || row.length){
+    row.push(value.trim());
+    rows.push(row);
+  }
+
+  return rows;
+}
+
+function cleanNA(v){
+  const s = String(v ?? "").trim();
+  if(!s) return "";
+  if(s.toUpperCase() === "N/A") return "";
+  return s;
+}
+
+function statusFromSheet(v){
+  const s = String(v ?? "").trim().toUpperCase();
+  return (s === "VENDUE") ? "vendue" : "disponible";
+}
 
 function buildImagePath(jpg){
   let p = String(jpg || "").trim();
-  p = p.replace(/^images\//i, "");
-  p = p.replace(/^\/+/, "");
-  return encodeURI(`${IMG_BASE}/${p}`);
+  p = p.replace(/^images\//i, ""); // évite images/images/...
+  p = p.replace(/^\/+/, "");       // évite images//...
+  return encodeURI(`${IMG_BASE}/${p}`); // encode espaces/accents
 }
 
-function parseCSV(text){
-  return text.split("\n").map(r => r.split(",").map(c => c.trim()));
+function setBadgeCount(key){
+  const n = filters[key].size;
+  countBadges[key].textContent = n ? String(n) : "";
 }
 
-function normalize(s){
-  return String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+function closeAllDropdowns(){
+  Object.values(ddEls).forEach(dd => {
+    dd.classList.remove("is-open");
+    const btn = dd.querySelector("button[aria-expanded]");
+    if(btn) btn.setAttribute("aria-expanded", "false");
+  });
 }
 
-/* ================= DOM ================= */
+/* =========================
+   LOAD FROM GOOGLE SHEET
+   ========================= */
 
-const masonry = document.getElementById("masonry");
-const count = document.getElementById("count");
-const q = document.getElementById("q");
-const resetBtn = document.getElementById("reset");
+async function loadArtworksFromSheet(){
+  const res = await fetch(SHEET_CSV_URL, { cache: "no-store" });
+  if(!res.ok) throw new Error("Impossible de charger la Google Sheet");
 
-const modal = document.getElementById("modal");
-const modalImg = document.getElementById("modalImg");
-const modalTitle = document.getElementById("modalTitle");
-const modalMeta = document.getElementById("modalMeta");
-const modalClose = document.getElementById("modalClose");
-
-let artworks = [];
-let filters = { q:"", year:new Set(), technique:new Set(), size:new Set(), status:new Set() };
-
-/* ================= LOAD ================= */
-
-async function load(){
-  const res = await fetch(SHEET_CSV_URL);
   const csv = await res.text();
   const rows = parseCSV(csv);
-  const headers = rows.shift().map(normalize);
 
-  const col = n => headers.indexOf(normalize(n));
+  const header = rows.shift().map(normalizeHeader);
+  const col = (name) => header.indexOf(normalizeHeader(name));
 
-  artworks = rows.map(r => {
-    const jpg = r[col("jpg")];
-    return {
-      title: r[col("nom")],
-      year: r[col("annee")],
-      technique: r[col("technique")],
-      size: r[col("format")] ? r[col("format")]+" cm" : "",
-      status: normalize(r[col("disponible")]) === "vendue" ? "vendue" : "disponible",
-      image: jpg ? buildImagePath(jpg) : ""
-    };
-  }).filter(a => a.title && a.image);
+  return rows
+    .filter(r => r[col("nom")])
+    .map(r => {
+      const title = cleanNA(r[col("nom")]);
+      const yearRaw = cleanNA(r[col("annee")]);
+      const year = yearRaw ? Number(yearRaw) : "";
+      const technique = cleanNA(r[col("technique")]) || "N/A";
+      const format = cleanNA(r[col("format")]);
+      const dispo = statusFromSheet(r[col("disponible")]);
+      const jpg = cleanNA(r[col("jpg")]);
 
-  render();
+      const size = format ? `${format} cm` : "N/A";
+      const image = jpg ? buildImagePath(jpg) : "";
+
+      return { title, year, technique, size, status: dispo, image };
+    })
+    .filter(a => a.title && a.image);
 }
 
-/* ================= RENDER ================= */
+/* =========================
+   DROPDOWNS + CHIPS
+   ========================= */
 
-function render(){
-  const list = artworks.filter(a =>
-    (!filters.q || a.title.toLowerCase().includes(filters.q)) &&
-    (!filters.year.size || filters.year.has(a.year)) &&
-    (!filters.technique.size || filters.technique.has(a.technique)) &&
-    (!filters.size.size || filters.size.has(a.size)) &&
-    (!filters.status.size || filters.status.has(a.status))
-  );
+function buildPanel(key, options, normalizer){
+  const panel = panels[key];
+  panel.innerHTML = "";
 
-  masonry.innerHTML = "";
-  list.forEach(a=>{
-    const el = document.createElement("article");
-    el.className = "piece";
-    el.innerHTML = `
-      <div class="imgWrap"><img src="${a.image}"></div>
-      <div class="cap">
-        <p class="capTitle">${a.title}</p>
-        <p class="capMeta">${a.technique} · ${a.size} · ${a.year}</p>
-        <span class="badge ${a.status}">${a.status}</span>
-      </div>
-    `;
-    el.onclick = ()=>openModal(a);
-    masonry.appendChild(el);
+  options.forEach(optValue => {
+    const raw = String(optValue);
+    const val = normalizer ? normalizer(raw) : raw;
+
+    const row = document.createElement("label");
+    row.className = "ddRow";
+
+    const input = document.createElement("input");
+    input.type = "checkbox";
+    input.value = raw;
+    input.checked = filters[key].has(val);
+
+    const label = document.createElement("span");
+    label.className = "ddLabel";
+    label.textContent = raw;
+
+    input.addEventListener("change", () => {
+      if(input.checked) filters[key].add(val);
+      else filters[key].delete(val);
+
+      setBadgeCount(key);
+      renderChips();
+      render();
+    });
+
+    row.appendChild(input);
+    row.appendChild(label);
+    panel.appendChild(row);
   });
 
-  count.textContent = list.length + " œuvre" + (list.length>1?"s":"");
+  setBadgeCount(key);
 }
 
-/* ================= MODAL ================= */
+function hydrateDropdowns(){
+  const years = uniq(artworks.map(a => a.year).filter(Boolean)).sort((a,b)=>b-a).map(String);
+  const techniques = uniq(artworks.map(a => a.technique).filter(Boolean));
+  const sizes = uniq(artworks.map(a => normSize(a.size)).filter(Boolean));
+  const statuses = ["disponible","vendue"];
+
+  buildPanel("year", years);
+  buildPanel("technique", techniques);
+  buildPanel("size", sizes, normSize);
+  buildPanel("status", statuses);
+}
+
+function syncCheckboxesForKey(key){
+  const panel = panels[key];
+  const inputs = panel.querySelectorAll('input[type="checkbox"]');
+  inputs.forEach(inp => {
+    const raw = inp.value;
+    const val = (key === "size") ? normSize(raw) : raw;
+    inp.checked = filters[key].has(val);
+  });
+}
+
+function renderChips(){
+  const chips = [];
+
+  filters.year.forEach(v => chips.push({ key:"year", label:v }));
+  filters.technique.forEach(v => chips.push({ key:"technique", label:v }));
+  filters.size.forEach(v => chips.push({ key:"size", label:v }));
+  filters.status.forEach(v => chips.push({ key:"status", label:v }));
+
+  els.chips.innerHTML = "";
+
+  chips.forEach(c => {
+    const chip = document.createElement("span");
+    chip.className = "chip";
+    chip.innerHTML = `
+      <span>${escapeHtml(c.label)}</span>
+      <button type="button" aria-label="Retirer">×</button>
+    `;
+
+    chip.querySelector("button").addEventListener("click", () => {
+      filters[c.key].delete(c.label);
+      syncCheckboxesForKey(c.key);
+      setBadgeCount(c.key);
+      renderChips();
+      render();
+    });
+
+    els.chips.appendChild(chip);
+  });
+}
+
+/* =========================
+   FILTERING + RENDER
+   ========================= */
+
+function matchArtwork(a){
+  const q = (filters.q || "").trim().toLowerCase();
+  if(q && !a.title.toLowerCase().includes(q)) return false;
+
+  if(filters.year.size && !filters.year.has(String(a.year))) return false;
+  if(filters.technique.size && !filters.technique.has(a.technique)) return false;
+
+  const s = normSize(a.size);
+  if(filters.size.size && !filters.size.has(s)) return false;
+
+  if(filters.status.size && !filters.status.has(a.status)) return false;
+
+  return true;
+}
+
+function render(){
+  const list = artworks.filter(matchArtwork);
+
+  els.masonry.innerHTML = "";
+  list.forEach(a=>{
+    const item = document.createElement("article");
+    item.className = "piece";
+    item.innerHTML = `
+      <div class="imgWrap">
+        <img src="${a.image}" alt="${escapeHtml(a.title)}" loading="lazy">
+      </div>
+      <div class="cap">
+        <p class="capTitle">${escapeHtml(a.title)}</p>
+        <p class="capMeta">${escapeHtml(a.technique)} · ${escapeHtml(a.size)} · ${a.year}</p>
+        <span class="badge ${a.status}">
+          ${a.status === "vendue" ? "VENDUE" : "DISPONIBLE"}
+        </span>
+      </div>
+    `;
+    item.addEventListener("click", ()=> openModal(a));
+    els.masonry.appendChild(item);
+  });
+
+  els.count.textContent = `${list.length} œuvre${list.length>1 ? "s" : ""}`;
+}
+
+/* =========================
+   MODAL
+   ========================= */
 
 function openModal(a){
-  modalImg.src = a.image;
-  modalTitle.textContent = a.title;
-  modalMeta.textContent = `${a.technique} · ${a.size} · ${a.year}`;
-  modal.showModal();
+  els.modalImg.src = a.image;
+  els.modalImg.alt = a.title;
+  els.modalTitle.textContent = a.title.toUpperCase();
+
+  const label = (a.status === "vendue") ? "VENDUE" : "DISPONIBLE";
+  els.modalMeta.innerHTML =
+    `${escapeHtml(a.technique)} · ${escapeHtml(a.size)} · ${a.year} · ` +
+    `<span class="statusText ${a.status}">${label}</span>`;
+
+  els.modal.showModal();
 }
-modalClose.onclick = ()=>modal.close();
 
-/* ================= EVENTS ================= */
+function closeModal(){ els.modal.close(); }
 
-q.oninput = ()=>{ filters.q = q.value.toLowerCase(); render(); };
-resetBtn.onclick = ()=>{
-  filters = { q:"", year:new Set(), technique:new Set(), size:new Set(), status:new Set() };
-  q.value="";
+/* =========================
+   EVENTS
+   ========================= */
+
+els.q.addEventListener("input", () => {
+  filters.q = els.q.value || "";
   render();
-};
+});
 
-/* ================= INIT ================= */
+els.reset.addEventListener("click", ()=>{
+  filters.q = "";
+  filters.year.clear();
+  filters.technique.clear();
+  filters.size.clear();
+  filters.status.clear();
 
-load();
+  els.q.value = "";
+
+  ["year","technique","size","status"].forEach(k => {
+    syncCheckboxesForKey(k);
+    setBadgeCount(k);
+  });
+
+  renderChips();
+  render();
+});
+
+Object.values(ddEls).forEach(dd => {
+  const btn = dd.querySelector(".pillBtn");
+  btn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const isOpen = dd.classList.contains("is-open");
+    closeAllDropdowns();
+    if(!isOpen){
+      dd.classList.add("is-open");
+      btn.setAttribute("aria-expanded", "true");
+    }
+  });
+});
+
+document.addEventListener("click", () => closeAllDropdowns());
+Object.values(panels).forEach(p => p.addEventListener("click", (e) => e.stopPropagation()));
+
+els.modalClose.addEventListener("click", closeModal);
+els.modal.addEventListener("click", (e)=>{ if(e.target === els.modal) closeModal(); });
+document.addEventListener("keydown", (e)=>{ if(e.key === "Escape" && els.modal.open) closeModal(); });
+
+/* =========================
+   INIT
+   ========================= */
+
+document.addEventListener("DOMContentLoaded", async () => {
+  try{
+    artworks = await loadArtworksFromSheet();
+    hydrateDropdowns();
+    renderChips();
+    render();
+  } catch(err){
+    console.error(err);
+    els.count.textContent = "Erreur de chargement (Sheet/Images)";
+  }
+});
 </script>
 
 </body>
+</html>
+
 </html>
