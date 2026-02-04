@@ -430,57 +430,109 @@
     }
 
     function buildFormatPanel(){
-      const panel = panels.format;
-      panel.innerHTML = "";
+  const panel = panels.format;
+  panel.innerHTML = "";
 
-      // 1) Forme
-      addHeading(panel, "Forme");
-      ["carre","paysage","portrait"].forEach(k => {
-        addCheckboxRow(
-          panel,
-          filters.shape.has(k),
-          shapeLabel(k),
-          (isOn) => {
-            if(isOn) filters.shape.add(k); else filters.shape.delete(k);
-            setBadgeCount("format");
-            renderChips();
-            render();
-          }
-        );
-      });
+  const sizesByShape = {
+    carre: uniq(artworks.filter(a => a.shape === "carre").map(a => a.sizeNorm).filter(Boolean)),
+    paysage: uniq(artworks.filter(a => a.shape === "paysage").map(a => a.sizeNorm).filter(Boolean)),
+    portrait: uniq(artworks.filter(a => a.shape === "portrait").map(a => a.sizeNorm).filter(Boolean)),
+  };
 
-      addSeparator(panel);
+  function prettySize(sizeNorm){
+    return sizeNorm.replace(/\s*x\s*/g," × ").replace(/\s*cm\s*/g," cm");
+  }
 
-      // 2) Tailles par forme (sous-titres)
-      const sizesCarre = uniq(artworks.filter(a => a.shape === "carre").map(a => a.sizeNorm).filter(Boolean));
-      const sizesPaysage = uniq(artworks.filter(a => a.shape === "paysage").map(a => a.sizeNorm).filter(Boolean));
-      const sizesPortrait = uniq(artworks.filter(a => a.shape === "portrait").map(a => a.sizeNorm).filter(Boolean));
+  function groupBlock(shapeKey){
+    const label = shapeLabel(shapeKey);
+    const isOn = filters.shape.has(shapeKey);
+    const list = sizesByShape[shapeKey];
 
-      function blockSizes(title, list){
-        addHeading(panel, title);
-        list.forEach(sizeNorm => {
-          // affichage plus joli : remettre "cm" et "x" espacés
-          const display = sizeNorm.replace(/\s*x\s*/g," × ").replace(/\s*cm\s*/g," cm");
-          addCheckboxRow(
-            panel,
-            filters.size.has(sizeNorm),
-            display,
-            (isOn) => {
-              if(isOn) filters.size.add(sizeNorm); else filters.size.delete(sizeNorm);
-              setBadgeCount("format");
-              renderChips();
-              render();
-            }
-          );
-        });
-      }
+    // Ligne Carré / Paysage / Portrait avec checkbox
+    const row = document.createElement("label");
+    row.className = "ddRow";
 
-      blockSizes("Tailles — Carré", sizesCarre);
-      blockSizes("Tailles — Paysage", sizesPaysage);
-      blockSizes("Tailles — Portrait", sizesPortrait);
+    const input = document.createElement("input");
+    input.type = "checkbox";
+    input.checked = isOn;
+
+    const text = document.createElement("span");
+    text.className = "ddLabel";
+    text.style.fontWeight = "900";
+    text.style.letterSpacing = ".08em";
+    text.style.textTransform = "uppercase";
+    text.textContent = label;
+
+    input.addEventListener("change", () => {
+      if(input.checked) filters.shape.add(shapeKey);
+      else filters.shape.delete(shapeKey);
 
       setBadgeCount("format");
+      renderChips();
+      render();
+
+      // reconstruit le panel pour afficher/cacher les tailles
+      buildFormatPanel();
+    });
+
+    row.appendChild(input);
+    row.appendChild(text);
+    panel.appendChild(row);
+
+    // Tailles visibles uniquement si la forme est cochée
+    if(input.checked){
+      const wrap = document.createElement("div");
+      wrap.style.padding = "4px 0 10px 34px";  // indentation
+      wrap.style.display = "grid";
+      wrap.style.gap = "6px";
+
+      list.forEach(sizeNorm => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.textContent = prettySize(sizeNorm);
+
+        // style minimal sans toucher ton CSS
+        btn.style.textAlign = "left";
+        btn.style.padding = "8px 10px";
+        btn.style.borderRadius = "10px";
+        btn.style.border = "1px solid rgba(255,255,255,.18)";
+        btn.style.background = filters.size.has(sizeNorm)
+          ? "rgba(61,220,132,.18)"
+          : "rgba(255,255,255,.06)";
+        btn.style.color = "rgba(255,255,255,.92)";
+        btn.style.cursor = "pointer";
+
+        btn.addEventListener("click", () => {
+          if(filters.size.has(sizeNorm)) filters.size.delete(sizeNorm);
+          else filters.size.add(sizeNorm);
+
+          setBadgeCount("format");
+          renderChips();
+          render();
+
+          // refresh visuel
+          buildFormatPanel();
+        });
+
+        wrap.appendChild(btn);
+      });
+
+      panel.appendChild(wrap);
     }
+
+    // séparateur entre groupes
+    const sep = document.createElement("div");
+    sep.className = "ddSep";
+    panel.appendChild(sep);
+  }
+
+  groupBlock("carre");
+  groupBlock("paysage");
+  groupBlock("portrait");
+
+  setBadgeCount("format");
+}
+
 
     function hydrateDropdowns(){
       const categories = uniq(artworks.map(a => a.category).filter(Boolean));
