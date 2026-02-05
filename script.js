@@ -108,165 +108,205 @@
     }
   }
 
-  /* =========================
-     3) GALERIES (Leaflet) — SAFE
-     ========================= */
-  function initGaleriesPage() {
-    // Détection simple : si pas de #map ou #list, on ne fait rien
-    const mapDiv = document.getElementById("map");
-    const listDiv = document.getElementById("list");
-    if (!mapDiv || !listDiv) return;
+ /* =========================
+   3) GALERIES (Leaflet) — ULTRA SAFE
+   ========================= */
+function initGaleriesPage() {
+  const mapDiv = document.getElementById("map");
+  const listDiv = document.getElementById("list");
+  if (!mapDiv || !listDiv) return;
 
-    // Leaflet pas chargé => on ne casse rien
-    if (!window.L) {
-      console.warn("[Galeries] Leaflet non chargé (window.L absent).");
+  const qInput = document.getElementById("q");
+  const resetBtn = document.getElementById("reset");
+  const metaEl = document.getElementById("meta");
+
+  // 1) Données (avec fallback)
+  const galleries = (Array.isArray(window.GALLERIES_DATA) && window.GALLERIES_DATA.length)
+    ? window.GALLERIES_DATA
+    : [
+        { name:"Galerie Rue Toulouse (French Art Network)", city:"Laguna Beach", country:"USA", phone:"(949) 549-4546", address:"390 S. Coast Hwy, Laguna Beach, CA 92651", website:"https://www.frenchart.net", lat:33.5427, lng:-117.7831 },
+        { name:"Galerie Page", city:"Biarritz", country:"France", phone:"05 59 24 97 52", address:"37 Rue Mazagran, 64200 Biarritz", website:"https://www.galeriepage-biarritz.com", lat:43.4832, lng:-1.5586 },
+        { name:"Artclub Gallery", city:"Lyon", country:"France", phone:"+33 (0)4 78 37 47 37", address:"22 Place Bellecour, 69002 Lyon", website:"https://www.artclub.fr", lat:45.7579, lng:4.8320 },
+        { name:"Artclub Gallery", city:"Paris", country:"France", phone:"+33 (0)1 47 03 42 20", address:"172 Rue de Rivoli, 75001 Paris", website:"https://www.artclub.fr", lat:48.8619, lng:2.3341 },
+        { name:"French Art Network — New Orleans", city:"New Orleans", country:"USA", phone:"(504) 581-5881", address:"509 Rue Royale, New Orleans, LA 70130", website:"https://www.frenchart.net", lat:29.9574, lng:-90.0620 },
+        { name:"French Art Network — Carmel-by-the-Sea", city:"Carmel-by-the-Sea", country:"USA", phone:"(931) 625-3456", address:"San Carlos St, Carmel-by-the-Sea, CA 93921", website:"https://www.frenchart.net", lat:36.5552, lng:-121.9233 },
+      ];
+
+  function escapeHtml(s) {
+    return String(s ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  // 2) On rend la LISTE même si Leaflet n'est pas chargé
+  let map = null;
+  let group = null;
+  let markers = [];
+
+  const leafletReady = !!window.L;
+
+  function makePopup(g) {
+    const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${g.lat},${g.lng}`;
+    const site = g.website
+      ? `<a class="link" href="${g.website}" target="_blank" rel="noopener noreferrer">site</a>`
+      : "";
+
+    return `
+      <div>
+        <p style="margin:0 0 6px;font-weight:800">${escapeHtml(g.name)}</p>
+        <p style="margin:0;color:rgba(255,255,255,.82);font-size:13px;line-height:1.4">
+          ${escapeHtml(g.address)}<br>${escapeHtml(g.city)} · ${escapeHtml(g.country)}
+        </p>
+        <p style="margin:10px 0 0;font-size:13px">
+          <a class="link" href="${mapsUrl}" target="_blank" rel="noopener noreferrer">itinéraire</a>
+          ${site ? " · " + site : ""}
+        </p>
+      </div>
+    `;
+  }
+
+  function safeInvalidate() {
+    if (!map) return;
+    // triple tick = robuste même si layout bouge
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        try { map.invalidateSize(); } catch(_) {}
+      });
+    });
+    setTimeout(() => { try { map && map.invalidateSize(); } catch(_) {} }, 150);
+  }
+
+  function initLeaflet() {
+    if (!leafletReady) {
+      console.warn("[Galeries] Leaflet non chargé => liste OK, carte désactivée.");
       return;
     }
 
-    const qInput = document.getElementById("q");
-    const resetBtn = document.getElementById("reset");
-    const metaEl = document.getElementById("meta");
+    try {
+      map = L.map(mapDiv, { scrollWheelZoom: true });
 
-    // ✅ Tu peux mettre tes galeries dans window.GALLERIES_DATA depuis le HTML si tu veux
-    const galleries = Array.isArray(window.GALLERIES_DATA) && window.GALLERIES_DATA.length
-      ? window.GALLERIES_DATA
-      : [
-          { name:"Galerie Rue Toulouse (French Art Network)", city:"Laguna Beach", country:"USA", phone:"(949) 549-4546", address:"390 S. Coast Hwy, Laguna Beach, CA 92651", website:"https://www.frenchart.net", lat:33.5427, lng:-117.7831 },
-          { name:"Galerie Page", city:"Biarritz", country:"France", phone:"05 59 24 97 52", address:"37 Rue Mazagran, 64200 Biarritz", website:"https://www.galeriepage-biarritz.com", lat:43.4832, lng:-1.5586 },
-          { name:"Artclub Gallery", city:"Lyon", country:"France", phone:"+33 (0)4 78 37 47 37", address:"22 Place Bellecour, 69002 Lyon", website:"https://www.artclub.fr", lat:45.7579, lng:4.8320 },
-          { name:"Artclub Gallery", city:"Paris", country:"France", phone:"+33 (0)1 47 03 42 20", address:"172 Rue de Rivoli, 75001 Paris", website:"https://www.artclub.fr", lat:48.8619, lng:2.3341 },
-          { name:"French Art Network — New Orleans", city:"New Orleans", country:"USA", phone:"(504) 581-5881", address:"509 Rue Royale, New Orleans, LA 70130", website:"https://www.frenchart.net", lat:29.9574, lng:-90.0620 },
-          { name:"French Art Network — Carmel-by-the-Sea", city:"Carmel-by-the-Sea", country:"USA", phone:"(931) 625-3456", address:"San Carlos St, Carmel-by-the-Sea, CA 93921", website:"https://www.frenchart.net", lat:36.5552, lng:-121.9233 },
-        ];
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 18,
+        attribution: "&copy; OpenStreetMap"
+      }).addTo(map);
 
-    function escapeHtml(s) {
-      return String(s ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
+      group = L.featureGroup().addTo(map);
+
+      safeInvalidate();
+
+      // ResizeObserver si dispo (sinon on ignore)
+      if (window.ResizeObserver) {
+        const ro = new ResizeObserver(() => safeInvalidate());
+        ro.observe(mapDiv);
+      }
+
+      window.addEventListener("resize", safeInvalidate);
+    } catch (err) {
+      console.error("[Galeries] initLeaflet error:", err);
+      map = null;
+      group = null;
+      markers = [];
     }
+  }
 
-    // --- MAP INIT ---
-    const map = L.map(mapDiv, { scrollWheelZoom: true });
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      maxZoom: 18,
-      attribution: "&copy; OpenStreetMap"
-    }).addTo(map);
+  function isValidCoord(n) {
+    const x = Number(n);
+    return Number.isFinite(x);
+  }
 
-    const group = L.featureGroup().addTo(map);
-    let markers = [];
+  function renderMarkers(list) {
+    if (!map || !group) return;
 
-    function makePopup(g) {
-      const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${g.lat},${g.lng}`;
-      const site = g.website
-        ? `<a class="link" href="${g.website}" target="_blank" rel="noopener noreferrer">site</a>`
-        : "";
-
-      return `
-        <div>
-          <p style="margin:0 0 6px;font-weight:800">${escapeHtml(g.name)}</p>
-          <p style="margin:0;color:rgba(255,255,255,.82);font-size:13px;line-height:1.4">
-            ${escapeHtml(g.address)}<br>${escapeHtml(g.city)} · ${escapeHtml(g.country)}
-          </p>
-          <p style="margin:10px 0 0;font-size:13px">
-            <a class="link" href="${mapsUrl}" target="_blank" rel="noopener noreferrer">itinéraire</a>
-            ${site ? " · " + site : ""}
-          </p>
-        </div>
-      `;
-    }
-
-    function renderMarkers(list) {
+    try {
       group.clearLayers();
       markers = [];
 
-      list.forEach((g) => {
-        const m = L.marker([g.lat, g.lng]).addTo(group);
+      const valid = list.filter(g => isValidCoord(g.lat) && isValidCoord(g.lng));
+
+      valid.forEach((g) => {
+        const m = L.marker([Number(g.lat), Number(g.lng)]).addTo(group);
         m.bindPopup(makePopup(g));
         markers.push(m);
       });
 
-      if (list.length) {
+      if (valid.length) {
         map.fitBounds(group.getBounds().pad(0.18));
       } else {
         map.setView([20, 0], 2);
       }
 
       safeInvalidate();
+    } catch (err) {
+      console.error("[Galeries] renderMarkers error:", err);
     }
+  }
 
-    function renderList(list) {
-      listDiv.innerHTML = "";
+  function renderList(list) {
+    listDiv.innerHTML = "";
 
-      list.forEach((g, idx) => {
-        const div = document.createElement("div");
-        div.className = "item";
-        div.innerHTML = `
-          <p class="name">${escapeHtml(g.name)}</p>
-          <p class="sub">
-            ${escapeHtml(g.city)} · ${escapeHtml(g.country)}<br>
-            ${escapeHtml(g.address)}<br>
-            ${g.phone ? escapeHtml(g.phone) + "<br>" : ""}
-            ${g.website ? `<a class="link" href="${g.website}" target="_blank" rel="noopener noreferrer">site</a>` : ""}
-            <span> · </span>
-            <a class="link" href="https://www.google.com/maps/dir/?api=1&destination=${g.lat},${g.lng}" target="_blank" rel="noopener noreferrer">itinéraire</a>
-          </p>
-        `;
+    list.forEach((g, idx) => {
+      const div = document.createElement("div");
+      div.className = "item";
+      div.innerHTML = `
+        <p class="name">${escapeHtml(g.name)}</p>
+        <p class="sub">
+          ${escapeHtml(g.city)} · ${escapeHtml(g.country)}<br>
+          ${escapeHtml(g.address)}<br>
+          ${g.phone ? escapeHtml(g.phone) + "<br>" : ""}
+          ${g.website ? `<a class="link" href="${g.website}" target="_blank" rel="noopener noreferrer">site</a>` : ""}
+          <span> · </span>
+          <a class="link" href="https://www.google.com/maps/dir/?api=1&destination=${g.lat},${g.lng}" target="_blank" rel="noopener noreferrer">itinéraire</a>
+        </p>
+      `;
 
-        div.addEventListener("click", () => {
-          [...listDiv.querySelectorAll(".item")].forEach(x => x.classList.remove("is-active"));
-          div.classList.add("is-active");
+      div.addEventListener("click", () => {
+        [...listDiv.querySelectorAll(".item")].forEach(x => x.classList.remove("is-active"));
+        div.classList.add("is-active");
 
-          const m = markers[idx];
+        // si map existe, on ouvre le marker correspondant (mais attention: markers index = valid only)
+        if (map && markers.length) {
+          // on retrouve l'index du marker dans la liste "valid"
+          const valid = list.filter(x => isValidCoord(x.lat) && isValidCoord(x.lng));
+          const g2 = list[idx];
+          const markerIndex = valid.findIndex(v => v === g2);
+          const m = markers[markerIndex];
           if (m) {
             map.setView(m.getLatLng(), Math.max(map.getZoom(), 6), { animate: true });
             m.openPopup();
           }
-        });
-
-        listDiv.appendChild(div);
-      });
-    }
-
-    function applyFilter() {
-      const q = (qInput?.value || "").trim().toLowerCase();
-
-      const filtered = galleries.filter(g => {
-        const hay = `${g.name} ${g.city} ${g.country} ${g.address}`.toLowerCase();
-        return !q || hay.includes(q);
+        }
       });
 
-      if (metaEl) metaEl.textContent = `${filtered.length} galerie${filtered.length > 1 ? "s" : ""}`;
+      listDiv.appendChild(div);
+    });
+  }
 
-      renderList(filtered);
-      renderMarkers(filtered);
-    }
+  function applyFilter() {
+    const q = (qInput?.value || "").trim().toLowerCase();
 
-    // ✅ Leaflet “taille mauvaise” — correction solide
-    function safeInvalidate() {
-      // 2 frames + timeout : marche même après layout CSS
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => map.invalidateSize());
-      });
-    }
-
-    // ResizeObserver = quand ta carte change de taille, Leaflet recalcule
-    const ro = new ResizeObserver(() => safeInvalidate());
-    ro.observe(mapDiv);
-
-    window.addEventListener("resize", safeInvalidate);
-
-    // Events UI
-    if (qInput) qInput.addEventListener("input", applyFilter);
-    if (resetBtn) resetBtn.addEventListener("click", () => {
-      if (qInput) qInput.value = "";
-      applyFilter();
+    const filtered = galleries.filter(g => {
+      const hay = `${g.name} ${g.city} ${g.country} ${g.address}`.toLowerCase();
+      return !q || hay.includes(q);
     });
 
-    // init
-    applyFilter();
-    safeInvalidate();
+    if (metaEl) metaEl.textContent = `${filtered.length} galerie${filtered.length > 1 ? "s" : ""}`;
+
+    renderList(filtered);
+    renderMarkers(filtered);
   }
-})();
+
+  // Events UI
+  if (qInput) qInput.addEventListener("input", applyFilter);
+  if (resetBtn) resetBtn.addEventListener("click", () => {
+    if (qInput) qInput.value = "";
+    applyFilter();
+  });
+
+  // INIT
+  initLeaflet();
+  applyFilter();
+  safeInvalidate();
+}
