@@ -77,7 +77,7 @@
       filter: blur(1px);
     }
 
-    /* Cadre EXACTEMENT à la taille image (on met l’image en cover du cadre) */
+    /* Cadre EXACTEMENT à la taille image */
     .frame{
       position:relative;
       width:100%;
@@ -99,11 +99,6 @@
       justify-content:center;
     }
 
-    /* ✅ Ici on met cover OU contain ?
-       Tu veux “cadre à la taille du tableau”.
-       => on dimensionne le cadre au ratio du tableau, donc l’image peut être en cover sans crop.
-       En pratique : object-fit: contain est OK aussi, mais inutile si ratio match.
-    */
     .art img{
       width:100%;
       height:100%;
@@ -196,7 +191,7 @@
 
       const img = document.createElement("img");
       img.alt = "";
-      img.loading = "eager"; // important pour calcul rapide
+      img.loading = "eager";
       img.decoding = "async";
       img.src = "images/" + src;
 
@@ -204,24 +199,21 @@
       frame.appendChild(art);
       piece.appendChild(frame);
 
-      // si erreur -> on supprime la pièce (pas de cadre vide)
       img.addEventListener("error", () => piece.remove(), { once:true });
-
       return { piece, img };
     }
 
     function pieceHeightPx(piece){
-      // hauteur réelle calculée (min(62vh, 560px))
-      const h = piece.getBoundingClientRect().height;
-      return h;
+      return piece.getBoundingClientRect().height;
     }
 
     (async function init(){
       const row = document.getElementById("row");
       const images = shuffle(await loadManifest());
 
-      // combien d'images base pour remplir l'écran + buffer
-      const need = Math.max(10, Math.ceil(window.innerWidth / 240) + 8);
+      // base count : assez pour remplir l'écran + buffer
+      const approxCardW = 260; // estimation pour calculer un nombre correct
+      const need = Math.max(10, Math.ceil(window.innerWidth / approxCardW) + 10);
 
       const basePieces = [];
       for(let i=0;i<need;i++){
@@ -230,15 +222,14 @@
         basePieces.push({ piece, img });
       }
 
-      // Attendre chargement des images base pour connaître naturalWidth/Height
+      // attendre chargement
       await Promise.all(basePieces.map(({img}) => new Promise(resolve => {
         if(img.complete && img.naturalWidth > 0) return resolve();
         img.addEventListener("load", resolve, { once:true });
         img.addEventListener("error", resolve, { once:true });
       })));
 
-      // Calculer largeur de chaque cadre selon ratio réel
-      // largeur = hauteur * (w/h), bornée pour éviter géants
+      // largeur selon ratio
       basePieces.forEach(({piece, img}) => {
         if(!img.naturalWidth || !img.naturalHeight) return;
 
@@ -246,28 +237,27 @@
         const ratio = img.naturalWidth / img.naturalHeight;
         let w = h * ratio;
 
-        // bornes esthétiques
         w = Math.max(220, Math.min(w, 720));
-
         piece.style.setProperty("--w", Math.round(w) + "px");
       });
 
-      // Maintenant qu'on a des widths justes, on clone la rangée pour la boucle
+      // wrapper base
       const baseWrapper = document.createElement("div");
       baseWrapper.style.display = "contents";
-
-      // déplacer les enfants actuels dans baseWrapper
       while(row.firstChild) baseWrapper.appendChild(row.firstChild);
       row.appendChild(baseWrapper);
 
-      const cloneWrapper = baseWrapper.cloneNode(true);
-      row.appendChild(cloneWrapper);
+      // ✅ 3 boucles : gauche + centre(base) + droite
+      const leftWrapper = baseWrapper.cloneNode(true);
+      const rightWrapper = baseWrapper.cloneNode(true);
+      row.insertBefore(leftWrapper, baseWrapper);
+      row.appendChild(rightWrapper);
 
-      // Reflow et mesures
+      // mesurer
       await new Promise(r => requestAnimationFrame(r));
       const loopWidth = baseWrapper.getBoundingClientRect().width;
 
-      // ✅ Démarrer hors écran à gauche : on commence “avant”
+      // ✅ position de départ au centre, et il y aura toujours du contenu à gauche
       let x = -loopWidth;
       const speed = 65; // px/sec vers la droite
       let last = performance.now();
@@ -278,10 +268,8 @@
 
         x += speed * dt;
 
-        // quand la première boucle est totalement passée, on recale
-        if(x >= 0){
-          x -= loopWidth;
-        }
+        // fenêtre stable : x reste dans [-loopWidth, 0)
+        if (x >= 0) x -= loopWidth;
 
         row.style.transform = `translate3d(${x}px, -50%, 0)`;
         requestAnimationFrame(tick);
@@ -289,7 +277,7 @@
 
       requestAnimationFrame(tick);
 
-      // Resize => recalcul propre (sinon ratios et loopWidth changent)
+      // resize safe
       window.addEventListener("resize", () => location.reload());
     })();
   </script>
