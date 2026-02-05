@@ -166,135 +166,228 @@
       </footer>
     </div>
   </div>
+<script>
+(() => {
+  "use strict";
 
-  <script>
-    async function loadManifest(){
-      const res = await fetch("images/manifest.json", { cache: "no-store" });
-      if(!res.ok) throw new Error("manifest introuvable");
+  const MANIFEST_URL = "images/manifest.json";
+  const IMAGES_PREFIX = "images/";
+  const BORDER_PX = 10;        // doit matcher .frame { border: 10px }
+  const GAP_DESKTOP = 42;      // doit matcher ton CSS gap
+  const GAP_MOBILE  = 28;
+
+  const row = document.getElementById("row");
+  if (!row) {
+    console.error("[home-wall] #row introuvable");
+    return;
+  }
+
+  // --- utils
+  const prefersReducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function shuffle(arr){
+    const a = arr.slice();
+    for(let i=a.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [a[i],a[j]]=[a[j],a[i]];
+    }
+    return a;
+  }
+
+  async function loadManifestSafe(){
+    try{
+      const res = await fetch(MANIFEST_URL, { cache: "no-store" });
+      if(!res.ok) throw new Error("HTTP " + res.status);
       const list = await res.json();
-      if(!Array.isArray(list) || list.length === 0) throw new Error("manifest vide");
+      if(!Array.isArray(list) || !list.length) throw new Error("manifest vide");
       return list;
+    }catch(err){
+      console.error("[home-wall] manifest KO, fallback:", err);
+      // fallback minimal (mets 2-3 images sûres si tu veux)
+      return [];
+    }
+  }
+
+  function makePiece(src){
+    const piece = document.createElement("div");
+    piece.className = "piece";
+
+    const frame = document.createElement("div");
+    frame.className = "frame";
+
+    const art = document.createElement("div");
+    art.className = "art";
+
+    const img = document.createElement("img");
+    img.alt = "";
+    img.loading = "eager";
+    img.decoding = "async";
+    img.src = IMAGES_PREFIX + src;
+
+    art.appendChild(img);
+    frame.appendChild(art);
+    piece.appendChild(frame);
+
+    img.addEventListener("error", () => {
+      console.warn("[home-wall] image introuvable:", img.src);
+      piece.remove();
+    }, { once:true });
+
+    return { piece, img };
+  }
+
+  function getPieceOuterHeightPx(examplePiece){
+    // height: min(62vh, 560px) -> on lit le rendu réel
+    const r = examplePiece.getBoundingClientRect();
+    return Math.max(1, r.height);
+  }
+
+  function currentGap(){
+    return window.innerWidth <= 900 ? GAP_MOBILE : GAP_DESKTOP;
+  }
+
+  function setExactWidthFromImage(piece, img){
+    // hauteur utile = hauteur totale - 2*bordure
+    const hOuter = getPieceOuterHeightPx(piece);
+    const hInner = Math.max(1, hOuter - BORDER_PX*2);
+    const ratio = img.naturalWidth / img.naturalHeight;
+
+    const wInner = hInner * ratio;
+    const wOuter = wInner + BORDER_PX*2;
+
+    // mini seulement (sinon trop fin)
+    const wFinal = Math.max(240, wOuter);
+
+    piece.style.setProperty("--w", Math.round(wFinal) + "px");
+  }
+
+  function waitImageReady(img){
+    // decode() est le plus fiable si dispo
+    if (img.decode) {
+      return img.decode().catch(() => {}); // decode peut rejeter si cross/erreur
+    }
+    return new Promise((resolve) => {
+      if (img.complete) return resolve();
+      img.addEventListener("load", resolve, { once:true });
+      img.addEventListener("error", resolve, { once:true });
+    });
+  }
+
+  function buildBands(pieces){
+    // 3 bandes : left / center / right
+    const bandL = document.createElement("div");
+    const bandC = document.createElement("div");
+    const bandR = document.createElement("div");
+    bandL.className = "band";
+    bandC.className = "band";
+    bandR.className = "band";
+
+    // répartir 1/3 - 1/3 - 1/3
+    pieces.forEach((p, i) => {
+      (i % 3 === 0 ? bandL : i % 3 === 1 ? bandC : bandR).appendChild(p);
+    });
+
+    row.innerHTML = "";
+    row.appendChild(bandL);
+    row.appendChild(bandC);
+    row.appendChild(bandR);
+
+    // clone pour boucle infinie (important: clone les 3 bandes)
+    const cloneL = bandL.cloneNode(true);
+    const cloneC = bandC.cloneNode(true);
+    const cloneR = bandR.cloneNode(true);
+    row.appendChild(cloneL);
+    row.appendChild(cloneC);
+    row.appendChild(cloneR);
+
+    return { bandL, bandC, bandR };
+  }
+
+  function measureLoopWidth(){
+    // largeur d’une “triple bande” = largeur des 3 premières bandes + 2*column-gap
+    // Comme on a 6 bandes (3 originales + 3 clones), on mesure la moitié.
+    const bands = row.querySelectorAll(".band");
+    if (bands.length < 3) return 0;
+    const w = bands[0].getBoundingClientRect().width
+            + bands[1].getBoundingClientRect().width
+            + bands[2].getBoundingClientRect().width
+            + currentGap()*2;
+    return w;
+  }
+
+  async function init(){
+    if (prefersReducedMotion) return; // tu as déjà un fallback CSS
+
+    const list = shuffle(await loadManifestSafe());
+
+    if (!list.length) {
+      console.error("[home-wall] manifest vide => rien à afficher");
+      return;
     }
 
-    function shuffle(arr){
-      const a = arr.slice();
-      for(let i=a.length-1;i>0;i--){
-        const j = Math.floor(Math.random()*(i+1));
-        [a[i],a[j]]=[a[j],a[i]];
-      }
-      return a;
+    // combien de pièces pour remplir la largeur + buffer
+    const approxPerScreen = Math.ceil(window.innerWidth / 260) + 10;
+    const count = Math.max(18, approxPerScreen * 2);
+
+    // créer pièces
+    const pieces = [];
+    const imgs = [];
+    for(let i=0;i<count;i++){
+      const { piece, img } = makePiece(list[i % list.length]);
+      pieces.push(piece);
+      imgs.push(img);
     }
 
-    function makePiece(src){
-      const piece = document.createElement("div");
-      piece.className = "piece";
+    // monter dans le DOM avant de mesurer hauteur réelle
+    buildBands(pieces);
 
-      const frame = document.createElement("div");
-      frame.className = "frame";
+    // attendre que ça s’affiche une frame
+    await new Promise(r => requestAnimationFrame(r));
 
-      const art = document.createElement("div");
-      art.className = "art";
+    // attendre images prêtes + calculer largeur exacte
+    await Promise.all(imgs.map(waitImageReady));
+    imgs.forEach((img, idx) => {
+      if (!img.naturalWidth || !img.naturalHeight) return;
+      setExactWidthFromImage(pieces[idx], img);
+    });
 
-      const img = document.createElement("img");
-      img.alt = "";
-      img.loading = "eager";
-      img.decoding = "async";
-      img.src = "images/" + src;
+    // reflow
+    await new Promise(r => requestAnimationFrame(r));
 
-      art.appendChild(img);
-      frame.appendChild(art);
-      piece.appendChild(frame);
-
-      img.addEventListener("error", () => piece.remove(), { once:true });
-      return { piece, img };
+    // boucle
+    let loopW = measureLoopWidth();
+    if (!loopW) {
+      console.error("[home-wall] loopWidth=0 (CSS/DOM)");
+      return;
     }
 
-    function waitImg(img){
-      return new Promise((resolve) => {
-        if(img.complete && img.naturalWidth > 0) return resolve();
-        img.addEventListener("load", resolve, { once:true });
-        img.addEventListener("error", resolve, { once:true });
-      });
-    }
+    // départ : exactement hors écran à gauche
+    let x = -loopW;
+    const speed = 70; // px/s
+    let last = performance.now();
 
-    function clamp(n, a, b){ return Math.max(a, Math.min(n, b)); }
+    function tick(now){
+      const dt = Math.min(0.05, (now - last)/1000);
+      last = now;
 
-    (async function init(){
-      const row = document.getElementById("row");
-      const images = shuffle(await loadManifest());
+      x += speed * dt;
 
-      // ✅ band centrale qui servira de "base"
-      const baseBand = document.createElement("div");
-      baseBand.className = "band";
+      // quand on a “consommé” une boucle, on recale
+      if (x >= 0) x -= loopW;
 
-      // assez de pièces pour remplir + buffer
-      const approx = 280;
-      const need = Math.max(10, Math.ceil(window.innerWidth / approx) + 12);
-
-      const basePieces = [];
-      for(let i=0;i<need;i++){
-        const { piece, img } = makePiece(images[i % images.length]);
-        baseBand.appendChild(piece);
-        basePieces.push({ piece, img });
-      }
-
-      // on attend les images pour calculer le ratio
-      await Promise.all(basePieces.map(({img}) => waitImg(img)));
-
-      // largeur selon ratio réel
-      basePieces.forEach(({piece, img}) => {
-  if(!img.naturalWidth || !img.naturalHeight) return;
-
-  const border = 10; // ✅ doit matcher .frame border
-  const hOuter = pieceHeightPx(piece);          // hauteur totale du cadre
-  const hInner = Math.max(1, hOuter - border*2); // hauteur utile pour l'image
-  const ratio = img.naturalWidth / img.naturalHeight;
-
-  // largeur utile image, puis on rajoute la bordure
-  const wInner = hInner * ratio;
-  const wOuter = wInner + border*2;
-
-  // ✅ limite mini seulement (sinon les formats très verticaux deviennent trop fins)
-  const wFinal = Math.max(240, wOuter);
-
-  piece.style.setProperty("--w", Math.round(wFinal) + "px");
-});
-
-      // ✅ 3 bandes: gauche + centre + droite
-      const leftBand = baseBand.cloneNode(true);
-      const centerBand = baseBand;
-      const rightBand = baseBand.cloneNode(true);
-
-      row.appendChild(leftBand);
-      row.appendChild(centerBand);
-      row.appendChild(rightBand);
-
-      // attendre layout stable
-      await new Promise(r => requestAnimationFrame(r));
-      const loopWidth = centerBand.getBoundingClientRect().width;
-
-      // ✅ on démarre sur la bande centrale (et la gauche existe déjà)
-      let x = -loopWidth;
-      const speed = 65;
-      let last = performance.now();
-
-      function tick(now){
-        const dt = Math.min(0.05, (now - last) / 1000);
-        last = now;
-
-        x += speed * dt;
-
-        // fenêtre stable : x dans [-loopWidth, 0)
-        if (x >= 0) x -= loopWidth;
-
-        row.style.transform = `translate3d(${x}px, -50%, 0)`;
-        requestAnimationFrame(tick);
-      }
-
+      row.style.transform = `translate3d(${x}px, -50%, 0)`;
       requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
 
-      window.addEventListener("resize", () => location.reload());
-    })();
-  </script>
+    // resize: recalcul propre
+    window.addEventListener("resize", () => location.reload());
+  }
+
+  init().catch(err => console.error("[home-wall] fatal:", err));
+})();
+</script>
+
+  
 </body>
 </html>
