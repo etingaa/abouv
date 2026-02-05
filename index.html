@@ -11,155 +11,142 @@
 
   <link rel="stylesheet" href="styles.css" />
 
-  <!-- Styles spécifiques à la couverture (ne supprime rien de styles.css) -->
   <style>
-    /* Fond bleu plein écran comme les autres pages */
     body.home{
-      background-image: none !important;
-      background: #02253A !important;
-      overflow: hidden; /* on masque ce qui sort de l'écran */
+      background-image:none !important;
+      background:#02253A !important;
+      overflow:hidden;
     }
 
-    /* On garde ton header/footer mais en overlay */
-    .page{
-      min-height: 100vh;
-      display:flex;
-      flex-direction:column;
-    }
-    .container{
-      flex:1;
-      display:flex;
-      flex-direction:column;
-      position: relative;
-      z-index: 2; /* au-dessus de l’animation */
-    }
+    .page{min-height:100vh;display:flex;flex-direction:column;}
+    .container{flex:1;display:flex;flex-direction:column;position:relative;z-index:2;}
 
-    /* Le mur prend tout l’écran derrière (pas de “cadre global”) */
+    /* Mur plein écran derrière */
     .galleryWall{
-      position: fixed;
-      inset: 0;
-      z-index: 1;
-      pointer-events: none; /* ne bloque pas les clics menu */
+      position:fixed;
+      inset:0;
+      z-index:1;
+      pointer-events:none;
       background:
         radial-gradient(1100px 700px at 20% 15%, rgba(255,255,255,.12), rgba(255,255,255,0) 60%),
         radial-gradient(900px 600px at 70% 70%, rgba(255,255,255,.10), rgba(255,255,255,0) 55%);
     }
 
-    /* Piste où les tableaux se déplacent */
-    .track{
+    /* Fenêtre de défilement */
+    .viewport{
       position:absolute;
-      inset: 0;
+      inset:0;
       overflow:hidden;
     }
 
-    /* Un “tableau encadré” */
-    .piece{
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: var(--w, 320px);
-      height: var(--h, 420px);
-      transform: translateX(-120%);
+    /* Rangée */
+    .row{
+      position:absolute;
+      left:0;
+      right:0;
+      top: 50%;
+      transform: translateY(-50%);
+      height: min(62vh, 560px);
+      display:flex;
+      align-items:center;
+      gap: 42px;                 /* ✅ écart identique */
+      padding: 0 60px;           /* marge aux bords */
       will-change: transform;
-      pointer-events: none;
     }
 
-    /* Le cadre (rectangulaire, pas arrondi) */
-    .frame{
-      position: relative;
-      width: 100%;
+    /* Un tableau encadré (taille = taille du tableau) */
+    .piece{
+      flex: 0 0 auto;
       height: 100%;
-      background: #0b1520;
-      border: 10px solid rgba(255,255,255,.10);
-      outline: 1px solid rgba(255,255,255,.18);
-      box-shadow:
-        0 24px 70px rgba(0,0,0,.45),
-        inset 0 0 0 2px rgba(0,0,0,.35);
+      /* largeur variable mais contrôlée */
+      width: clamp(240px, 26vw, 420px);
+      position: relative;
     }
 
-    /* Le “spot” : un halo au-dessus qui éclaire le cadre */
-    .frame::before{
+    /* Si tu veux un mix portrait/paysage sans casser l’alignement */
+    .piece.portrait{ width: clamp(240px, 22vw, 360px); }
+    .piece.landscape{ width: clamp(320px, 32vw, 520px); }
+
+    /* Spot au-dessus (par pièce) */
+    .piece::before{
       content:"";
       position:absolute;
-      left: 50%;
-      top: -18%;
+      left:50%;
+      top:-18%;
       width: 140%;
       height: 70%;
       transform: translateX(-50%);
-      background: radial-gradient(closest-side, rgba(255,255,255,.20), rgba(255,255,255,0) 70%);
-      filter: blur(1px);
+      background: radial-gradient(closest-side, rgba(255,255,255,.20), rgba(255,255,255,0) 72%);
       opacity: .85;
       pointer-events:none;
+      filter: blur(1px);
     }
 
-    /* Petite ombre de vignettage sur l’image (effet expo) */
-    .frame::after{
-      content:"";
-      position:absolute;
-      inset: 0;
-      background:
-        radial-gradient(120% 90% at 50% 35%, rgba(255,255,255,.10), rgba(0,0,0,.18) 70%),
-        linear-gradient(180deg, rgba(0,0,0,.10), rgba(0,0,0,.18));
-      mix-blend-mode: overlay;
-      pointer-events:none;
-      opacity: .35;
+    /* Le cadre exactement à la taille de la pièce */
+    .frame{
+      position:relative;
+      width:100%;
+      height:100%;
+      background:#0b1520;
+      border: 10px solid rgba(255,255,255,.10);
+      outline: 1px solid rgba(255,255,255,.18);
+      box-shadow: 0 24px 70px rgba(0,0,0,.45), inset 0 0 0 2px rgba(0,0,0,.35);
     }
 
-    /* L’image : entière, non arrondie */
+    /* Zone image à l’intérieur du cadre */
     .art{
       position:absolute;
-      inset: 10px; /* marge intérieure du cadre */
-      background: #000;
+      inset: 10px;
       border: 1px solid rgba(255,255,255,.12);
-      box-shadow: inset 0 0 0 1px rgba(0,0,0,.35);
-      overflow: hidden;
+      background:#0a0f14;
+      overflow:hidden;
     }
+
+    /* ✅ tableau en entier */
     .art img{
       width:100%;
       height:100%;
-      object-fit: contain;  /* ✅ tableau en entier */
+      object-fit: contain;
       display:block;
-      background: #0a0f14;  /* fond derrière si ratios différents */
       filter: contrast(1.05) saturate(1.02);
     }
 
-    /* Lisibilité du header/footer au-dessus des images */
-    .top, .bottom{
-      position: relative;
-      z-index: 3;
-    }
-    .top{
-      padding-top: 18px;
-      padding-bottom: 10px;
-    }
-    .bottom{
-      margin-top: auto; /* pousse le footer en bas */
-      padding-top: 10px;
-      padding-bottom: 18px;
+    /* vignettage très léger */
+    .frame::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        radial-gradient(120% 90% at 50% 35%, rgba(255,255,255,.10), rgba(0,0,0,.18) 70%),
+        linear-gradient(180deg, rgba(0,0,0,.10), rgba(0,0,0,.18));
+      opacity:.25;
+      pointer-events:none;
     }
 
-    /* Respect accessibilité */
+    /* Lisibilité menu/footer */
+    .top, .bottom{position:relative;z-index:3;}
+    .bottom{margin-top:auto;padding-bottom:18px;}
+
     @media (prefers-reduced-motion: reduce){
-      .galleryWall{ display:none; }
-      body.home{ overflow:auto; }
+      .galleryWall{display:none;}
+      body.home{overflow:auto;}
     }
   </style>
 </head>
 
 <body class="home">
-  <!-- Mur animé plein écran -->
   <div class="galleryWall" aria-hidden="true">
-    <div class="track" id="track"></div>
+    <div class="viewport">
+      <div class="row" id="row"></div>
+    </div>
   </div>
 
   <div class="page">
     <div class="container">
-      <!-- TOP -->
       <header class="top">
         <div class="top__left">
           <a href="index.html" class="brand" aria-label="Accueil">ANNICK&nbsp;BOUVATTIER</a>
         </div>
-
         <nav class="top__nav" aria-label="Navigation principale">
           <a class="nav__link is-active" href="index.html">Accueil</a>
           <a class="nav__link" href="portfolio.html">Portfolio</a>
@@ -171,27 +158,17 @@
         </nav>
       </header>
 
-      <!-- BOTTOM -->
       <footer class="bottom">
         <div class="bottom__left">
-          <a class="bottom__link"
-             href="https://www.instagram.com/annick.bouvattier/"
-             target="_blank" rel="noopener noreferrer">instagram</a>
-
-          <a class="bottom__link"
-             href="https://www.facebook.com/annick.bouvattier/"
-             target="_blank" rel="noopener noreferrer">facebook</a>
-
-          <a class="bottom__link"
-             href="https://www.saatchiart.com/bouvattier"
-             target="_blank" rel="noopener noreferrer">saatchi art</a>
+          <a class="bottom__link" href="https://www.instagram.com/annick.bouvattier/" target="_blank" rel="noopener noreferrer">instagram</a>
+          <a class="bottom__link" href="https://www.facebook.com/annick.bouvattier/" target="_blank" rel="noopener noreferrer">facebook</a>
+          <a class="bottom__link" href="https://www.saatchiart.com/bouvattier" target="_blank" rel="noopener noreferrer">saatchi art</a>
         </div>
       </footer>
     </div>
   </div>
 
   <script>
-    // Lit /images/manifest.json (tableau de noms de fichiers)
     async function loadManifest(){
       const res = await fetch("images/manifest.json", { cache: "no-store" });
       if(!res.ok) throw new Error("manifest introuvable");
@@ -200,13 +177,22 @@
       return list;
     }
 
-    function rand(min, max){ return Math.random() * (max - min) + min; }
-    function pick(arr){ return arr[Math.floor(Math.random() * arr.length)]; }
+    function shuffle(arr){
+      const a = arr.slice();
+      for(let i=a.length-1;i>0;i--){
+        const j = Math.floor(Math.random()*(i+1));
+        [a[i],a[j]]=[a[j],a[i]];
+      }
+      return a;
+    }
 
-    // Fabrique un "tableau" (cadre + spot)
-    function createPiece(src){
+    function makePiece(src){
       const piece = document.createElement("div");
       piece.className = "piece";
+
+      // petite variation portrait/paysage (sans chevauchement car flex+gap)
+      if(Math.random() < 0.75) piece.classList.add("portrait");
+      else piece.classList.add("landscape");
 
       const frame = document.createElement("div");
       frame.className = "frame";
@@ -223,103 +209,79 @@
       frame.appendChild(art);
       piece.appendChild(frame);
 
-      return { piece, img };
+      return piece;
     }
 
-    // Animation façon "convoyeur" de gauche -> droite
     (async function init(){
-      const track = document.getElementById("track");
-      const images = await loadManifest();
+      const images = shuffle(await loadManifest());
+      const row = document.getElementById("row");
 
-      const W = () => window.innerWidth;
-      const H = () => window.innerHeight;
+      // combien d'items ? assez pour remplir + buffer
+      const baseCount = Math.max(10, Math.min(18, Math.ceil(window.innerWidth / 220) + 6));
 
-      // nombre d’éléments simultanés (adapte selon écran)
-      const count = Math.max(8, Math.min(16, Math.floor(W() / 160)));
-
-      // états animés
-      const items = [];
-
-      // Préparer les pièces
-      for(let i=0;i<count;i++){
-        const src = pick(images);
-        const { piece, img } = createPiece(src);
-
-        // tailles (variées mais cohérentes)
-        const portrait = Math.random() < 0.7;
-        const w = portrait ? rand(240, 360) : rand(320, 460);
-        const h = portrait ? w * rand(1.2, 1.45) : w * rand(0.70, 0.85);
-
-        piece.style.setProperty("--w", w.toFixed(0) + "px");
-        piece.style.setProperty("--h", h.toFixed(0) + "px");
-
-        // position verticale (évite header/footer)
-        const topMin = 90;
-        const topMax = Math.max(topMin + 40, H() - 140 - h);
-        const y = rand(topMin, topMax);
-
-        // départ décalé (éparpillé sur la largeur)
-        const x = rand(-W() * 0.6, W() * 1.1);
-
-        // vitesse (px/sec)
-        const v = rand(40, 85);
-
-        track.appendChild(piece);
-        items.push({ piece, img, x, y, w, h, v });
+      // 1) construire une première série
+      for(let i=0;i<baseCount;i++){
+        row.appendChild(makePiece(images[i % images.length]));
       }
 
-      function respawn(it){
-        it.img.src = "images/" + pick(images);
+      // 2) dupliquer pour faire une boucle parfaite
+      const clone = row.cloneNode(true);
+      clone.id = "rowClone";
+      row.parentElement.appendChild(clone);
 
-        // nouvelle taille parfois
-        const portrait = Math.random() < 0.7;
-        it.w = portrait ? rand(240, 360) : rand(320, 460);
-        it.h = portrait ? it.w * rand(1.2, 1.45) : it.w * rand(0.70, 0.85);
-
-        it.piece.style.setProperty("--w", it.w.toFixed(0) + "px");
-        it.piece.style.setProperty("--h", it.h.toFixed(0) + "px");
-
-        // repart à gauche, légèrement hors champ
-        it.x = -it.w - rand(40, 220);
-
-        // nouvelle hauteur
-        const topMin = 90;
-        const topMax = Math.max(topMin + 40, H() - 140 - it.h);
-        it.y = rand(topMin, topMax);
-
-        // nouvelle vitesse
-        it.v = rand(40, 85);
+      // Met le clone à la suite du premier
+      function placeClone(){
+        const w = row.getBoundingClientRect().width;
+        clone.style.transform = `translateX(${w}px) translateY(-50%)`;
       }
 
+      // On préfère gérer la boucle en JS (plus fiable que CSS pour le reset)
+      let x = 0;
+      const speed = 45; // px/sec -> ajuste
       let last = performance.now();
+
+      function layout(){
+        // on positionne les deux rangées au même Y
+        row.style.top = "50%";
+        clone.style.top = "50%";
+        row.style.position = "absolute";
+        clone.style.position = "absolute";
+        row.style.left = "0";
+        clone.style.left = "0";
+        row.style.transform = `translate(${x}px, -50%)`;
+
+        const w = row.getBoundingClientRect().width;
+        clone.style.transform = `translate(${x + w}px, -50%)`;
+      }
+
       function tick(now){
         const dt = Math.min(0.05, (now - last) / 1000);
         last = now;
 
-        const ww = W();
+        // gauche -> droite
+        x += speed * dt;
 
-        for(const it of items){
-          it.x += it.v * dt;
-          it.piece.style.transform = `translate(${it.x}px, ${it.y}px)`;
-
-          // quand ça sort à droite -> on recycle
-          if(it.x > ww + 80){
-            respawn(it);
-          }
+        const w = row.getBoundingClientRect().width;
+        // quand la 1ère rangée est entièrement passée, on reset
+        if(x >= w){
+          x -= w;
         }
 
+        layout();
         requestAnimationFrame(tick);
       }
 
-      // Ajuste si resize
-      window.addEventListener("resize", () => {
-        for(const it of items){
-          // si hors limite verticale, on le remet
-          const topMin = 90;
-          const topMax = Math.max(topMin + 40, H() - 140 - it.h);
-          if(it.y > topMax) it.y = topMax;
-        }
+      // initialise layout une fois les images chargées (meilleure largeur)
+      const imgs = [...row.querySelectorAll("img"), ...clone.querySelectorAll("img")];
+      let pending = imgs.length;
+      imgs.forEach(im=>{
+        if(im.complete) { pending--; return; }
+        im.addEventListener("load", ()=>{ pending--; if(pending===0) layout(); }, { once:true });
+        im.addEventListener("error", ()=>{ pending--; if(pending===0) layout(); }, { once:true });
       });
+      if(pending===0) layout();
+
+      window.addEventListener("resize", () => layout());
 
       requestAnimationFrame(tick);
     })();
