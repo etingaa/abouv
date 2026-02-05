@@ -100,21 +100,16 @@
   border: 10px solid rgba(255,255,255,.10);
   outline: 1px solid rgba(255,255,255,.18);
   box-shadow: 0 24px 70px rgba(0,0,0,.45), inset 0 0 0 2px rgba(0,0,0,.35);
-  overflow:hidden; /* ✅ important */
+  overflow:hidden;
 }
 
-.art{
-  position:absolute;
-  inset: 0;            /* ✅ plus de passe-partout */
-  background:#0a0f14;
-}
+.art{ position:absolute; inset:0; }
 
 .art img{
   width:100%;
   height:100%;
-  object-fit: contain; /* ✅ pas de crop, tableau entier */
+  object-fit: cover;   /* ✅ pas de bandes si ratio exact */
   display:block;
-  background:#0a0f14;  /* si jamais il reste une micro-bande */
 }
 
     .frame::after{
@@ -248,12 +243,22 @@
 
       // largeur selon ratio réel
       basePieces.forEach(({piece, img}) => {
-        if(!img.naturalWidth || !img.naturalHeight) return;
-        const h = piece.getBoundingClientRect().height;
-        const ratio = img.naturalWidth / img.naturalHeight;
-        const w = clamp(h * ratio, 220, 720);
-        piece.style.setProperty("--w", Math.round(w) + "px");
-      });
+  if(!img.naturalWidth || !img.naturalHeight) return;
+
+  const border = 10; // ✅ doit matcher .frame border
+  const hOuter = pieceHeightPx(piece);          // hauteur totale du cadre
+  const hInner = Math.max(1, hOuter - border*2); // hauteur utile pour l'image
+  const ratio = img.naturalWidth / img.naturalHeight;
+
+  // largeur utile image, puis on rajoute la bordure
+  const wInner = hInner * ratio;
+  const wOuter = wInner + border*2;
+
+  // ✅ limite mini seulement (sinon les formats très verticaux deviennent trop fins)
+  const wFinal = Math.max(240, wOuter);
+
+  piece.style.setProperty("--w", Math.round(wFinal) + "px");
+});
 
       // ✅ 3 bandes: gauche + centre + droite
       const leftBand = baseBand.cloneNode(true);
