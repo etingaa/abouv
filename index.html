@@ -13,140 +13,151 @@
 
   <!-- Styles spécifiques à la couverture (ne supprime rien de styles.css) -->
   <style>
-    /* Fond bleu comme les autres pages */
+    /* Fond bleu plein écran comme les autres pages */
     body.home{
       background-image: none !important;
       background: #02253A !important;
+      overflow: hidden; /* on masque ce qui sort de l'écran */
     }
 
-    /* Mettre footer en bas même si peu de contenu */
-    body.home .page{
+    /* On garde ton header/footer mais en overlay */
+    .page{
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
+      display:flex;
+      flex-direction:column;
     }
-    body.home .container{
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-    }
-
-    /* Zone "mur de galerie" entre header et footer */
-    .homeStage{
-      flex: 1;
-      margin-top: 10px;
-      border: 1px solid rgba(255,255,255,.18);
-      border-radius: 18px;
-      background: rgba(255,255,255,.04);
-      overflow: hidden;
+    .container{
+      flex:1;
+      display:flex;
+      flex-direction:column;
       position: relative;
-      display: flex;
-      flex-direction: column;
-      min-height: 520px;
+      z-index: 2; /* au-dessus de l’animation */
     }
 
-    /* Un léger halo comme sur tes autres cards */
-    .homeStage::before{
-      content:"";
-      position:absolute;
-      inset:0;
-      background:
-        radial-gradient(900px 520px at 30% 20%, rgba(255,255,255,.18), rgba(255,255,255,0) 60%),
-        radial-gradient(900px 520px at 70% 70%, rgba(255,255,255,.10), rgba(255,255,255,0) 55%);
-      pointer-events:none;
-      opacity:.9;
-    }
-
-    /* Le "mur" : grille dense qui remplit la zone */
-    .wall{
-      position: relative;
-      z-index: 1;
-      height: 100%;
-      padding: 16px;
-      display: grid;
-      grid-template-columns: repeat(6, minmax(0, 1fr));
-      gap: 12px;
-      align-content: start;
-      overflow: hidden;
-    }
-
-    @media (max-width: 1200px){
-      .wall{ grid-template-columns: repeat(5, minmax(0, 1fr)); }
-    }
-    @media (max-width: 980px){
-      .wall{ grid-template-columns: repeat(4, minmax(0, 1fr)); }
-    }
-    @media (max-width: 720px){
-      .wall{ grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    }
-    @media (max-width: 520px){
-      .wall{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    }
-
-    /* Cadre "tableau" */
-    .frame{
-      position: relative;
-      border-radius: 14px;
-      overflow: hidden;
-      border: 1px solid rgba(255,255,255,.18);
-      background: rgba(255,255,255,.03);
-      box-shadow: 0 18px 55px rgba(0,0,0,.25);
-      transform: translateZ(0);
-    }
-
-    /* Variations de ratios pour donner l'effet "mur" */
-    .frame.r1{ aspect-ratio: 4 / 5; }
-    .frame.r2{ aspect-ratio: 1 / 1; }
-    .frame.r3{ aspect-ratio: 3 / 2; }
-
-    .frame img{
-      width:100%;
-      height:100%;
-      object-fit: cover;
-      display:block;
-      opacity: .92;
-      filter: contrast(1.05) saturate(1.02);
-      transform: scale(1.02);
-      transition: opacity .35s ease, transform .45s ease;
-    }
-
-    /* Petit fondu discret au survol */
-    .frame:hover img{
-      opacity: 1;
-      transform: scale(1.06);
-    }
-
-    /* Animation : léger défilement vertical en boucle */
-    .wallScroller{
-      position: absolute;
+    /* Le mur prend tout l’écran derrière (pas de “cadre global”) */
+    .galleryWall{
+      position: fixed;
       inset: 0;
       z-index: 1;
+      pointer-events: none; /* ne bloque pas les clics menu */
+      background:
+        radial-gradient(1100px 700px at 20% 15%, rgba(255,255,255,.12), rgba(255,255,255,0) 60%),
+        radial-gradient(900px 600px at 70% 70%, rgba(255,255,255,.10), rgba(255,255,255,0) 55%);
+    }
+
+    /* Piste où les tableaux se déplacent */
+    .track{
+      position:absolute;
+      inset: 0;
+      overflow:hidden;
+    }
+
+    /* Un “tableau encadré” */
+    .piece{
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: var(--w, 320px);
+      height: var(--h, 420px);
+      transform: translateX(-120%);
       will-change: transform;
-      animation: wallScroll 22s linear infinite;
+      pointer-events: none;
     }
 
-    /* on fait défiler le contenu (on duplique la grille en JS pour la boucle) */
-    @keyframes wallScroll{
-      from{ transform: translateY(0); }
-      to{ transform: translateY(-50%); }
+    /* Le cadre (rectangulaire, pas arrondi) */
+    .frame{
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background: #0b1520;
+      border: 10px solid rgba(255,255,255,.10);
+      outline: 1px solid rgba(255,255,255,.18);
+      box-shadow:
+        0 24px 70px rgba(0,0,0,.45),
+        inset 0 0 0 2px rgba(0,0,0,.35);
     }
 
-    /* Footer en bas */
+    /* Le “spot” : un halo au-dessus qui éclaire le cadre */
+    .frame::before{
+      content:"";
+      position:absolute;
+      left: 50%;
+      top: -18%;
+      width: 140%;
+      height: 70%;
+      transform: translateX(-50%);
+      background: radial-gradient(closest-side, rgba(255,255,255,.20), rgba(255,255,255,0) 70%);
+      filter: blur(1px);
+      opacity: .85;
+      pointer-events:none;
+    }
+
+    /* Petite ombre de vignettage sur l’image (effet expo) */
+    .frame::after{
+      content:"";
+      position:absolute;
+      inset: 0;
+      background:
+        radial-gradient(120% 90% at 50% 35%, rgba(255,255,255,.10), rgba(0,0,0,.18) 70%),
+        linear-gradient(180deg, rgba(0,0,0,.10), rgba(0,0,0,.18));
+      mix-blend-mode: overlay;
+      pointer-events:none;
+      opacity: .35;
+    }
+
+    /* L’image : entière, non arrondie */
+    .art{
+      position:absolute;
+      inset: 10px; /* marge intérieure du cadre */
+      background: #000;
+      border: 1px solid rgba(255,255,255,.12);
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,.35);
+      overflow: hidden;
+    }
+    .art img{
+      width:100%;
+      height:100%;
+      object-fit: contain;  /* ✅ tableau en entier */
+      display:block;
+      background: #0a0f14;  /* fond derrière si ratios différents */
+      filter: contrast(1.05) saturate(1.02);
+    }
+
+    /* Lisibilité du header/footer au-dessus des images */
+    .top, .bottom{
+      position: relative;
+      z-index: 3;
+    }
+    .top{
+      padding-top: 18px;
+      padding-bottom: 10px;
+    }
     .bottom{
-      margin-top: 14px;
+      margin-top: auto; /* pousse le footer en bas */
+      padding-top: 10px;
+      padding-bottom: 18px;
+    }
+
+    /* Respect accessibilité */
+    @media (prefers-reduced-motion: reduce){
+      .galleryWall{ display:none; }
+      body.home{ overflow:auto; }
     }
   </style>
 </head>
 
 <body class="home">
+  <!-- Mur animé plein écran -->
+  <div class="galleryWall" aria-hidden="true">
+    <div class="track" id="track"></div>
+  </div>
+
   <div class="page">
     <div class="container">
       <!-- TOP -->
       <header class="top">
         <div class="top__left">
-          <a href="index.html" class="brand" aria-label="Accueil">
-            ANNICK&nbsp;BOUVATTIER
-          </a>
+          <a href="index.html" class="brand" aria-label="Accueil">ANNICK&nbsp;BOUVATTIER</a>
         </div>
 
         <nav class="top__nav" aria-label="Navigation principale">
@@ -160,172 +171,157 @@
         </nav>
       </header>
 
-      <!-- MUR DE GALERIE (défilement random) -->
-      <main class="homeStage" aria-label="Mur de galerie">
-        <div class="wallScroller" id="wallScroller">
-          <div class="wall" id="wall"></div>
-          <!-- la 2e grille (clone) sera injectée en JS pour la boucle -->
-        </div>
-      </main>
-
-      <!-- Liens en bas -->
+      <!-- BOTTOM -->
       <footer class="bottom">
         <div class="bottom__left">
           <a class="bottom__link"
              href="https://www.instagram.com/annick.bouvattier/"
-             target="_blank"
-             rel="noopener noreferrer">
-            instagram
-          </a>
+             target="_blank" rel="noopener noreferrer">instagram</a>
 
           <a class="bottom__link"
              href="https://www.facebook.com/annick.bouvattier/"
-             target="_blank"
-             rel="noopener noreferrer">
-            facebook
-          </a>
+             target="_blank" rel="noopener noreferrer">facebook</a>
 
           <a class="bottom__link"
              href="https://www.saatchiart.com/bouvattier"
-             target="_blank"
-             rel="noopener noreferrer">
-            saatchi art
-          </a>
+             target="_blank" rel="noopener noreferrer">saatchi art</a>
         </div>
       </footer>
     </div>
   </div>
 
   <script>
-    /**
-     * IMPORTANT :
-     * Un site statique (GitHub Pages) ne peut pas "lister" automatiquement le dossier /images.
-     * Donc il faut soit :
-     *  - (A) mettre ici la liste des fichiers, OU
-     *  - (B) créer un fichier images/manifest.json qui contient ["img1.jpg","img2.jpg",...]
-     *
-     * Cette page supporte les deux : elle essaie manifest.json, sinon elle prend la liste ci-dessous.
-     */
+    // Lit /images/manifest.json (tableau de noms de fichiers)
+    async function loadManifest(){
+      const res = await fetch("images/manifest.json", { cache: "no-store" });
+      if(!res.ok) throw new Error("manifest introuvable");
+      const list = await res.json();
+      if(!Array.isArray(list) || list.length === 0) throw new Error("manifest vide");
+      return list;
+    }
 
-    const fallbackImages = [
-      // Mets ici les noms exacts de tes images (dans /images/)
-      // Exemple :
-      // "tableau-01.jpg",
-      // "tableau-02.jpg",
-      // "tableau-03.jpg",
-    ];
+    function rand(min, max){ return Math.random() * (max - min) + min; }
+    function pick(arr){ return arr[Math.floor(Math.random() * arr.length)]; }
 
-    const WALL_TILES = 30;       // nombre de cadres visibles (ajuste)
-    const SWAP_EVERY_MS = 2600;  // rythme des changements aléatoires
+    // Fabrique un "tableau" (cadre + spot)
+    function createPiece(src){
+      const piece = document.createElement("div");
+      piece.className = "piece";
 
-    function shuffle(arr){
-      const a = arr.slice();
-      for(let i=a.length-1;i>0;i--){
-        const j = Math.floor(Math.random()*(i+1));
-        [a[i],a[j]] = [a[j],a[i]];
+      const frame = document.createElement("div");
+      frame.className = "frame";
+
+      const art = document.createElement("div");
+      art.className = "art";
+
+      const img = document.createElement("img");
+      img.alt = "";
+      img.loading = "lazy";
+      img.src = "images/" + src;
+
+      art.appendChild(img);
+      frame.appendChild(art);
+      piece.appendChild(frame);
+
+      return { piece, img };
+    }
+
+    // Animation façon "convoyeur" de gauche -> droite
+    (async function init(){
+      const track = document.getElementById("track");
+      const images = await loadManifest();
+
+      const W = () => window.innerWidth;
+      const H = () => window.innerHeight;
+
+      // nombre d’éléments simultanés (adapte selon écran)
+      const count = Math.max(8, Math.min(16, Math.floor(W() / 160)));
+
+      // états animés
+      const items = [];
+
+      // Préparer les pièces
+      for(let i=0;i<count;i++){
+        const src = pick(images);
+        const { piece, img } = createPiece(src);
+
+        // tailles (variées mais cohérentes)
+        const portrait = Math.random() < 0.7;
+        const w = portrait ? rand(240, 360) : rand(320, 460);
+        const h = portrait ? w * rand(1.2, 1.45) : w * rand(0.70, 0.85);
+
+        piece.style.setProperty("--w", w.toFixed(0) + "px");
+        piece.style.setProperty("--h", h.toFixed(0) + "px");
+
+        // position verticale (évite header/footer)
+        const topMin = 90;
+        const topMax = Math.max(topMin + 40, H() - 140 - h);
+        const y = rand(topMin, topMax);
+
+        // départ décalé (éparpillé sur la largeur)
+        const x = rand(-W() * 0.6, W() * 1.1);
+
+        // vitesse (px/sec)
+        const v = rand(40, 85);
+
+        track.appendChild(piece);
+        items.push({ piece, img, x, y, w, h, v });
       }
-      return a;
-    }
 
-    async function loadImages(){
-      try{
-        const res = await fetch("images/manifest.json", { cache: "no-store" });
-        if(!res.ok) throw new Error("no manifest");
-        const list = await res.json();
-        if(!Array.isArray(list) || list.length === 0) throw new Error("bad manifest");
-        return list;
-      }catch(e){
-        return fallbackImages;
-      }
-    }
+      function respawn(it){
+        it.img.src = "images/" + pick(images);
 
-    function ratioClass(i){
-      // ratio random mais stable par index
-      const r = i % 6;
-      if(r === 0 || r === 3) return "r3"; // paysage
-      if(r === 1 || r === 4) return "r2"; // carré
-      return "r1";                         // portrait
-    }
+        // nouvelle taille parfois
+        const portrait = Math.random() < 0.7;
+        it.w = portrait ? rand(240, 360) : rand(320, 460);
+        it.h = portrait ? it.w * rand(1.2, 1.45) : it.w * rand(0.70, 0.85);
 
-    function buildWall(imgs){
-      const wall = document.getElementById("wall");
-      wall.innerHTML = "";
+        it.piece.style.setProperty("--w", it.w.toFixed(0) + "px");
+        it.piece.style.setProperty("--h", it.h.toFixed(0) + "px");
 
-      const pool = shuffle(imgs);
-      const tiles = [];
+        // repart à gauche, légèrement hors champ
+        it.x = -it.w - rand(40, 220);
 
-      for(let i=0;i<WALL_TILES;i++){
-        const src = pool[i % pool.length];
-        const frame = document.createElement("div");
-        frame.className = `frame ${ratioClass(i)}`;
+        // nouvelle hauteur
+        const topMin = 90;
+        const topMax = Math.max(topMin + 40, H() - 140 - it.h);
+        it.y = rand(topMin, topMax);
 
-        const img = document.createElement("img");
-        img.loading = "lazy";
-        img.alt = "";
-        img.src = "images/" + src;
-
-        frame.appendChild(img);
-        wall.appendChild(frame);
-        tiles.push(img);
+        // nouvelle vitesse
+        it.v = rand(40, 85);
       }
 
-      // Clone pour boucle de scroll (mur infini)
-      const scroller = document.getElementById("wallScroller");
-      const clone = wall.cloneNode(true);
-      clone.id = "wallClone";
-      scroller.appendChild(clone);
+      let last = performance.now();
+      function tick(now){
+        const dt = Math.min(0.05, (now - last) / 1000);
+        last = now;
 
-      return { tiles, imgs };
-    }
+        const ww = W();
 
-    function startRandomSwaps(state){
-      if(!state.imgs || state.imgs.length < 2) return;
+        for(const it of items){
+          it.x += it.v * dt;
+          it.piece.style.transform = `translate(${it.x}px, ${it.y}px)`;
 
-      setInterval(() => {
-        // change 1 à 3 images aléatoirement avec fondu
-        const swaps = 1 + Math.floor(Math.random() * 3);
-        for(let k=0;k<swaps;k++){
-          const idx = Math.floor(Math.random() * state.tiles.length);
-          const img = state.tiles[idx];
-          const next = state.imgs[Math.floor(Math.random() * state.imgs.length)];
-
-          // fondu simple
-          img.style.opacity = "0";
-          setTimeout(() => {
-            img.src = "images/" + next;
-            img.style.opacity = "";
-          }, 220);
-        }
-
-        // on met aussi à jour le clone pour éviter la répétition visible
-        const clone = document.getElementById("wallClone");
-        if(clone){
-          const cloneImgs = clone.querySelectorAll("img");
-          for(let k=0;k<swaps;k++){
-            const idx = Math.floor(Math.random() * cloneImgs.length);
-            const img = cloneImgs[idx];
-            const next = state.imgs[Math.floor(Math.random() * state.imgs.length)];
-            img.style.opacity = "0";
-            setTimeout(() => {
-              img.src = "images/" + next;
-              img.style.opacity = "";
-            }, 220);
+          // quand ça sort à droite -> on recycle
+          if(it.x > ww + 80){
+            respawn(it);
           }
         }
-      }, SWAP_EVERY_MS);
-    }
 
-    (async function init(){
-      const imgs = await loadImages();
-
-      // sécurité : si aucune image listée, on évite un mur vide
-      if(!imgs || imgs.length === 0){
-        console.warn("Aucune image trouvée. Ajoute images/manifest.json ou renseigne fallbackImages.");
-        return;
+        requestAnimationFrame(tick);
       }
 
-      const state = buildWall(imgs);
-      startRandomSwaps(state);
+      // Ajuste si resize
+      window.addEventListener("resize", () => {
+        for(const it of items){
+          // si hors limite verticale, on le remet
+          const topMin = 90;
+          const topMax = Math.max(topMin + 40, H() - 140 - it.h);
+          if(it.y > topMax) it.y = topMax;
+        }
+      });
+
+      requestAnimationFrame(tick);
     })();
   </script>
 </body>
