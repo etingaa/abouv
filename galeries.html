@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
 
-  <!-- ✅ Leaflet CSS -->
+  <!-- Leaflet -->
   <link
     rel="stylesheet"
     href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -17,294 +17,57 @@
     crossorigin=""
   />
 
-  <!-- ✅ ton CSS global -->
   <link rel="stylesheet" href="styles.css">
-
-  <!-- ✅ CSS spécifique galeries (min) -->
-  <style>
-    body.galeries{ background-image:none; background:#02253A; }
-    .galWrap{ width:100%; max-width:1400px; margin:0 auto; padding:20px 48px 56px; }
-    @media (max-width:768px){ .galWrap{ padding:16px 20px 40px; } }
-
-    .galHead{ display:flex; align-items:baseline; justify-content:space-between; gap:16px; margin:14px 0 10px; }
-    .galHead h1{ margin:0; font-size:28px; font-weight:800; }
-    .galMeta{ color: rgba(255,255,255,.55); font-size:14px; }
-
-    .galCard{
-      margin-top:12px;
-      display:grid;
-      grid-template-columns: 1.2fr .8fr;
-      border:1px solid rgba(255,255,255,.18);
-      border-radius:18px;
-      overflow:hidden;
-      background: rgba(255,255,255,.04);
-    }
-    @media (max-width:1050px){ .galCard{ grid-template-columns:1fr; } }
-
-    .galMap{
-      background:#0b1c28;
-      min-height:560px;
-    }
-    #map{
-      width:100%;
-      height:560px;     /* ✅ hauteur réelle */
-      background:#0b1c28;
-    }
-    @media (max-width:1050px){
-      .galMap{ min-height:420px; }
-      #map{ height:420px; }
-    }
-
-    .galSide{
-      border-left:1px solid rgba(255,255,255,.18);
-      padding:12px;
-      background: rgba(255,255,255,.02);
-      min-height:560px;
-      display:flex;
-      flex-direction:column;
-    }
-    @media (max-width:1050px){
-      .galSide{ border-left:0; border-top:1px solid rgba(255,255,255,.18); min-height:auto; }
-    }
-
-    .t{ margin:4px 4px 10px; font-size:14px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:rgba(255,255,255,.55); }
-    .row{ display:flex; gap:10px; margin: 0 4px 10px; }
-    .in{
-      width:100%; height:44px; border-radius:12px;
-      border:1px solid rgba(255,255,255,.18);
-      background: rgba(255,255,255,.08);
-      color:#fff; padding:10px 12px; outline:none;
-    }
-    .btn{
-      height:44px; padding:0 14px; border-radius:12px;
-      border:1px solid rgba(255,255,255,.18);
-      background: rgba(255,255,255,.14);
-      color:#fff; font-weight:700; cursor:pointer;
-      white-space:nowrap;
-    }
-    .btn:hover{ background: rgba(255,255,255,.18); }
-
-    .list{ display:flex; flex-direction:column; gap:10px; margin-top:10px; overflow:auto; flex:1; padding-right:4px; }
-    .item{
-      border:1px solid rgba(255,255,255,.14);
-      border-radius:16px;
-      padding:12px;
-      background: rgba(255,255,255,.03);
-      cursor:pointer;
-    }
-    .item:hover{ background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.26); }
-    .item.is-active{ border-color: rgba(255,255,255,.40); background: rgba(255,255,255,.06); }
-    .name{ margin:0; font-weight:800; font-size:14px; }
-    .sub{ margin:6px 0 0; color: rgba(255,255,255,.82); font-size:13px; line-height:1.45; }
-    .link{ color: rgba(255,255,255,.82); border-bottom:1px solid rgba(255,255,255,.35); }
-    .link:hover{ color:#fff; border-bottom-color:#fff; }
-
-    /* debug badge */
-    #debug{
-      position: fixed;
-      left: 12px;
-      bottom: 12px;
-      padding: 10px 12px;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,.18);
-      background: rgba(0,0,0,.45);
-      color: #fff;
-      font: 13px/1.3 Inter, system-ui, sans-serif;
-      max-width: 520px;
-      z-index: 9999;
-      display:none;
-    }
-    #debug.show{ display:block; }
-  </style>
 </head>
 
 <body class="galeries">
-  <div class="galWrap">
+  <div class="page">
+    <div class="container">
 
-    <!-- ✅ ton header (si tu veux garder celui du site, laisse-le tel quel) -->
-    <header class="top">
-      <a class="brand" href="index.html">ANNICK&nbsp;BOUVATTIER</a>
-      <nav class="top__nav" aria-label="Navigation principale">
-        <a class="nav__link" href="index.html">Accueil</a>
-        <a class="nav__link" href="portfolio.html">Portfolio</a>
-        <a class="nav__link is-active" href="galeries.html">Galeries</a>
-        <a class="nav__link" href="expositions.html">Expositions</a>
-        <a class="nav__link" href="informations.html">Informations</a>
-        <a class="nav__link" href="apropos.html">À propos</a>
-        <a class="nav__link" href="presse.html">Presse</a>
-      </nav>
-    </header>
+      <header class="top">
+        <a class="brand" href="index.html">ANNICK&nbsp;BOUVATTIER</a>
+        <nav class="top__nav" aria-label="Navigation principale">
+          <a class="nav__link" href="index.html">Accueil</a>
+          <a class="nav__link" href="portfolio.html">Portfolio</a>
+          <a class="nav__link" href="galeries.html">Galeries</a>
+          <a class="nav__link" href="expositions.html">Expositions</a>
+          <a class="nav__link" href="informations.html">Informations</a>
+          <a class="nav__link" href="apropos.html">À propos</a>
+          <a class="nav__link" href="presse.html">Presse</a>
+        </nav>
+      </header>
 
-    <div class="galHead">
-      <h1>Galeries</h1>
-      <div class="galMeta" id="meta"></div>
+      <div class="galHead">
+        <h1 class="galH1">Galeries</h1>
+        <div class="galMeta" id="galMeta"></div>
+      </div>
+
+      <div class="galCard">
+        <section class="galMap" aria-label="Carte des galeries">
+          <div id="map"></div>
+        </section>
+
+        <aside class="galSide" aria-label="Liste des galeries">
+          <div class="galTitle">Rechercher</div>
+          <div class="galSearchRow">
+            <input id="galQ" class="galInput" type="search" placeholder="Nom, ville, pays…" />
+            <button class="galBtn" id="galReset" type="button">Reset</button>
+          </div>
+
+          <div class="galTitle">Galeries</div>
+          <div class="galList" id="galList"></div>
+        </aside>
+      </div>
+
     </div>
+  </div>
 
-   <div class="galCard">
-  <section class="galMap" aria-label="Carte des galeries">
-    <div id="map"></div>
-  </section>
-
-  <aside class="galSide" aria-label="Liste des galeries">
-    <div class="galTitle">Rechercher</div>
-    <div class="galSearchRow">
-      <input id="q" class="galInput" type="search" placeholder="Nom, ville, pays…" />
-      <button class="galBtn" id="reset" type="button">Reset</button>
-    </div>
-
-    <div class="galTitle">Galeries</div>
-    <div class="galList" id="list"></div>
-  </aside>
-</div>
-
-
-  <div id="debug"></div>
-
-  <!-- ✅ Leaflet JS (doit être AVANT ton script) -->
   <script
     src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
     crossorigin=""
   ></script>
 
-  <script>
-    const debugEl = document.getElementById("debug");
-    function debug(msg){
-      debugEl.classList.add("show");
-      debugEl.innerHTML = msg;
-    }
-
-    // ✅ Vérif chargement Leaflet + présence du #map
-    if(!window.L) debug("❌ Leaflet (L) n'est pas chargé. Le script CDN est bloqué ou ne charge pas.");
-    const mapDiv = document.getElementById("map");
-    if(!mapDiv) debug("❌ #map introuvable dans le HTML (id='map').");
-    if(window.L && mapDiv){
-      // ✅ Données
-      const galleries = [
-        { name:"Galerie Rue Toulouse (French Art Network)", city:"Laguna Beach", country:"USA", phone:"(949) 549-4546", address:"390 S. Coast Hwy, Laguna Beach, CA 92651", website:"https://www.frenchart.net", lat:33.5427, lng:-117.7831 },
-        { name:"Galerie Page", city:"Biarritz", country:"France", phone:"05 59 24 97 52", address:"37 Rue Mazagran, 64200 Biarritz", website:"https://www.galeriepage-biarritz.com", lat:43.4832, lng:-1.5586 },
-        { name:"Artclub Gallery", city:"Lyon", country:"France", phone:"+33 (0)4 78 37 47 37", address:"22 Place Bellecour, 69002 Lyon", website:"https://www.artclub.fr", lat:45.7579, lng:4.8320 },
-        { name:"Artclub Gallery", city:"Paris", country:"France", phone:"+33 (0)1 47 03 42 20", address:"172 Rue de Rivoli, 75001 Paris", website:"https://www.artclub.fr", lat:48.8619, lng:2.3341 },
-        { name:"French Art Network — New Orleans", city:"New Orleans", country:"USA", phone:"(504) 581-5881", address:"509 Rue Royale, New Orleans, LA 70130", website:"https://www.frenchart.net", lat:29.9574, lng:-90.0620 },
-        { name:"French Art Network — Carmel-by-the-Sea", city:"Carmel-by-the-Sea", country:"USA", phone:"(931) 625-3456", address:"San Carlos St, Carmel-by-the-Sea, CA 93921", website:"https://www.frenchart.net", lat:36.5552, lng:-121.9233 },
-      ];
-
-      const els = {
-        meta: document.getElementById("meta"),
-        q: document.getElementById("q"),
-        reset: document.getElementById("reset"),
-        list: document.getElementById("list"),
-      };
-
-      function escapeHtml(s){
-        return String(s ?? "")
-          .replaceAll("&","&amp;")
-          .replaceAll("<","&lt;")
-          .replaceAll(">","&gt;")
-          .replaceAll('"',"&quot;")
-          .replaceAll("'","&#039;");
-      }
-
-      // ✅ Map
-      const map = L.map("map", { scrollWheelZoom: true });
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        maxZoom: 18,
-        attribution: "&copy; OpenStreetMap"
-      }).addTo(map);
-
-      const group = L.featureGroup().addTo(map);
-      let markers = [];
-
-      function makePopup(g){
-        const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${g.lat},${g.lng}`;
-        const site = g.website ? `<a class="link" href="${g.website}" target="_blank" rel="noopener noreferrer">site</a>` : "";
-        return `
-          <div>
-            <p style="margin:0 0 6px;font-weight:800">${escapeHtml(g.name)}</p>
-            <p style="margin:0;color:rgba(255,255,255,.82);font-size:13px;line-height:1.4">
-              ${escapeHtml(g.address)}<br>${escapeHtml(g.city)} · ${escapeHtml(g.country)}
-            </p>
-            <p style="margin:10px 0 0;font-size:13px">
-              <a class="link" href="${mapsUrl}" target="_blank" rel="noopener noreferrer">itinéraire</a>
-              ${site ? " · " + site : ""}
-            </p>
-          </div>
-        `;
-      }
-
-      function addMarkers(list){
-        group.clearLayers();
-        markers = [];
-        list.forEach((g, idx)=>{
-          const m = L.marker([g.lat, g.lng]).addTo(group);
-          m.bindPopup(makePopup(g));
-          markers.push(m);
-        });
-
-        if(list.length){
-          map.fitBounds(group.getBounds().pad(0.18));
-        }else{
-          map.setView([20,0], 2);
-        }
-      }
-
-      function renderList(list){
-        els.list.innerHTML = "";
-        list.forEach((g, idx)=>{
-          const div = document.createElement("div");
-          div.className = "item";
-          div.innerHTML = `
-            <p class="name">${escapeHtml(g.name)}</p>
-            <p class="sub">
-              ${escapeHtml(g.city)} · ${escapeHtml(g.country)}<br>
-              ${escapeHtml(g.address)}<br>
-              ${g.phone ? escapeHtml(g.phone) + "<br>" : ""}
-              ${g.website ? `<a class="link" href="${g.website}" target="_blank" rel="noopener noreferrer">site</a>` : ""}
-              <span> · </span>
-              <a class="link" href="https://www.google.com/maps/dir/?api=1&destination=${g.lat},${g.lng}" target="_blank" rel="noopener noreferrer">itinéraire</a>
-            </p>
-          `;
-          div.addEventListener("click", ()=>{
-            [...els.list.querySelectorAll(".item")].forEach(x=>x.classList.remove("is-active"));
-            div.classList.add("is-active");
-            const m = markers[idx];
-            if(m){
-              map.setView(m.getLatLng(), Math.max(map.getZoom(), 6), { animate:true });
-              m.openPopup();
-            }
-          });
-          els.list.appendChild(div);
-        });
-      }
-
-      function apply(){
-        const q = (els.q.value || "").trim().toLowerCase();
-        const filtered = galleries.filter(g=>{
-          const hay = `${g.name} ${g.city} ${g.country} ${g.address}`.toLowerCase();
-          return !q || hay.includes(q);
-        });
-
-        els.meta.textContent = `${filtered.length} galerie${filtered.length>1?"s":""}`;
-        renderList(filtered);
-        addMarkers(filtered);
-
-        // ✅ La ligne qui règle 90% des bugs Leaflet en grid
-        setTimeout(() => map.invalidateSize(), 0);
-      }
-
-      els.q.addEventListener("input", apply);
-      els.reset.addEventListener("click", ()=>{ els.q.value=""; apply(); });
-
-      // init
-      apply();
-
-      // ✅ refresh final
-      setTimeout(() => map.invalidateSize(), 100);
-      window.addEventListener("resize", () => map.invalidateSize());
-
-      // si tu vois ce message, Leaflet est bien chargé :
-      // debugEl restera caché.
-    }
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
