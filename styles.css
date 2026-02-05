@@ -141,7 +141,14 @@ body.galeries{
 @media (max-width:1050px){
   .galCard{
     grid-template-columns: 1fr;
-    min-height: auto;
+    height: auto;
+  }
+  .galMap{
+    min-height: 420px;
+  }
+  #map{
+    position: relative;
+    height: 420px;
   }
 }
 
