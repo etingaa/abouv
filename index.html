@@ -12,9 +12,6 @@
   <link rel="stylesheet" href="styles.css" />
 
   <style>
-    /* =========================
-       HOME ONLY
-       ========================= */
     body.home{
       background-image:none !important;
       background:#02253A !important;
@@ -24,69 +21,19 @@
     .page{min-height:100vh;display:flex;flex-direction:column;}
     .container{flex:1;display:flex;flex-direction:column;position:relative;z-index:3;}
 
-    /* =========================
-       MOVING WALL + FLOOR (sync with frames)
-       ========================= */
     .galleryWall{
       position:fixed;
       inset:0;
       z-index:1;
       pointer-events:none;
-      overflow:hidden;
-      background:#02253A;
+      background:
+        radial-gradient(1100px 700px at 20% 15%, rgba(255,255,255,.12), rgba(255,255,255,0) 60%),
+        radial-gradient(900px 600px at 70% 70%, rgba(255,255,255,.10), rgba(255,255,255,0) 55%);
     }
 
-    .movingWall{
-      position:absolute;
-      inset:0 0 22vh 0;
-      background:
-        radial-gradient(1100px 700px at 20% 15%, rgba(255,255,255,.10), rgba(255,255,255,0) 60%),
-        radial-gradient(900px 600px at 70% 70%, rgba(255,255,255,.08), rgba(255,255,255,0) 55%),
-        repeating-linear-gradient(
-          90deg,
-          rgba(255,255,255,.035) 0px,
-          rgba(255,255,255,.035) 80px,
-          rgba(255,255,255,.00) 160px
-        );
-      background-size: auto, auto, 520px 100%;
-      background-repeat: no-repeat, no-repeat, repeat-x;
-      background-position: 0 0, 0 0, 0 0;
-      filter: saturate(.95);
-    }
-    .movingWall::after{
-      content:"";
-      position:absolute;
-      inset:0;
-      background:
-        radial-gradient(1200px 700px at 50% 40%, rgba(0,0,0,0), rgba(0,0,0,.35) 75%),
-        linear-gradient(180deg, rgba(255,255,255,.04), rgba(0,0,0,.25));
-      pointer-events:none;
-    }
-
-    .movingFloor{
-      position:absolute;
-      left:0; right:0; bottom:0;
-      height:22vh;
-      background:
-        linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,0) 30%),
-        repeating-linear-gradient(
-          90deg,
-          rgba(255,255,255,.07) 0px,
-          rgba(255,255,255,.07) 3px,
-          rgba(255,255,255,.02) 3px,
-          rgba(255,255,255,.02) 140px
-        );
-      background-size: auto, 520px 100%;
-      background-repeat: no-repeat, repeat-x;
-      background-position: 0 0, 0 0;
-      filter: brightness(.55) saturate(.9);
-    }
-
-    /* =========================
-       VIEWPORT + TRACK
-       ========================= */
     .viewport{ position:absolute; inset:0; overflow:hidden; }
 
+    /* ✅ track animée */
     .track{
       position:absolute;
       top:50%;
@@ -103,6 +50,7 @@
       .track{ --gap: 28px; --pad: 28px; }
     }
 
+    /* ✅ un set mesurable */
     .set{
       display:flex;
       align-items:center;
@@ -110,21 +58,6 @@
       flex: 0 0 auto;
     }
 
-    /* ombre de contact sous les cadres */
-    .viewport::after{
-      content:"";
-      position:absolute;
-      left:0; right:0;
-      top:50%;
-      height:140px;
-      transform: translateY(120px);
-      background: radial-gradient(closest-side, rgba(0,0,0,.35), rgba(0,0,0,0) 70%);
-      pointer-events:none;
-    }
-
-    /* =========================
-       FRAMES
-       ========================= */
     .piece{
       flex: 0 0 auto;
       height: min(62vh, 560px);
@@ -132,7 +65,6 @@
       position: relative;
     }
 
-    /* Spot par tableau */
     .piece::before{
       content:"";
       position:absolute;
@@ -167,7 +99,7 @@
       justify-content:center;
     }
 
-    /* ✅ toile entière (pas coupée) */
+    /* ✅ pas coupé */
     .art img{
       width:100%;
       height:100%;
@@ -198,9 +130,6 @@
 
 <body class="home">
   <div class="galleryWall" aria-hidden="true">
-    <div class="movingWall" id="movingWall"></div>
-    <div class="movingFloor" id="movingFloor"></div>
-
     <div class="viewport">
       <div class="track" id="track">
         <div class="set" id="set"></div>
@@ -241,16 +170,11 @@
 
     const MANIFEST_URL = "images/manifest.json";
     const IMAGES_PREFIX = "images/";
-    const FRAME_BORDER = 10;     // doit matcher .frame border
-    const SPEED = 70;            // px/s
-    const MIN_W = 260;           // largeur min cadre
-    const MAX_W = 980;           // sécurité (évite ultra large)
-    const SAFE_START_EXTRA = 80; // marge de départ hors écran
+    const FRAME_BORDER = 10; // border du cadre (px)
+    const SPEED = 70;        // px/s
 
     const track = document.getElementById("track");
     const set = document.getElementById("set");
-    const wall = document.getElementById("movingWall");
-    const floor = document.getElementById("movingFloor");
     if (!track || !set) return;
 
     const prefersReducedMotion =
@@ -308,40 +232,34 @@
       });
     }
 
-    async function twoFrames(){
-      await new Promise(r => requestAnimationFrame(r));
-      await new Promise(r => requestAnimationFrame(r));
-    }
-
     function setWidthFromRatio(piece, img){
       if(!img.naturalWidth || !img.naturalHeight) return;
 
       const hOuter = piece.getBoundingClientRect().height || 1;
       const hInner = Math.max(1, hOuter - FRAME_BORDER * 2);
 
-      const ratio = img.naturalWidth / img.naturalHeight; // w/h
+      const ratio = img.naturalWidth / img.naturalHeight;
       const wInner = hInner * ratio;
       const wOuter = wInner + FRAME_BORDER * 2;
 
-      const w = Math.max(MIN_W, Math.min(MAX_W, Math.round(wOuter)));
-      piece.style.setProperty("--w", w + "px");
+      piece.style.setProperty("--w", Math.max(240, Math.round(wOuter)) + "px");
     }
 
-    function measureSetWidth(){
+    async function twoFrames(){
+      await new Promise(r => requestAnimationFrame(r));
+      await new Promise(r => requestAnimationFrame(r));
+    }
+
+    function measureLoopWidth(){
+      // largeur du 1er set (mesurable car display:flex)
       return set.getBoundingClientRect().width;
-    }
-
-    function syncWall(x){
-      // texture mur/sol suit le même déplacement => impression "accroché"
-      if (wall) wall.style.backgroundPosition = `${x}px 0, ${x}px 0, ${x}px 0`;
-      if (floor) floor.style.backgroundPosition = `${x}px 0, ${x}px 0`;
     }
 
     async function init(){
       const manifest = shuffle(await loadManifest());
 
-      // quantité : assez pour remplir + buffer (évite les vides)
-      const count = Math.max(24, Math.ceil(window.innerWidth / 240) + 28);
+      // remplir + buffer
+      const count = Math.max(18, Math.ceil(window.innerWidth / 260) + 16);
 
       const pieces = [];
       const imgs = [];
@@ -354,34 +272,37 @@
         imgs.push(img);
       }
 
-      // attendre layout (hauteur des .piece OK)
+      // attendre DOM + hauteurs
       await twoFrames();
 
-      // attendre images puis calculer largeur des cadres à partir du ratio
+      // attendre images puis calculer ratios
       await Promise.all(imgs.map(waitReady));
       imgs.forEach((img, i) => setWidthFromRatio(pieces[i], img));
 
-      // reflow après widths
+      // reflow
       await twoFrames();
 
-      // clone du set pour boucle continue
+      // clone pour boucle parfaite
       const clone = set.cloneNode(true);
       track.appendChild(clone);
 
       await twoFrames();
 
-      let loopW = measureSetWidth();
+      // loop width
+      let loopW = measureLoopWidth();
+
+      // si loopW=0 (rare), retente une fois
       if (!loopW) {
         await twoFrames();
-        loopW = measureSetWidth();
+        loopW = measureLoopWidth();
       }
       if (!loopW) {
         console.error("[home-wall] loopW=0 (mesure impossible)");
         return;
       }
 
-      // départ bien hors écran à gauche
-      let x = -loopW - SAFE_START_EXTRA;
+      // départ hors écran à gauche
+      let x = -loopW;
       let last = performance.now();
 
       function tick(now){
@@ -389,13 +310,9 @@
         last = now;
 
         x += SPEED * dt;
-
-        // quand on a avancé d'une largeur de set, on recale
         if (x >= 0) x -= loopW;
 
         track.style.transform = `translate3d(${x}px, -50%, 0)`;
-        syncWall(x);
-
         requestAnimationFrame(tick);
       }
       requestAnimationFrame(tick);
