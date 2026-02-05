@@ -10,58 +10,323 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="styles.css" />
+
+  <!-- Styles spécifiques à la couverture (ne supprime rien de styles.css) -->
+  <style>
+    /* Fond bleu comme les autres pages */
+    body.home{
+      background-image: none !important;
+      background: #02253A !important;
+    }
+
+    /* Mettre footer en bas même si peu de contenu */
+    body.home .page{
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    body.home .container{
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Zone "mur de galerie" entre header et footer */
+    .homeStage{
+      flex: 1;
+      margin-top: 10px;
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 18px;
+      background: rgba(255,255,255,.04);
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      min-height: 520px;
+    }
+
+    /* Un léger halo comme sur tes autres cards */
+    .homeStage::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        radial-gradient(900px 520px at 30% 20%, rgba(255,255,255,.18), rgba(255,255,255,0) 60%),
+        radial-gradient(900px 520px at 70% 70%, rgba(255,255,255,.10), rgba(255,255,255,0) 55%);
+      pointer-events:none;
+      opacity:.9;
+    }
+
+    /* Le "mur" : grille dense qui remplit la zone */
+    .wall{
+      position: relative;
+      z-index: 1;
+      height: 100%;
+      padding: 16px;
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 12px;
+      align-content: start;
+      overflow: hidden;
+    }
+
+    @media (max-width: 1200px){
+      .wall{ grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    }
+    @media (max-width: 980px){
+      .wall{ grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    }
+    @media (max-width: 720px){
+      .wall{ grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+    @media (max-width: 520px){
+      .wall{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    /* Cadre "tableau" */
+    .frame{
+      position: relative;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.03);
+      box-shadow: 0 18px 55px rgba(0,0,0,.25);
+      transform: translateZ(0);
+    }
+
+    /* Variations de ratios pour donner l'effet "mur" */
+    .frame.r1{ aspect-ratio: 4 / 5; }
+    .frame.r2{ aspect-ratio: 1 / 1; }
+    .frame.r3{ aspect-ratio: 3 / 2; }
+
+    .frame img{
+      width:100%;
+      height:100%;
+      object-fit: cover;
+      display:block;
+      opacity: .92;
+      filter: contrast(1.05) saturate(1.02);
+      transform: scale(1.02);
+      transition: opacity .35s ease, transform .45s ease;
+    }
+
+    /* Petit fondu discret au survol */
+    .frame:hover img{
+      opacity: 1;
+      transform: scale(1.06);
+    }
+
+    /* Animation : léger défilement vertical en boucle */
+    .wallScroller{
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      will-change: transform;
+      animation: wallScroll 22s linear infinite;
+    }
+
+    /* on fait défiler le contenu (on duplique la grille en JS pour la boucle) */
+    @keyframes wallScroll{
+      from{ transform: translateY(0); }
+      to{ transform: translateY(-50%); }
+    }
+
+    /* Footer en bas */
+    .bottom{
+      margin-top: 14px;
+    }
+  </style>
 </head>
 
-<body>
+<body class="home">
   <div class="page">
-  <div class="container">
-    <!-- TOP -->
-    <header class="top">
-  <div class="top__left">
-    <a href="index.html" class="brand" aria-label="Accueil">
-      ANNICK&nbsp;BOUVATTIER
-    </a>
+    <div class="container">
+      <!-- TOP -->
+      <header class="top">
+        <div class="top__left">
+          <a href="index.html" class="brand" aria-label="Accueil">
+            ANNICK&nbsp;BOUVATTIER
+          </a>
+        </div>
+
+        <nav class="top__nav" aria-label="Navigation principale">
+          <a class="nav__link is-active" href="index.html">Accueil</a>
+          <a class="nav__link" href="portfolio.html">Portfolio</a>
+          <a class="nav__link" href="galeries.html">Galeries</a>
+          <a class="nav__link" href="expositions.html">Expositions</a>
+          <a class="nav__link" href="apropos.html">À propos</a>
+          <a class="nav__link" href="presse.html">Presse</a>
+          <a class="nav__link" href="contact.html">Contact</a>
+        </nav>
+      </header>
+
+      <!-- MUR DE GALERIE (défilement random) -->
+      <main class="homeStage" aria-label="Mur de galerie">
+        <div class="wallScroller" id="wallScroller">
+          <div class="wall" id="wall"></div>
+          <!-- la 2e grille (clone) sera injectée en JS pour la boucle -->
+        </div>
+      </main>
+
+      <!-- Liens en bas -->
+      <footer class="bottom">
+        <div class="bottom__left">
+          <a class="bottom__link"
+             href="https://www.instagram.com/annick.bouvattier/"
+             target="_blank"
+             rel="noopener noreferrer">
+            instagram
+          </a>
+
+          <a class="bottom__link"
+             href="https://www.facebook.com/annick.bouvattier/"
+             target="_blank"
+             rel="noopener noreferrer">
+            facebook
+          </a>
+
+          <a class="bottom__link"
+             href="https://www.saatchiart.com/bouvattier"
+             target="_blank"
+             rel="noopener noreferrer">
+            saatchi art
+          </a>
+        </div>
+      </footer>
+    </div>
   </div>
 
-      <nav class="top__nav" aria-label="Navigation principale">
-  <a class="nav__link is-active" href="index.html">Accueil</a>
-  <a class="nav__link" href="portfolio.html">Portfolio</a>
-  <a class="nav__link" href="galeries.html">Galeries</a>
-  <a class="nav__link" href="expositions.html">Expositions</a>
-  <a class="nav__link" href="apropos.html">À propos</a>
-  <a class="nav__link" href="presse.html">Presse</a>
-  <a class="nav__link" href="contact.html">Contact</a>
-</nav>
+  <script>
+    /**
+     * IMPORTANT :
+     * Un site statique (GitHub Pages) ne peut pas "lister" automatiquement le dossier /images.
+     * Donc il faut soit :
+     *  - (A) mettre ici la liste des fichiers, OU
+     *  - (B) créer un fichier images/manifest.json qui contient ["img1.jpg","img2.jpg",...]
+     *
+     * Cette page supporte les deux : elle essaie manifest.json, sinon elle prend la liste ci-dessous.
+     */
 
-    </header>
+    const fallbackImages = [
+      // Mets ici les noms exacts de tes images (dans /images/)
+      // Exemple :
+      // "tableau-01.jpg",
+      // "tableau-02.jpg",
+      // "tableau-03.jpg",
+    ];
 
-    <!-- BOTTOM -->
-   <footer class="bottom">
-  <div class="bottom__left">
-    <a class="bottom__link"
-       href="https://www.instagram.com/annick.bouvattier/"
-       target="_blank"
-       rel="noopener noreferrer">
-      instagram
-    </a>
+    const WALL_TILES = 30;       // nombre de cadres visibles (ajuste)
+    const SWAP_EVERY_MS = 2600;  // rythme des changements aléatoires
 
-    <a class="bottom__link"
-       href="https://www.facebook.com/annick.bouvattier/"
-       target="_blank"
-       rel="noopener noreferrer">
-      facebook
-    </a>
+    function shuffle(arr){
+      const a = arr.slice();
+      for(let i=a.length-1;i>0;i--){
+        const j = Math.floor(Math.random()*(i+1));
+        [a[i],a[j]] = [a[j],a[i]];
+      }
+      return a;
+    }
 
-    <a class="bottom__link"
-       href="https://www.saatchiart.com/bouvattier"
-       target="_blank"
-       rel="noopener noreferrer">
-      saatchi art
-    </a>
-  </div>
-</footer>
+    async function loadImages(){
+      try{
+        const res = await fetch("images/manifest.json", { cache: "no-store" });
+        if(!res.ok) throw new Error("no manifest");
+        const list = await res.json();
+        if(!Array.isArray(list) || list.length === 0) throw new Error("bad manifest");
+        return list;
+      }catch(e){
+        return fallbackImages;
+      }
+    }
 
-  </div>
-  </div>
+    function ratioClass(i){
+      // ratio random mais stable par index
+      const r = i % 6;
+      if(r === 0 || r === 3) return "r3"; // paysage
+      if(r === 1 || r === 4) return "r2"; // carré
+      return "r1";                         // portrait
+    }
+
+    function buildWall(imgs){
+      const wall = document.getElementById("wall");
+      wall.innerHTML = "";
+
+      const pool = shuffle(imgs);
+      const tiles = [];
+
+      for(let i=0;i<WALL_TILES;i++){
+        const src = pool[i % pool.length];
+        const frame = document.createElement("div");
+        frame.className = `frame ${ratioClass(i)}`;
+
+        const img = document.createElement("img");
+        img.loading = "lazy";
+        img.alt = "";
+        img.src = "images/" + src;
+
+        frame.appendChild(img);
+        wall.appendChild(frame);
+        tiles.push(img);
+      }
+
+      // Clone pour boucle de scroll (mur infini)
+      const scroller = document.getElementById("wallScroller");
+      const clone = wall.cloneNode(true);
+      clone.id = "wallClone";
+      scroller.appendChild(clone);
+
+      return { tiles, imgs };
+    }
+
+    function startRandomSwaps(state){
+      if(!state.imgs || state.imgs.length < 2) return;
+
+      setInterval(() => {
+        // change 1 à 3 images aléatoirement avec fondu
+        const swaps = 1 + Math.floor(Math.random() * 3);
+        for(let k=0;k<swaps;k++){
+          const idx = Math.floor(Math.random() * state.tiles.length);
+          const img = state.tiles[idx];
+          const next = state.imgs[Math.floor(Math.random() * state.imgs.length)];
+
+          // fondu simple
+          img.style.opacity = "0";
+          setTimeout(() => {
+            img.src = "images/" + next;
+            img.style.opacity = "";
+          }, 220);
+        }
+
+        // on met aussi à jour le clone pour éviter la répétition visible
+        const clone = document.getElementById("wallClone");
+        if(clone){
+          const cloneImgs = clone.querySelectorAll("img");
+          for(let k=0;k<swaps;k++){
+            const idx = Math.floor(Math.random() * cloneImgs.length);
+            const img = cloneImgs[idx];
+            const next = state.imgs[Math.floor(Math.random() * state.imgs.length)];
+            img.style.opacity = "0";
+            setTimeout(() => {
+              img.src = "images/" + next;
+              img.style.opacity = "";
+            }, 220);
+          }
+        }
+      }, SWAP_EVERY_MS);
+    }
+
+    (async function init(){
+      const imgs = await loadImages();
+
+      // sécurité : si aucune image listée, on évite un mur vide
+      if(!imgs || imgs.length === 0){
+        console.warn("Aucune image trouvée. Ajoute images/manifest.json ou renseigne fallbackImages.");
+        return;
+      }
+
+      const state = buildWall(imgs);
+      startRandomSwaps(state);
+    })();
+  </script>
 </body>
 </html>
