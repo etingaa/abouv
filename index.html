@@ -37,32 +37,40 @@
       overflow:hidden;
     }
 
-    /* Rangée centrée verticalement */
     .row{
       position:absolute;
       top:50%;
       left:0;
       display:flex;
       align-items:center;
-      gap: 42px;             /* ✅ écart identique */
-      padding: 0 60px;       /* marge bords */
       transform: translate3d(0,-50%,0);
       will-change: transform;
       white-space: nowrap;
+      padding: 0 60px;
+      gap: 0; /* gap est géré dans les bands */
     }
     @media (max-width: 900px){
-      .row{ gap: 28px; padding: 0 28px; }
+      .row{ padding: 0 28px; }
     }
 
-    /* Chaque pièce prend une hauteur fixe (mur) mais largeur dépend du ratio réel */
+    /* ✅ band = une boucle mesurable */
+    .band{
+      display:inline-flex;
+      align-items:center;
+      gap:42px; /* ✅ écart identique */
+      flex: 0 0 auto;
+    }
+    @media (max-width: 900px){
+      .band{ gap:28px; }
+    }
+
     .piece{
       flex: 0 0 auto;
-      height: min(62vh, 560px);   /* hauteur max */
-      width: var(--w, 360px);     /* ✅ largeur calculée en JS */
+      height: min(62vh, 560px);
+      width: var(--w, 360px);
       position: relative;
     }
 
-    /* Spot par tableau */
     .piece::before{
       content:"";
       position:absolute;
@@ -77,7 +85,6 @@
       filter: blur(1px);
     }
 
-    /* Cadre EXACTEMENT à la taille image */
     .frame{
       position:relative;
       width:100%;
@@ -102,7 +109,7 @@
     .art img{
       width:100%;
       height:100%;
-      object-fit: cover; /* ratio match => pas de bandes */
+      object-fit: cover;
       display:block;
     }
 
@@ -203,63 +210,63 @@
       return { piece, img };
     }
 
-    function pieceHeightPx(piece){
-      return piece.getBoundingClientRect().height;
+    function waitImg(img){
+      return new Promise((resolve) => {
+        if(img.complete && img.naturalWidth > 0) return resolve();
+        img.addEventListener("load", resolve, { once:true });
+        img.addEventListener("error", resolve, { once:true });
+      });
     }
+
+    function clamp(n, a, b){ return Math.max(a, Math.min(n, b)); }
 
     (async function init(){
       const row = document.getElementById("row");
       const images = shuffle(await loadManifest());
 
-      // base count : assez pour remplir l'écran + buffer
-      const approxCardW = 260; // estimation pour calculer un nombre correct
-      const need = Math.max(10, Math.ceil(window.innerWidth / approxCardW) + 10);
+      // ✅ band centrale qui servira de "base"
+      const baseBand = document.createElement("div");
+      baseBand.className = "band";
+
+      // assez de pièces pour remplir + buffer
+      const approx = 280;
+      const need = Math.max(10, Math.ceil(window.innerWidth / approx) + 12);
 
       const basePieces = [];
       for(let i=0;i<need;i++){
         const { piece, img } = makePiece(images[i % images.length]);
-        row.appendChild(piece);
+        baseBand.appendChild(piece);
         basePieces.push({ piece, img });
       }
 
-      // attendre chargement
-      await Promise.all(basePieces.map(({img}) => new Promise(resolve => {
-        if(img.complete && img.naturalWidth > 0) return resolve();
-        img.addEventListener("load", resolve, { once:true });
-        img.addEventListener("error", resolve, { once:true });
-      })));
+      // on attend les images pour calculer le ratio
+      await Promise.all(basePieces.map(({img}) => waitImg(img)));
 
-      // largeur selon ratio
+      // largeur selon ratio réel
       basePieces.forEach(({piece, img}) => {
         if(!img.naturalWidth || !img.naturalHeight) return;
-
-        const h = pieceHeightPx(piece);
+        const h = piece.getBoundingClientRect().height;
         const ratio = img.naturalWidth / img.naturalHeight;
-        let w = h * ratio;
-
-        w = Math.max(220, Math.min(w, 720));
+        const w = clamp(h * ratio, 220, 720);
         piece.style.setProperty("--w", Math.round(w) + "px");
       });
 
-      // wrapper base
-      const baseWrapper = document.createElement("div");
-      baseWrapper.style.display = "contents";
-      while(row.firstChild) baseWrapper.appendChild(row.firstChild);
-      row.appendChild(baseWrapper);
+      // ✅ 3 bandes: gauche + centre + droite
+      const leftBand = baseBand.cloneNode(true);
+      const centerBand = baseBand;
+      const rightBand = baseBand.cloneNode(true);
 
-      // ✅ 3 boucles : gauche + centre(base) + droite
-      const leftWrapper = baseWrapper.cloneNode(true);
-      const rightWrapper = baseWrapper.cloneNode(true);
-      row.insertBefore(leftWrapper, baseWrapper);
-      row.appendChild(rightWrapper);
+      row.appendChild(leftBand);
+      row.appendChild(centerBand);
+      row.appendChild(rightBand);
 
-      // mesurer
+      // attendre layout stable
       await new Promise(r => requestAnimationFrame(r));
-      const loopWidth = baseWrapper.getBoundingClientRect().width;
+      const loopWidth = centerBand.getBoundingClientRect().width;
 
-      // ✅ position de départ au centre, et il y aura toujours du contenu à gauche
+      // ✅ on démarre sur la bande centrale (et la gauche existe déjà)
       let x = -loopWidth;
-      const speed = 65; // px/sec vers la droite
+      const speed = 65;
       let last = performance.now();
 
       function tick(now){
@@ -268,7 +275,7 @@
 
         x += speed * dt;
 
-        // fenêtre stable : x reste dans [-loopWidth, 0)
+        // fenêtre stable : x dans [-loopWidth, 0)
         if (x >= 0) x -= loopWidth;
 
         row.style.transform = `translate3d(${x}px, -50%, 0)`;
@@ -277,7 +284,6 @@
 
       requestAnimationFrame(tick);
 
-      // resize safe
       window.addEventListener("resize", () => location.reload());
     })();
   </script>
