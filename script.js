@@ -119,3 +119,11 @@ document.addEventListener("DOMContentLoaded", () => {
     setTimeout(() => scrollToId(window.location.hash, false), 0);
   }
 });
+
+apply();
+
+// ✅ Fix Leaflet (quand la map est dans une grille / carte)
+setTimeout(() => {
+  map.invalidateSize();
+  if (group.getLayers().length) map.fitBounds(group.getBounds().pad(0.18));
+}, 50);
