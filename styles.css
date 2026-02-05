@@ -583,178 +583,153 @@ body.galeries{
   background: #02253A;
 }
 
-body.galeries .galHeadRow{
+/* wrapper page */
+.galWrap{
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px 48px 56px;
+}
+@media (max-width:768px){
+  .galWrap{ padding:16px 20px 40px; }
+}
+
+.galHead{
   display:flex;
   align-items:baseline;
   justify-content:space-between;
   gap:16px;
-  margin: 14px 0 10px;
+  margin:14px 0 10px;
 }
-body.galeries .galTitle{
-  margin:0;
-  font-size:28px;
-  font-weight:800;
-  letter-spacing:-.02em;
-}
-body.galeries .galMeta{
-  color: var(--ink-faint);
-  font-size:14px;
-}
+.galHead h1{ margin:0; font-size:28px; font-weight:800; }
+.galMeta{ color: rgba(255,255,255,.55); font-size:14px; }
 
-/* Bloc unique */
-body.galeries .galCard{
+/* ✅ le gros bloc : hauteur “propre” */
+.galCard{
   margin-top: 12px;
-  display:grid;
+  display: grid;
   grid-template-columns: 1.2fr .8fr;
-  gap:0;
-  border:1px solid rgba(255,255,255,.18);
-  border-radius:18px;
-  overflow:hidden;
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 18px;
+  overflow: hidden;
   background: rgba(255,255,255,.04);
+
+  /* prend la place visible */
+  height: calc(100vh - 210px); /* ajuste si besoin */
+  min-height: 520px;
+}
+@media (max-width:1050px){
+  .galCard{
+    grid-template-columns: 1fr;
+    height: auto;
+    min-height: 0;
+  }
 }
 
-/* Zone map */
-body.galeries .galCard__map{
-  position: relative;
-  background: #0b1c28;               /* ✅ fond opaque derrière Leaflet */
-  min-height: 560px;
+/* ✅ la carte occupe toute la hauteur du bloc */
+.galMap{ background:#0b1c28; }
+#map{
+  width:100%;
+  height: 100%;
+  min-height: 520px;
+  background:#0b1c28;
+}
+@media (max-width:1050px){
+  #map{ height: 420px; min-height: 420px; }
 }
 
-/* ✅ IMPORTANT : hauteur fixe sur #map */
-body.galeries #map{
-  position: relative;
-  width: 100%;
-  height: 560px;
-  background: #0b1c28;               /* ✅ évite transparence */
-  z-index: 1;
-}
-
-/* Panneau droit */
-body.galeries .galCard__side{
-  border-left:1px solid rgba(255,255,255,.18);
+/* ✅ panneau à droite = même hauteur + scroll interne */
+.galSide{
+  border-left: 1px solid rgba(255,255,255,.18);
+  padding: 14px;
   background: rgba(255,255,255,.02);
-  padding:12px;
-  min-height:560px;
-  display:flex;
-  flex-direction:column;
-  z-index: 2;
+
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+@media (max-width:1050px){
+  .galSide{
+    border-left: 0;
+    border-top: 1px solid rgba(255,255,255,.18);
+    height: auto;
+  }
 }
 
-/* UI panneau */
-body.galeries .galPanelTitle{
-  margin:4px 4px 10px;
-  font-size:14px;
-  font-weight:800;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-  color: var(--ink-faint);
+.galTitle{
+  margin: 0 4px 10px;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.55);
 }
 
-body.galeries .galSearchRow{
+.galSearchRow{
   display:flex;
   gap:10px;
-  margin: 0 4px 10px;
+  margin: 0 4px 12px;
 }
 
-body.galeries .galInput{
+.galInput{
   width:100%;
   height:44px;
-  border:1px solid rgba(255,255,255,.18);
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.18);
   background: rgba(255,255,255,.08);
   color:#fff;
-  border-radius:12px;
-  padding:10px 12px;
+  padding: 10px 12px;
   outline:none;
-  font-size:14px;
 }
-body.galeries .galInput::placeholder{ color: rgba(255,255,255,.45); }
-body.galeries .galInput:focus{
-  border-color: rgba(255,255,255,.35);
-  background: rgba(255,255,255,.12);
-}
+.galInput::placeholder{ color: rgba(255,255,255,.45); }
 
-body.galeries .galBtn{
+.galBtn{
   height:44px;
-  padding:0 14px;
-  border-radius:12px;
-  border:1px solid rgba(255,255,255,.18);
+  padding: 0 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.18);
   background: rgba(255,255,255,.14);
   color:#fff;
   font-weight:700;
   cursor:pointer;
-  white-space:nowrap;
+  white-space: nowrap;
 }
-body.galeries .galBtn:hover{ background: rgba(255,255,255,.18); }
+.galBtn:hover{ background: rgba(255,255,255,.18); }
 
-/* Liste */
-body.galeries .galList{
+/* ✅ la liste scrolle dans le panneau */
+.galList{
+  margin-top: 8px;
   display:flex;
   flex-direction:column;
   gap:10px;
-  margin-top:10px;
   overflow:auto;
-  padding-right:4px;
-  flex:1;
+  flex: 1;
+  padding-right: 4px;
 }
 
-body.galeries .galItem{
-  border:1px solid rgba(255,255,255,.14);
-  border-radius:16px;
-  padding:12px;
+.galItem{
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 16px;
+  padding: 12px;
   background: rgba(255,255,255,.03);
   cursor:pointer;
   transition: background .12s ease, border-color .12s ease, transform .12s ease;
 }
-body.galeries .galItem:hover{
+.galItem:hover{
   background: rgba(255,255,255,.05);
   border-color: rgba(255,255,255,.26);
   transform: translateY(-1px);
 }
-body.galeries .galItem.is-active{
+.galItem.is-active{
   border-color: rgba(255,255,255,.40);
   background: rgba(255,255,255,.06);
 }
 
-body.galeries .galName{
-  margin:0;
-  font-weight:800;
-  font-size:14px;
-  letter-spacing:.02em;
-}
-body.galeries .galSub{
-  margin:6px 0 0;
-  color: rgba(255,255,255,.82);
-  font-size:13px;
-  line-height:1.45;
-}
-body.galeries .galLink{
-  color: rgba(255,255,255,.82);
-  border-bottom:1px solid rgba(255,255,255,.35);
-}
-body.galeries .galLink:hover{
-  color:#fff;
-  border-bottom-color:#fff;
-}
+.galName{ margin:0; font-weight:800; font-size:14px; }
+.galSub{ margin:6px 0 0; color: rgba(255,255,255,.82); font-size:13px; line-height:1.45; }
 
-/* Mobile */
-@media (max-width: 1050px){
-  body.galeries .galCard{ grid-template-columns: 1fr; }
-  body.galeries .galCard__side{
-    border-left:0;
-    border-top:1px solid rgba(255,255,255,.18);
-    min-height:auto;
-  }
-  body.galeries .galCard__map{ min-height: 420px; }
-  body.galeries #map{ height: 420px; }
+.galLink{
+  color: rgba(255,255,255,.82);
+  border-bottom: 1px solid rgba(255,255,255,.35);
 }
-
-/* Leaflet : assure la visibilité des couches */
-body.galeries .leaflet-container{
-  background: #0b1c28 !important;
-}
-body.galeries .leaflet-pane,
-body.galeries .leaflet-tile-pane,
-body.galeries .leaflet-overlay-pane,
-body.galeries .leaflet-marker-pane{
-  z-index: 2;
-}
+.galLink:hover{ color:#fff; border-bottom-color:#fff; }
