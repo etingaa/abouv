@@ -212,18 +212,58 @@
   </div>
 
   <script>
-    // ✅ Tu remplaces ces données par tes vraies expositions
-    // (Exemples inspirés de ta page actuelle : Galerie Rue Toulouse, Galerie Page, Artclub Paris, etc.) :contentReference[oaicite:1]{index=1}
     const expos = [
-      { year: 2024, title: "French Art Network — Galerie Rue Toulouse", city: "Laguna Beach, Carmel", country: "États-Unis", type: "solo" },
-      { year: 2024, title: "Galerie Page", city: "Biarritz", country: "France", type: "solo" },
-      { year: 2020, title: "French Art Network — Galerie Rue Toulouse", city: "New Orleans", country: "États-Unis", type: "solo", note:"Depuis 2020" },
-      { year: 2005, title: "Galerie Artclub", city: "Paris", country: "France", type: "solo", note:"2005–2024" },
-      { year: 2018, title: "Galerie ArtAddict", city: "Mougins", country: "France", type: "group" },
-      { year: 2018, title: "Art3F", city: "Cannes", country: "France", type: "fair" },
-      { year: 2017, title: "ArtShopping", city: "Paris", country: "France", type: "fair" },
-      { year: 2017, title: "ArtFair", city: "Lausanne", country: "Suisse", type: "fair" },
-      { year: 2017, title: "Art3F", city: "Paris", country: "France", type: "fair" },
+      // =======================
+// EXPOSITIONS PERSONNELLES
+// =======================
+
+{ year: 2019, title: "Galerie Bouillon d’Art", city: "Bordeaux", country: "France", type: "solo" },
+{ year: 2018, title: "Artclub Gallery", city: "Paris", country: "France", type: "solo" },
+{ year: 2015, title: "Galerie Next", city: "Toulouse", country: "France", type: "solo" },
+{ year: 2013, title: "Galerie Salvany", city: "Clermont-Ferrand", country: "France", type: "solo" },
+{ year: 2012, title: "Artclub Gallery", city: "Paris", country: "France", type: "solo" },
+{ year: 2011, title: "Palm Beach", city: "Cannes", country: "France", type: "solo" },
+{ year: 2011, title: "Galerie Neel", city: "Cannes", country: "France", type: "solo" },
+{ year: 2010, title: "Galerie des Chapelains", city: "Nevers", country: "France", type: "solo" },
+{ year: 2009, title: "Artclub Gallery", city: "Paris", country: "France", type: "solo" },
+{ year: 2006, title: "Galerie Salvany", city: "Clermont-Ferrand", country: "France", type: "solo" },
+{ year: 2005, title: "Artclub Gallery", city: "Paris", country: "France", type: "solo" },
+{ year: 2005, title: "Galerie Futurart", city: "Bruxelles", country: "France", type: "solo" },
+{ year: 2002, title: "Galerie Aktuaryus", city: "Strasbourg", country: "France", type: "solo" },
+{ year: 2002, title: "Galerie des Chapelains", city: "Nevers", country: "France", type: "solo" },
+{ year: 2001, title: "Galerie Tosaka", city: "Paris", country: "France", type: "solo" },
+{ year: 2000, title: "Galerie Aktuaryus", city: "Strasbourg", country: "France", type: "solo" },
+{ year: 2000, title: "Galerie des Chapelains", city: "Nevers", country: "France", type: "solo" },
+{ year: 1997, title: "Galerie Saint-Cyr", city: "Nevers", country: "France", type: "solo" },
+{ year: 1996, title: "Galerie Étienne De Caussans", city: "Paris", country: "France", type: "solo" },
+{ year: 1993, title: "Galerie Jason", city: "Perpignan", country: "France", type: "solo" },
+
+// =======================
+// EXPOSITIONS COLLECTIVES
+// =======================
+
+{ year: 2024, title: "French Art Network — Galerie Rue Toulouse", city: "Laguna Beach, Carmel", country: "États-Unis", type: "group" },
+{ year: 2024, title: "Galerie Page", city: "Biarritz", country: "France", type: "group" },
+{ year: "Depuis 2020", title: "French Art Network — Galerie Rue Toulouse", city: "New Orleans", country: "États-Unis", type: "group" },
+{ year: "2005–2024", title: "Galerie Artclub", city: "Paris", country: "France", type: "group" },
+{ year: 2018, title: "Galerie ArtAddict", city: "Mougins", country: "France", type: "group" },
+{ year: 2018, title: "Art3F", city: "Cannes", country: "France", type: "group" },
+{ year: 2017, title: "ArtShopping", city: "Paris", country: "France", type: "group" },
+{ year: 2017, title: "ArtFair", city: "Lausanne", country: "Suisse", type: "group" },
+{ year: 2017, title: "Art3F", city: "Paris", country: "France", type: "group" },
+{ year: 2016, title: "Exposition ArtFair", city: "Anvers", country: "Belgique", type: "group" },
+{ year: 2010, title: "Galerie Neel", city: "Cannes", country: "France", type: "group" },
+{ year: 2008, title: "Galerie Joël Dupuis", city: "Hardelot-sur-Mer", country: "France", type: "group" },
+{ year: 2007, title: "The Catto Gallery", city: "Londres", country: "Angleterre", type: "group" },
+{ year: 2007, title: "Galerie Joël Dupuis", city: "Hardelot-sur-Mer", country: "France", type: "group" },
+{ year: 2007, title: "Galerie Hugues Penot", city: "La Baule", country: "France", type: "group" },
+{ year: 1998, title: "Artexpo", city: "New York", country: "États-Unis", type: "group" },
+{ year: 1998, title: "Galerie Christian Dazy", city: "Dijon", country: "France", type: "group" },
+{ year: 1997, title: "Musée de Marzy", city: "Marzy", country: "France", type: "group" },
+{ year: 1996, title: "Salon de Printemps", city: "Decize", country: "France", type: "group" },
+{ year: 1994, title: "Salon de Bourges", city: "Bourges", country: "France", type: "group" },
+{ year: 1993, title: "Salon d’Automne (Grand Palais)", city: "Paris", country: "France", type: "group" },
+{ year: 1992, title: "Exposition d’Été", city: "Decize", country: "France", type: "group" }
     ];
 
     // Optionnel : "en ce moment"
