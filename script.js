@@ -1,20 +1,33 @@
 // script.js — SAFE GLOBAL (toutes pages)
+// - Nav active robuste
+// - Scroll doux ancres
+// - Galeries (Leaflet) uniquement si la page a #map + #list + Leaflet chargé
+// IMPORTANT: rien ici ne doit casser Portfolio si la page n'a pas les éléments.
+
 (() => {
   "use strict";
 
   document.addEventListener("DOMContentLoaded", () => {
-    try { initActiveNav(); } catch(e){ console.error(e); }
-    try { initSmoothAnchors(); } catch(e){ console.error(e); }
-    try { initGaleriesPage(); } catch(e){ console.error(e); showDebug("❌ JS crash: " + e.message); }
+    initActiveNav();
+    initSmoothAnchors();
+    initGaleriesPage(); // ne fait rien si pas sur galeries.html
   });
 
-  function showDebug(msg){
-    const el = document.getElementById("galDebug");
-    if(el) el.innerHTML = msg;
+  /* =========================
+     DEBUG (optionnel)
+     ========================= */
+  function dbg(msg) {
+    const d = document.getElementById("debug");
+    if (d) {
+      d.style.display = "block";
+      d.textContent = msg;
+    } else {
+      console.log("[DEBUG]", msg);
+    }
   }
 
   /* =========================
-     1) NAV ACTIVE
+     1) NAV ACTIVE (robuste)
      ========================= */
   function initActiveNav() {
     const navLinks = Array.from(document.querySelectorAll(".top__nav .nav__link"));
@@ -22,26 +35,28 @@
 
     const origin = window.location.origin;
 
-    const fileFromPath = (pathname) => {
+    function fileFromPath(pathname) {
       const clean = (pathname || "").replace(/\/+$/, "");
       const last = clean.split("/").pop();
       return last ? last : "index.html";
-    };
+    }
 
-    const fileFromHref = (href) => {
+    function fileFromHref(href) {
       if (!href) return null;
       if (href.startsWith("#")) return null;
       if (/^(mailto:|tel:|javascript:)/i.test(href)) return null;
+
       const u = new URL(href, origin);
       if (u.origin !== origin) return null;
       return fileFromPath(u.pathname);
-    };
+    }
 
     const current = new URL(window.location.href);
     const currentFile = fileFromPath(current.pathname);
 
     navLinks.forEach((link) => {
       link.classList.remove("is-active");
+
       const href = link.getAttribute("href") || "";
       const linkFile = fileFromHref(href);
       if (!linkFile) return;
@@ -69,7 +84,11 @@
       if (!target) return;
 
       const y = target.getBoundingClientRect().top + window.pageYOffset - HEADER_OFFSET;
-      window.scrollTo({ top: y, behavior: prefersReducedMotion ? "auto" : "smooth" });
+
+      window.scrollTo({
+        top: y,
+        behavior: prefersReducedMotion ? "auto" : "smooth",
+      });
 
       if (push) history.pushState(null, "", hash);
 
@@ -91,28 +110,32 @@
       if (window.location.hash) scrollToId(window.location.hash, false);
     });
 
-    if (window.location.hash) setTimeout(() => scrollToId(window.location.hash, false), 0);
+    if (window.location.hash) {
+      setTimeout(() => scrollToId(window.location.hash, false), 0);
+    }
   }
 
   /* =========================
-     3) GALERIES (Leaflet)
+     3) GALERIES (Leaflet) — SAFE
      ========================= */
   function initGaleriesPage() {
     const mapDiv = document.getElementById("map");
     const listDiv = document.getElementById("list");
-    if (!mapDiv || !listDiv) return; // pas sur galeries
+
+    // pas la page galeries => on sort sans rien faire
+    if (!mapDiv || !listDiv) return;
+
+    // Leaflet pas chargé => on ne casse rien
+    if (!window.L) {
+      dbg("❌ Leaflet pas chargé (window.L absent).");
+      return;
+    }
 
     const qInput = document.getElementById("q");
     const resetBtn = document.getElementById("reset");
     const metaEl = document.getElementById("meta");
 
-    if (!window.L) {
-      showDebug("❌ Leaflet non chargé (CDN bloqué?).<br>Essaie sans adblock / vérifie la connexion.");
-      return;
-    }
-
-    showDebug("✅ JS OK — init galeries…");
-
+    // Données (tu peux remplacer par window.GALLERIES_DATA depuis le HTML si tu veux)
     const galleries = Array.isArray(window.GALLERIES_DATA) && window.GALLERIES_DATA.length
       ? window.GALLERIES_DATA
       : [
@@ -124,70 +147,68 @@
           { name:"French Art Network — Carmel-by-the-Sea", city:"Carmel-by-the-Sea", country:"USA", phone:"(931) 625-3456", address:"San Carlos St, Carmel-by-the-Sea, CA 93921", website:"https://www.frenchart.net", lat:36.5552, lng:-121.9233 },
         ];
 
-    const escapeHtml = (s) =>
-      String(s ?? "")
+    function escapeHtml(s) {
+      return String(s ?? "")
         .replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#039;");
+    }
 
-    // MAP INIT
+    // ✅ init map
     const map = L.map(mapDiv, { scrollWheelZoom: true });
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       maxZoom: 18,
-      attribution: "&copy; OpenStreetMap"
+      attribution: "&copy; OpenStreetMap",
     }).addTo(map);
 
     const group = L.featureGroup().addTo(map);
     let markers = [];
 
-    function makePopup(g) {
+    function popupHtml(g) {
       const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${g.lat},${g.lng}`;
       const site = g.website
         ? `<a class="link" href="${g.website}" target="_blank" rel="noopener noreferrer">site</a>`
         : "";
       return `
-        <div>
-          <p style="margin:0 0 6px;font-weight:800">${escapeHtml(g.name)}</p>
-          <p style="margin:0;color:rgba(255,255,255,.82);font-size:13px;line-height:1.4">
+        <div style="min-width:220px">
+          <div style="font-weight:800;margin:0 0 6px">${escapeHtml(g.name)}</div>
+          <div style="font-size:13px;line-height:1.35;opacity:.9">
             ${escapeHtml(g.address)}<br>${escapeHtml(g.city)} · ${escapeHtml(g.country)}
-          </p>
-          <p style="margin:10px 0 0;font-size:13px">
+          </div>
+          <div style="margin-top:10px;font-size:13px">
             <a class="link" href="${mapsUrl}" target="_blank" rel="noopener noreferrer">itinéraire</a>
             ${site ? " · " + site : ""}
-          </p>
+          </div>
         </div>
       `;
     }
 
-    function invalidateSafe(){
-      requestAnimationFrame(() => requestAnimationFrame(() => map.invalidateSize()));
+    function safeInvalidate() {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => map.invalidateSize());
+      });
     }
 
-    function renderMarkers(list){
+    function renderMarkers(list) {
       group.clearLayers();
       markers = [];
 
       list.forEach((g) => {
         const m = L.marker([g.lat, g.lng]).addTo(group);
-        m.bindPopup(makePopup(g));
+        m.bindPopup(popupHtml(g));
         markers.push(m);
       });
 
       if (list.length) map.fitBounds(group.getBounds().pad(0.18));
-      else map.setView([20,0], 2);
+      else map.setView([20, 0], 2);
 
-      invalidateSafe();
+      safeInvalidate();
     }
 
-    function renderList(list){
+    function renderList(list) {
       listDiv.innerHTML = "";
-
-      if(!list.length){
-        listDiv.innerHTML = `<div class="item"><p class="name">Aucune galerie</p><p class="sub">Change ta recherche.</p></div>`;
-        return;
-      }
 
       list.forEach((g, idx) => {
         const div = document.createElement("div");
@@ -205,12 +226,12 @@
         `;
 
         div.addEventListener("click", () => {
-          [...listDiv.querySelectorAll(".item")].forEach(x => x.classList.remove("is-active"));
+          [...listDiv.querySelectorAll(".item")].forEach((x) => x.classList.remove("is-active"));
           div.classList.add("is-active");
 
           const m = markers[idx];
-          if(m){
-            map.setView(m.getLatLng(), Math.max(map.getZoom(), 6), { animate:true });
+          if (m) {
+            map.setView(m.getLatLng(), Math.max(map.getZoom(), 6), { animate: true });
             m.openPopup();
           }
         });
@@ -219,37 +240,35 @@
       });
     }
 
-    function apply(){
+    function apply() {
       const q = (qInput?.value || "").trim().toLowerCase();
-      const filtered = galleries.filter(g => {
+
+      const filtered = galleries.filter((g) => {
         const hay = `${g.name} ${g.city} ${g.country} ${g.address}`.toLowerCase();
         return !q || hay.includes(q);
       });
 
-      if(metaEl) metaEl.textContent = `${filtered.length} galerie${filtered.length>1?"s":""}`;
+      if (metaEl) metaEl.textContent = `${filtered.length} galerie${filtered.length > 1 ? "s" : ""}`;
+
       renderList(filtered);
       renderMarkers(filtered);
     }
 
-    // observers
-    if(window.ResizeObserver){
-      const ro = new ResizeObserver(() => invalidateSafe());
-      ro.observe(mapDiv);
-    }
-    window.addEventListener("resize", invalidateSafe);
+    // Observateur taille (super important quand la map est dans une grid)
+    const ro = new ResizeObserver(() => safeInvalidate());
+    ro.observe(mapDiv);
+    window.addEventListener("resize", safeInvalidate);
 
-    if(qInput) qInput.addEventListener("input", apply);
-    if(resetBtn) resetBtn.addEventListener("click", () => { if(qInput) qInput.value=""; apply(); });
+    // Events
+    if (qInput) qInput.addEventListener("input", apply);
+    if (resetBtn) resetBtn.addEventListener("click", () => {
+      if (qInput) qInput.value = "";
+      apply();
+    });
 
     // init
+    dbg("✅ Galeries init OK (si tu vois des items à droite, c'est bon).");
     apply();
-    invalidateSafe();
-
-    showDebug("✅ Galeries OK (liste + carte).");
-    setTimeout(() => showDebug(""), 1500);
+    safeInvalidate();
   }
 })();
-
-
-
-}
