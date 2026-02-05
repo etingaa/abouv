@@ -1,20 +1,20 @@
 // script.js — SAFE GLOBAL (toutes pages)
-// - Nav active robuste
-// - Scroll doux ancres
-// - Galeries (Leaflet) seulement si #map existe
-// Ne casse rien si la page n'a pas les éléments.
-
 (() => {
   "use strict";
 
   document.addEventListener("DOMContentLoaded", () => {
-    initActiveNav();
-    initSmoothAnchors();
-    initGaleriesPage(); // ne fait rien si pas sur galeries
+    try { initActiveNav(); } catch(e){ console.error(e); }
+    try { initSmoothAnchors(); } catch(e){ console.error(e); }
+    try { initGaleriesPage(); } catch(e){ console.error(e); showDebug("❌ JS crash: " + e.message); }
   });
 
+  function showDebug(msg){
+    const el = document.getElementById("galDebug");
+    if(el) el.innerHTML = msg;
+  }
+
   /* =========================
-     1) NAV ACTIVE (robuste)
+     1) NAV ACTIVE
      ========================= */
   function initActiveNav() {
     const navLinks = Array.from(document.querySelectorAll(".top__nav .nav__link"));
@@ -22,43 +22,36 @@
 
     const origin = window.location.origin;
 
-    function fileFromPath(pathname) {
+    const fileFromPath = (pathname) => {
       const clean = (pathname || "").replace(/\/+$/, "");
       const last = clean.split("/").pop();
       return last ? last : "index.html";
-    }
+    };
 
-    function fileFromHref(href) {
+    const fileFromHref = (href) => {
       if (!href) return null;
       if (href.startsWith("#")) return null;
       if (/^(mailto:|tel:|javascript:)/i.test(href)) return null;
-
       const u = new URL(href, origin);
       if (u.origin !== origin) return null;
-
       return fileFromPath(u.pathname);
-    }
+    };
 
-    function setActiveNav() {
-      const current = new URL(window.location.href);
-      const currentFile = fileFromPath(current.pathname);
+    const current = new URL(window.location.href);
+    const currentFile = fileFromPath(current.pathname);
 
-      navLinks.forEach((link) => {
-        link.classList.remove("is-active");
+    navLinks.forEach((link) => {
+      link.classList.remove("is-active");
+      const href = link.getAttribute("href") || "";
+      const linkFile = fileFromHref(href);
+      if (!linkFile) return;
 
-        const href = link.getAttribute("href") || "";
-        const linkFile = fileFromHref(href);
-        if (!linkFile) return;
+      const isIndex =
+        (currentFile === "index.html" || currentFile === "") &&
+        (linkFile === "index.html" || linkFile === "");
 
-        const isIndex =
-          (currentFile === "index.html" || currentFile === "") &&
-          (linkFile === "index.html" || linkFile === "");
-
-        if (linkFile === currentFile || isIndex) link.classList.add("is-active");
-      });
-    }
-
-    setActiveNav();
+      if (linkFile === currentFile || isIndex) link.classList.add("is-active");
+    });
   }
 
   /* =========================
@@ -76,11 +69,7 @@
       if (!target) return;
 
       const y = target.getBoundingClientRect().top + window.pageYOffset - HEADER_OFFSET;
-
-      window.scrollTo({
-        top: y,
-        behavior: prefersReducedMotion ? "auto" : "smooth",
-      });
+      window.scrollTo({ top: y, behavior: prefersReducedMotion ? "auto" : "smooth" });
 
       if (push) history.pushState(null, "", hash);
 
@@ -102,48 +91,29 @@
       if (window.location.hash) scrollToId(window.location.hash, false);
     });
 
-    if (window.location.hash) {
-      setTimeout(() => scrollToId(window.location.hash, false), 0);
-    }
+    if (window.location.hash) setTimeout(() => scrollToId(window.location.hash, false), 0);
   }
 
   /* =========================
-     3) GALERIES (Leaflet) — SAFE + compatible ids
+     3) GALERIES (Leaflet)
      ========================= */
   function initGaleriesPage() {
     const mapDiv = document.getElementById("map");
-    if (!mapDiv) return; // pas sur la page galeries
+    const listDiv = document.getElementById("list");
+    if (!mapDiv || !listDiv) return; // pas sur galeries
 
-    // ids standard OU tes ids
-    const listDiv  = document.getElementById("list")  || document.getElementById("galList");
-    const qInput   = document.getElementById("q")     || document.getElementById("galQ");
-    const resetBtn = document.getElementById("reset") || document.getElementById("galReset");
-    const metaEl   = document.getElementById("meta")  || document.getElementById("galMeta");
-
-    // Debug visible si un truc manque
-    const debugEl = ensureDebugEl();
-    function showDebug(msg) {
-      debugEl.style.display = "block";
-      debugEl.innerHTML = msg;
-    }
-
-    if (!listDiv) {
-      showDebug("❌ Galeries: il manque la liste. Ajoute <div id='galList'> (ou id='list').");
-      return;
-    }
+    const qInput = document.getElementById("q");
+    const resetBtn = document.getElementById("reset");
+    const metaEl = document.getElementById("meta");
 
     if (!window.L) {
-      showDebug("❌ Leaflet non chargé. Vérifie que leaflet.js est AVANT script.js dans le HTML.");
+      showDebug("❌ Leaflet non chargé (CDN bloqué?).<br>Essaie sans adblock / vérifie la connexion.");
       return;
     }
 
-    // Force une hauteur mini si ta CSS donne 0px
-    if (mapDiv.getBoundingClientRect().height < 120) {
-      mapDiv.style.minHeight = "420px";
-      mapDiv.style.height = "100%";
-    }
+    showDebug("✅ JS OK — init galeries…");
 
-    const galleries = (Array.isArray(window.GALLERIES_DATA) && window.GALLERIES_DATA.length)
+    const galleries = Array.isArray(window.GALLERIES_DATA) && window.GALLERIES_DATA.length
       ? window.GALLERIES_DATA
       : [
           { name:"Galerie Rue Toulouse (French Art Network)", city:"Laguna Beach", country:"USA", phone:"(949) 549-4546", address:"390 S. Coast Hwy, Laguna Beach, CA 92651", website:"https://www.frenchart.net", lat:33.5427, lng:-117.7831 },
@@ -154,34 +124,29 @@
           { name:"French Art Network — Carmel-by-the-Sea", city:"Carmel-by-the-Sea", country:"USA", phone:"(931) 625-3456", address:"San Carlos St, Carmel-by-the-Sea, CA 93921", website:"https://www.frenchart.net", lat:36.5552, lng:-121.9233 },
         ];
 
-    function escapeHtml(s){
-      return String(s ?? "")
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
-    }
+    const escapeHtml = (s) =>
+      String(s ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
 
-    let map;
-    try {
-      map = L.map(mapDiv, { scrollWheelZoom: true });
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        maxZoom: 18,
-        attribution: "&copy; OpenStreetMap"
-      }).addTo(map);
-    } catch (e) {
-      console.error(e);
-      showDebug("❌ Leaflet: init map a planté. Ouvre la console (F12).");
-      return;
-    }
+    // MAP INIT
+    const map = L.map(mapDiv, { scrollWheelZoom: true });
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 18,
+      attribution: "&copy; OpenStreetMap"
+    }).addTo(map);
 
     const group = L.featureGroup().addTo(map);
     let markers = [];
 
-    function makePopup(g){
+    function makePopup(g) {
       const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${g.lat},${g.lng}`;
-      const site = g.website ? `<a class="link" href="${g.website}" target="_blank" rel="noopener noreferrer">site</a>` : "";
+      const site = g.website
+        ? `<a class="link" href="${g.website}" target="_blank" rel="noopener noreferrer">site</a>`
+        : "";
       return `
         <div>
           <p style="margin:0 0 6px;font-weight:800">${escapeHtml(g.name)}</p>
@@ -196,35 +161,35 @@
       `;
     }
 
-    function safeInvalidate(){
+    function invalidateSafe(){
       requestAnimationFrame(() => requestAnimationFrame(() => map.invalidateSize()));
-      setTimeout(() => { try { map.invalidateSize(); } catch(_){} }, 200);
     }
 
     function renderMarkers(list){
       group.clearLayers();
       markers = [];
 
-      const valid = list.filter(g =>
-        Number.isFinite(Number(g.lat)) && Number.isFinite(Number(g.lng))
-      );
-
-      valid.forEach((g) => {
-        const m = L.marker([Number(g.lat), Number(g.lng)]).addTo(group);
+      list.forEach((g) => {
+        const m = L.marker([g.lat, g.lng]).addTo(group);
         m.bindPopup(makePopup(g));
-        markers.push({ g, m });
+        markers.push(m);
       });
 
-      if (valid.length) map.fitBounds(group.getBounds().pad(0.18));
+      if (list.length) map.fitBounds(group.getBounds().pad(0.18));
       else map.setView([20,0], 2);
 
-      safeInvalidate();
+      invalidateSafe();
     }
 
     function renderList(list){
       listDiv.innerHTML = "";
 
-      list.forEach((g) => {
+      if(!list.length){
+        listDiv.innerHTML = `<div class="item"><p class="name">Aucune galerie</p><p class="sub">Change ta recherche.</p></div>`;
+        return;
+      }
+
+      list.forEach((g, idx) => {
         const div = document.createElement("div");
         div.className = "item";
         div.innerHTML = `
@@ -243,10 +208,10 @@
           [...listDiv.querySelectorAll(".item")].forEach(x => x.classList.remove("is-active"));
           div.classList.add("is-active");
 
-          const hit = markers.find(x => x.g === g);
-          if (hit) {
-            map.setView(hit.m.getLatLng(), Math.max(map.getZoom(), 6), { animate:true });
-            hit.m.openPopup();
+          const m = markers[idx];
+          if(m){
+            map.setView(m.getLatLng(), Math.max(map.getZoom(), 6), { animate:true });
+            m.openPopup();
           }
         });
 
@@ -254,52 +219,37 @@
       });
     }
 
-    function applyFilter(){
+    function apply(){
       const q = (qInput?.value || "").trim().toLowerCase();
       const filtered = galleries.filter(g => {
         const hay = `${g.name} ${g.city} ${g.country} ${g.address}`.toLowerCase();
         return !q || hay.includes(q);
       });
 
-      if (metaEl) metaEl.textContent = `${filtered.length} galerie${filtered.length>1?"s":""}`;
-
+      if(metaEl) metaEl.textContent = `${filtered.length} galerie${filtered.length>1?"s":""}`;
       renderList(filtered);
       renderMarkers(filtered);
     }
 
-    if (qInput) qInput.addEventListener("input", applyFilter);
-    if (resetBtn) resetBtn.addEventListener("click", () => {
-      if (qInput) qInput.value = "";
-      applyFilter();
-    });
-
-    if (window.ResizeObserver) {
-      const ro = new ResizeObserver(() => safeInvalidate());
+    // observers
+    if(window.ResizeObserver){
+      const ro = new ResizeObserver(() => invalidateSafe());
       ro.observe(mapDiv);
     }
-    window.addEventListener("resize", safeInvalidate);
+    window.addEventListener("resize", invalidateSafe);
+
+    if(qInput) qInput.addEventListener("input", apply);
+    if(resetBtn) resetBtn.addEventListener("click", () => { if(qInput) qInput.value=""; apply(); });
 
     // init
-    applyFilter();
-    safeInvalidate();
-    debugEl.style.display = "none"; // cache debug si tout va bien
-  }
+    apply();
+    invalidateSafe();
 
-  function ensureDebugEl(){
-    let el = document.getElementById("debug-galeries");
-    if (!el) {
-      el = document.createElement("div");
-      el.id = "debug-galeries";
-      el.style.cssText =
-        "position:fixed;left:12px;bottom:12px;z-index:99999;max-width:520px;" +
-        "padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.18);" +
-        "background:rgba(0,0,0,.55);color:#fff;font:13px/1.35 Inter,system-ui,sans-serif;" +
-        "display:none";
-      document.body.appendChild(el);
-    }
-    return el;
+    showDebug("✅ Galeries OK (liste + carte).");
+    setTimeout(() => showDebug(""), 1500);
   }
 })();
+
 
 
 }
