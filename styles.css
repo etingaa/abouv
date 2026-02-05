@@ -13,7 +13,6 @@ body{
   margin:0;
   font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   color: var(--ink);
-
   background-image: url("images/couverture.jpg");
   background-size: cover;
   background-position: center;
@@ -25,23 +24,18 @@ body{
 html, body{
   cursor: url("images/cursor.svg") 8 8, auto;
 }
-
-/* Sur les éléments cliquables */
 a, button, [role="button"]{
   cursor: url("images/cursor-pointer.svg") 8 8, pointer;
 }
 
 /* liens */
-a{
-  color: inherit;
-  text-decoration: none;
-}
+a{ color: inherit; text-decoration: none; }
 
 /* page + container */
 .page{
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  display:flex;
+  flex-direction:column;
   background: transparent;
 }
 
@@ -50,12 +44,10 @@ a{
   max-width: 1400px;
   margin: 0 auto;
   padding: 20px 48px;
-
   flex: 1;
-  display: flex;
-  flex-direction: column;
+  display:flex;
+  flex-direction:column;
 }
-
 @media (max-width: 768px){
   .container{ padding: 16px 20px; }
 }
@@ -66,6 +58,7 @@ a{
   align-items:center;
   justify-content:space-between;
   padding: 18px 0;
+  gap: 20px;
 }
 
 .brand{
@@ -83,6 +76,7 @@ a{
   align-items:center;
   gap: 20px;
   flex-wrap: wrap;
+  justify-content:flex-end;
 }
 
 .nav__link{
@@ -93,505 +87,21 @@ a{
   padding-bottom: 6px;
   line-height: 1;
 }
-
 .nav__link:hover{ border-bottom-color: rgba(255,255,255,.5); }
 .nav__link.is-active{ border-bottom-color: #fff; }
 
-/* HOME CENTER */
-.center{
-  flex: 1;
-  display: grid;
-  place-items: center;
-  padding: 32px 0 28px;
-}
-
-.heroImage{
-  width: min(920px, 78vw);
-  height: auto;
-  display:block;
-  filter: drop-shadow(0 18px 35px rgba(0,0,0,.20));
-  border-radius: 2px;
-}
-
-/* FOOTER */
-.bottom{
-  margin-top: auto;
-  padding: 16px 0 24px;
-}
-
-.bottom__left{
-  display:flex;
-  gap: 26px;
-  flex-wrap: wrap;
-}
-
-.bottom__link,
-.bottom__right{
-  color: var(--ink-faint);
-  border-bottom: 1px solid transparent;
-  padding-bottom: 2px;
-}
-
-.bottom__link:hover,
-.bottom__right:hover{
-  color: var(--ink-soft);
-  border-bottom-color: rgba(255,255,255,.45);
-}
-
 /* Responsive header */
 @media (max-width: 860px){
-  .top{
-    flex-direction: column;
-    align-items:flex-start;
-    gap: 10px;
-  }
-  .top__nav{
-    justify-content: flex-start;
-    gap: 12px;
-  }
-  .heroImage{ width: min(920px, 92vw); }
-  .bottom{ flex-direction: column; align-items:flex-start; }
-}
-
-/* =========================
-   PORTFOLIO (spécifique)
-   ========================= */
-
-body.portfolio{
-  background-image: none;
-  background: #02253A;
-}
-
-body.portfolio .container{
-  padding: 20px 48px 56px;
-}
-@media (max-width:768px){
-  body.portfolio .container{ padding:16px 20px 40px; }
-}
-
-/* =========================
-   NOUVEAUX FILTRES — chips + dropdown multi
-   (remplace l'ancien .filters)
-   ========================= */
-
-/* Chips actives */
-body.portfolio .filterChips{
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-  margin: 10px 0 10px;
-}
-
-body.portfolio .chip{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  padding:6px 10px;
-  border:1px solid rgba(255,255,255,.22);
-  background: rgba(255,255,255,.08);
-  border-radius: 999px;
-  font-size: 13px;
-  color: rgba(255,255,255,.92);
-}
-
-body.portfolio .chip button{
-  border:0;
-  background: transparent;
-  color: rgba(255,255,255,.75);
-  cursor:pointer;
-  font-size: 16px;
-  line-height: 1;
-  padding: 0;
-}
-body.portfolio .chip button:hover{ color:#fff; }
-
-/* Barre des filtres */
-body.portfolio .filterBar{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-  align-items:center;
-  padding: 6px 0 12px;
-}
-
-/* Champ recherche (Nom) */
-body.portfolio .field--search{
-  flex: 1 1 260px;
-  min-width: 240px;
-}
-
-body.portfolio .pillInput{
-  width:100%;
-  height:42px;
-  padding: 0 14px;
-  border-radius: 999px;
-  border:1px solid rgba(255,255,255,.22);
-  background: rgba(255,255,255,.08);
-  color:#fff;
-  outline:none;
-  font-size:14px;
-}
-body.portfolio .pillInput::placeholder{ color: rgba(255,255,255,.45); }
-body.portfolio .pillInput:focus{
-  border-color: rgba(255,255,255,.35);
-  background: rgba(255,255,255,.12);
-}
-
-/* Dropdown */
-body.portfolio .dd{ position: relative; }
-
-body.portfolio .pillBtn{
-  height:42px;
-  border-radius: 999px;
-  border:1px solid rgba(255,255,255,.22);
-  background: rgba(255,255,255,.08);
-  color:#fff;
-  padding: 0 14px;
-  font-weight:700;
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  cursor:pointer;
-  user-select:none;
-  font-size:14px;
-}
-body.portfolio .pillBtn:hover{ background: rgba(255,255,255,.12); }
-
-body.portfolio .pillBtn--ghost{
-  background: rgba(255,255,255,0);
-}
-
-/* petit badge compteur (nombre de choix) */
-body.portfolio .pillCount{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  min-width: 18px;
-  height:18px;
-  padding:0 6px;
-  border-radius: 999px;
-  background: rgba(255,255,255,.18);
-  font-size: 12px;
-  color: rgba(255,255,255,.9);
-}
-body.portfolio .pillCount:empty{ display:none; }
-
-body.portfolio .pillCaret{
-  opacity:.8;
-  font-size: 12px;
-}
-
-/* panneau dropdown */
-body.portfolio .ddPanel{
-  position:absolute;
-  top: calc(42px + 8px);
-  left:0;
-  min-width: 260px;
-  max-height: 320px;
-  overflow:auto;
-  padding:10px;
-  border-radius: 14px;
-  border:1px solid rgba(255,255,255,.18);
-  background: rgba(7,16,24,.92);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 18px 50px rgba(0,0,0,.35);
-  display:none;
-  z-index: 50;
-}
-
-body.portfolio .dd.is-open .ddPanel{ display:block; }
-
-body.portfolio .ddRow{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:8px 8px;
-  border-radius: 10px;
-  cursor:pointer;
-}
-body.portfolio .ddRow:hover{ background: rgba(255,255,255,.06); }
-
-body.portfolio .ddRow input{
-  accent-color: #3ddc84;
-}
-
-body.portfolio .ddLabel{
-  flex:1;
-  font-size:14px;
-  color: rgba(255,255,255,.92);
-}
-
-/* =========================
-   Title row
-   ========================= */
-
-body.portfolio .metaRow{
-  display:flex;
-  align-items:baseline;
-  justify-content:space-between;
-  gap:16px;
-  margin:18px 2px 10px;
-}
-body.portfolio .title{
-  margin:0;
-  font-size:22px;
-  font-weight:800;
-}
-body.portfolio .count{
-  color: var(--ink-faint);
-  font-size:14px;
-}
-
-/* =========================
-   Masonry
-   ========================= */
-
-body.portfolio .masonry{ column-gap:14px; columns:4; }
-@media (max-width:1200px){ body.portfolio .masonry{ columns:3; } }
-@media (max-width:900px){ body.portfolio .masonry{ columns:2; } }
-@media (max-width:520px){ body.portfolio .masonry{ columns:1; } }
-
-body.portfolio .piece{
-  break-inside: avoid;
-  margin: 0 0 14px;
-  cursor:pointer;
-}
-
-/* Image wrap */
-body.portfolio .imgWrap{
-  position: relative; /* ✅ pour filigrane */
-  border:1px solid rgba(255,255,255,.18);
-  overflow:hidden;
-  background: rgba(255,255,255,.03);
-  transition: transform .12s ease, border-color .12s ease, background .12s ease;
-}
-body.portfolio .piece:hover .imgWrap{
-  transform: translateY(-2px);
-  border-color: rgba(255,255,255,.35);
-  background: rgba(255,255,255,.05);
-}
-body.portfolio .piece img{
-  width:100%;
-  height:auto;
-  display:block;
-}
-
-/* Caption */
-body.portfolio .cap{
-  padding: 8px 6px 0;
-  text-align:center;
-}
-body.portfolio .capTitle{
-  margin:0;
-  font-weight:900;
-  letter-spacing:.06em;
-  text-transform:uppercase;
-  font-size:12px;
-  color:#fff;
-}
-body.portfolio .capMeta{
-  margin:6px 0 0;
-  font-size:12px;
-  color: var(--ink-faint);
-  letter-spacing:.02em;
-}
-
-/* Badge vert/rouge + point */
-body.portfolio .badge{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  margin-top:6px;
-  padding:4px 10px;
-  border:1px solid var(--border);
-  background: rgba(255,255,255,.06);
-  font-size:12px;
-  font-weight:800;
-  text-transform:uppercase;
-  letter-spacing:.05em;
-}
-body.portfolio .badge::before{
-  content:"";
-  width:8px;
-  height:8px;
-  border-radius:50%;
-  display:inline-block;
-}
-body.portfolio .badge.disponible{
-  color:#3ddc84;
-  border-color: rgba(61,220,132,.5);
-}
-body.portfolio .badge.disponible::before{ background:#3ddc84; }
-body.portfolio .badge.vendue{
-  color:#ff5c5c;
-  border-color: rgba(255,92,92,.5);
-  opacity:.9;
-}
-body.portfolio .badge.vendue::before{ background:#ff5c5c; }
-
-/* =========================
-   FILIGRANE — GRILLE
-   ========================= */
-
-body.portfolio .imgWrap::after{
-  content: "ANNICK BOUVATTIER";
-  position: absolute;
-  inset: 0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size: 20px;
-  font-weight: 900;
-  letter-spacing: .22em;
-  text-transform: uppercase;
-  color: rgba(255,255,255,.10);
-  pointer-events: none;
-  transform: rotate(-25deg);
-}
-
-/* =========================
-   MODAL — image max, texte dessous, aucun cadre
-   ========================= */
-
-body.portfolio dialog{
-  border: none;
-  padding: 0;
-  background: transparent;
-  max-width: 96vw;
-  max-height: 92vh;
-}
-
-body.portfolio dialog::backdrop{
-  background: rgba(0,0,0,.55);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-}
-
-body.portfolio .modal{
-  position: relative;
-  width: min(1200px, 96vw);
-  height: min(92vh, 900px);
-  display: flex;
-  flex-direction: column;
-  background: transparent;
-  border: none;
-}
-
-body.portfolio .modal__media{
-  position: relative; /* ✅ pour croix + filigrane */
-  flex: 1;
-  min-height: 0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
-body.portfolio .modal__img{
-  max-width: 100%;
-  max-height: 100%;
-  width: auto;
-  height: auto;
-  object-fit: contain;
-  display:block;
-}
-
-/* Filigrane dans le modal */
-body.portfolio .modal__media::after{
-  content: "ANNICK BOUVATTIER";
-  position: absolute;
-  inset: 0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size: 28px;
-  font-weight: 900;
-  letter-spacing: .25em;
-  text-transform: uppercase;
-  color: rgba(255,255,255,.14);
-  pointer-events: none;
-  transform: rotate(-25deg);
-}
-
-body.portfolio .modal__info{
-  padding: 14px 0 6px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  text-align:center;
-  gap: 6px;
-}
-
-body.portfolio .modal__h{
-  margin:0;
-  font-size:16px;
-  font-weight:900;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-  color:#fff;
-}
-
-body.portfolio .modal__meta{
-  margin:0;
-  font-size:14px;
-  color: rgba(255,255,255,.85);
-}
-
-/* Statut coloré dans le modal */
-body.portfolio .statusText{
-  font-weight: 900;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-}
-body.portfolio .statusText.disponible{ color:#3ddc84; }
-body.portfolio .statusText.vendue{ color:#ff5c5c; }
-
-/* Croix */
-body.portfolio .modal__closeBtn{
-  position:absolute;
-  top:10px;
-  right:10px;
-  width:36px;
-  height:36px;
-  border-radius:50%;
-  border:1px solid rgba(255,255,255,.35);
-  background: rgba(0,0,0,.45);
-  color:#fff;
-  font-size:22px;
-  font-weight:900;
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-body.portfolio .modal__closeBtn:hover{
-  background: rgba(0,0,0,.65);
-}
-
-/* Bonus dissuasion (facultatif) */
-body.portfolio img{
-  user-select: none;
-  -webkit-user-drag: none;
+  .top{ flex-direction: column; align-items:flex-start; gap: 10px; }
+  .top__nav{ justify-content: flex-start; gap: 12px; }
 }
 
 /* =========================
    GALERIES
    ========================= */
-
 body.galeries{
   background-image: none;
   background: #02253A;
-}
-
-/* wrapper page */
-.galWrap{
-  width: 100%;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 20px 48px 56px;
-}
-@media (max-width:768px){
-  .galWrap{ padding:16px 20px 40px; }
 }
 
 .galHead{
@@ -601,135 +111,161 @@ body.galeries{
   gap:16px;
   margin:14px 0 10px;
 }
-.galHead h1{ margin:0; font-size:28px; font-weight:800; }
-.galMeta{ color: rgba(255,255,255,.55); font-size:14px; }
+.galH1{
+  margin:0;
+  font-size:28px;
+  font-weight:800;
+}
+.galMeta{
+  color: var(--ink-faint);
+  font-size:14px;
+}
 
-/* ✅ le gros bloc : hauteur “propre” */
+/* ✅ Carte globale (map + liste collées) */
 .galCard{
-  margin-top: 12px;
-  display: grid;
-  grid-template-columns: 1.2fr .8fr;
-  border: 1px solid rgba(255,255,255,.18);
-  border-radius: 18px;
-  overflow: hidden;
+  margin-top:12px;
+  display:grid;
+  grid-template-columns: 1.25fr .75fr;
+  gap:0;
+  align-items: stretch;
+  border:1px solid var(--border);
+  border-radius:18px;
+  overflow:hidden;
   background: rgba(255,255,255,.04);
+}
 
-  /* prend la place visible */
-  height: calc(100vh - 210px); /* ajuste si besoin */
-  min-height: 520px;
+/* ✅ La hauteur est contrôlée ici */
+.galCard{
+  min-height: 620px;
 }
 @media (max-width:1050px){
   .galCard{
     grid-template-columns: 1fr;
-    height: auto;
-    min-height: 0;
+    min-height: auto;
   }
 }
 
-/* ✅ la carte occupe toute la hauteur du bloc */
-.galMap{ background:#0b1c28; }
+/* ✅ map en full height */
+.galMap{
+  position: relative;
+  background:#0b1c28;
+  border-right: 1px solid rgba(255,255,255,.14);
+}
+@media (max-width:1050px){
+  .galMap{
+    border-right:0;
+    border-bottom: 1px solid rgba(255,255,255,.14);
+    min-height: 420px;
+  }
+}
+
 #map{
+  position:absolute;
+  inset:0;
   width:100%;
-  height: 100%;
-  min-height: 520px;
+  height:100%;
   background:#0b1c28;
 }
-@media (max-width:1050px){
-  #map{ height: 420px; min-height: 420px; }
-}
 
-/* ✅ panneau à droite = même hauteur + scroll interne */
+/* colonne droite */
 .galSide{
-  border-left: 1px solid rgba(255,255,255,.18);
-  padding: 14px;
+  padding:14px;
   background: rgba(255,255,255,.02);
-
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-@media (max-width:1050px){
-  .galSide{
-    border-left: 0;
-    border-top: 1px solid rgba(255,255,255,.18);
-    height: auto;
-  }
+  display:flex;
+  flex-direction:column;
+  min-height:0;
 }
 
 .galTitle{
-  margin: 0 4px 10px;
-  font-size: 14px;
-  font-weight: 800;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  color: rgba(255,255,255,.55);
+  margin:4px 4px 10px;
+  font-size:14px;
+  font-weight:800;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color: var(--ink-faint);
 }
 
 .galSearchRow{
   display:flex;
   gap:10px;
-  margin: 0 4px 12px;
+  margin: 0 4px 10px;
 }
 
 .galInput{
   width:100%;
   height:44px;
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,.18);
+  border-radius:12px;
+  border:1px solid var(--border);
   background: rgba(255,255,255,.08);
   color:#fff;
-  padding: 10px 12px;
+  padding:10px 12px;
   outline:none;
+  font-size:14px;
 }
 .galInput::placeholder{ color: rgba(255,255,255,.45); }
+.galInput:focus{
+  border-color: rgba(255,255,255,.35);
+  background: rgba(255,255,255,.12);
+}
 
 .galBtn{
   height:44px;
-  padding: 0 14px;
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,.18);
+  padding:0 14px;
+  border-radius:12px;
+  border:1px solid var(--border);
   background: rgba(255,255,255,.14);
   color:#fff;
-  font-weight:700;
+  font-weight:800;
   cursor:pointer;
-  white-space: nowrap;
+  white-space:nowrap;
 }
 .galBtn:hover{ background: rgba(255,255,255,.18); }
 
-/* ✅ la liste scrolle dans le panneau */
 .galList{
-  margin-top: 8px;
   display:flex;
   flex-direction:column;
   gap:10px;
+  margin-top:10px;
   overflow:auto;
-  flex: 1;
-  padding-right: 4px;
+  flex:1;
+  min-height:0;
+  padding-right:4px;
 }
 
-.galItem{
-  border: 1px solid rgba(255,255,255,.14);
-  border-radius: 16px;
-  padding: 12px;
+/* cards de galeries */
+.item{
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:16px;
+  padding:12px;
   background: rgba(255,255,255,.03);
   cursor:pointer;
   transition: background .12s ease, border-color .12s ease, transform .12s ease;
 }
-.galItem:hover{
+.item:hover{
   background: rgba(255,255,255,.05);
   border-color: rgba(255,255,255,.26);
   transform: translateY(-1px);
 }
-.galItem.is-active{
+.item.is-active{
   border-color: rgba(255,255,255,.40);
   background: rgba(255,255,255,.06);
 }
-
-.galName{ margin:0; font-weight:800; font-size:14px; }
-.galSub{ margin:6px 0 0; color: rgba(255,255,255,.82); font-size:13px; line-height:1.45; }
-
-.galLink{
-  color: rgba(255,255,255,.82);
-  border-bottom: 1px solid rgba(255,255,255,.35);
+.name{
+  margin:0;
+  font-weight:800;
+  font-size:14px;
 }
-.galLink:hover{ color:#fff; border-bottom-color:#fff; }
+.sub{
+  margin:6px 0 0;
+  color: var(--ink-soft);
+  font-size:13px;
+  line-height:1.45;
+}
+.link{
+  color: var(--ink-soft);
+  border-bottom:1px solid rgba(255,255,255,.35);
+}
+.link:hover{
+  color:#fff;
+  border-bottom-color:#fff;
+}
