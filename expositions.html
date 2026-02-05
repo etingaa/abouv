@@ -19,7 +19,9 @@
       --chip2:rgba(255,255,255,.12);
     }
     *{box-sizing:border-box}
-    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(""),}
+
+    /* ✅ correction : enlève background:var(""), */
+    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
     body{background:var(--bg);color:var(--ink)}
     a{color:inherit;text-decoration:none}
 
@@ -68,6 +70,7 @@
       font-weight:700;
       padding:10px 12px;
       border-radius:12px;
+      cursor:pointer;
     }
     .btn:hover{background:rgba(255,255,255,.18)}
 
@@ -118,8 +121,24 @@
     .year{font-size:18px;font-weight:800}
     .yearCount{color:var(--faint);font-size:14px}
 
-    .items{padding:10px 12px 12px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .items{
+      padding:10px 12px 12px;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
     @media (max-width:900px){.items{grid-template-columns:1fr}}
+
+    /* ✅ NOUVEAU : si une seule expo, on fait une colonne */
+    .items.is-single{
+      grid-template-columns: 1fr;
+    }
+
+    /* (optionnel mais joli) : si tu veux éviter que la carte s'étire trop */
+    .items.is-single .expo{
+      max-width: 920px;
+      justify-self: start; /* mets center si tu préfères centré */
+    }
 
     .expo{
       border:1px solid rgba(255,255,255,.14);
@@ -145,7 +164,6 @@
   </style>
 </head>
 
-  
 <body>
   <div class="container">
     <header class="top">
@@ -213,56 +231,53 @@
 
   <script>
     const expos = [
+      { year: 2019, title: "Galerie Bouillon d’Art", city: "Bordeaux", country: "France", type: "solo" },
+      { year: 2018, title: "Artclub Gallery", city: "Paris", country: "France", type: "solo" },
+      { year: 2015, title: "Galerie Next", city: "Toulouse", country: "France", type: "solo" },
+      { year: 2013, title: "Galerie Salvany", city: "Clermont-Ferrand", country: "France", type: "solo" },
+      { year: 2012, title: "Artclub Gallery", city: "Paris", country: "France", type: "solo" },
+      { year: 2011, title: "Palm Beach", city: "Cannes", country: "France", type: "solo" },
+      { year: 2011, title: "Galerie Neel", city: "Cannes", country: "France", type: "solo" },
+      { year: 2010, title: "Galerie des Chapelains", city: "Nevers", country: "France", type: "solo" },
+      { year: 2009, title: "Artclub Gallery", city: "Paris", country: "France", type: "solo" },
+      { year: 2006, title: "Galerie Salvany", city: "Clermont-Ferrand", country: "France", type: "solo" },
+      { year: 2005, title: "Artclub Gallery", city: "Paris", country: "France", type: "solo" },
+      { year: 2005, title: "Galerie Futurart", city: "Bruxelles", country: "France", type: "solo" },
+      { year: 2002, title: "Galerie Aktuaryus", city: "Strasbourg", country: "France", type: "solo" },
+      { year: 2002, title: "Galerie des Chapelains", city: "Nevers", country: "France", type: "solo" },
+      { year: 2001, title: "Galerie Tosaka", city: "Paris", country: "France", type: "solo" },
+      { year: 2000, title: "Galerie Aktuaryus", city: "Strasbourg", country: "France", type: "solo" },
+      { year: 2000, title: "Galerie des Chapelains", city: "Nevers", country: "France", type: "solo" },
+      { year: 1997, title: "Galerie Saint-Cyr", city: "Nevers", country: "France", type: "solo" },
+      { year: 1996, title: "Galerie Étienne De Caussans", city: "Paris", country: "France", type: "solo" },
+      { year: 1993, title: "Galerie Jason", city: "Perpignan", country: "France", type: "solo" },
 
-{ year: 2019, title: "Galerie Bouillon d’Art", city: "Bordeaux", country: "France", type: "solo" },
-{ year: 2018, title: "Artclub Gallery", city: "Paris", country: "France", type: "solo" },
-{ year: 2015, title: "Galerie Next", city: "Toulouse", country: "France", type: "solo" },
-{ year: 2013, title: "Galerie Salvany", city: "Clermont-Ferrand", country: "France", type: "solo" },
-{ year: 2012, title: "Artclub Gallery", city: "Paris", country: "France", type: "solo" },
-{ year: 2011, title: "Palm Beach", city: "Cannes", country: "France", type: "solo" },
-{ year: 2011, title: "Galerie Neel", city: "Cannes", country: "France", type: "solo" },
-{ year: 2010, title: "Galerie des Chapelains", city: "Nevers", country: "France", type: "solo" },
-{ year: 2009, title: "Artclub Gallery", city: "Paris", country: "France", type: "solo" },
-{ year: 2006, title: "Galerie Salvany", city: "Clermont-Ferrand", country: "France", type: "solo" },
-{ year: 2005, title: "Artclub Gallery", city: "Paris", country: "France", type: "solo" },
-{ year: 2005, title: "Galerie Futurart", city: "Bruxelles", country: "France", type: "solo" },
-{ year: 2002, title: "Galerie Aktuaryus", city: "Strasbourg", country: "France", type: "solo" },
-{ year: 2002, title: "Galerie des Chapelains", city: "Nevers", country: "France", type: "solo" },
-{ year: 2001, title: "Galerie Tosaka", city: "Paris", country: "France", type: "solo" },
-{ year: 2000, title: "Galerie Aktuaryus", city: "Strasbourg", country: "France", type: "solo" },
-{ year: 2000, title: "Galerie des Chapelains", city: "Nevers", country: "France", type: "solo" },
-{ year: 1997, title: "Galerie Saint-Cyr", city: "Nevers", country: "France", type: "solo" },
-{ year: 1996, title: "Galerie Étienne De Caussans", city: "Paris", country: "France", type: "solo" },
-{ year: 1993, title: "Galerie Jason", city: "Perpignan", country: "France", type: "solo" },
-
-{ year: 2024, title: "French Art Network — Galerie Rue Toulouse", city: "Laguna Beach, Carmel", country: "États-Unis", type: "group" },
-{ year: 2024, title: "Galerie Page", city: "Biarritz", country: "France", type: "group" },
-{ year: "Depuis 2020", title: "French Art Network — Galerie Rue Toulouse", city: "New Orleans", country: "États-Unis", type: "group" },
-{ year: "2005–2024", title: "Galerie Artclub", city: "Paris", country: "France", type: "group" },
-{ year: 2018, title: "Galerie ArtAddict", city: "Mougins", country: "France", type: "group" },
-{ year: 2018, title: "Art3F", city: "Cannes", country: "France", type: "salon" },
-{ year: 2017, title: "ArtShopping", city: "Paris", country: "France", type: "salon" },
-{ year: 2017, title: "ArtFair", city: "Lausanne", country: "Suisse", type: "salon" },
-{ year: 2017, title: "Art3F", city: "Paris", country: "France", type: "salon" },
-{ year: 2016, title: "Exposition ArtFair", city: "Anvers", country: "Belgique", type: "salon" },
-{ year: 2010, title: "Galerie Neel", city: "Cannes", country: "France", type: "group" },
-{ year: 2008, title: "Galerie Joël Dupuis", city: "Hardelot-sur-Mer", country: "France", type: "group" },
-{ year: 2007, title: "The Catto Gallery", city: "Londres", country: "Angleterre", type: "group" },
-{ year: 2007, title: "Galerie Joël Dupuis", city: "Hardelot-sur-Mer", country: "France", type: "group" },
-{ year: 2007, title: "Galerie Hugues Penot", city: "La Baule", country: "France", type: "group" },
-{ year: 1998, title: "Artexpo", city: "New York", country: "États-Unis", type: "salon" },
-{ year: 1998, title: "Galerie Christian Dazy", city: "Dijon", country: "France", type: "group" },
-{ year: 1997, title: "Musée de Marzy", city: "Marzy", country: "France", type: "group" },
-{ year: 1996, title: "Salon de Printemps", city: "Decize", country: "France", type: "salon" },
-{ year: 1994, title: "Salon de Bourges", city: "Bourges", country: "France", type: "salon" },
-{ year: 1993, title: "Salon d’Automne (Grand Palais)", city: "Paris", country: "France", type: "salon" },
-{ year: 1992, title: "Exposition d’Été", city: "Decize", country: "France", type: "group" }
+      { year: 2024, title: "French Art Network — Galerie Rue Toulouse", city: "Laguna Beach, Carmel", country: "États-Unis", type: "group" },
+      { year: 2024, title: "Galerie Page", city: "Biarritz", country: "France", type: "group" },
+      { year: "Depuis 2020", title: "French Art Network — Galerie Rue Toulouse", city: "New Orleans", country: "États-Unis", type: "group" },
+      { year: "2005–2024", title: "Galerie Artclub", city: "Paris", country: "France", type: "group" },
+      { year: 2018, title: "Galerie ArtAddict", city: "Mougins", country: "France", type: "group" },
+      { year: 2018, title: "Art3F", city: "Cannes", country: "France", type: "salon" },
+      { year: 2017, title: "ArtShopping", city: "Paris", country: "France", type: "salon" },
+      { year: 2017, title: "ArtFair", city: "Lausanne", country: "Suisse", type: "salon" },
+      { year: 2017, title: "Art3F", city: "Paris", country: "France", type: "salon" },
+      { year: 2016, title: "Exposition ArtFair", city: "Anvers", country: "Belgique", type: "salon" },
+      { year: 2010, title: "Galerie Neel", city: "Cannes", country: "France", type: "group" },
+      { year: 2008, title: "Galerie Joël Dupuis", city: "Hardelot-sur-Mer", country: "France", type: "group" },
+      { year: 2007, title: "The Catto Gallery", city: "Londres", country: "Angleterre", type: "group" },
+      { year: 2007, title: "Galerie Joël Dupuis", city: "Hardelot-sur-Mer", country: "France", type: "group" },
+      { year: 2007, title: "Galerie Hugues Penot", city: "La Baule", country: "France", type: "group" },
+      { year: 1998, title: "Artexpo", city: "New York", country: "États-Unis", type: "salon" },
+      { year: 1998, title: "Galerie Christian Dazy", city: "Dijon", country: "France", type: "group" },
+      { year: 1997, title: "Musée de Marzy", city: "Marzy", country: "France", type: "group" },
+      { year: 1996, title: "Salon de Printemps", city: "Decize", country: "France", type: "salon" },
+      { year: 1994, title: "Salon de Bourges", city: "Bourges", country: "France", type: "salon" },
+      { year: 1993, title: "Salon d’Automne (Grand Palais)", city: "Paris", country: "France", type: "salon" },
+      { year: 1992, title: "Exposition d’Été", city: "Decize", country: "France", type: "group" }
     ];
 
     // Optionnel : "en ce moment"
     const nowExpo = null;
-    // Exemple:
-    // const nowExpo = { title:"Nom de l’expo", line:"Galerie X — Paris · jusqu’au 12 mars", url:"https://..." };
 
     const els = {
       meta: document.getElementById("meta"),
@@ -282,10 +297,8 @@
     function uniq(arr){ return [...new Set(arr)].sort((a,b)=> (""+a).localeCompare(""+b)); }
 
     function hydrate(){
-      // meta count
       els.meta.textContent = `${expos.length} expositions`;
 
-      // now
       if(nowExpo){
         els.now.hidden = false;
         els.nowTitle.textContent = nowExpo.title;
@@ -293,14 +306,12 @@
         els.nowBtn.href = nowExpo.url;
       }
 
-      // countries
       uniq(expos.map(e=>e.country)).forEach(c=>{
         const o=document.createElement("option");
         o.value=c; o.textContent=c;
         els.country.appendChild(o);
       });
 
-      // years (desc)
       const years = uniq(expos.map(e=>e.year)).sort((a,b)=>b-a);
       years.forEach(y=>{
         const o=document.createElement("option");
@@ -333,6 +344,7 @@
       if(t==="solo") return "Personnelle";
       if(t==="group") return "Collective";
       if(t==="salon") return "Salon / Art fair";
+      return "";
     }
 
     function render(){
@@ -360,6 +372,9 @@
           <div class="items"></div>
         `;
         const wrap = block.querySelector(".items");
+
+        /* ✅ NOUVEAU : si une seule carte, on force 1 colonne */
+        if(items.length === 1) wrap.classList.add("is-single");
 
         items.forEach(e=>{
           const card = document.createElement("div");
@@ -407,4 +422,3 @@
   </script>
 </body>
 </html>
-
