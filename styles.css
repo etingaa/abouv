@@ -578,9 +578,12 @@ body.portfolio img{
    GALERIES
    ========================= */
 
-body.galeries{
-  background-image: none;
-  background: #02253A;
+body.galeries #map{
+  width: 100%;
+  height: 520px;   /* ✅ hauteur réelle */
+}
+@media (max-width: 1050px){
+  body.galeries #map{ height: 420px; }
 }
 
 /* Titre + compteur */
