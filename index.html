@@ -19,9 +19,8 @@
     }
 
     .page{min-height:100vh;display:flex;flex-direction:column;}
-    .container{flex:1;display:flex;flex-direction:column;position:relative;z-index:2;}
+    .container{flex:1;display:flex;flex-direction:column;position:relative;z-index:3;}
 
-    /* Mur plein écran derrière */
     .galleryWall{
       position:fixed;
       inset:0;
@@ -32,57 +31,53 @@
         radial-gradient(900px 600px at 70% 70%, rgba(255,255,255,.10), rgba(255,255,255,0) 55%);
     }
 
-    /* Fenêtre de défilement */
     .viewport{
       position:absolute;
       inset:0;
       overflow:hidden;
     }
 
-    /* Rangée */
+    /* ✅ UNE SEULE ROW (pas de clone externe) */
     .row{
       position:absolute;
+      top:50%;
       left:0;
-      right:0;
-      top: 50%;
-      transform: translateY(-50%);
-      height: min(62vh, 560px);
+      transform: translate3d(0,-50%,0);
       display:flex;
       align-items:center;
-      gap: 42px;                 /* ✅ écart identique */
-      padding: 0 60px;           /* marge aux bords */
+      gap: 42px;        /* ✅ écart identique */
+      padding: 0 60px;
       will-change: transform;
+      white-space: nowrap;
     }
 
-    /* Un tableau encadré (taille = taille du tableau) */
+    /* Taille “cadre” identique -> pas de surprises, pas de chevauchement */
     .piece{
       flex: 0 0 auto;
-      height: 100%;
-      /* largeur variable mais contrôlée */
-      width: clamp(240px, 26vw, 420px);
+      width: 360px;   /* ajuste */
+      height: 520px;  /* ajuste */
       position: relative;
     }
+    @media (max-width: 900px){
+      .piece{ width: 300px; height: 440px; }
+      .row{ gap: 28px; padding: 0 28px; }
+    }
 
-    /* Si tu veux un mix portrait/paysage sans casser l’alignement */
-    .piece.portrait{ width: clamp(240px, 22vw, 360px); }
-    .piece.landscape{ width: clamp(320px, 32vw, 520px); }
-
-    /* Spot au-dessus (par pièce) */
+    /* spot par tableau */
     .piece::before{
       content:"";
       position:absolute;
       left:50%;
       top:-18%;
-      width: 140%;
+      width: 150%;
       height: 70%;
       transform: translateX(-50%);
-      background: radial-gradient(closest-side, rgba(255,255,255,.20), rgba(255,255,255,0) 72%);
+      background: radial-gradient(closest-side, rgba(255,255,255,.22), rgba(255,255,255,0) 72%);
       opacity: .85;
       pointer-events:none;
       filter: blur(1px);
     }
 
-    /* Le cadre exactement à la taille de la pièce */
     .frame{
       position:relative;
       width:100%;
@@ -93,7 +88,6 @@
       box-shadow: 0 24px 70px rgba(0,0,0,.45), inset 0 0 0 2px rgba(0,0,0,.35);
     }
 
-    /* Zone image à l’intérieur du cadre */
     .art{
       position:absolute;
       inset: 10px;
@@ -102,16 +96,13 @@
       overflow:hidden;
     }
 
-    /* ✅ tableau en entier */
     .art img{
       width:100%;
       height:100%;
-      object-fit: contain;
+      object-fit: contain; /* ✅ tableau en entier */
       display:block;
-      filter: contrast(1.05) saturate(1.02);
     }
 
-    /* vignettage très léger */
     .frame::after{
       content:"";
       position:absolute;
@@ -119,12 +110,11 @@
       background:
         radial-gradient(120% 90% at 50% 35%, rgba(255,255,255,.10), rgba(0,0,0,.18) 70%),
         linear-gradient(180deg, rgba(0,0,0,.10), rgba(0,0,0,.18));
-      opacity:.25;
+      opacity:.22;
       pointer-events:none;
     }
 
-    /* Lisibilité menu/footer */
-    .top, .bottom{position:relative;z-index:3;}
+    .top, .bottom{position:relative;z-index:4;}
     .bottom{margin-top:auto;padding-bottom:18px;}
 
     @media (prefers-reduced-motion: reduce){
@@ -190,10 +180,6 @@
       const piece = document.createElement("div");
       piece.className = "piece";
 
-      // petite variation portrait/paysage (sans chevauchement car flex+gap)
-      if(Math.random() < 0.75) piece.classList.add("portrait");
-      else piece.classList.add("landscape");
-
       const frame = document.createElement("div");
       frame.className = "frame";
 
@@ -205,85 +191,68 @@
       img.loading = "lazy";
       img.src = "images/" + src;
 
+      // si image cassée -> on cache (évite cadre vide)
+      img.addEventListener("error", ()=> {
+        piece.remove();
+      }, { once:true });
+
       art.appendChild(img);
       frame.appendChild(art);
       piece.appendChild(frame);
-
       return piece;
     }
 
     (async function init(){
-      const images = shuffle(await loadManifest());
       const row = document.getElementById("row");
+      const images = shuffle(await loadManifest());
 
-      // combien d'items ? assez pour remplir + buffer
-      const baseCount = Math.max(10, Math.min(18, Math.ceil(window.innerWidth / 220) + 6));
+      // On met assez d’items pour remplir l’écran + marge
+      const approxPiece = 360 + 42; // width + gap (desktop)
+      const need = Math.max(10, Math.ceil(window.innerWidth / approxPiece) + 6);
 
-      // 1) construire une première série
-      for(let i=0;i<baseCount;i++){
-        row.appendChild(makePiece(images[i % images.length]));
+      // 1) on construit la “boucle 1”
+      const base = document.createElement("div");
+      base.style.display = "contents";
+
+      for(let i=0;i<need;i++){
+        base.appendChild(makePiece(images[i % images.length]));
       }
+      row.appendChild(base);
 
-      // 2) dupliquer pour faire une boucle parfaite
-      const clone = row.cloneNode(true);
-      clone.id = "rowClone";
-      row.parentElement.appendChild(clone);
+      // 2) on duplique la “boucle 1” pour que le scroll soit infini
+      const clone = base.cloneNode(true);
+      row.appendChild(clone);
 
-      // Met le clone à la suite du premier
-      function placeClone(){
-        const w = row.getBoundingClientRect().width;
-        clone.style.transform = `translateX(${w}px) translateY(-50%)`;
-      }
+      // attendre un tick pour que le layout calcule la largeur
+      await new Promise(r => requestAnimationFrame(r));
 
-      // On préfère gérer la boucle en JS (plus fiable que CSS pour le reset)
+      // largeur de la boucle 1 (celle qu’on va “cycler”)
+      const loopWidth = base.getBoundingClientRect().width;
+
       let x = 0;
-      const speed = 45; // px/sec -> ajuste
+      const speed = 55; // px/sec vers la droite
       let last = performance.now();
-
-      function layout(){
-        // on positionne les deux rangées au même Y
-        row.style.top = "50%";
-        clone.style.top = "50%";
-        row.style.position = "absolute";
-        clone.style.position = "absolute";
-        row.style.left = "0";
-        clone.style.left = "0";
-        row.style.transform = `translate(${x}px, -50%)`;
-
-        const w = row.getBoundingClientRect().width;
-        clone.style.transform = `translate(${x + w}px, -50%)`;
-      }
 
       function tick(now){
         const dt = Math.min(0.05, (now - last) / 1000);
         last = now;
 
-        // gauche -> droite
         x += speed * dt;
 
-        const w = row.getBoundingClientRect().width;
-        // quand la 1ère rangée est entièrement passée, on reset
-        if(x >= w){
-          x -= w;
+        // quand on a décalé d’une boucle complète, on revient
+        if(x >= loopWidth){
+          x -= loopWidth;
         }
 
-        layout();
+        // translate sur X et on garde Y centré
+        row.style.transform = `translate3d(${x}px, -50%, 0)`;
         requestAnimationFrame(tick);
       }
 
-      // initialise layout une fois les images chargées (meilleure largeur)
-      const imgs = [...row.querySelectorAll("img"), ...clone.querySelectorAll("img")];
-      let pending = imgs.length;
-      imgs.forEach(im=>{
-        if(im.complete) { pending--; return; }
-        im.addEventListener("load", ()=>{ pending--; if(pending===0) layout(); }, { once:true });
-        im.addEventListener("error", ()=>{ pending--; if(pending===0) layout(); }, { once:true });
-      });
-      if(pending===0) layout();
-
-      window.addEventListener("resize", () => layout());
-
       requestAnimationFrame(tick);
+
+      // resize => on reload pour recalculer proprement
+      window.addEventListener("resize", () => location.reload());
     })();
   </script>
 </body>
