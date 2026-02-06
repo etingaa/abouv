@@ -630,18 +630,3 @@ body.galeries .link{
   border-bottom:1px solid rgba(255,255,255,.35);
 }
 body.galeries .link:hover{ color:#fff; border-bottom-color:#fff; }
-
-
-/* CONTACT FORM */
-
-
-.form-wrap{
-  display: flex;
-  justify-content: center;
-}
-
-.form-wrap form{
-  width: 100%;
-  max-width: 520px;   /* largeur confortable */
-}
-
