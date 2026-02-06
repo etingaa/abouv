@@ -7,7 +7,8 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="styles.css" />
 
   <style>
@@ -18,132 +19,21 @@
     }
 
     .page{min-height:100vh;display:flex;flex-direction:column;}
-    .container{flex:1;display:flex;flex-direction:column;position:relative;z-index:5;}
+    .container{flex:1;display:flex;flex-direction:column;position:relative;z-index:3;}
 
-    /* ====== ZONES FIXES (header/footer) ====== */
-    :root{
-      --safeTop: 120px;   /* hauteur header mobile */
-      --safeBot: 72px;    /* hauteur footer réseaux mobile */
-    }
-
-    /* ====== HEADER sympa (mobile-first) ====== */
-    .top{
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      padding: 14px 14px 10px;
-      background: rgba(2,37,58,.45);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(255,255,255,.10);
-    }
-
-    .top__left{ display:flex; align-items:center; gap:10px; }
-    .brand{
-      font-weight: 900;
-      letter-spacing: .10em;
-      text-transform: uppercase;
-      font-size: 18px;
-      padding: 0;
-      margin: 0;
-      line-height: 1.05;
-    }
-
-    .top__nav{
-      margin-top: 10px;
-      display:flex;
-      gap: 14px;
-      flex-wrap: nowrap;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      padding-bottom: 8px;
-    }
-    .top__nav::-webkit-scrollbar{ display:none; }
-    .nav__link{
-      font-size: 15px;
-      padding-bottom: 6px;
-      white-space: nowrap;
-      opacity: .92;
-    }
-
-    /* desktop: tu récupères ton layout normal */
-    @media (min-width: 901px){
-      :root{ --safeTop: 0px; --safeBot: 0px; }
-      .top{
-        position: relative;
-        background: transparent;
-        backdrop-filter: none;
-        border-bottom: 0;
-        padding: 18px 0;
-      }
-      .top__nav{
-        margin-top: 0;
-        overflow: visible;
-        padding-bottom: 0;
-        gap: 20px;
-      }
-      .nav__link{ font-size: 18px; }
-      .brand{ font-size: 22px; }
-    }
-
-    /* ====== FOOTER réseaux toujours visible sur mobile ====== */
-    .bottom{
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 10;
-      padding: 12px 14px 14px;
-      background: rgba(2,37,58,.55);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-top: 1px solid rgba(255,255,255,.10);
-    }
-    .bottom__left{
-      display:flex;
-      justify-content: center;
-      gap: 16px;
-      font-weight: 700;
-      letter-spacing: .04em;
-      text-transform: lowercase;
-    }
-    .bottom__link{
-      opacity: .9;
-    }
-    .bottom__link:hover{ opacity: 1; }
-
-    @media (min-width: 901px){
-      .bottom{
-        position: relative;
-        background: transparent;
-        backdrop-filter: none;
-        border-top: 0;
-        padding: 0 0 18px;
-      }
-      .bottom__left{ justify-content:flex-start; }
-    }
-
-    /* ====== MUR + TABLEAUX ======
-       IMPORTANT: le mur ne prend QUE la zone entre header & footer en mobile
-    */
     .galleryWall{
-      position: fixed;
-      z-index: 1;
-      pointer-events: none;
-      left: 0;
-      right: 0;
-      top: var(--safeTop);
-      bottom: var(--safeBot);
-      overflow: hidden;
-      /* un peu de lumière sur le mur */
+      position:fixed;
+      inset:0;
+      z-index:1;
+      pointer-events:none;
       background:
         radial-gradient(1100px 700px at 20% 15%, rgba(255,255,255,.12), rgba(255,255,255,0) 60%),
         radial-gradient(900px 600px at 70% 70%, rgba(255,255,255,.10), rgba(255,255,255,0) 55%);
     }
 
-    /* viewport interne */
     .viewport{ position:absolute; inset:0; overflow:hidden; }
 
+    /* ✅ track animée */
     .track{
       position:absolute;
       top:50%;
@@ -156,15 +46,11 @@
       padding: 0 var(--pad, 60px);
       white-space: nowrap;
     }
-
-    /* Mobile: on concentre au milieu, plus petit */
     @media (max-width: 900px){
-      .track{
-        --gap: 18px;
-        --pad: 16px;
-      }
+      .track{ --gap: 28px; --pad: 28px; }
     }
 
+    /* ✅ un set mesurable */
     .set{
       display:flex;
       align-items:center;
@@ -172,7 +58,6 @@
       flex: 0 0 auto;
     }
 
-    /* taille des pièces */
     .piece{
       flex: 0 0 auto;
       height: min(62vh, 560px);
@@ -180,14 +65,6 @@
       position: relative;
     }
 
-    /* mobile: réduit les tableaux */
-    @media (max-width: 900px){
-      .piece{
-        height: min(38vh, 260px);
-      }
-    }
-
-    /* spot */
     .piece::before{
       content:"";
       position:absolute;
@@ -196,7 +73,7 @@
       width: 150%;
       height: 70%;
       transform: translateX(-50%);
-      background: radial-gradient(closest-side, rgba(255,255,255,.18), rgba(255,255,255,0) 72%);
+      background: radial-gradient(closest-side, rgba(255,255,255,.22), rgba(255,255,255,0) 72%);
       opacity: .85;
       pointer-events:none;
       filter: blur(1px);
@@ -209,7 +86,7 @@
       background:#0b1520;
       border: 10px solid rgba(255,255,255,.10);
       outline: 1px solid rgba(255,255,255,.18);
-      box-shadow: 0 18px 50px rgba(0,0,0,.42), inset 0 0 0 2px rgba(0,0,0,.35);
+      box-shadow: 0 24px 70px rgba(0,0,0,.45), inset 0 0 0 2px rgba(0,0,0,.35);
       overflow:hidden;
     }
 
@@ -222,7 +99,7 @@
       justify-content:center;
     }
 
-    /* ✅ TOILES PAS COUPÉES */
+    /* ✅ pas coupé */
     .art img{
       width:100%;
       height:100%;
@@ -235,13 +112,15 @@
       position:absolute;
       inset:0;
       background:
-        radial-gradient(120% 90% at 50% 35%, rgba(255,255,255,.08), rgba(0,0,0,.20) 70%),
-        linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,0,0,.18));
+        radial-gradient(120% 90% at 50% 35%, rgba(255,255,255,.10), rgba(0,0,0,.18) 70%),
+        linear-gradient(180deg, rgba(0,0,0,.10), rgba(0,0,0,.18));
       opacity:.22;
       pointer-events:none;
     }
 
-    /* Respect reduced motion */
+    .top, .bottom{position:relative;z-index:4;}
+    .bottom{margin-top:auto;padding-bottom:18px;}
+
     @media (prefers-reduced-motion: reduce){
       .galleryWall{display:none;}
       body.home{overflow:auto;}
@@ -250,8 +129,6 @@
 </head>
 
 <body class="home">
-
-  <!-- MUR -->
   <div class="galleryWall" aria-hidden="true">
     <div class="viewport">
       <div class="track" id="track">
@@ -262,7 +139,6 @@
 
   <div class="page">
     <div class="container">
-      <!-- HEADER -->
       <header class="top">
         <div class="top__left">
           <a href="index.html" class="brand" aria-label="Accueil">ANNICK&nbsp;BOUVATTIER</a>
@@ -278,7 +154,6 @@
         </nav>
       </header>
 
-      <!-- Footer réseaux fixé -->
       <footer class="bottom">
         <div class="bottom__left">
           <a class="bottom__link" href="https://www.instagram.com/annick.bouvattier/" target="_blank" rel="noopener noreferrer">instagram</a>
@@ -286,7 +161,6 @@
           <a class="bottom__link" href="https://www.saatchiart.com/bouvattier" target="_blank" rel="noopener noreferrer">saatchi art</a>
         </div>
       </footer>
-
     </div>
   </div>
 
@@ -294,23 +168,18 @@
   (() => {
     "use strict";
 
-    // Si tu veux prendre les mêmes images que le portfolio (sheet),
-    // on peut remplacer le manifest plus tard. Là on garde ton manifest stable.
     const MANIFEST_URL = "images/manifest.json";
     const IMAGES_PREFIX = "images/";
-    const FRAME_BORDER = 10;
-    const SPEED_DESKTOP = 70;
-    const SPEED_MOBILE  = 35;
+    const FRAME_BORDER = 10; // border du cadre (px)
+    const SPEED = 70;        // px/s
 
     const track = document.getElementById("track");
-    const set   = document.getElementById("set");
+    const set = document.getElementById("set");
     if (!track || !set) return;
 
     const prefersReducedMotion =
       window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (prefersReducedMotion) return;
-
-    const mqMobile = window.matchMedia("(max-width: 900px)");
 
     function shuffle(arr){
       const a = arr.slice();
@@ -368,16 +237,12 @@
 
       const hOuter = piece.getBoundingClientRect().height || 1;
       const hInner = Math.max(1, hOuter - FRAME_BORDER * 2);
-      const ratio = img.naturalWidth / img.naturalHeight;
 
+      const ratio = img.naturalWidth / img.naturalHeight;
       const wInner = hInner * ratio;
       const wOuter = wInner + FRAME_BORDER * 2;
 
-      const minW = mqMobile.matches ? 160 : 240;
-      const maxW = mqMobile.matches ? 420 : 900;
-
-      const w = Math.max(minW, Math.min(maxW, Math.round(wOuter)));
-      piece.style.setProperty("--w", w + "px");
+      piece.style.setProperty("--w", Math.max(240, Math.round(wOuter)) + "px");
     }
 
     async function twoFrames(){
@@ -386,16 +251,15 @@
     }
 
     function measureLoopWidth(){
+      // largeur du 1er set (mesurable car display:flex)
       return set.getBoundingClientRect().width;
     }
 
     async function init(){
       const manifest = shuffle(await loadManifest());
-      const isMobile = mqMobile.matches;
 
-      // remplir + buffer (mobile moins chargé)
-      const base = Math.ceil(window.innerWidth / 220) + (isMobile ? 10 : 16);
-      const count = Math.max(isMobile ? 14 : 18, base);
+      // remplir + buffer
+      const count = Math.max(18, Math.ceil(window.innerWidth / 260) + 16);
 
       const pieces = [];
       const imgs = [];
@@ -408,35 +272,44 @@
         imgs.push(img);
       }
 
+      // attendre DOM + hauteurs
       await twoFrames();
 
+      // attendre images puis calculer ratios
       await Promise.all(imgs.map(waitReady));
       imgs.forEach((img, i) => setWidthFromRatio(pieces[i], img));
 
+      // reflow
       await twoFrames();
 
-      // clone pour boucle infinie
+      // clone pour boucle parfaite
       const clone = set.cloneNode(true);
       track.appendChild(clone);
 
       await twoFrames();
 
+      // loop width
       let loopW = measureLoopWidth();
-      if (!loopW){
+
+      // si loopW=0 (rare), retente une fois
+      if (!loopW) {
         await twoFrames();
         loopW = measureLoopWidth();
       }
-      if (!loopW) return;
+      if (!loopW) {
+        console.error("[home-wall] loopW=0 (mesure impossible)");
+        return;
+      }
 
+      // départ hors écran à gauche
       let x = -loopW;
-      const speed = isMobile ? SPEED_MOBILE : SPEED_DESKTOP;
       let last = performance.now();
 
       function tick(now){
         const dt = Math.min(0.05, (now - last) / 1000);
         last = now;
 
-        x += speed * dt;
+        x += SPEED * dt;
         if (x >= 0) x -= loopW;
 
         track.style.transform = `translate3d(${x}px, -50%, 0)`;
@@ -444,12 +317,7 @@
       }
       requestAnimationFrame(tick);
 
-      // reload si on change réellement de breakpoint
-      let lastMode = isMobile ? "m" : "d";
-      window.addEventListener("resize", () => {
-        const mode = mqMobile.matches ? "m" : "d";
-        if (mode !== lastMode) location.reload();
-      }, { passive:true });
+      window.addEventListener("resize", () => location.reload());
     }
 
     init().catch(console.error);
@@ -457,3 +325,6 @@
   </script>
 </body>
 </html>
+
+tu peux faireune version pour téléphone en plus de la version destop stp
+
