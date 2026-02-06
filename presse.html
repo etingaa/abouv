@@ -1,1 +1,212 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Presse — Annick Bouvattier</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+
+  <!-- ton CSS global (ne modifie pas les autres pages) -->
+  <link rel="stylesheet" href="styles.css" />
+
+  <style>
+    /* Page presse (fond bleu comme les autres pages) */
+    body.presse{
+      background-image: none !important;
+      background: #02253A !important;
+    }
+
+    /* Layout */
+    .presseHead{
+      display:flex;
+      align-items:baseline;
+      justify-content:space-between;
+      gap:16px;
+      margin: 14px 0 10px;
+    }
+    .presseH1{
+      margin:0;
+      font-size:28px;
+      font-weight:800;
+      letter-spacing:-.02em;
+    }
+    .presseMeta{
+      color: rgba(255,255,255,.55);
+      font-size:14px;
+    }
+
+    /* Viewer */
+    .pdfCard{
+      margin-top:14px;
+      border:1px solid rgba(255,255,255,.18);
+      border-radius:18px;
+      overflow:hidden;
+      background: rgba(255,255,255,.04);
+      box-shadow: 0 18px 60px rgba(0,0,0,.25);
+    }
+
+    .pdfTopbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding: 12px 14px;
+      border-bottom:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.03);
+    }
+    .pdfTitle{
+      font-size:13px;
+      font-weight:900;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color: rgba(255,255,255,.82);
+      margin:0;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .pdfActions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .pdfBtn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      height:40px;
+      padding: 0 12px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.22);
+      background: rgba(255,255,255,.08);
+      color:#fff;
+      font-weight:800;
+      font-size:13px;
+      letter-spacing:.02em;
+      cursor:pointer;
+      user-select:none;
+      text-decoration:none;
+      white-space:nowrap;
+    }
+    .pdfBtn:hover{ background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.32); }
+
+    /* Zone PDF */
+    .pdfWrap{
+      width:100%;
+      height: min(78vh, 860px);
+      background: rgba(0,0,0,.18);
+    }
+
+    /* L’embed en responsive */
+    .pdfWrap iframe,
+    .pdfWrap embed{
+      width:100%;
+      height:100%;
+      border:0;
+      display:block;
+      background: transparent;
+    }
+
+    /* Fallback message */
+    .pdfFallback{
+      padding: 14px;
+      color: rgba(255,255,255,.82);
+      font-size:14px;
+      line-height:1.6;
+      display:none;
+    }
+
+    /* Mobile : un peu moins haut */
+    @media (max-width: 700px){
+      .pdfWrap{ height: 70vh; }
+      .pdfTopbar{ align-items:flex-start; }
+      .pdfTitle{ max-width: 48vw; }
+    }
+  </style>
+</head>
+
+<body class="presse">
+  <div class="page">
+    <div class="container">
+      <header class="top">
+        <a class="brand" href="index.html">ANNICK&nbsp;BOUVATTIER</a>
+        <nav class="top__nav" aria-label="Navigation principale">
+          <a class="nav__link" href="index.html">Accueil</a>
+          <a class="nav__link" href="portfolio.html">Portfolio</a>
+          <a class="nav__link" href="galeries.html">Galeries</a>
+          <a class="nav__link" href="expositions.html">Expositions</a>
+          <a class="nav__link" href="apropos.html">À propos</a>
+          <a class="nav__link is-active" href="presse.html">Presse</a>
+          <a class="nav__link" href="contact.html">Contact</a>
+        </nav>
+      </header>
+
+      <div class="presseHead">
+        <h1 class="presseH1">Presse</h1>
+        <div class="presseMeta">Dossier de presse (PDF)</div>
+      </div>
+
+      <section class="pdfCard" aria-label="Lecteur PDF">
+        <div class="pdfTopbar">
+          <p class="pdfTitle">Artistes — Annick Bouvattier</p>
+          <div class="pdfActions">
+            <a class="pdfBtn" href="images/ArtistesAnnickBouvattier.pdf" target="_blank" rel="noopener noreferrer">
+              Ouvrir
+            </a>
+            <a class="pdfBtn" href="images/ArtistesAnnickBouvattier.pdf" download>
+              Télécharger
+            </a>
+          </div>
+        </div>
+
+        <div class="pdfWrap">
+          <!-- iframe marche bien sur desktop, sur iOS ça peut ouvrir le viewer système -->
+          <iframe
+            src="images/ArtistesAnnickBouvattier.pdf#view=FitH"
+            title="Dossier de presse — PDF"
+            loading="lazy">
+          </iframe>
+
+          <!-- Fallback si le navigateur bloque l’iframe PDF -->
+          <div class="pdfFallback" id="pdfFallback">
+            <p style="margin:0 0 10px;">
+              Ton navigateur ne peut pas afficher le PDF directement.
+            </p>
+            <p style="margin:0;">
+              <a class="pdfBtn" href="images/ArtistesAnnickBouvattier.pdf" target="_blank" rel="noopener noreferrer">Ouvrir le PDF</a>
+              <span style="opacity:.7; padding:0 6px;">ou</span>
+              <a class="pdfBtn" href="images/ArtistesAnnickBouvattier.pdf" download>Télécharger</a>
+            </p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <script>
+    // Fallback simple si le PDF ne se charge pas dans l'iframe (bloqué / iOS / sécurité)
+    (function(){
+      const iframe = document.querySelector(".pdfWrap iframe");
+      const fb = document.getElementById("pdfFallback");
+      if(!iframe || !fb) return;
+
+      let shown = false;
+      const show = () => { if(!shown){ fb.style.display = "block"; shown = true; } };
+
+      // Si l'iframe error/timeout => fallback
+      iframe.addEventListener("error", show);
+      setTimeout(() => {
+        // tentative: si l’iframe n’a pas rendu (on ne peut pas lire son contenu cross-origin)
+        // on affiche quand même le fallback après un délai raisonnable sur certains mobiles.
+        show();
+      }, 2500);
+    })();
+  </script>
+</body>
+</html>
 
