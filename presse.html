@@ -7,40 +7,53 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
 
-  <!-- ton CSS global (ne modifie pas les autres pages) -->
+  <!-- Ton CSS global -->
   <link rel="stylesheet" href="styles.css" />
 
+  <!-- CSS spécifique à la page Presse (ne touche pas aux autres pages) -->
   <style>
-    /* Page presse (fond bleu comme les autres pages) */
+    /* Fond comme tes autres pages */
     body.presse{
-      background-image: none !important;
-      background: #02253A !important;
+      background-image: none;
+      background: #02253A;
     }
 
-    /* Layout */
-    .presseHead{
+    /* En-tête page */
+    .headRow{
       display:flex;
       align-items:baseline;
       justify-content:space-between;
       gap:16px;
-      margin: 14px 0 10px;
+      margin:18px 0 10px;
     }
-    .presseH1{
+    .headRow h1{
       margin:0;
       font-size:28px;
       font-weight:800;
       letter-spacing:-.02em;
     }
-    .presseMeta{
+    .headRow .meta{
       color: rgba(255,255,255,.55);
       font-size:14px;
     }
 
-    /* Viewer */
+    /* Layout 2 colonnes : PDF à gauche */
+    .presseLayout{
+      display:grid;
+      grid-template-columns: 58% 42%;
+      gap: 28px;
+      margin-top: 16px;
+      align-items:start;
+    }
+
+    @media (max-width: 900px){
+      .presseLayout{ grid-template-columns: 1fr; }
+    }
+
+    /* Bloc PDF */
     .pdfCard{
-      margin-top:14px;
       border:1px solid rgba(255,255,255,.18);
       border-radius:18px;
       overflow:hidden;
@@ -53,78 +66,66 @@
       align-items:center;
       justify-content:space-between;
       gap:12px;
-      padding: 12px 14px;
+      padding:12px 14px;
       border-bottom:1px solid rgba(255,255,255,.14);
       background: rgba(255,255,255,.03);
     }
+
     .pdfTitle{
+      margin:0;
       font-size:13px;
       font-weight:900;
       letter-spacing:.08em;
       text-transform:uppercase;
       color: rgba(255,255,255,.82);
-      margin:0;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
     }
+
     .pdfActions{
       display:flex;
       gap:10px;
       flex-wrap:wrap;
       justify-content:flex-end;
     }
+
     .pdfBtn{
       display:inline-flex;
       align-items:center;
       justify-content:center;
-      height:40px;
-      padding: 0 12px;
-      border-radius:12px;
+      height:38px;
+      padding:0 14px;
+      border-radius:999px;
       border:1px solid rgba(255,255,255,.22);
       background: rgba(255,255,255,.08);
       color:#fff;
       font-weight:800;
-      font-size:13px;
-      letter-spacing:.02em;
-      cursor:pointer;
-      user-select:none;
-      text-decoration:none;
+      font-size:14px;
       white-space:nowrap;
     }
-    .pdfBtn:hover{ background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.32); }
-
-    /* Zone PDF */
-    .pdfWrap{
-      width:100%;
-      height: min(78vh, 860px);
-      background: rgba(0,0,0,.18);
+    .pdfBtn:hover{
+      background: rgba(255,255,255,.12);
+      border-color: rgba(255,255,255,.32);
     }
 
-    /* L’embed en responsive */
-    .pdfWrap iframe,
-    .pdfWrap embed{
+    .pdfWrap{
+      width:100%;
+      height: 80vh; /* important pour voir le PDF "en entier" sans zoom dégueu */
+      background:#0b1c28;
+    }
+    @media (max-width: 900px){
+      .pdfWrap{ height: 76vh; }
+    }
+
+    .pdfWrap iframe{
       width:100%;
       height:100%;
       border:0;
       display:block;
-      background: transparent;
+      background:#111;
     }
 
-    /* Fallback message */
-    .pdfFallback{
-      padding: 14px;
-      color: rgba(255,255,255,.82);
-      font-size:14px;
-      line-height:1.6;
-      display:none;
-    }
-
-    /* Mobile : un peu moins haut */
-    @media (max-width: 700px){
-      .pdfWrap{ height: 70vh; }
-      .pdfTopbar{ align-items:flex-start; }
-      .pdfTitle{ max-width: 48vw; }
+    /* Colonne droite (vide pour respirer) */
+    .presseAside{
+      min-height: 1px;
     }
   </style>
 </head>
@@ -132,8 +133,10 @@
 <body class="presse">
   <div class="page">
     <div class="container">
+      <!-- HEADER (comme tes autres pages) -->
       <header class="top">
         <a class="brand" href="index.html">ANNICK&nbsp;BOUVATTIER</a>
+
         <nav class="top__nav" aria-label="Navigation principale">
           <a class="nav__link" href="index.html">Accueil</a>
           <a class="nav__link" href="portfolio.html">Portfolio</a>
@@ -145,68 +148,45 @@
         </nav>
       </header>
 
-      <div class="presseHead">
-        <h1 class="presseH1">Presse</h1>
-        <div class="presseMeta">Dossier de presse (PDF)</div>
+      <!-- TITRE -->
+      <div class="headRow">
+        <h1>Presse</h1>
+        <div class="meta">Dossier de presse (PDF)</div>
       </div>
 
-      <section class="pdfCard" aria-label="Lecteur PDF">
-        <div class="pdfTopbar">
-          <p class="pdfTitle">Artistes — Annick Bouvattier</p>
-          <div class="pdfActions">
-            <a class="pdfBtn" href="images/ArtistesAnnickBouvattier.pdf" target="_blank" rel="noopener noreferrer">
-              Ouvrir
-            </a>
-            <a class="pdfBtn" href="images/ArtistesAnnickBouvattier.pdf" download>
-              Télécharger
-            </a>
+      <!-- CONTENU -->
+      <div class="presseLayout">
+        <!-- COLONNE GAUCHE : PDF -->
+        <section class="pdfCard" aria-label="Lecteur PDF">
+          <div class="pdfTopbar">
+            <p class="pdfTitle">Artistes — Annick Bouvattier</p>
+            <div class="pdfActions">
+              <a class="pdfBtn" href="images/ArtistesAnnickBouvattier.pdf" target="_blank" rel="noopener noreferrer">
+                Ouvrir
+              </a>
+              <a class="pdfBtn" href="images/ArtistesAnnickBouvattier.pdf" download>
+                Télécharger
+              </a>
+            </div>
           </div>
-        </div>
 
-        <div class="pdfWrap">
-          <!-- iframe marche bien sur desktop, sur iOS ça peut ouvrir le viewer système -->
-          <iframe
-            src="images/ArtistesAnnickBouvattier.pdf#view=FitH"
-            title="Dossier de presse — PDF"
-            loading="lazy">
-          </iframe>
-
-          <!-- Fallback si le navigateur bloque l’iframe PDF -->
-          <div class="pdfFallback" id="pdfFallback">
-            <p style="margin:0 0 10px;">
-              Ton navigateur ne peut pas afficher le PDF directement.
-            </p>
-            <p style="margin:0;">
-              <a class="pdfBtn" href="images/ArtistesAnnickBouvattier.pdf" target="_blank" rel="noopener noreferrer">Ouvrir le PDF</a>
-              <span style="opacity:.7; padding:0 6px;">ou</span>
-              <a class="pdfBtn" href="images/ArtistesAnnickBouvattier.pdf" download>Télécharger</a>
-            </p>
+          <div class="pdfWrap">
+            <iframe
+              src="images/ArtistesAnnickBouvattier.pdf#view=FitH"
+              title="Dossier de presse — PDF"
+              loading="lazy">
+            </iframe>
           </div>
-        </div>
-      </section>
+        </section>
 
+        <!-- COLONNE DROITE : vide volontaire (pour voir le PDF en entier) -->
+        <aside class="presseAside" aria-hidden="true"></aside>
+      </div>
     </div>
   </div>
 
-  <script>
-    // Fallback simple si le PDF ne se charge pas dans l'iframe (bloqué / iOS / sécurité)
-    (function(){
-      const iframe = document.querySelector(".pdfWrap iframe");
-      const fb = document.getElementById("pdfFallback");
-      if(!iframe || !fb) return;
-
-      let shown = false;
-      const show = () => { if(!shown){ fb.style.display = "block"; shown = true; } };
-
-      // Si l'iframe error/timeout => fallback
-      iframe.addEventListener("error", show);
-      setTimeout(() => {
-        // tentative: si l’iframe n’a pas rendu (on ne peut pas lire son contenu cross-origin)
-        // on affiche quand même le fallback après un délai raisonnable sur certains mobiles.
-        show();
-      }, 2500);
-    })();
-  </script>
+  <!-- Ton JS global (si tu l’utilises déjà sur toutes les pages) -->
+  <script src="script.js"></script>
 </body>
 </html>
 
