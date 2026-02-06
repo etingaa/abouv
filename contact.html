@@ -150,79 +150,112 @@ Pour une information, une acquisition, une exposition ou une collaboration, écr
   <div class="infoTitle">Envoyer un message</div>
 
   <!-- ✅ FORMSPREE ACTIF -->
-  <form id="contactForm" action="https://formspree.io/f/xdalokdl" method="POST" novalidate>
+ <form id="contactForm" action="https://formspree.io/f/xdalokdl" method="POST" novalidate>
+  <input type="hidden" name="_subject" value="Nouveau message — Site Annick Bouvattier">
 
-    <input type="hidden" name="_subject" value="Nouveau message — Site Annick Bouvattier">
-
-    <div class="grid">
-      <label class="field">
-        <span class="label">Prénom</span>
-        <input name="prenom" required>
-      </label>
-      <label class="field">
-        <span class="label">Nom</span>
-        <input name="nom" required>
-      </label>
-    </div>
-
-    <label class="field" style="margin-top:10px">
-      <span class="label">Email</span>
-      <!-- 🔑 IMPORTANT -->
-      <input type="email" name="_replyto" required>
+  <div class="grid">
+    <label class="field">
+      <span class="label">Prénom</span>
+      <input name="prenom" autocomplete="given-name" required>
     </label>
 
-    <label class="field" style="margin-top:10px">
-      <span class="label">Message</span>
-      <textarea name="message" required></textarea>
+    <label class="field">
+      <span class="label">Nom</span>
+      <input name="nom" autocomplete="family-name" required>
     </label>
+  </div>
 
-    <!-- Honeypot -->
-    <div class="hp">
-      <input name="website">
-    </div>
+  <label class="field" style="margin-top:10px">
+    <span class="label">Email</span>
+    <!-- ✅ IMPORTANT : "email" -->
+    <input type="email" name="email" autocomplete="email" required>
+  </label>
 
+  <!-- Optionnel : Formspree peut utiliser ça comme reply-to -->
+  <input type="hidden" name="_replyto" value="">
+
+  <label class="field" style="margin-top:10px">
+    <span class="label">Message</span>
+    <textarea name="message" required></textarea>
+  </label>
+
+  <!-- Honeypot anti-spam -->
+  <div class="hp">
+    <label>Ne pas remplir
+      <input name="website" tabindex="-1" autocomplete="off">
+    </label>
+  </div>
+
+  <div class="actions">
     <button class="btn" type="submit">Envoyer</button>
-    <div id="status" class="status"></div>
-  </form>
+    <p class="hint">En envoyant ce message, vous acceptez que je vous réponde par e-mail.</p>
+  </div>
+
+  <div id="status" class="status" role="status" aria-live="polite"></div>
+</form>
+
 </section>
 
 </div>
 </div>
 
 <script>
-const form = document.getElementById("contactForm");
-const statusBox = document.getElementById("status");
+  const form = document.getElementById("contactForm");
+  const statusBox = document.getElementById("status");
 
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
-
-  if (form.website && form.website.value !== "") {
-    statusBox.className = "status ok";
-    statusBox.textContent = "Message envoyé.";
-    form.reset();
-    return;
+  function showStatus(type, msg){
+    statusBox.className = "status " + type;
+    statusBox.textContent = msg;
   }
 
-  try {
-    const res = await fetch(form.action, {
-      method: "POST",
-      body: new FormData(form),
-      headers: { "Accept": "application/json" }
-    });
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-    if (res.ok) {
-      statusBox.className = "status ok";
-      statusBox.textContent = "Merci, votre message a bien été envoyé.";
+    // Honeypot
+    if (form.website && form.website.value.trim() !== "") {
+      showStatus("ok", "Message envoyé.");
       form.reset();
-    } else {
-      throw new Error();
+      return;
     }
-  } catch {
-    statusBox.className = "status err";
-    statusBox.textContent = "Erreur d’envoi. Vous pouvez écrire directement par email.";
-  }
-});
+
+    if (!form.checkValidity()) {
+      showStatus("err", "Vérifiez les champs requis (nom, e-mail, message).");
+      return;
+    }
+
+    // ✅ copie l'email dans _replyto (optionnel)
+    const email = form.querySelector('input[name="email"]').value.trim();
+    const reply = form.querySelector('input[name="_replyto"]');
+    if (reply) reply.value = email;
+
+    try {
+      const res = await fetch(form.action, {
+        method: "POST",
+        body: new FormData(form),
+        headers: { "Accept": "application/json" }
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (res.ok) {
+        showStatus("ok", "Merci ! Votre message a bien été envoyé.");
+        form.reset();
+      } else {
+        // 🔥 message Formspree utile
+        const msg =
+          (data && data.errors && data.errors[0] && data.errors[0].message)
+          || data.error
+          || "Envoi refusé (Formspree). Vérifiez la configuration du formulaire.";
+        showStatus("err", msg);
+        console.warn("Formspree error:", data);
+      }
+    } catch (err) {
+      showStatus("err", "Erreur réseau (test local ?). Ouvrez la page depuis votre site (https).");
+      console.error(err);
+    }
+  });
 </script>
+
 
 </body>
 </html>
