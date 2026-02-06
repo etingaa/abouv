@@ -18,10 +18,9 @@
       --border:rgba(255,255,255,.18);
       --chip:rgba(255,255,255,.08);
       --chip2:rgba(255,255,255,.12);
-      --ok: rgba(88, 255, 179, .18);
-      --err: rgba(255, 88, 88, .18);
     }
     *{box-sizing:border-box}
+    html,body{height:100%}
     body{
       margin:0;
       font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
@@ -30,250 +29,124 @@
     }
     a{color:inherit;text-decoration:none}
 
-    .container{max-width:1400px;margin:0 auto;padding:20px 48px 56px}
+    .container{
+      max-width:1400px;
+      margin:0 auto;
+      padding:20px 48px 56px;
+    }
     @media (max-width:768px){.container{padding:16px 20px 40px}}
 
     /* Header */
-    .top{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:18px 0}
-    .brand{font-size:18px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
-    .top__nav{display:flex;gap:20px;flex-wrap:wrap}
-    .nav__link{font-size:16px;font-weight:500;border-bottom:2px solid transparent;padding-bottom:4px}
+    .top{
+      display:flex;align-items:center;justify-content:space-between;
+      gap:24px;padding:18px 0;
+    }
+    .brand{
+      font-size:18px;font-weight:800;letter-spacing:.08em;
+      text-transform:uppercase;line-height:1;padding-bottom:6px;white-space:nowrap;
+    }
+    .top__nav{display:flex;align-items:center;gap:20px;flex-wrap:wrap;justify-content:flex-end}
+    .nav__link{font-size:16px;font-weight:500;border-bottom:2px solid transparent;padding:6px 2px 4px;line-height:1}
+    .nav__link:hover{border-bottom-color:rgba(255,255,255,.5)}
     .nav__link.is-active{border-bottom-color:#fff}
 
-    h1{margin:0 0 8px;font-size:28px;font-weight:800}
-    .lead{color:var(--soft);max-width:760px}
-
-    .layout{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:14px;
-      margin-top:18px;
+    /* Page head */
+    .headRow{
+      display:flex;align-items:baseline;justify-content:space-between;
+      gap:16px;margin:18px 0 14px;
     }
-    @media (max-width:1050px){.layout{grid-template-columns:1fr}}
+    h1{margin:0;font-size:28px;font-weight:800;letter-spacing:-.02em}
+    .lead{margin:10px 0 0;color:var(--soft);max-width:760px;line-height:1.6}
 
+    /* Card */
     .card{
+      margin-top:14px;
       border:1px solid var(--border);
       border-radius:18px;
       background:rgba(255,255,255,.04);
-      padding:16px;
+      padding: 18px;
+      max-width: 760px;
     }
 
-    .infoTitle{
-      font-size:12px;
-      color:var(--faint);
-      letter-spacing:.10em;
-      text-transform:uppercase;
-      font-weight:800;
-      margin-bottom:10px;
-    }
-
-    .field{display:flex;flex-direction:column;gap:6px}
-    .label{font-size:12px;color:var(--faint);letter-spacing:.06em;text-transform:uppercase;font-weight:800}
-
-    input, select, textarea{
+    /* Formspree form styling (simple) */
+    form{margin:0;display:grid;gap:12px}
+    label{display:grid;gap:6px;color:var(--faint);font-size:12px;letter-spacing:.06em;text-transform:uppercase;font-weight:800}
+    input, textarea{
+      width:100%;
       border:1px solid var(--border);
       background:var(--chip);
       color:var(--ink);
       border-radius:12px;
-      padding:12px;
-      font-size:14px;
-    }
-    input:focus, select:focus, textarea:focus{
-      background:var(--chip2);
-      border-color:rgba(255,255,255,.35);
+      padding:12px 12px;
       outline:none;
+      font-size:14px;
+      text-transform:none;
+      letter-spacing:normal;
+      font-weight:500;
     }
-
-    textarea{min-height:140px;resize:vertical}
-
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    @media (max-width:680px){.grid{grid-template-columns:1fr}}
-
-    .btn{
-      margin-top:10px;
+    input{height:44px}
+    textarea{min-height:160px;resize:vertical}
+    input::placeholder, textarea::placeholder{color:rgba(255,255,255,.45)}
+    input:focus, textarea:focus{
+      border-color:rgba(255,255,255,.35);
+      background:var(--chip2);
+    }
+    button{
       height:44px;
-      padding:0 16px;
+      padding:0 14px;
       border-radius:12px;
       border:1px solid var(--border);
       background:rgba(255,255,255,.14);
       color:var(--ink);
       font-weight:800;
       cursor:pointer;
+      width: fit-content;
     }
-
-    .status{
-      display:none;
-      margin-top:12px;
-      padding:10px 12px;
-      border-radius:14px;
-      border:1px solid var(--border);
-    }
-    .status.ok{display:block;background:var(--ok)}
-    .status.err{display:block;background:var(--err)}
-
-    /* Honeypot */
-    .hp{position:absolute;left:-9999px}
+    button:hover{background:rgba(255,255,255,.18)}
   </style>
 </head>
 
 <body>
-<div class="container">
+  <div class="container">
+    <header class="top">
+      <a class="brand" href="index.html">ANNICK&nbsp;BOUVATTIER</a>
+      <nav class="top__nav" aria-label="Navigation principale">
+        <a class="nav__link" href="index.html">Accueil</a>
+        <a class="nav__link" href="portfolio.html">Portfolio</a>
+        <a class="nav__link" href="galeries.html">Galeries</a>
+        <a class="nav__link" href="expositions.html">Expositions</a>
+        <a class="nav__link" href="apropos.html">À propos</a>
+        <a class="nav__link" href="presse.html">Presse</a>
+        <a class="nav__link is-active" href="contact.html">Contact</a>
+      </nav>
+    </header>
 
-<header class="top">
-  <a class="brand" href="index.html">ANNICK&nbsp;BOUVATTIER</a>
-  <nav class="top__nav">
-    <a class="nav__link" href="index.html">Accueil</a>
-    <a class="nav__link" href="portfolio.html">Portfolio</a>
-    <a class="nav__link" href="galeries.html">Galeries</a>
-    <a class="nav__link" href="expositions.html">Expositions</a>
-    <a class="nav__link" href="apropos.html">À propos</a>
-    <a class="nav__link" href="presse.html">Presse</a>
-    <a class="nav__link is-active" href="contact.html">Contact</a>
-  </nav>
-</header>
+    <div class="headRow">
+      <div>
+        <h1>Contact</h1>
+        <p class="lead">Écrivez-moi ici, je vous réponds dès que possible.</p>
+      </div>
+    </div>
 
-<h1>Contact</h1>
-<p class="lead">
-Pour une information, une acquisition, une exposition ou une collaboration, écrivez-moi ici.
-</p>
+    <section class="card" aria-label="Formulaire de contact">
+      <!-- ✅ EXACTEMENT le snippet Formspree -->
+      <form
+        action="https://formspree.io/f/xdalokdl"
+        method="POST"
+      >
+        <label>
+          Your email:
+          <input type="email" name="email">
+        </label>
 
-<div class="layout">
+        <label>
+          Your message:
+          <textarea name="message"></textarea>
+        </label>
 
-<section class="card">
-  <div class="infoTitle">Coordonnées</div>
-  <p><strong>Email</strong><br>
-    <a href="mailto:hello@annickbouvattier.art">hello@annickbouvattier.art</a>
-  </p>
-</section>
-
-<section class="card">
-  <div class="infoTitle">Envoyer un message</div>
-
-  <!-- ✅ FORMSPREE ACTIF -->
-<form id="contactForm" action="https://formspree.io/f/xdalokdl" method="POST">
-  <div class="grid">
-    <label class="field">
-      <span class="label">Prénom</span>
-      <input name="prenom" autocomplete="given-name" placeholder="Votre prénom" required>
-    </label>
-
-    <label class="field">
-      <span class="label">Nom</span>
-      <input name="nom" autocomplete="family-name" placeholder="Votre nom" required>
-    </label>
+        <button type="submit">Send</button>
+      </form>
+    </section>
   </div>
-
-  <label class="field" style="margin-top:10px">
-    <span class="label">Email</span>
-    <!-- ✅ EXACTEMENT comme ils veulent -->
-    <input type="email" name="email" autocomplete="email" placeholder="vous@exemple.com" required>
-  </label>
-
-  <label class="field" style="margin-top:10px">
-    <span class="label">Sujet</span>
-    <select name="sujet" required>
-      <option value="" selected disabled>Choisir…</option>
-      <option>Acquisition</option>
-      <option>Exposition</option>
-      <option>Collaboration</option>
-      <option>Presse</option>
-      <option>Autre</option>
-    </select>
-  </label>
-
-  <label class="field" style="margin-top:10px">
-    <span class="label">Téléphone (optionnel)</span>
-    <input name="telephone" autocomplete="tel" placeholder="+33 …">
-  </label>
-
-  <label class="field" style="margin-top:10px">
-    <span class="label">Message</span>
-    <!-- ✅ EXACTEMENT comme ils veulent -->
-    <textarea name="message" placeholder="Décrivez votre demande…" required></textarea>
-  </label>
-
-  <!-- Honeypot anti-spam (optionnel, ok) -->
-  <div class="hp">
-    <label>Ne pas remplir ce champ
-      <input name="website" tabindex="-1" autocomplete="off">
-    </label>
-  </div>
-
-  <!-- Optionnel: sujet du mail que tu reçois -->
-  <input type="hidden" name="_subject" value="Nouveau message — Site Annick Bouvattier">
-
-  <!-- Optionnel: redirection après envoi -->
-  <input type="hidden" name="_next" value="contact-merci.html">
-
-  <div class="actions">
-    <button class="btn" type="submit">Envoyer</button>
-    <p class="hint">En envoyant ce message, vous acceptez que je vous réponde par e-mail.</p>
-  </div>
-</form>
-
-
-</section>
-
-</div>
-</div>
-
-<script>
-  const form = document.getElementById("contactForm");
-  const statusBox = document.getElementById("status");
-
-  function showStatus(type, msg){
-    statusBox.className = "status " + type;
-    statusBox.textContent = msg;
-  }
-
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    // Honeypot
-    if (form.website && form.website.value.trim() !== "") {
-      showStatus("ok", "Message envoyé.");
-      form.reset();
-      return;
-    }
-
-    if (!form.checkValidity()) {
-      showStatus("err", "Vérifiez les champs requis (nom, e-mail, message).");
-      return;
-    }
-
-    // ✅ copie l'email dans _replyto (optionnel)
-    const email = form.querySelector('input[name="email"]').value.trim();
-    const reply = form.querySelector('input[name="_replyto"]');
-    if (reply) reply.value = email;
-
-    try {
-      const res = await fetch(form.action, {
-        method: "POST",
-        body: new FormData(form),
-        headers: { "Accept": "application/json" }
-      });
-
-      const data = await res.json().catch(() => ({}));
-
-      if (res.ok) {
-        showStatus("ok", "Merci ! Votre message a bien été envoyé.");
-        form.reset();
-      } else {
-        // 🔥 message Formspree utile
-        const msg =
-          (data && data.errors && data.errors[0] && data.errors[0].message)
-          || data.error
-          || "Envoi refusé (Formspree). Vérifiez la configuration du formulaire.";
-        showStatus("err", msg);
-        console.warn("Formspree error:", data);
-      }
-    } catch (err) {
-      showStatus("err", "Erreur réseau (test local ?). Ouvrez la page depuis votre site (https).");
-      console.error(err);
-    }
-  });
-</script>
-
-
 </body>
 </html>
