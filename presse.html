@@ -9,123 +9,89 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
 
-  <!-- Ton CSS global -->
   <link rel="stylesheet" href="styles.css" />
 
-  <!-- CSS spécifique à la page Presse (ne touche pas aux autres pages) -->
   <style>
-    /* Fond comme tes autres pages */
     body.presse{
-      background-image: none;
-      background: #02253A;
+      background:#02253A;
     }
 
-    /* En-tête page */
     .headRow{
       display:flex;
-      align-items:baseline;
       justify-content:space-between;
-      gap:16px;
-      margin:18px 0 10px;
+      align-items:baseline;
+      margin:18px 0;
     }
-    .headRow h1{
+    h1{
       margin:0;
       font-size:28px;
       font-weight:800;
-      letter-spacing:-.02em;
     }
-    .headRow .meta{
-      color: rgba(255,255,255,.55);
+    .meta{
+      color:rgba(255,255,255,.55);
       font-size:14px;
     }
 
-    /* Layout 2 colonnes : PDF à gauche */
     .presseLayout{
       display:grid;
-      grid-template-columns: 58% 42%;
-      gap: 28px;
-      margin-top: 16px;
-      align-items:start;
+      grid-template-columns: 1.1fr .9fr;
+      gap:32px;
+      margin-top:24px;
+      align-items:center;
+    }
+    @media (max-width:900px){
+      .presseLayout{ grid-template-columns:1fr; }
     }
 
-    @media (max-width: 900px){
-      .presseLayout{ grid-template-columns: 1fr; }
-    }
-
-    /* Bloc PDF */
-    .pdfCard{
-      border:1px solid rgba(255,255,255,.18);
+    /* Aperçu PDF */
+    .pdfPreview{
       border-radius:18px;
       overflow:hidden;
-      background: rgba(255,255,255,.04);
-      box-shadow: 0 18px 60px rgba(0,0,0,.25);
+      box-shadow:0 24px 70px rgba(0,0,0,.45);
+      border:1px solid rgba(255,255,255,.18);
+      background:#0b1c28;
+    }
+    .pdfPreview img{
+      width:100%;
+      display:block;
     }
 
-    .pdfTopbar{
+    /* Colonne texte */
+    .presseText{
+      max-width:42ch;
+    }
+    .presseText h2{
+      margin:0 0 10px;
+      font-size:20px;
+      font-weight:800;
+    }
+    .presseText p{
+      margin:0 0 18px;
+      color:rgba(255,255,255,.8);
+      line-height:1.6;
+      font-size:16px;
+    }
+
+    .actions{
       display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      padding:12px 14px;
-      border-bottom:1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.03);
-    }
-
-    .pdfTitle{
-      margin:0;
-      font-size:13px;
-      font-weight:900;
-      letter-spacing:.08em;
-      text-transform:uppercase;
-      color: rgba(255,255,255,.82);
-    }
-
-    .pdfActions{
-      display:flex;
-      gap:10px;
+      gap:14px;
       flex-wrap:wrap;
-      justify-content:flex-end;
     }
-
-    .pdfBtn{
+    .btn{
       display:inline-flex;
       align-items:center;
       justify-content:center;
-      height:38px;
-      padding:0 14px;
+      height:44px;
+      padding:0 18px;
       border-radius:999px;
-      border:1px solid rgba(255,255,255,.22);
-      background: rgba(255,255,255,.08);
-      color:#fff;
       font-weight:800;
-      font-size:14px;
-      white-space:nowrap;
+      border:1px solid rgba(255,255,255,.25);
+      background:rgba(255,255,255,.08);
+      color:#fff;
+      text-decoration:none;
     }
-    .pdfBtn:hover{
-      background: rgba(255,255,255,.12);
-      border-color: rgba(255,255,255,.32);
-    }
-
-    .pdfWrap{
-      width:100%;
-      height: 80vh; /* important pour voir le PDF "en entier" sans zoom dégueu */
-      background:#0b1c28;
-    }
-    @media (max-width: 900px){
-      .pdfWrap{ height: 76vh; }
-    }
-
-    .pdfWrap iframe{
-      width:100%;
-      height:100%;
-      border:0;
-      display:block;
-      background:#111;
-    }
-
-    /* Colonne droite (vide pour respirer) */
-    .presseAside{
-      min-height: 1px;
+    .btn:hover{
+      background:rgba(255,255,255,.14);
     }
   </style>
 </head>
@@ -133,11 +99,11 @@
 <body class="presse">
   <div class="page">
     <div class="container">
-      <!-- HEADER (comme tes autres pages) -->
+
+      <!-- HEADER -->
       <header class="top">
         <a class="brand" href="index.html">ANNICK&nbsp;BOUVATTIER</a>
-
-        <nav class="top__nav" aria-label="Navigation principale">
+        <nav class="top__nav">
           <a class="nav__link" href="index.html">Accueil</a>
           <a class="nav__link" href="portfolio.html">Portfolio</a>
           <a class="nav__link" href="galeries.html">Galeries</a>
@@ -151,42 +117,43 @@
       <!-- TITRE -->
       <div class="headRow">
         <h1>Presse</h1>
-        <div class="meta">Dossier de presse (PDF)</div>
+        <div class="meta">Dossier de presse</div>
       </div>
 
       <!-- CONTENU -->
-      <div class="presseLayout">
-        <!-- COLONNE GAUCHE : PDF -->
-        <section class="pdfCard" aria-label="Lecteur PDF">
-          <div class="pdfTopbar">
-            <p class="pdfTitle">Artistes — Annick Bouvattier</p>
-            <div class="pdfActions">
-              <a class="pdfBtn" href="images/ArtistesAnnickBouvattier.pdf" target="_blank" rel="noopener noreferrer">
-                Ouvrir
-              </a>
-              <a class="pdfBtn" href="images/ArtistesAnnickBouvattier.pdf" download>
-                Télécharger
-              </a>
-            </div>
-          </div>
+      <section class="presseLayout">
 
-          <div class="pdfWrap">
-            <iframe
-              src="images/ArtistesAnnickBouvattier.pdf#view=FitH"
-              title="Dossier de presse — PDF"
-              loading="lazy">
-            </iframe>
-          </div>
-        </section>
+        <!-- Aperçu -->
+        <div class="pdfPreview">
+          <img src="images/presse-cover.jpg"
+               alt="Dossier de presse — Annick Bouvattier">
+        </div>
 
-        <!-- COLONNE DROITE : vide volontaire (pour voir le PDF en entier) -->
-        <aside class="presseAside" aria-hidden="true"></aside>
-      </div>
+        <!-- Texte -->
+        <div class="presseText">
+          <h2>Artistes — Annick Bouvattier</h2>
+          <p>
+            Dossier de presse présentant le parcours, la démarche artistique
+            et une sélection d’œuvres publiées dans la presse spécialisée.
+          </p>
+
+          <div class="actions">
+            <a class="btn"
+               href="images/ArtistesAnnickBouvattier.pdf"
+               target="_blank" rel="noopener">
+              Lire le PDF
+            </a>
+            <a class="btn"
+               href="images/ArtistesAnnickBouvattier.pdf"
+               download>
+              Télécharger
+            </a>
+          </div>
+        </div>
+
+      </section>
+
     </div>
   </div>
-
-  <!-- Ton JS global (si tu l’utilises déjà sur toutes les pages) -->
-  <script src="script.js"></script>
 </body>
 </html>
-
