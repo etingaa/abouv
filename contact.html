@@ -150,49 +150,67 @@ Pour une information, une acquisition, une exposition ou une collaboration, écr
   <div class="infoTitle">Envoyer un message</div>
 
   <!-- ✅ FORMSPREE ACTIF -->
- <form id="contactForm" action="https://formspree.io/f/xdalokdl" method="POST" novalidate>
-  <input type="hidden" name="_subject" value="Nouveau message — Site Annick Bouvattier">
-
+<form id="contactForm" action="https://formspree.io/f/xdalokdl" method="POST">
   <div class="grid">
     <label class="field">
       <span class="label">Prénom</span>
-      <input name="prenom" autocomplete="given-name" required>
+      <input name="prenom" autocomplete="given-name" placeholder="Votre prénom" required>
     </label>
 
     <label class="field">
       <span class="label">Nom</span>
-      <input name="nom" autocomplete="family-name" required>
+      <input name="nom" autocomplete="family-name" placeholder="Votre nom" required>
     </label>
   </div>
 
   <label class="field" style="margin-top:10px">
     <span class="label">Email</span>
-    <!-- ✅ IMPORTANT : "email" -->
-    <input type="email" name="email" autocomplete="email" required>
+    <!-- ✅ EXACTEMENT comme ils veulent -->
+    <input type="email" name="email" autocomplete="email" placeholder="vous@exemple.com" required>
   </label>
 
-  <!-- Optionnel : Formspree peut utiliser ça comme reply-to -->
-  <input type="hidden" name="_replyto" value="">
+  <label class="field" style="margin-top:10px">
+    <span class="label">Sujet</span>
+    <select name="sujet" required>
+      <option value="" selected disabled>Choisir…</option>
+      <option>Acquisition</option>
+      <option>Exposition</option>
+      <option>Collaboration</option>
+      <option>Presse</option>
+      <option>Autre</option>
+    </select>
+  </label>
+
+  <label class="field" style="margin-top:10px">
+    <span class="label">Téléphone (optionnel)</span>
+    <input name="telephone" autocomplete="tel" placeholder="+33 …">
+  </label>
 
   <label class="field" style="margin-top:10px">
     <span class="label">Message</span>
-    <textarea name="message" required></textarea>
+    <!-- ✅ EXACTEMENT comme ils veulent -->
+    <textarea name="message" placeholder="Décrivez votre demande…" required></textarea>
   </label>
 
-  <!-- Honeypot anti-spam -->
+  <!-- Honeypot anti-spam (optionnel, ok) -->
   <div class="hp">
-    <label>Ne pas remplir
+    <label>Ne pas remplir ce champ
       <input name="website" tabindex="-1" autocomplete="off">
     </label>
   </div>
+
+  <!-- Optionnel: sujet du mail que tu reçois -->
+  <input type="hidden" name="_subject" value="Nouveau message — Site Annick Bouvattier">
+
+  <!-- Optionnel: redirection après envoi -->
+  <input type="hidden" name="_next" value="contact-merci.html">
 
   <div class="actions">
     <button class="btn" type="submit">Envoyer</button>
     <p class="hint">En envoyant ce message, vous acceptez que je vous réponde par e-mail.</p>
   </div>
-
-  <div id="status" class="status" role="status" aria-live="polite"></div>
 </form>
+
 
 </section>
 
