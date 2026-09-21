@@ -3,11 +3,17 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>ANNICK BOUVATTIER</title>
+  <meta name="description" content="Annick Bouvattier, artiste peintre : peintures à l'huile et portraits de femmes, en jeux d'ombre et de lumière." />
+  <meta name="theme-color" content="#02253A" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Annick Bouvattier" />
+  <meta property="og:locale" content="fr_FR" />
+  <meta property="og:title" content="Annick Bouvattier — Artiste peintre" />
+  <meta property="og:description" content="Annick Bouvattier, artiste peintre : peintures à l'huile et portraits de femmes, en jeux d'ombre et de lumière." />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="preload" href="fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <title>Annick Bouvattier — Artiste peintre</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="styles.css" />
 
@@ -19,7 +25,7 @@
     }
 
     .page{min-height:100vh;display:flex;flex-direction:column;}
-    .container{flex:1;display:flex;flex-direction:column;position:relative;z-index:3;}
+    .container{flex:1;display:flex;flex-direction:column;position:relative;z-index:3;padding-bottom:20px;}
 
     .galleryWall{
       position:fixed;
@@ -58,10 +64,13 @@
       flex: 0 0 auto;
     }
 
+    /* Largeur = hauteur intérieure du cadre × ratio de l'image (--r, posé par le script)
+       + 2 × 10px de bordure. Calculé en CSS : suit la hauteur de la fenêtre sans re-mesure. */
     .piece{
+      --ph: min(62vh, 560px);
       flex: 0 0 auto;
-      height: min(62vh, 560px);
-      width: var(--w, 360px);
+      height: var(--ph);
+      width: max(240px, calc((var(--ph) - 20px) * var(--r, .75) + 20px));
       position: relative;
     }
 
@@ -121,8 +130,8 @@
     .top, .bottom{position:relative;z-index:4;}
     .bottom{margin-top:auto;padding-bottom:18px;}
 
+    /* prefers-reduced-motion : les œuvres restent affichées, mais immobiles (voir le script) */
     @media (prefers-reduced-motion: reduce){
-      .galleryWall{display:none;}
       body.home{overflow:auto;}
     }
   </style>
@@ -139,12 +148,13 @@
 
   <div class="page">
     <div class="container">
+      <h1 class="sr-only">Annick Bouvattier — artiste peintre</h1>
       <header class="top">
         <div class="top__left">
           <a href="index.html" class="brand" aria-label="Accueil">ANNICK&nbsp;BOUVATTIER</a>
         </div>
         <nav class="top__nav" aria-label="Navigation principale">
-          <a class="nav__link is-active" href="index.html">Accueil</a>
+          <a class="nav__link is-active" aria-current="page" href="index.html">Accueil</a>
           <a class="nav__link" href="portfolio.html">Portfolio</a>
           <a class="nav__link" href="galeries.html">Galeries</a>
           <a class="nav__link" href="expositions.html">Expositions</a>
@@ -159,6 +169,7 @@
           <a class="bottom__link" href="https://www.instagram.com/annick.bouvattier/" target="_blank" rel="noopener noreferrer">instagram</a>
           <a class="bottom__link" href="https://www.facebook.com/annick.bouvattier/" target="_blank" rel="noopener noreferrer">facebook</a>
           <a class="bottom__link" href="https://www.saatchiart.com/bouvattier" target="_blank" rel="noopener noreferrer">saatchi art</a>
+          <a class="bottom__link" href="mentions-legales.html">mentions légales</a>
         </div>
       </footer>
     </div>
@@ -170,7 +181,7 @@
 
     const MANIFEST_URL = "images/manifest.json";
     const IMAGES_PREFIX = "images/";
-    const FRAME_BORDER = 10; // border du cadre (px)
+    const THUMBS_PREFIX = "images/thumbs/"; // voir scripts/make-thumbs.py
     const SPEED = 70;        // px/s
 
     const track = document.getElementById("track");
@@ -179,7 +190,6 @@
 
     const prefersReducedMotion =
       window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (prefersReducedMotion) return;
 
     function shuffle(arr){
       const a = arr.slice();
@@ -212,13 +222,19 @@
       img.alt = "";
       img.loading = "eager";
       img.decoding = "async";
-      img.src = IMAGES_PREFIX + src;
+      const name = encodeURIComponent(src);
+      img.src = THUMBS_PREFIX + name;
 
       art.appendChild(img);
       frame.appendChild(art);
       piece.appendChild(frame);
 
-      img.addEventListener("error", () => piece.remove(), { once:true });
+      // miniature absente -> on tente l'original, puis on retire la pièce
+      img.addEventListener("error", () => {
+        if (img.dataset.fallback) { piece.remove(); return; }
+        img.dataset.fallback = "1";
+        img.src = IMAGES_PREFIX + name;
+      });
 
       return { piece, img };
     }
@@ -232,17 +248,9 @@
       });
     }
 
-    function setWidthFromRatio(piece, img){
+    function setRatio(piece, img){
       if(!img.naturalWidth || !img.naturalHeight) return;
-
-      const hOuter = piece.getBoundingClientRect().height || 1;
-      const hInner = Math.max(1, hOuter - FRAME_BORDER * 2);
-
-      const ratio = img.naturalWidth / img.naturalHeight;
-      const wInner = hInner * ratio;
-      const wOuter = wInner + FRAME_BORDER * 2;
-
-      piece.style.setProperty("--w", Math.max(240, Math.round(wOuter)) + "px");
+      piece.style.setProperty("--r", (img.naturalWidth / img.naturalHeight).toFixed(4));
     }
 
     async function twoFrames(){
@@ -255,11 +263,34 @@
       return set.getBoundingClientRect().width;
     }
 
+    let loopW = 0;
+    let x = 0;
+
+    // Largeur de la fenêtre modifiée -> on reconstruit le mur (nombre de pièces à revoir).
+    // Hauteur seule (barre d'adresse mobile, redimensionnement vertical) -> pas de rechargement :
+    // le CSS adapte les cadres, on re-mesure juste la longueur de la boucle.
+    function handleResize(){
+      let lastW = window.innerWidth;
+      let timer;
+      window.addEventListener("resize", () => {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+          if (window.innerWidth !== lastW) { location.reload(); return; }
+          const w = measureLoopWidth();
+          if (w) { loopW = w; if (x < -loopW) x = -loopW; }
+        }, 250);
+      });
+    }
+
     async function init(){
+      handleResize();
+
       const manifest = shuffle(await loadManifest());
 
-      // remplir + buffer
-      const count = Math.max(18, Math.ceil(window.innerWidth / 260) + 16);
+      // remplir + buffer (mouvement réduit : juste de quoi remplir l'écran, immobile)
+      const count = prefersReducedMotion
+        ? Math.ceil(window.innerWidth / 240) + 1
+        : Math.max(18, Math.ceil(window.innerWidth / 260) + 16);
 
       const pieces = [];
       const imgs = [];
@@ -277,10 +308,13 @@
 
       // attendre images puis calculer ratios
       await Promise.all(imgs.map(waitReady));
-      imgs.forEach((img, i) => setWidthFromRatio(pieces[i], img));
+      imgs.forEach((img, i) => setRatio(pieces[i], img));
 
       // reflow
       await twoFrames();
+
+      // mouvement réduit : les œuvres restent affichées, sans défilement
+      if (prefersReducedMotion) return;
 
       // clone pour boucle parfaite
       const clone = set.cloneNode(true);
@@ -289,7 +323,7 @@
       await twoFrames();
 
       // loop width
-      let loopW = measureLoopWidth();
+      loopW = measureLoopWidth();
 
       // si loopW=0 (rare), retente une fois
       if (!loopW) {
@@ -302,7 +336,7 @@
       }
 
       // départ hors écran à gauche
-      let x = -loopW;
+      x = -loopW;
       let last = performance.now();
 
       function tick(now){
@@ -316,8 +350,6 @@
         requestAnimationFrame(tick);
       }
       requestAnimationFrame(tick);
-
-      window.addEventListener("resize", () => location.reload());
     }
 
     init().catch(console.error);

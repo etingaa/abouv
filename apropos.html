@@ -3,10 +3,17 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="Biographie d'Annick Bouvattier, artiste peintre : de la mode et du cinéma à la peinture à l'huile au couteau." />
+  <meta name="theme-color" content="#02253A" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Annick Bouvattier" />
+  <meta property="og:locale" content="fr_FR" />
+  <meta property="og:title" content="À propos — Annick Bouvattier" />
+  <meta property="og:description" content="Biographie d'Annick Bouvattier, artiste peintre : de la mode et du cinéma à la peinture à l'huile au couteau." />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="preload" href="fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="styles.css" />
   <title>À propos — Annick Bouvattier</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
 
   <style>
     :root{
@@ -16,26 +23,6 @@
       --faint:rgba(255,255,255,.55);
       --border:rgba(255,255,255,.18);
     }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-      background:var(--bg);
-      color:var(--ink);
-    }
-    a{color:inherit;text-decoration:none}
-
-    .container{max-width:1400px;margin:0 auto;padding:20px 48px 56px}
-    @media (max-width:768px){.container{padding:16px 20px 40px}}
-
-    /* Header (même style que tes pages) */
-    .top{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:18px 0}
-    .brand{font-size:18px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;line-height:1;padding-bottom:6px;white-space:nowrap}
-    .top__nav{display:flex;align-items:center;gap:20px;flex-wrap:wrap;justify-content:flex-end}
-    .nav__link{font-size:16px;font-weight:500;border-bottom:2px solid transparent;padding:6px 2px 4px;line-height:1}
-    .nav__link:hover{border-bottom-color:rgba(255,255,255,.5)}
-    .nav__link.is-active{border-bottom-color:#fff}
-
     /* Page */
     .headRow{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin:18px 0 10px}
     h1{margin:0;font-size:28px;font-weight:800;letter-spacing:-.02em}
@@ -148,12 +135,12 @@
   <div class="container">
     <header class="top">
       <a class="brand" href="index.html">ANNICK&nbsp;BOUVATTIER</a>
-      <nav class="top__nav">
+      <nav class="top__nav" aria-label="Navigation principale">
         <a class="nav__link" href="index.html">Accueil</a>
         <a class="nav__link" href="portfolio.html">Portfolio</a>
         <a class="nav__link" href="galeries.html">Galeries</a>
         <a class="nav__link" href="expositions.html">Expositions</a>
-        <a class="nav__link is-active" href="apropos.html">À propos</a>
+        <a class="nav__link is-active" aria-current="page" href="apropos.html">À propos</a>
         <a class="nav__link" href="presse.html">Presse</a>
         <a class="nav__link" href="contact.html">Contact</a>
       </nav>
@@ -185,6 +172,9 @@
         </div>
       </div>
     </section>
+    <footer class="siteFooter">
+      <a href="mentions-legales.html">Mentions légales</a>
+    </footer>
   </div>
 </body>
 </html>

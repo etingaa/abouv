@@ -1,9 +1,12 @@
 name: Update artworks from Notion
 
+# Planification désactivée : le site lit le Google Sheet (portfolio.html), pas data/artworks.json,
+# et ce workflow n'a jamais commité de fichier. Il reste lançable à la main (Actions > Run workflow).
+# Pour le réactiver : décommenter le bloc "schedule".
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "0 * * * *"  # toutes les heures
+  # schedule:
+  #   - cron: "0 * * * *"  # toutes les heures
 
 jobs:
   build:

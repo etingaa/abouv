@@ -3,11 +3,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="Contacter Annick Bouvattier : renseignement sur une œuvre, une exposition ou une commande." />
+  <meta name="theme-color" content="#02253A" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Annick Bouvattier" />
+  <meta property="og:locale" content="fr_FR" />
+  <meta property="og:title" content="Contact — Annick Bouvattier" />
+  <meta property="og:description" content="Contacter Annick Bouvattier : renseignement sur une œuvre, une exposition ou une commande." />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="preload" href="fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="styles.css" />
   <title>Contact — Annick Bouvattier</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
 
   <style>
     :root{
@@ -19,37 +26,6 @@
       --chip:rgba(255,255,255,.08);
       --chip2:rgba(255,255,255,.12);
     }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-      background:var(--bg);
-      color:var(--ink);
-    }
-    a{color:inherit;text-decoration:none}
-
-    .container{
-      max-width:1400px;
-      margin:0 auto;
-      padding:20px 48px 56px;
-    }
-    @media (max-width:768px){.container{padding:16px 20px 40px}}
-
-    /* Header */
-    .top{
-      display:flex;align-items:center;justify-content:space-between;
-      gap:24px;padding:18px 0;
-    }
-    .brand{
-      font-size:18px;font-weight:800;letter-spacing:.08em;
-      text-transform:uppercase;line-height:1;padding-bottom:6px;white-space:nowrap;
-    }
-    .top__nav{display:flex;align-items:center;gap:20px;flex-wrap:wrap;justify-content:flex-end}
-    .nav__link{font-size:16px;font-weight:500;border-bottom:2px solid transparent;padding:6px 2px 4px;line-height:1}
-    .nav__link:hover{border-bottom-color:rgba(255,255,255,.5)}
-    .nav__link.is-active{border-bottom-color:#fff}
-
     /* Page head */
     .headRow{
       display:flex;align-items:baseline;justify-content:space-between;
@@ -104,6 +80,12 @@
     }
     button:hover{background:rgba(255,255,255,.18)}
 
+    .formNote{margin:0;font-size:12px;line-height:1.5;color:var(--faint)}
+    .formNote a{border-bottom:1px solid rgba(255,255,255,.35)}
+    .formStatus{margin:0;line-height:1.5;color:var(--soft)}
+    .formStatus.is-error{color:#ff9b9b}
+    button:disabled{opacity:.6;cursor:progress}
+
     .form-wrap{
       display: flex;
       justify-content: center;
@@ -127,7 +109,7 @@
         <a class="nav__link" href="expositions.html">Expositions</a>
         <a class="nav__link" href="apropos.html">À propos</a>
         <a class="nav__link" href="presse.html">Presse</a>
-        <a class="nav__link is-active" href="contact.html">Contact</a>
+        <a class="nav__link is-active" aria-current="page" href="contact.html">Contact</a>
       </nav>
     </header>
 
@@ -139,44 +121,96 @@
     </div>
 
     <section class="card" aria-label="Formulaire de contact">
-      <!-- ✅ EXACTEMENT le snippet Formspree -->
-      
       <div class="form-wrap">
-      <form action="https://formspree.io/f/xdalokdl" method="POST">
+      <form id="contactForm" action="https://formspree.io/f/xdalokdl" method="POST">
         <label>
           Email
-          <input type="email" name="email" required>
+          <input type="email" name="email" autocomplete="email" required>
         </label>
-      
+
         <label>
           Prénom
-          <input type="text" name="Prénom" required>
+          <input type="text" name="Prénom" autocomplete="given-name" required>
         </label>
-      
+
         <label>
           Nom
-          <input type="text" name="Nom" required>
+          <input type="text" name="Nom" autocomplete="family-name" required>
         </label>
-      
+
         <label>
           Organisation
-          <input type="text" name="Organisation">
+          <input type="text" name="Organisation" autocomplete="organization">
         </label>
-      
+
         <label>
           Pays
-          <input type="text" name="Pays">
+          <input type="text" name="Pays" autocomplete="country-name">
         </label>
-      
+
         <label>
           Message
-          <textarea name="message" required></textarea>
+          <textarea name="message" id="message" required></textarea>
         </label>
-      
-        <button type="submit">Send</button>
+
+        <!-- anti-spam : champ invisible, rempli uniquement par les robots (ignoré par Formspree) -->
+        <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true"
+               style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+        <input type="hidden" name="_subject" value="Nouveau message depuis le site Annick Bouvattier">
+
+        <button type="submit" id="submitBtn">Envoyer</button>
+        <p class="formNote">Les informations saisies servent uniquement à répondre à votre demande. <a href="mentions-legales.html">En savoir plus</a></p>
+        <p id="formStatus" class="formStatus" role="status" aria-live="polite" hidden></p>
       </form>
       </div>
     </section>
+    <footer class="siteFooter">
+      <a href="mentions-legales.html">Mentions légales</a>
+    </footer>
   </div>
+
+  <script>
+  (() => {
+    const form = document.getElementById("contactForm");
+    const status = document.getElementById("formStatus");
+    const btn = document.getElementById("submitBtn");
+    const msg = document.getElementById("message");
+
+    // Arrivée depuis « Demander des informations » sur le portfolio : message pré-rempli
+    const oeuvre = new URLSearchParams(location.search).get("oeuvre");
+    if (oeuvre && !msg.value) {
+      msg.value = "Bonjour,\n\nJe souhaiterais avoir des informations sur l'œuvre « " + oeuvre.slice(0, 120) + " ».\n\nMerci,";
+    }
+
+    function say(text, isError) {
+      status.textContent = text;
+      status.classList.toggle("is-error", !!isError);
+      status.hidden = false;
+    }
+
+    // Envoi sans quitter le site. En cas de souci (JS ou réponse inattendue), on retombe sur
+    // l'envoi classique du formulaire, qui fonctionne toujours.
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      btn.disabled = true;
+      status.hidden = true;
+      try {
+        const res = await fetch(form.action, {
+          method: "POST",
+          body: new FormData(form),
+          headers: { "Accept": "application/json" },
+        });
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        form.reset();
+        say("Merci, votre message a bien été envoyé. Je vous réponds dès que possible.");
+      } catch (err) {
+        console.warn("Envoi AJAX impossible, envoi classique.", err);
+        form.submit();
+      } finally {
+        btn.disabled = false;
+      }
+    });
+  })();
+  </script>
 </body>
 </html>

@@ -3,11 +3,17 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="Les galeries qui présentent le travail d'Annick Bouvattier, en France et aux États-Unis." />
+  <meta name="theme-color" content="#02253A" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Annick Bouvattier" />
+  <meta property="og:locale" content="fr_FR" />
+  <meta property="og:title" content="Galeries — Annick Bouvattier" />
+  <meta property="og:description" content="Les galeries qui présentent le travail d'Annick Bouvattier, en France et aux États-Unis." />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="preload" href="fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
   <title>Galeries — Annick Bouvattier</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
 
   <!-- Leaflet -->
   <link rel="stylesheet"
@@ -17,21 +23,12 @@
 
   <link rel="stylesheet" href="styles.css">
 
-  <!-- ✅ mini garde-fou : hauteur map -->
+  <!-- garde-fou : hauteur de la carte -->
   <style>
     body.galeries{ background-image:none; background:#02253A; }
     .galMap{ min-height:520px; position:relative; }
     #map{ position:absolute; inset:0; width:100%; height:100%; }
     @media (max-width:1050px){ .galMap{ min-height:420px; } }
-    /* ✅ debug visible si script casse */
-    #galDebug{
-      position:fixed; left:12px; bottom:12px; z-index:99999;
-      padding:10px 12px; border-radius:12px;
-      border:1px solid rgba(255,255,255,.18);
-      background: rgba(0,0,0,.55); color:#fff;
-      font: 13px/1.35 Inter, system-ui, sans-serif;
-      max-width: 520px;
-    }
   </style>
 </head>
 
@@ -44,7 +41,7 @@
         <nav class="top__nav" aria-label="Navigation principale">
           <a class="nav__link" href="index.html">Accueil</a>
           <a class="nav__link" href="portfolio.html">Portfolio</a>
-          <a class="nav__link is-active" href="galeries.html">Galeries</a>
+          <a class="nav__link is-active" aria-current="page" href="galeries.html">Galeries</a>
           <a class="nav__link" href="expositions.html">Expositions</a>
           <a class="nav__link" href="apropos.html">À propos</a>
           <a class="nav__link" href="presse.html">Presse</a>
@@ -74,7 +71,10 @@
         </aside>
       </div>
 
-    </div>
+    <footer class="siteFooter">
+      <a href="mentions-legales.html">Mentions légales</a>
+    </footer>
+  </div>
   </div>
 
 
@@ -83,7 +83,7 @@
           integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
           crossorigin=""></script>
 
-  <!-- ✅ IMPORTANT : mets ./script.js (chemin relatif sûr) -->
+  <!-- logique de la page (carte, liste, recherche) -->
   <script src="./script.js"></script>
 
 </body>

@@ -1,122 +1,13 @@
-// script.js — SAFE GLOBAL (toutes pages)
-// - Nav active robuste
-// - Scroll doux ancres
-// - Galeries (Leaflet) uniquement si la page a #map + #list + Leaflet chargé
-// IMPORTANT: rien ici ne doit casser Portfolio si la page n'a pas les éléments.
+// script.js — page Galeries uniquement (carte Leaflet + liste + recherche).
+// Chargé par galeries.html après Leaflet. Ne fait rien si #map / #list sont absents.
 
 (() => {
   "use strict";
 
-  document.addEventListener("DOMContentLoaded", () => {
-    initActiveNav();
-    initSmoothAnchors();
-    initGaleriesPage(); // ne fait rien si pas sur galeries.html
-  });
+  document.addEventListener("DOMContentLoaded", initGaleriesPage);
 
   /* =========================
-     DEBUG (optionnel)
-     ========================= */
-  function dbg(msg) {
-    const d = document.getElementById("debug");
-    if (d) {
-      d.style.display = "block";
-      d.textContent = msg;
-    } else {
-      console.log("[DEBUG]", msg);
-    }
-  }
-
-  /* =========================
-     1) NAV ACTIVE (robuste)
-     ========================= */
-  function initActiveNav() {
-    const navLinks = Array.from(document.querySelectorAll(".top__nav .nav__link"));
-    if (!navLinks.length) return;
-
-    const origin = window.location.origin;
-
-    function fileFromPath(pathname) {
-      const clean = (pathname || "").replace(/\/+$/, "");
-      const last = clean.split("/").pop();
-      return last ? last : "index.html";
-    }
-
-    function fileFromHref(href) {
-      if (!href) return null;
-      if (href.startsWith("#")) return null;
-      if (/^(mailto:|tel:|javascript:)/i.test(href)) return null;
-
-      const u = new URL(href, origin);
-      if (u.origin !== origin) return null;
-      return fileFromPath(u.pathname);
-    }
-
-    const current = new URL(window.location.href);
-    const currentFile = fileFromPath(current.pathname);
-
-    navLinks.forEach((link) => {
-      link.classList.remove("is-active");
-
-      const href = link.getAttribute("href") || "";
-      const linkFile = fileFromHref(href);
-      if (!linkFile) return;
-
-      const isIndex =
-        (currentFile === "index.html" || currentFile === "") &&
-        (linkFile === "index.html" || linkFile === "");
-
-      if (linkFile === currentFile || isIndex) link.classList.add("is-active");
-    });
-  }
-
-  /* =========================
-     2) SCROLL DOUX ANCRES
-     ========================= */
-  function initSmoothAnchors() {
-    const prefersReducedMotion =
-      window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    const HEADER_OFFSET = 0;
-
-    function scrollToId(hash, push = true) {
-      if (!hash || hash === "#") return;
-      const target = document.querySelector(hash);
-      if (!target) return;
-
-      const y = target.getBoundingClientRect().top + window.pageYOffset - HEADER_OFFSET;
-
-      window.scrollTo({
-        top: y,
-        behavior: prefersReducedMotion ? "auto" : "smooth",
-      });
-
-      if (push) history.pushState(null, "", hash);
-
-      if (!target.hasAttribute("tabindex")) target.setAttribute("tabindex", "-1");
-      target.focus({ preventScroll: true });
-    }
-
-    document.querySelectorAll('a[href^="#"]').forEach((a) => {
-      a.addEventListener("click", (e) => {
-        const hash = a.getAttribute("href");
-        if (!hash || hash === "#") return;
-        if (!document.querySelector(hash)) return;
-        e.preventDefault();
-        scrollToId(hash, true);
-      });
-    });
-
-    window.addEventListener("popstate", () => {
-      if (window.location.hash) scrollToId(window.location.hash, false);
-    });
-
-    if (window.location.hash) {
-      setTimeout(() => scrollToId(window.location.hash, false), 0);
-    }
-  }
-
-  /* =========================
-     3) GALERIES (Leaflet) — SAFE
+     GALERIES (Leaflet)
      ========================= */
   function initGaleriesPage() {
     const mapDiv = document.getElementById("map");
@@ -125,10 +16,10 @@
     // pas la page galeries => on sort sans rien faire
     if (!mapDiv || !listDiv) return;
 
-    // Leaflet pas chargé => on ne casse rien
+    // Leaflet pas chargé (CDN injoignable) => message à la place de la carte
     if (!window.L) {
-      dbg("❌ Leaflet pas chargé (window.L absent).");
-      return;
+      console.error("Leaflet n'a pas pu être chargé.");
+      mapDiv.innerHTML = '<p style="padding:20px;color:rgba(255,255,255,.75)">La carte n\'a pas pu être chargée. La liste des galeries reste disponible.</p>';
     }
 
     const qInput = document.getElementById("q");
@@ -155,20 +46,24 @@
         .replaceAll("'", "&#039;");
     }
 
-    // ✅ init map
-    const map = L.map(mapDiv, { scrollWheelZoom: true });
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      maxZoom: 18,
-      attribution: "&copy; OpenStreetMap",
-    }).addTo(map);
-
-    const group = L.featureGroup().addTo(map);
+    const hasMap = !!window.L;
+    let map = null;
+    let group = null;
     let markers = [];
+
+    if (hasMap) {
+      map = L.map(mapDiv, { scrollWheelZoom: true });
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 18,
+        attribution: "&copy; OpenStreetMap",
+      }).addTo(map);
+      group = L.featureGroup().addTo(map);
+    }
 
     function popupHtml(g) {
       const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${g.lat},${g.lng}`;
       const site = g.website
-        ? `<a class="link" href="${g.website}" target="_blank" rel="noopener noreferrer">site</a>`
+        ? `<a class="link" href="${escapeHtml(g.website)}" target="_blank" rel="noopener noreferrer">site</a>`
         : "";
       return `
         <div style="min-width:220px">
@@ -185,12 +80,14 @@
     }
 
     function safeInvalidate() {
+      if (!map) return;
       requestAnimationFrame(() => {
         requestAnimationFrame(() => map.invalidateSize());
       });
     }
 
     function renderMarkers(list) {
+      if (!map) return;
       group.clearLayers();
       markers = [];
 
@@ -218,8 +115,7 @@
             ${escapeHtml(g.city)} · ${escapeHtml(g.country)}<br>
             ${escapeHtml(g.address)}<br>
             ${g.phone ? escapeHtml(g.phone) + "<br>" : ""}
-            ${g.website ? `<a class="link" href="${g.website}" target="_blank" rel="noopener noreferrer">site</a>` : ""}
-            <span> · </span>
+            ${g.website ? `<a class="link" href="${escapeHtml(g.website)}" target="_blank" rel="noopener noreferrer">site</a> <span> · </span>` : ""}
             <a class="link" href="https://www.google.com/maps/dir/?api=1&destination=${g.lat},${g.lng}" target="_blank" rel="noopener noreferrer">itinéraire</a>
           </p>
         `;
@@ -254,9 +150,10 @@
     }
 
     // Observateur taille (super important quand la map est dans une grid)
-    const ro = new ResizeObserver(() => safeInvalidate());
-    ro.observe(mapDiv);
-    window.addEventListener("resize", safeInvalidate);
+    if (hasMap) {
+      new ResizeObserver(() => safeInvalidate()).observe(mapDiv);
+      window.addEventListener("resize", safeInvalidate);
+    }
 
     // Events
     if (qInput) qInput.addEventListener("input", apply);
@@ -266,7 +163,6 @@
     });
 
     // init
-    dbg("✅ Galeries init OK (si tu vois des items à droite, c'est bon).");
     apply();
     safeInvalidate();
   }

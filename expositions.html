@@ -3,10 +3,17 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="Expositions personnelles, collectives et salons d'Annick Bouvattier depuis 1992." />
+  <meta name="theme-color" content="#02253A" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Annick Bouvattier" />
+  <meta property="og:locale" content="fr_FR" />
+  <meta property="og:title" content="Expositions — Annick Bouvattier" />
+  <meta property="og:description" content="Expositions personnelles, collectives et salons d'Annick Bouvattier depuis 1992." />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="preload" href="fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="styles.css" />
   <title>Expositions — Annick Bouvattier</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
 
   <style>
     :root{
@@ -18,24 +25,6 @@
       --chip:rgba(255,255,255,.08);
       --chip2:rgba(255,255,255,.12);
     }
-    *{box-sizing:border-box}
-
-    /* ✅ correction : enlève background:var(""), */
-    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
-    body{background:var(--bg);color:var(--ink)}
-    a{color:inherit;text-decoration:none}
-
-    .container{max-width:1400px;margin:0 auto;padding:20px 48px 56px}
-    @media (max-width:768px){.container{padding:16px 20px 40px}}
-
-    /* Header */
-    .top{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:18px 0}
-    .brand{font-size:18px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;line-height:1;padding-bottom:6px;white-space:nowrap}
-    .top__nav{display:flex;align-items:center;gap:20px;flex-wrap:wrap;justify-content:flex-end}
-    .nav__link{font-size:16px;font-weight:500;border-bottom:2px solid transparent;padding:6px 2px 4px;line-height:1}
-    .nav__link:hover{border-bottom-color:rgba(255,255,255,.5)}
-    .nav__link.is-active{border-bottom-color:#fff}
-
     /* Page head */
     .headRow{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin:18px 0 10px}
     h1{margin:0;font-size:28px;font-weight:800;letter-spacing:-.02em}
@@ -92,6 +81,7 @@
     .field{display:flex;flex-direction:column;gap:6px;min-width:0}
     .label{font-size:12px;color:var(--faint);letter-spacing:.06em;text-transform:uppercase}
     input,select{
+      color-scheme:dark; /* listes déroulantes sombres (sinon texte blanc sur fond blanc sous Windows) */
       height:44px;width:100%;
       border:1px solid var(--border);
       background:rgba(255,255,255,.08);
@@ -168,11 +158,11 @@
   <div class="container">
     <header class="top">
       <a class="brand" href="index.html">ANNICK&nbsp;BOUVATTIER</a>
-      <nav class="top__nav">
+      <nav class="top__nav" aria-label="Navigation principale">
         <a class="nav__link" href="index.html">Accueil</a>
         <a class="nav__link" href="portfolio.html">Portfolio</a>
         <a class="nav__link" href="galeries.html">Galeries</a>
-        <a class="nav__link is-active" href="expositions.html">Expositions</a>
+        <a class="nav__link is-active" aria-current="page" href="expositions.html">Expositions</a>
         <a class="nav__link" href="apropos.html">À propos</a>
         <a class="nav__link" href="presse.html">Presse</a>
         <a class="nav__link" href="contact.html">Contact</a>
@@ -198,11 +188,11 @@
     <!-- Filtres -->
     <section class="filters" aria-label="Filtres">
       <div class="field">
-        <div class="label">Rechercher</div>
+        <label class="label" for="q">Rechercher</label>
         <input id="q" type="search" placeholder="Galerie, ville, pays…" />
       </div>
       <div class="field">
-        <div class="label">Type</div>
+        <label class="label" for="type">Type</label>
         <select id="type">
           <option value="all">Tous</option>
           <option value="solo">Personnelle</option>
@@ -211,13 +201,13 @@
         </select>
       </div>
       <div class="field">
-        <div class="label">Pays</div>
+        <label class="label" for="country">Pays</label>
         <select id="country">
           <option value="all">Tous</option>
         </select>
       </div>
       <div class="field">
-        <div class="label">Année</div>
+        <label class="label" for="year">Année</label>
         <select id="year">
           <option value="all">Toutes</option>
         </select>
@@ -227,6 +217,9 @@
 
     <section class="timeline" id="timeline"></section>
     <p class="empty" id="empty" hidden>Aucune exposition ne correspond aux filtres.</p>
+    <footer class="siteFooter">
+      <a href="mentions-legales.html">Mentions légales</a>
+    </footer>
   </div>
 
   <script>
@@ -242,7 +235,7 @@
       { year: 2009, title: "Artclub Gallery", city: "Paris", country: "France", type: "solo" },
       { year: 2006, title: "Galerie Salvany", city: "Clermont-Ferrand", country: "France", type: "solo" },
       { year: 2005, title: "Artclub Gallery", city: "Paris", country: "France", type: "solo" },
-      { year: 2005, title: "Galerie Futurart", city: "Bruxelles", country: "France", type: "solo" },
+      { year: 2005, title: "Galerie Futurart", city: "Bruxelles", country: "Belgique", type: "solo" },
       { year: 2002, title: "Galerie Aktuaryus", city: "Strasbourg", country: "France", type: "solo" },
       { year: 2002, title: "Galerie des Chapelains", city: "Nevers", country: "France", type: "solo" },
       { year: 2001, title: "Galerie Tosaka", city: "Paris", country: "France", type: "solo" },
@@ -400,12 +393,8 @@
         .replaceAll("'","&#039;");
     }
 
-    ["input","change"].forEach(evt=>{
-      els.q.addEventListener(evt, render);
-      els.type.addEventListener(evt, render);
-      els.country.addEventListener(evt, render);
-      els.year.addEventListener(evt, render);
-    });
+    els.q.addEventListener("input", render);
+    [els.type, els.country, els.year].forEach(sel => sel.addEventListener("change", render));
 
     els.reset.addEventListener("click", ()=>{
       els.q.value="";

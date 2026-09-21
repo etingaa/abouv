@@ -3,11 +3,17 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="Portfolio d'Annick Bouvattier : peintures à l'huile et sculptures, à filtrer par catégorie, technique, format et disponibilité." />
+  <meta name="theme-color" content="#02253A" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Annick Bouvattier" />
+  <meta property="og:locale" content="fr_FR" />
+  <meta property="og:title" content="Portfolio — Annick Bouvattier" />
+  <meta property="og:description" content="Portfolio d'Annick Bouvattier : peintures à l'huile et sculptures, à filtrer par catégorie, technique, format et disponibilité." />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="preload" href="fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
   <title>Portfolio — Annick Bouvattier</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="styles.css">
 
@@ -37,7 +43,7 @@
         <a class="brand" href="index.html">ANNICK&nbsp;BOUVATTIER</a>
         <nav class="top__nav" aria-label="Navigation principale">
           <a class="nav__link" href="index.html">Accueil</a>
-          <a class="nav__link is-active" href="portfolio.html">Portfolio</a>
+          <a class="nav__link is-active" aria-current="page" href="portfolio.html">Portfolio</a>
           <a class="nav__link" href="galeries.html">Galeries</a>
           <a class="nav__link" href="expositions.html">Expositions</a>
           <a class="nav__link" href="apropos.html">À propos</a>
@@ -52,43 +58,43 @@
       <!-- Barre de filtres -->
       <section class="filterBar" aria-label="Filtres">
         <div class="field field--search">
-          <input id="q" class="pillInput" type="search" placeholder="Rechercher une œuvre…" />
+          <input id="q" class="pillInput" type="search" placeholder="Rechercher une œuvre…" aria-label="Rechercher une œuvre" />
         </div>
 
         <!-- Catégorie (colonne C) -->
         <div class="dd" data-key="category">
-          <button class="pillBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
+          <button class="pillBtn" type="button" aria-haspopup="true" aria-expanded="false">
             Catégorie <span class="pillCount" data-count="category"></span>
             <span class="pillCaret">▾</span>
           </button>
-          <div class="ddPanel" role="listbox" aria-label="Catégorie" data-panel="category"></div>
+          <div class="ddPanel" role="group" aria-label="Catégorie" data-panel="category"></div>
         </div>
 
         <!-- Technique -->
         <div class="dd" data-key="technique">
-          <button class="pillBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
+          <button class="pillBtn" type="button" aria-haspopup="true" aria-expanded="false">
             Technique <span class="pillCount" data-count="technique"></span>
             <span class="pillCaret">▾</span>
           </button>
-          <div class="ddPanel" role="listbox" aria-label="Technique" data-panel="technique"></div>
+          <div class="ddPanel" role="group" aria-label="Technique" data-panel="technique"></div>
         </div>
 
         <!-- Format (Forme + tailles) -->
         <div class="dd" data-key="format">
-          <button class="pillBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
+          <button class="pillBtn" type="button" aria-haspopup="true" aria-expanded="false">
             Format <span class="pillCount" data-count="format"></span>
             <span class="pillCaret">▾</span>
           </button>
-          <div class="ddPanel" role="listbox" aria-label="Format" data-panel="format"></div>
+          <div class="ddPanel" role="group" aria-label="Format" data-panel="format"></div>
         </div>
 
         <!-- Disponible -->
         <div class="dd" data-key="status">
-          <button class="pillBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
+          <button class="pillBtn" type="button" aria-haspopup="true" aria-expanded="false">
             Disponible <span class="pillCount" data-count="status"></span>
             <span class="pillCaret">▾</span>
           </button>
-          <div class="ddPanel" role="listbox" aria-label="Disponible" data-panel="status"></div>
+          <div class="ddPanel" role="group" aria-label="Disponible" data-panel="status"></div>
         </div>
 
         <button class="pillBtn pillBtn--ghost" id="reset" type="button">Tout effacer</button>
@@ -96,24 +102,30 @@
 
       <div class="metaRow">
         <h1 class="title">Portfolio</h1>
-        <div class="count" id="count"></div>
+        <div class="count" id="count" aria-live="polite">Chargement…</div>
       </div>
 
       <section class="masonry" id="masonry" aria-label="Œuvres"></section>
-    </div>
+    <footer class="siteFooter">
+      <a href="mentions-legales.html">Mentions légales</a>
+    </footer>
+  </div>
   </div>
 
   <!-- Modal -->
-  <dialog id="modal">
+  <dialog id="modal" aria-labelledby="modalTitle">
     <div class="modal">
       <div class="modal__media">
         <img class="modal__img" id="modalImg" alt="">
         <button class="modal__closeBtn" id="modalClose" type="button" aria-label="Fermer">×</button>
+        <button class="modal__navBtn modal__navBtn--prev" id="modalPrev" type="button" aria-label="Œuvre précédente">‹</button>
+        <button class="modal__navBtn modal__navBtn--next" id="modalNext" type="button" aria-label="Œuvre suivante">›</button>
       </div>
 
       <div class="modal__info">
         <h2 class="modal__h" id="modalTitle"></h2>
         <p class="modal__meta" id="modalMeta"></p>
+        <a class="modal__cta" id="modalCta" href="contact.html" hidden>Demander des informations</a>
       </div>
     </div>
   </dialog>
@@ -125,6 +137,9 @@
 
     const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSmK-RAKlpq_VMnhd78eWdWeMTnCkU3_-411IzeTyzO9j0zbJdkkhzfxlRDZpqzKixpoUgTtAAI_Auw/pub?output=csv";
     const IMG_BASE = "images";
+    const THUMB_BASE = "images/thumbs";            // générées par scripts/make-thumbs.py
+    const SIZES_URL = "images/thumbs/sizes.json";  // dimensions des miniatures (évite les sauts de mise en page)
+    const CACHE_KEY = "abouv:sheet-csv";           // dernière version du Sheet, si Google est injoignable
 
     /* =========================
        DOM
@@ -142,6 +157,9 @@
       modalTitle: document.getElementById("modalTitle"),
       modalMeta: document.getElementById("modalMeta"),
       modalClose: document.getElementById("modalClose"),
+      modalPrev: document.getElementById("modalPrev"),
+      modalNext: document.getElementById("modalNext"),
+      modalCta: document.getElementById("modalCta"),
     };
 
     const ddEls = {
@@ -166,6 +184,9 @@
     };
 
     let artworks = [];
+    let sizesMap = {};      // nom de fichier -> [largeur, hauteur] de la miniature
+    let currentList = [];   // œuvres actuellement affichées (après filtres)
+    let modalIndex = -1;
 
     // filtres multi
     const filters = {
@@ -293,11 +314,21 @@
       return (s === "VENDUE") ? "vendue" : "disponible";
     }
 
-    function buildImagePath(jpg){
-      let p = String(jpg || "").trim();
-      p = p.replace(/^images\//i, "");
-      p = p.replace(/^\/+/, "");
-      return encodeURI(`${IMG_BASE}/${p}`);
+    function cleanFile(jpg){
+      return String(jpg || "").trim().replace(/^images\//i, "").replace(/^\/+/, "");
+    }
+
+    function buildImagePath(file, base = IMG_BASE){
+      return encodeURI(`${base}/${file}`);
+    }
+
+    function statusLabel(s){
+      return s === "vendue" ? "Vendue" : "Disponible";
+    }
+
+    // "Huile sur Toile · 60 x 120 cm" (sans les champs vides)
+    function metaLine(a){
+      return [a.technique, a.size].filter(Boolean).map(escapeHtml).join(" · ");
     }
 
     function setBadgeCount(key){
@@ -322,35 +353,59 @@
        LOAD
        ========================= */
 
-    async function loadArtworksFromSheet(){
-      const res = await fetch(SHEET_CSV_URL, { cache: "no-store" });
-      if(!res.ok) throw new Error("Impossible de charger la Google Sheet");
+    async function fetchSheetCSV(){
+      try{
+        const res = await fetch(SHEET_CSV_URL, { cache: "no-store" });
+        if(!res.ok) throw new Error("Impossible de charger la Google Sheet");
+        const csv = await res.text();
+        try{ localStorage.setItem(CACHE_KEY, csv); }catch(_){}
+        return csv;
+      }catch(err){
+        // Google injoignable / Sheet dépubliée : on affiche la dernière version connue
+        let cached = null;
+        try{ cached = localStorage.getItem(CACHE_KEY); }catch(_){}
+        if(cached){ console.warn("Sheet injoignable, utilisation de la copie locale.", err); return cached; }
+        throw err;
+      }
+    }
 
-      const csv = await res.text();
+    async function loadSizes(){
+      try{
+        const res = await fetch(SIZES_URL);
+        return res.ok ? await res.json() : {};
+      }catch(_){ return {}; }
+    }
+
+    async function loadArtworksFromSheet(){
+      const [csv, sizes] = await Promise.all([fetchSheetCSV(), loadSizes()]);
+      sizesMap = sizes || {};
+
       const rows = parseCSV(csv);
+      if(!rows.length) throw new Error("Sheet vide");
 
       const header = rows.shift().map(normalizeHeader);
       const col = (name) => header.indexOf(normalizeHeader(name));
 
-      // Ton sheet : Nom | Année | Catégorie | Technique | Format | Disponible | Jpg
-      // => On charge Catégorie, Technique, Format, Disponible, Jpg
+      // Sheet : Nom | Année | Catégorie | Technique | Format | Disponible | Jpg | Disponible où ? | Accueil
       return rows
         .filter(r => r[col("nom")])
         .map(r => {
           const title = cleanNA(r[col("nom")]);
-          const category = cleanNA(r[col("categorie")]);        // ✅ colonne C
-          const technique = cleanNA(r[col("technique")]) || "N/A";
+          const category = cleanNA(r[col("categorie")]);
+          const technique = cleanNA(r[col("technique")]);
           const formatRaw = cleanNA(r[col("format")]);
-          const dispo = statusFromSheet(r[col("disponible")]);
-          const jpg = cleanNA(r[col("jpg")]);
+          const status = statusFromSheet(r[col("disponible")]);
+          const where = cleanNA(r[col("disponible ou ?")]);
+          const file = cleanFile(cleanNA(r[col("jpg")]));
 
-          const size = formatRaw ? `${formatRaw} cm` : "N/A";
-          const sizeNorm = normSize(size);
-          const shape = shapeFromSize(sizeNorm);
+          const size = formatRaw ? `${formatRaw} cm` : "";
+          const sizeNorm = size ? normSize(size) : "";
+          const shape = size ? shapeFromSize(sizeNorm) : "unknown";
 
-          const image = jpg ? buildImagePath(jpg) : "";
+          const image = file ? buildImagePath(file) : "";
+          const thumb = file ? buildImagePath(file, THUMB_BASE) : "";
 
-          return { title, category, technique, size, sizeNorm, shape, status: dispo, image };
+          return { title, category, technique, size, sizeNorm, shape, status, where, file, image, thumb };
         })
         .filter(a => a.title && a.image);
     }
@@ -359,7 +414,7 @@
        PANELS (Category / Technique / Status)
        ========================= */
 
-    function buildSimplePanel(key, options){
+    function buildSimplePanel(key, options, labelFn = (v) => v){
       const panel = panels[key];
       panel.innerHTML = "";
 
@@ -374,7 +429,7 @@
 
         const label = document.createElement("span");
         label.className = "ddLabel";
-        label.textContent = v;
+        label.textContent = labelFn(v);
 
         input.addEventListener("change", () => {
           if(input.checked) filters[key].add(v);
@@ -542,7 +597,7 @@
       buildSimplePanel("category", categories);
       buildSimplePanel("technique", techniques);
       buildFormatPanel();
-      buildSimplePanel("status", statuses.map(s => s)); // labels gérés au rendu
+      buildSimplePanel("status", statuses, statusLabel);
     }
 
     /* =========================
@@ -623,6 +678,7 @@
        ========================= */
 
     function matchArtwork(a){
+      if(a.broken) return false; // image introuvable (ni miniature ni original)
       const q = (filters.q||"").trim().toLowerCase();
       if(q && !a.title.toLowerCase().includes(q)) return false;
 
@@ -638,27 +694,61 @@
       return true;
     }
 
+    let renderQueued = false;
+    function scheduleRender(){
+      if(renderQueued) return;
+      renderQueued = true;
+      requestAnimationFrame(() => { renderQueued = false; render(); });
+    }
+
     function render(){
       const list = artworks.filter(matchArtwork);
+      currentList = list;
 
       els.masonry.innerHTML = "";
-      list.forEach(a=>{
+
+      if(!list.length){
+        els.masonry.innerHTML = '<p class="statusMsg">Aucune œuvre ne correspond à ces filtres.</p>';
+      }
+
+      list.forEach((a, idx)=>{
         const item = document.createElement("article");
         item.className = "piece";
+        item.tabIndex = 0;
+        item.setAttribute("role", "button");
+        item.setAttribute("aria-label", `${a.title} — ${statusLabel(a.status)}. Ouvrir l'œuvre`);
+
+        const dims = sizesMap[a.file];
+        const dimAttrs = dims ? ` width="${dims[0]}" height="${dims[1]}"` : "";
+        const meta = metaLine(a);
+
         item.innerHTML = `
           <div class="imgWrap">
-            <img src="${a.image}" alt="${escapeHtml(a.title)}" loading="lazy">
+            <img src="${a.thumb}" alt="${escapeHtml(a.title)}"${dimAttrs} loading="lazy" decoding="async">
           </div>
           <div class="cap">
             <p class="capTitle">${escapeHtml(a.title)}</p>
-            <!-- ✅ on enlève l'année : plus de date -->
-            <p class="capMeta">${escapeHtml(a.technique)} · ${escapeHtml(a.size)}</p>
+            ${meta ? `<p class="capMeta">${meta}</p>` : ""}
             <span class="badge ${a.status}">
               ${a.status === "vendue" ? "VENDUE" : "DISPONIBLE"}
             </span>
           </div>
         `;
-        item.addEventListener("click", ()=> openModal(a));
+
+        // miniature absente -> image d'origine ; si elle manque aussi -> l'œuvre est masquée
+        const img = item.querySelector("img");
+        let triedOriginal = false;
+        img.addEventListener("error", () => {
+          if(!triedOriginal){ triedOriginal = true; img.src = a.image; return; }
+          console.warn("Image introuvable, œuvre masquée :", a.title, a.image);
+          a.broken = true;
+          scheduleRender();
+        });
+
+        item.addEventListener("click", ()=> openModal(idx));
+        item.addEventListener("keydown", (e)=>{
+          if(e.key === "Enter" || e.key === " "){ e.preventDefault(); openModal(idx); }
+        });
         els.masonry.appendChild(item);
       });
 
@@ -669,22 +759,45 @@
        MODAL
        ========================= */
 
-    function openModal(a){
-      els.modalImg.src = a.image;
+    function showArtwork(idx){
+      const n = currentList.length;
+      if(!n) return;
+      modalIndex = (idx + n) % n;
+      const a = currentList[modalIndex];
+
+      // miniature tout de suite, puis image d'origine dès qu'elle est chargée
+      els.modalImg.src = a.thumb;
       els.modalImg.alt = a.title;
+      const full = new Image();
+      full.onload = () => { if(currentList[modalIndex] === a) els.modalImg.src = a.image; };
+      full.src = a.image;
 
       els.modalTitle.textContent = a.title.toUpperCase();
 
-      // ✅ on enlève l'année : pas de date dans le modal
-      const label = (a.status === "vendue") ? "VENDUE" : "DISPONIBLE";
-      els.modalMeta.innerHTML =
-        `${escapeHtml(a.technique)} · ${escapeHtml(a.size)} · ` +
-        `<span class="statusText ${a.status}">${label}</span>`;
+      const label = a.status === "vendue" ? "VENDUE" : "DISPONIBLE";
+      const parts = [];
+      const meta = metaLine(a);
+      if(meta) parts.push(meta);
+      parts.push(`<span class="statusText ${a.status}">${label}</span>` +
+                 (a.status === "disponible" && a.where ? ` · ${escapeHtml(a.where)}` : ""));
+      els.modalMeta.innerHTML = parts.join(" · ");
 
+      // œuvre disponible -> lien vers le formulaire, message pré-rempli
+      els.modalCta.hidden = a.status !== "disponible";
+      els.modalCta.href = "contact.html?oeuvre=" + encodeURIComponent(a.title);
+
+      const multi = n > 1;
+      els.modalPrev.hidden = !multi;
+      els.modalNext.hidden = !multi;
+    }
+
+    function openModal(idx){
+      showArtwork(idx);
+      document.body.style.overflow = "hidden"; // pas de scroll de la page derrière
       els.modal.showModal();
     }
 
-    function closeModal(){ els.modal.close(); }
+    function closeModal(){ if(els.modal.open) els.modal.close(); }
 
     /* =========================
        EVENTS
@@ -729,8 +842,30 @@
     Object.values(panels).forEach(p => p.addEventListener("click", (e) => e.stopPropagation()));
 
     els.modalClose.addEventListener("click", closeModal);
-    els.modal.addEventListener("click", (e)=>{ if(e.target === els.modal) closeModal(); });
-    document.addEventListener("keydown", (e)=>{ if(e.key === "Escape" && els.modal.open) closeModal(); });
+    els.modalPrev.addEventListener("click", ()=> showArtwork(modalIndex - 1));
+    els.modalNext.addEventListener("click", ()=> showArtwork(modalIndex + 1));
+    // clic sur le fond ou sur la zone vide autour de l'image -> fermer
+    els.modal.addEventListener("click", (e)=>{
+      const t = e.target;
+      if(t === els.modal || t.classList.contains("modal") || t.classList.contains("modal__media")) closeModal();
+    });
+    // "close" couvre aussi la touche Échap gérée nativement par <dialog>
+    els.modal.addEventListener("close", ()=>{ document.body.style.overflow = ""; });
+
+    document.addEventListener("keydown", (e)=>{
+      if(els.modal.open){
+        if(e.key === "ArrowLeft") showArtwork(modalIndex - 1);
+        if(e.key === "ArrowRight") showArtwork(modalIndex + 1);
+        return;
+      }
+      if(e.key === "Escape"){
+        const open = Object.values(ddEls).find(dd => dd.classList.contains("is-open"));
+        if(open){
+          closeAllDropdowns();
+          open.querySelector(".pillBtn").focus();
+        }
+      }
+    });
 
     /* =========================
        INIT
@@ -744,7 +879,10 @@
         render();
       } catch(err){
         console.error(err);
-        els.count.textContent = "Erreur de chargement (Sheet/Images)";
+        els.count.textContent = "";
+        els.masonry.innerHTML =
+          '<p class="statusMsg">Impossible de charger les œuvres pour le moment. ' +
+          'Vérifiez votre connexion, puis <a href="portfolio.html">actualisez la page</a>.</p>';
       }
     });
   </script>
