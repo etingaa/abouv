@@ -25,23 +25,23 @@
 
     .form{
       margin:0; display:grid; grid-template-columns:1fr 1fr; gap:14px 12px;
-      padding:22px; border:1px solid rgba(255,255,255,.12); border-radius:var(--radius-card);
-      background:rgba(255,255,255,.02);
+      padding:22px; border:1px solid rgba(var(--ink-rgb),.12); border-radius:var(--radius-card);
+      background:rgba(var(--ink-rgb),.02);
     }
     .field{ display:flex; flex-direction:column; gap:6px; min-width:0; }
     .field--full{ grid-column:1 / -1; }
     .field__label{ font-size:12px; font-weight:500; color:var(--ink-faint); }
-    .field__label em{ font-style:normal; color:rgba(255,255,255,.35); }
+    .field__label em{ font-style:normal; color:rgba(var(--ink-rgb),.35); }
     .form input, .form textarea{
       width:100%; height:38px; padding:0 12px;
-      border:1px solid rgba(255,255,255,.14); border-radius:8px;
-      background:rgba(255,255,255,.03); color:#fff;
+      border:1px solid rgba(var(--ink-rgb),.14); border-radius:8px;
+      background:rgba(var(--ink-rgb),.03); color:var(--ink);
       font:inherit; font-size:14px; outline:none;
       transition:border-color var(--ease), background-color var(--ease);
     }
     .form textarea{ height:auto; min-height:150px; padding:10px 12px; resize:vertical; line-height:1.5; }
-    .form input:hover, .form textarea:hover{ border-color:rgba(255,255,255,.26); }
-    .form input:focus, .form textarea:focus{ border-color:rgba(255,255,255,.4); background:rgba(255,255,255,.06); }
+    .form input:hover, .form textarea:hover{ border-color:rgba(var(--ink-rgb),.26); }
+    .form input:focus, .form textarea:focus{ border-color:rgba(var(--ink-rgb),.4); background:rgba(var(--ink-rgb),.06); }
 
     /* Sujet : mêmes onglets que les filtres */
     .topics{ display:flex; flex-wrap:wrap; gap:4px; }
@@ -49,16 +49,16 @@
     .form__foot{ display:flex; flex-wrap:wrap; align-items:center; gap:12px 16px; }
     .sendBtn{
       height:36px; padding:0 18px;
-      border:1px solid #fff; border-radius:8px; background:#fff; color:var(--bg);
+      border:1px solid var(--ink); border-radius:8px; background:var(--ink); color:var(--bg);
       font:inherit; font-size:14px; font-weight:600; cursor:pointer;
       transition:background-color var(--ease), border-color var(--ease);
     }
-    .sendBtn:hover{ background:rgba(255,255,255,.85); border-color:rgba(255,255,255,.85); }
+    .sendBtn:hover{ background:rgba(var(--ink-rgb),.85); border-color:rgba(var(--ink-rgb),.85); }
     .sendBtn:disabled{ opacity:.6; cursor:progress; }
     .formNote{ margin:0; flex:1; min-width:220px; font-size:12px; line-height:1.5; color:var(--ink-faint); }
-    .formNote a{ border-bottom:1px solid rgba(255,255,255,.35); }
+    .formNote a{ border-bottom:1px solid rgba(var(--ink-rgb),.35); }
     .formStatus{ grid-column:1 / -1; margin:0; line-height:1.5; color:var(--ink-soft); }
-    .formStatus.is-error{ color:#ff9b9b; }
+    .formStatus.is-error{ color:var(--red); }
 
     /* Ailleurs : tuiles empilées */
     .elsewhere .facts{ grid-template-columns:1fr; }

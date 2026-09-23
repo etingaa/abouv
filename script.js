@@ -152,7 +152,7 @@
       }, { passive: false });
     } else {
       console.error("Leaflet n'a pas pu être chargé.");
-      mapDiv.innerHTML = `<p style="padding:20px;color:rgba(255,255,255,.75)">${t("La carte n'a pas pu être chargée. La liste des galeries reste disponible.")}</p>`;
+      mapDiv.innerHTML = `<p style="padding:20px;color:rgba(var(--ink-rgb),.75)">${t("La carte n'a pas pu être chargée. La liste des galeries reste disponible.")}</p>`;
     }
 
     const pinIcon = () => L.divIcon({ className: "galPin", html: "<i></i>", iconSize: [22, 22], iconAnchor: [11, 11], popupAnchor: [0, -10] });
