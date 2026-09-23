@@ -19,7 +19,7 @@
     // Leaflet pas chargé (CDN injoignable) => message à la place de la carte
     if (!window.L) {
       console.error("Leaflet n'a pas pu être chargé.");
-      mapDiv.innerHTML = '<p style="padding:20px;color:rgba(255,255,255,.75)">La carte n\'a pas pu être chargée. La liste des galeries reste disponible.</p>';
+      mapDiv.innerHTML = `<p style="padding:20px;color:rgba(255,255,255,.75)">${t("La carte n'a pas pu être chargée. La liste des galeries reste disponible.")}</p>`;
     }
 
     const qInput = document.getElementById("q");
@@ -68,16 +68,16 @@
     function popupHtml(g) {
       const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${g.lat},${g.lng}`;
       const site = g.website
-        ? `<a class="link" href="${escapeHtml(g.website)}" target="_blank" rel="noopener noreferrer">site</a>`
+        ? `<a class="link" href="${escapeHtml(g.website)}" target="_blank" rel="noopener noreferrer">${t("site")}</a>`
         : "";
       return `
         <div style="min-width:220px">
           <div style="font-weight:800;margin:0 0 6px">${escapeHtml(g.name)}</div>
           <div style="font-size:13px;line-height:1.35;opacity:.9">
-            ${escapeHtml(g.address)}<br>${escapeHtml(g.city)} · ${escapeHtml(g.country)}
+            ${escapeHtml(g.address)}<br>${escapeHtml(g.city)} · ${escapeHtml(t(g.country))}
           </div>
           <div style="margin-top:10px;font-size:13px">
-            <a class="link" href="${mapsUrl}" target="_blank" rel="noopener noreferrer">itinéraire</a>
+            <a class="link" href="${mapsUrl}" target="_blank" rel="noopener noreferrer">${t("itinéraire")}</a>
             ${site ? " · " + site : ""}
           </div>
         </div>
@@ -119,11 +119,11 @@
         div.innerHTML = `
           <p class="name">${escapeHtml(g.name)}</p>
           <p class="sub">
-            ${escapeHtml(g.city)} · ${escapeHtml(g.country)}<br>
+            ${escapeHtml(g.city)} · ${escapeHtml(t(g.country))}<br>
             ${escapeHtml(g.address)}<br>
             ${g.phone ? escapeHtml(g.phone) + "<br>" : ""}
-            ${g.website ? `<a class="link" href="${escapeHtml(g.website)}" target="_blank" rel="noopener noreferrer">site</a> <span> · </span>` : ""}
-            <a class="link" href="https://www.google.com/maps/dir/?api=1&destination=${g.lat},${g.lng}" target="_blank" rel="noopener noreferrer">itinéraire</a>
+            ${g.website ? `<a class="link" href="${escapeHtml(g.website)}" target="_blank" rel="noopener noreferrer">${t("site")}</a> <span> · </span>` : ""}
+            <a class="link" href="https://www.google.com/maps/dir/?api=1&destination=${g.lat},${g.lng}" target="_blank" rel="noopener noreferrer">${t("itinéraire")}</a>
           </p>
         `;
 
@@ -150,7 +150,7 @@
         return !q || hay.includes(q);
       });
 
-      if (metaEl) metaEl.textContent = `${filtered.length} galerie${filtered.length > 1 ? "s" : ""}`;
+      if (metaEl) metaEl.textContent = `${filtered.length} ${t(filtered.length > 1 ? "galeries" : "galerie")}`;
 
       renderList(filtered);
       renderMarkers(filtered);

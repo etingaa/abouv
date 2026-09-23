@@ -11,6 +11,7 @@
   <meta property="og:title" content="Portfolio — Annick Bouvattier" />
   <meta property="og:description" content="Portfolio d'Annick Bouvattier : peintures à l'huile et sculptures, à filtrer par catégorie, technique, format et disponibilité." />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <script src="i18n.js"></script>
   <link rel="preload" href="fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
   <title>Portfolio — Annick Bouvattier</title>
 
@@ -53,7 +54,7 @@
       </header>
 
       <!-- Chips actives -->
-      <div class="filterChips" id="chips"></div>
+      <div class="filterChips" id="chips" translate="no"></div>
 
       <!-- Barre de filtres -->
       <section class="filterBar" aria-label="Filtres">
@@ -105,14 +106,9 @@
         <div class="count" id="count" aria-live="polite">Chargement…</div>
       </div>
 
-      <section class="masonry" id="masonry" aria-label="Œuvres"></section>
+      <section class="masonry" id="masonry" aria-label="Œuvres" translate="no"></section>
     <footer class="siteFooter">
-      <div class="siteFooter__social">
-        <a href="https://www.instagram.com/annick.bouvattier/" target="_blank" rel="noopener noreferrer">instagram</a>
-        <a href="https://www.facebook.com/annick.bouvattier/" target="_blank" rel="noopener noreferrer">facebook</a>
-        <a href="https://www.saatchiart.com/bouvattier" target="_blank" rel="noopener noreferrer">saatchi art</a>
-      </div>
-      <a class="siteFooter__legal" href="mentions-legales.html">mentions légales</a>
+      <a href="mentions-legales.html">Mentions légales</a>
     </footer>
   </div>
   </div>
@@ -256,10 +252,10 @@
     }
 
     function shapeLabel(key){
-      if(key === "carre") return "Carré";
-      if(key === "paysage") return "Paysage";
-      if(key === "portrait") return "Portrait";
-      return "Autre";
+      if(key === "carre") return t("Carré");
+      if(key === "paysage") return t("Paysage");
+      if(key === "portrait") return t("Portrait");
+      return t("Autre");
     }
 
     // CSV robuste (gère guillemets + virgules)
@@ -328,12 +324,12 @@
     }
 
     function statusLabel(s){
-      return s === "vendue" ? "Vendue" : "Disponible";
+      return t(s === "vendue" ? "statut|Vendue" : "statut|Disponible");
     }
 
-    // "Huile sur Toile · 60 x 120 cm" (sans les champs vides)
+    // "Huile sur Toile · 60 x 120 cm" (sans les champs vides) — technique traduite en anglais
     function metaLine(a){
-      return [a.technique, a.size].filter(Boolean).map(escapeHtml).join(" · ");
+      return [a.technique && t(a.technique), a.size].filter(Boolean).map(escapeHtml).join(" · ");
     }
 
     function setBadgeCount(key){
@@ -599,8 +595,8 @@
       const techniques = uniq(artworks.map(a => a.technique).filter(Boolean));
       const statuses = ["disponible","vendue"];
 
-      buildSimplePanel("category", categories);
-      buildSimplePanel("technique", techniques);
+      buildSimplePanel("category", categories, t);
+      buildSimplePanel("technique", techniques, t);
       buildFormatPanel();
       buildSimplePanel("status", statuses, statusLabel);
     }
@@ -612,16 +608,16 @@
     function renderChips(){
       const chips = [];
 
-      filters.category.forEach(v => chips.push({ key:"category", label: v }));
-      filters.technique.forEach(v => chips.push({ key:"technique", label: v }));
+      filters.category.forEach(v => chips.push({ key:"category", label: t(v), raw: v }));
+      filters.technique.forEach(v => chips.push({ key:"technique", label: t(v), raw: v }));
 
-      filters.shape.forEach(v => chips.push({ key:"shape", label: shapeLabel(v) }));
+      filters.shape.forEach(v => chips.push({ key:"shape", label: shapeLabel(v), raw: v }));
       filters.size.forEach(v => {
         const display = v.replace(/\s*x\s*/g," × ").replace(/\s*cm\s*/g," cm");
         chips.push({ key:"size", label: display, raw: v });
       });
 
-      filters.status.forEach(v => chips.push({ key:"status", label: (v==="vendue"?"VENDUE":"DISPONIBLE"), raw: v }));
+      filters.status.forEach(v => chips.push({ key:"status", label: t(v==="vendue"?"VENDUE":"DISPONIBLE"), raw: v }));
 
       els.chips.innerHTML = "";
 
@@ -630,23 +626,12 @@
         chip.className = "chip";
         chip.innerHTML = `
           <span>${escapeHtml(c.label)}</span>
-          <button type="button" aria-label="Retirer">×</button>
+          <button type="button" aria-label="${escapeHtml(t("Retirer"))}">×</button>
         `;
 
         chip.querySelector("button").addEventListener("click", () => {
-          if(c.key === "shape"){
-            // enlever forme
-            const inv = Object.entries({Carré:"carre", Paysage:"paysage", Portrait:"portrait"})
-              .find(([lab]) => lab === c.label);
-            const val = inv ? inv[1] : null;
-            if(val) filters.shape.delete(val);
-          }else if(c.key === "size"){
-            filters.size.delete(c.raw);
-          }else if(c.key === "status"){
-            filters.status.delete(c.raw);
-          }else{
-            filters[c.key].delete(c.label);
-          }
+          // raw = valeur d'origine (le libellé affiché peut être traduit)
+          filters[c.key].delete(c.raw);
 
           setBadgeCount("category");
           setBadgeCount("technique");
@@ -713,7 +698,7 @@
       els.masonry.innerHTML = "";
 
       if(!list.length){
-        els.masonry.innerHTML = '<p class="statusMsg">Aucune œuvre ne correspond à ces filtres.</p>';
+        els.masonry.innerHTML = `<p class="statusMsg">${t("Aucune œuvre ne correspond à ces filtres.")}</p>`;
       }
 
       list.forEach((a, idx)=>{
@@ -721,7 +706,7 @@
         item.className = "piece";
         item.tabIndex = 0;
         item.setAttribute("role", "button");
-        item.setAttribute("aria-label", `${a.title} — ${statusLabel(a.status)}. Ouvrir l'œuvre`);
+        item.setAttribute("aria-label", `${a.title} — ${statusLabel(a.status)}. ${t("Ouvrir l'œuvre")}`);
 
         const dims = sizesMap[a.file];
         const dimAttrs = dims ? ` width="${dims[0]}" height="${dims[1]}"` : "";
@@ -735,7 +720,7 @@
             <p class="capTitle">${escapeHtml(a.title)}</p>
             ${meta ? `<p class="capMeta">${meta}</p>` : ""}
             <span class="badge ${a.status}">
-              ${a.status === "vendue" ? "VENDUE" : "DISPONIBLE"}
+              ${t(a.status === "vendue" ? "VENDUE" : "DISPONIBLE")}
             </span>
           </div>
         `;
@@ -757,7 +742,7 @@
         els.masonry.appendChild(item);
       });
 
-      els.count.textContent = `${list.length} œuvre${list.length>1 ? "s" : ""}`;
+      els.count.textContent = `${list.length} ${t(list.length>1 ? "œuvres" : "œuvre")}`;
     }
 
     /* =========================
@@ -779,12 +764,12 @@
 
       els.modalTitle.textContent = a.title.toUpperCase();
 
-      const label = a.status === "vendue" ? "VENDUE" : "DISPONIBLE";
+      const label = t(a.status === "vendue" ? "VENDUE" : "DISPONIBLE");
       const parts = [];
       const meta = metaLine(a);
       if(meta) parts.push(meta);
       parts.push(`<span class="statusText ${a.status}">${label}</span>` +
-                 (a.status === "disponible" && a.where ? ` · ${escapeHtml(a.where)}` : ""));
+                 (a.status === "disponible" && a.where ? ` · ${escapeHtml(t(a.where))}` : ""));
       els.modalMeta.innerHTML = parts.join(" · ");
 
       // œuvre disponible -> lien vers le formulaire, message pré-rempli
@@ -886,8 +871,8 @@
         console.error(err);
         els.count.textContent = "";
         els.masonry.innerHTML =
-          '<p class="statusMsg">Impossible de charger les œuvres pour le moment. ' +
-          'Vérifiez votre connexion, puis <a href="portfolio.html">actualisez la page</a>.</p>';
+          `<p class="statusMsg">${t("Impossible de charger les œuvres pour le moment. Vérifiez votre connexion, puis")} ` +
+          `<a href="portfolio.html">${t("actualisez la page")}</a>.</p>`;
       }
     });
   </script>

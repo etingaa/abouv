@@ -23,6 +23,23 @@ hébergée dans `fonts/`.
 
 Sans miniature, le site retombe sur l'image d'origine (plus lourde, mais elle s'affiche).
 
+## Version anglaise (FR / EN)
+
+Une seule copie de chaque page : les pages sont écrites en français et `i18n.js` les traduit en anglais
+à l'affichage. Toute modification de mise en page ou de style vaut donc pour les deux langues.
+
+- **Choix de la langue** : sélecteur FR / EN ajouté automatiquement dans le menu (choix mémorisé).
+  Sans choix, un navigateur en français voit le site en français, les autres en anglais.
+  Lien direct vers une langue : `portfolio.html?lang=en`.
+- **Ajouter ou modifier un texte** : l'écrire en français dans la page, puis ajouter la ligne
+  `"texte français exact": "English text",` dans le dictionnaire `EN` d'`i18n.js`.
+  Un texte sans traduction reste en français ; la console du navigateur liste ceux qui manquent.
+- **Textes longs** (biographie, mentions légales) : deux blocs côte à côte dans la page,
+  `<div data-lang="fr">…</div>` et `<div data-lang="en">…</div>`.
+- **Dans les scripts** : `t("texte français")` renvoie la traduction de la langue active.
+- **Google Sheet** : les valeurs des colonnes Catégorie, Technique et « Disponible où ? » sont traduites
+  via le même dictionnaire. Une nouvelle catégorie dans le Sheet = une ligne à ajouter dans `i18n.js`.
+
 ## Notes
 
 - `mentions-legales.html` : éditeur, hébergeur (GitHub Pages), données personnelles. À mettre à jour si l'hébergement, l'adresse ou les services tiers (Google Sheets, Formspree, Leaflet/OSM) changent.

@@ -11,6 +11,7 @@
   <meta property="og:title" content="Annick Bouvattier — Artiste peintre" />
   <meta property="og:description" content="Annick Bouvattier, artiste peintre : peintures à l'huile et portraits de femmes, en jeux d'ombre et de lumière." />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <script src="i18n.js"></script>
   <link rel="preload" href="fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
   <title>Annick Bouvattier — Artiste peintre</title>
 
@@ -128,7 +129,20 @@
     }
 
     .top, .bottom{position:relative;z-index:4;}
-    .bottom{padding-bottom:18px;}
+    .bottom{
+      margin-top:auto;
+      padding-bottom:18px;
+      display:flex;
+      align-items:baseline;
+      justify-content:space-between;
+      flex-wrap:wrap;
+      gap:10px 24px;
+    }
+    .bottom__left{display:flex;flex-wrap:wrap;gap:6px 18px;}
+    .bottom__link{font-size:14px;color:var(--ink-soft);}
+    .bottom__link:hover{color:#fff;}
+    .bottom__link--legal{margin-left:auto;font-size:13px;color:rgba(255,255,255,.4);}
+    .bottom__link--legal:hover{color:rgba(255,255,255,.75);}
 
     /* prefers-reduced-motion : les œuvres restent affichées, mais immobiles (voir le script) */
     @media (prefers-reduced-motion: reduce){
@@ -164,13 +178,13 @@
         </nav>
       </header>
 
-      <footer class="siteFooter bottom">
-        <div class="siteFooter__social">
-          <a href="https://www.instagram.com/annick.bouvattier/" target="_blank" rel="noopener noreferrer">instagram</a>
-          <a href="https://www.facebook.com/annick.bouvattier/" target="_blank" rel="noopener noreferrer">facebook</a>
-          <a href="https://www.saatchiart.com/bouvattier" target="_blank" rel="noopener noreferrer">saatchi art</a>
+      <footer class="bottom">
+        <div class="bottom__left">
+          <a class="bottom__link" href="https://www.instagram.com/annick.bouvattier/" target="_blank" rel="noopener noreferrer">instagram</a>
+          <a class="bottom__link" href="https://www.facebook.com/annick.bouvattier/" target="_blank" rel="noopener noreferrer">facebook</a>
+          <a class="bottom__link" href="https://www.saatchiart.com/bouvattier" target="_blank" rel="noopener noreferrer">saatchi art</a>
         </div>
-        <a class="siteFooter__legal" href="mentions-legales.html">mentions légales</a>
+        <a class="bottom__link bottom__link--legal" href="mentions-legales.html">mentions légales</a>
       </footer>
     </div>
   </div>

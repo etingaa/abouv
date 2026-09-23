@@ -11,6 +11,7 @@
   <meta property="og:title" content="Expositions — Annick Bouvattier" />
   <meta property="og:description" content="Expositions personnelles, collectives et salons d'Annick Bouvattier depuis 1992." />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <script src="i18n.js"></script>
   <link rel="preload" href="fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="styles.css" />
   <title>Expositions — Annick Bouvattier</title>
@@ -215,15 +216,10 @@
       <button class="btn" id="reset" type="button">Réinitialiser</button>
     </section>
 
-    <section class="timeline" id="timeline"></section>
+    <section class="timeline" id="timeline" translate="no"></section>
     <p class="empty" id="empty" hidden>Aucune exposition ne correspond aux filtres.</p>
     <footer class="siteFooter">
-      <div class="siteFooter__social">
-        <a href="https://www.instagram.com/annick.bouvattier/" target="_blank" rel="noopener noreferrer">instagram</a>
-        <a href="https://www.facebook.com/annick.bouvattier/" target="_blank" rel="noopener noreferrer">facebook</a>
-        <a href="https://www.saatchiart.com/bouvattier" target="_blank" rel="noopener noreferrer">saatchi art</a>
-      </div>
-      <a class="siteFooter__legal" href="mentions-legales.html">mentions légales</a>
+      <a href="mentions-legales.html">Mentions légales</a>
     </footer>
   </div>
 
@@ -293,7 +289,7 @@
     function uniq(arr){ return [...new Set(arr)].sort((a,b)=> (""+a).localeCompare(""+b)); }
 
     function hydrate(){
-      els.meta.textContent = `${expos.length} expositions`;
+      els.meta.textContent = `${expos.length} ${t("expositions")}`;
 
       if(nowExpo){
         els.now.hidden = false;
@@ -304,7 +300,7 @@
 
       uniq(expos.map(e=>e.country)).forEach(c=>{
         const o=document.createElement("option");
-        o.value=c; o.textContent=c;
+        o.value=c; o.textContent=t(c);
         els.country.appendChild(o);
       });
 
@@ -318,7 +314,8 @@
 
     function matches(e, f){
       const q = f.q.trim().toLowerCase();
-      const hay = `${e.title} ${e.city} ${e.country} ${e.year} ${e.note||""}`.toLowerCase();
+      // recherche dans les 2 langues (« Londres » comme « London »)
+      const hay = `${e.title} ${e.city} ${e.country} ${t(e.city)} ${t(e.country)} ${e.year} ${e.note||""}`.toLowerCase();
       if(q && !hay.includes(q)) return false;
       if(f.type !== "all" && e.type !== f.type) return false;
       if(f.country !== "all" && e.country !== f.country) return false;
@@ -336,10 +333,10 @@
       return [...m.entries()].sort((a,b)=> b[0]-a[0]);
     }
 
-    function typeLabel(t){
-      if(t==="solo") return "Personnelle";
-      if(t==="group") return "Collective";
-      if(t==="salon") return "Salon / Art fair";
+    function typeLabel(type){
+      if(type==="solo") return t("Personnelle");
+      if(type==="group") return t("Collective");
+      if(type==="salon") return t("Salon / Art fair");
       return "";
     }
 
@@ -363,7 +360,7 @@
         block.innerHTML = `
           <header class="yearHead">
             <div class="year">${year}</div>
-            <div class="yearCount">${items.length} exposition${items.length>1?"s":""}</div>
+            <div class="yearCount">${items.length} ${t(items.length>1 ? "expositions" : "exposition")}</div>
           </header>
           <div class="items"></div>
         `;
@@ -377,7 +374,7 @@
           card.className = "expo";
           card.innerHTML = `
             <p class="expoTitle">${escapeHtml(e.title)}</p>
-            <p class="expoMeta">${escapeHtml(e.city)} · ${escapeHtml(e.country)}${e.note ? " · " + escapeHtml(e.note) : ""}</p>
+            <p class="expoMeta">${escapeHtml(t(e.city))} · ${escapeHtml(t(e.country))}${e.note ? " · " + escapeHtml(e.note) : ""}</p>
             <div class="tags">
               <span class="tag">${typeLabel(e.type)}</span>
             </div>

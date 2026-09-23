@@ -11,6 +11,7 @@
   <meta property="og:title" content="Contact — Annick Bouvattier" />
   <meta property="og:description" content="Contacter Annick Bouvattier : renseignement sur une œuvre, une exposition ou une commande." />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <script src="i18n.js"></script>
   <link rel="preload" href="fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="styles.css" />
   <title>Contact — Annick Bouvattier</title>
@@ -148,6 +149,8 @@
         <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true"
                style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
         <input type="hidden" name="_subject" value="Nouveau message depuis le site Annick Bouvattier">
+        <!-- langue du site au moment de l'envoi : pour savoir en quelle langue répondre -->
+        <input type="hidden" name="Langue" id="langField" value="fr">
 
         <button type="submit" id="submitBtn">Envoyer</button>
         <p class="formNote">Les informations saisies servent uniquement à répondre à votre demande. <a href="mentions-legales.html">En savoir plus</a></p>
@@ -155,12 +158,7 @@
       </form>
     </section>
     <footer class="siteFooter">
-      <div class="siteFooter__social">
-        <a href="https://www.instagram.com/annick.bouvattier/" target="_blank" rel="noopener noreferrer">instagram</a>
-        <a href="https://www.facebook.com/annick.bouvattier/" target="_blank" rel="noopener noreferrer">facebook</a>
-        <a href="https://www.saatchiart.com/bouvattier" target="_blank" rel="noopener noreferrer">saatchi art</a>
-      </div>
-      <a class="siteFooter__legal" href="mentions-legales.html">mentions légales</a>
+      <a href="mentions-legales.html">Mentions légales</a>
     </footer>
   </div>
 
@@ -170,11 +168,12 @@
     const status = document.getElementById("formStatus");
     const btn = document.getElementById("submitBtn");
     const msg = document.getElementById("message");
+    document.getElementById("langField").value = I18N.lang === "en" ? "anglais" : "français";
 
     // Arrivée depuis « Demander des informations » sur le portfolio : message pré-rempli
     const oeuvre = new URLSearchParams(location.search).get("oeuvre");
     if (oeuvre && !msg.value) {
-      msg.value = "Bonjour,\n\nJe souhaiterais avoir des informations sur l'œuvre « " + oeuvre.slice(0, 120) + " ».\n\nMerci,";
+      msg.value = t("Bonjour,\n\nJe souhaiterais avoir des informations sur l'œuvre « {oeuvre} ».\n\nMerci,", { oeuvre: oeuvre.slice(0, 120) });
     }
 
     function say(text, isError) {
@@ -197,7 +196,7 @@
         });
         if (!res.ok) throw new Error("HTTP " + res.status);
         form.reset();
-        say("Merci, votre message a bien été envoyé. Je vous réponds dès que possible.");
+        say(t("Merci, votre message a bien été envoyé. Je vous réponds dès que possible."));
       } catch (err) {
         console.warn("Envoi AJAX impossible, envoi classique.", err);
         form.submit();
