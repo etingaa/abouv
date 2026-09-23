@@ -2,7 +2,8 @@
 // Menu téléphone : sur petit écran, le menu est remplacé par un bouton « Menu »
 // qui ouvre la navigation en plein écran. (Styles : styles.css, « MENU TÉLÉPHONE ».)
 // Header compact : dès qu'on descend, le header reste en haut de l'écran et devient
-// une barre d'icônes (nom → « AB ») ; il reprend ses mots en haut de page.
+// une barre d'icônes ; il reprend ses mots en haut de page. Un seul fond flouté (.shade)
+// couvre le header et ce qui reste accroché dessous (filtres du portfolio).
 // (Styles : styles.css, « HEADER COMPACT ».)
 // Chargé dans le <head> de chaque page, après i18n.js.
 
@@ -23,12 +24,6 @@
   };
 
   function setupCompactHeader(top, nav){
-    // nom complet + monogramme
-    const brand = top.querySelector(".brand");
-    if (brand && !brand.querySelector(".brand__full")) {
-      brand.innerHTML = '<span class="brand__full">' + brand.innerHTML + '</span>' +
-                        '<span class="brand__short" aria-hidden="true">AB</span>';
-    }
     // chaque lien : icône + mot (le mot reste lu par les lecteurs d'écran en mode icône)
     nav.querySelectorAll(".nav__link").forEach(a => {
       const icon = ICONS[(a.getAttribute("href") || "").split(/[?#]/)[0]];
@@ -58,6 +53,18 @@
     }
     setHeaderVar();
     window.addEventListener("resize", setHeaderVar);
+
+    // fond commun : du haut de l'écran jusqu'au bas de ce qui est accroché (header ou filtres)
+    const shade = document.createElement("div");
+    shade.className = "shade";
+    shade.setAttribute("aria-hidden", "true");
+    document.body.prepend(shade);
+    const stuck = document.querySelector("body.portfolio .toolbar") || top;
+    function setShade(){
+      document.documentElement.style.setProperty("--shade-h", Math.max(0, stuck.getBoundingClientRect().bottom) + "px");
+    }
+    if (window.ResizeObserver) new ResizeObserver(setShade).observe(stuck); // sous-filtres dépliés
+
     let queued = false;
     function onScroll(){
       if (queued) return;
@@ -65,8 +72,10 @@
       requestAnimationFrame(() => {
         queued = false;
         const y = window.scrollY;
+        document.documentElement.classList.toggle("is-scrolled", y > 4);
         if (!compact && y > 120) setCompact(true);
         else if (compact && y < 40) setCompact(false);
+        setShade();
       });
     }
     window.addEventListener("scroll", onScroll, { passive: true });
