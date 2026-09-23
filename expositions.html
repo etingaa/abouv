@@ -180,11 +180,38 @@
     .tlHint{ margin:0 0 0 auto; font-size:12px; color:rgba(255,255,255,.4); }
     @media (min-width:601px){ .expositions .search{ width:280px; } }
     .empty{ margin:14px 0 0; color:var(--ink-faint); }
+    .tlLayout{ display:flex; flex-direction:column; }
 
+    /* Téléphone : la ligne du temps devient verticale (ligne à gauche, expositions à droite)
+       et se parcourt en faisant défiler la page. */
     @media (max-width:600px){
-      .tlYear{ width:180px; padding:0 6px; }
-      .tlYear.is-empty{ width:18px; }
-      .tlArrow{ display:none; }
+      .tl{ overflow:visible; cursor:auto; -webkit-mask-image:none; mask-image:none; }
+      .tlTrack{ flex-direction:column-reverse; width:auto; padding:4px 0 0; }
+      .tlTrack::before{
+        left:5px; right:auto; top:0; bottom:0; width:1px; height:auto;
+        background:linear-gradient(to bottom, rgba(255,255,255,.3), rgba(255,255,255,.3) 92%, rgba(255,255,255,0));
+      }
+      .tlYear{
+        width:auto; padding:0 0 22px;
+        grid-template-rows:auto auto; grid-template-columns:62px 1fr;
+        grid-template-areas:"axis top" "axis bottom";
+        column-gap:4px;
+      }
+      .tlYear.is-empty{ display:none; }
+      .tlAxis{
+        grid-area:axis; flex-direction:row; align-items:center; justify-content:flex-start;
+        gap:10px; align-self:start; height:22px; margin-top:8px;
+      }
+      .tlDot{ flex:none; width:11px; height:11px; }
+      .tlYearLabel{ position:static; font-size:14px; }
+      .tlLane{ gap:8px; }
+      .tlLane--top{ grid-area:top; padding:0; justify-content:flex-start; }
+      .tlLane--bottom{ grid-area:bottom; padding:0; }
+      .tlLane--top:not(:empty) + .tlAxis + .tlLane--bottom:not(:empty){ padding-top:8px; }
+      .tlLane--top::after, .tlLane--bottom::before{ display:none !important; }
+      .tlNav, .tlHint{ display:none; }
+      .tlKey__where{ display:none; }
+      .tlFoot{ margin:0 0 18px; order:-1; }
     }
     @media (prefers-reduced-motion: reduce){
       .tlCard, .tlDot{ transition:none; }
@@ -238,7 +265,8 @@
       <div class="subtabs" id="subtabs" translate="no" hidden></div>
     </section>
 
-    <!-- Ligne du temps -->
+    <!-- Ligne du temps (+ légende, placée au-dessus sur téléphone) -->
+    <div class="tlLayout">
     <section class="tlWrap" aria-label="Ligne du temps des expositions">
       <div class="tl" id="tl" tabindex="0">
         <div class="tlTrack" id="track" translate="no"></div>
@@ -254,10 +282,11 @@
       <button class="tlArrow" id="next" type="button" aria-label="Plus récent"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="m4 2 4 4-4 4"/></svg></button>
     </div>
     <div class="tlFoot">
-      <span class="tlKey" data-type="solo">Personnelle — au-dessus de la ligne</span>
+      <span class="tlKey" data-type="solo">Personnelle<span class="tlKey__where"> — au-dessus de la ligne</span></span>
       <span class="tlKey" data-type="group">Collective</span>
       <span class="tlKey" data-type="salon">Salon / Art fair</span>
       <p class="tlHint">Faites glisser la ligne du temps, ou utilisez le curseur.</p>
+    </div>
     </div>
     <p class="empty" id="empty" hidden>Aucune exposition ne correspond aux filtres.</p>
 
@@ -490,9 +519,16 @@
     }
 
     // défilement doux vers une année (centrée)
+    const phone = matchMedia("(max-width:600px)");
     function scrollToYear(y, smooth = true){
       const col = yearEls[y];
       if(!col) return;
+      if(phone.matches){
+        // ligne verticale : on fait défiler la page, sous le header et les filtres accrochés
+        const bar = document.querySelector(".toolbar").getBoundingClientRect().bottom;
+        window.scrollTo({ top: window.scrollY + col.getBoundingClientRect().top - bar - 16, behavior: smooth ? "smooth" : "auto" });
+        return;
+      }
       const left = col.offsetLeft + col.offsetWidth / 2 - els.tl.clientWidth / 2;
       els.tl.scrollTo({ left, behavior: smooth ? "smooth" : "auto" });
     }

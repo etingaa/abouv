@@ -317,21 +317,59 @@ html.is-scrolled .toolbar{ border-bottom-color:transparent; }
   .top.is-open .menuBtn__icon i:first-child{ top:5px; transform:rotate(45deg); }
   .top.is-open .menuBtn__icon i:last-child{ top:5px; transform:rotate(-45deg); }
 
+  /* Menu plein écran : liens alignés sous le header, séparés par un trait fin et numérotés,
+     qui apparaissent l'un après l'autre ; réseaux + langue en bas */
   .top__nav{ display:none; }
   .top.is-open .brand{ position:relative; z-index:101; }
   .top.is-open .top__nav{
     display:flex; position:fixed; inset:0; z-index:100;
-    flex-direction:column; align-items:flex-start; justify-content:center; flex-wrap:nowrap;
-    gap:8px; padding:96px 28px 48px 7px;
-    background: var(--bg);
+    flex-direction:column; align-items:stretch; justify-content:flex-start; flex-wrap:nowrap;
+    gap:0; padding:calc(var(--header-h) + 20px) 20px 28px;
+    background:
+      radial-gradient(120% 60% at 100% 0%, rgba(255,255,255,.06), rgba(255,255,255,0) 60%),
+      var(--bg);
     overflow-y:auto;
+    counter-reset:nav;
   }
-  .top.is-open .nav__link{ font-size:30px; font-weight:600; padding:8px 12px; border-radius:12px; }
+  .top.is-open .nav__link{
+    display:flex; align-items:baseline; justify-content:space-between;
+    padding:16px 2px; margin:0;
+    border:0; border-bottom:1px solid rgba(255,255,255,.09); border-radius:0;
+    background:none;
+    font-size:26px; font-weight:600; letter-spacing:-.01em; line-height:1.1;
+    color:rgba(255,255,255,.62);
+    counter-increment:nav;
+    animation:menuIn .42s cubic-bezier(.2,.7,.2,1) both;
+    animation-delay:calc(var(--i, 0) * 40ms + 40ms);
+  }
+  .top.is-open .nav__link:first-child{ border-top:1px solid rgba(255,255,255,.09); }
+  .top.is-open .nav__link::after{
+    content:counter(nav, decimal-leading-zero);
+    font-size:12px; font-weight:500; letter-spacing:.08em; color:rgba(255,255,255,.35);
+    font-variant-numeric:tabular-nums;
+  }
+  .top.is-open .nav__link:hover{ background:none; color:#fff; }
+  .top.is-open .nav__link.is-active{ color:#fff; background:none; border-color:rgba(255,255,255,.09); }
+  .top.is-open .nav__link.is-active::after{ content:"●"; font-size:8px; color:#fff; }
+
+  /* réseaux + langue, en bas du menu */
+  .menuFoot{ display:none; }
+  .top.is-open .menuFoot{
+    display:flex; flex-wrap:wrap; align-items:center; gap:10px 18px;
+    margin-top:auto; padding-top:28px;
+    animation:menuIn .42s cubic-bezier(.2,.7,.2,1) both; animation-delay:.34s;
+  }
+  .menuFoot a{ font-size:14px; color:var(--ink-soft); }
+  .menuFoot__lang{ margin-left:auto; display:flex; gap:12px; }
+  .menuFoot__lang a{ font-size:13px; letter-spacing:.04em; color:rgba(255,255,255,.4); }
+  .menuFoot__lang a[aria-current="true"]{ color:#fff; }
   html.menu-open, html.menu-open body{ overflow:hidden; }
 }
 
+@keyframes menuIn{ from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:none; } }
 @media (prefers-reduced-motion: reduce){
   .menuBtn__icon i{ transition:none; }
+  .top.is-open .nav__link, .top.is-open .menuFoot{ animation:none; }
 }
 
 /* =========================
@@ -467,6 +505,10 @@ body.portfolio .container{
     width:calc(100% + 40px); margin-left:-20px; margin-right:-20px; padding-left:20px; padding-right:20px;
     overflow-x:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch;
   }
+  .tabs, .subtabs{
+    -webkit-mask-image:linear-gradient(to right, #000 calc(100% - 36px), transparent);
+    mask-image:linear-gradient(to right, #000 calc(100% - 36px), transparent);
+  }
   .tabs::-webkit-scrollbar,
   .subtabs::-webkit-scrollbar{ display:none; }
   .tabs > *, .subtabs > *{ flex:0 0 auto; }
@@ -478,10 +520,13 @@ body.portfolio .masonry{ column-gap:14px; columns:4; }
 @media (max-width:900px){ body.portfolio .masonry{ columns:2; } }
 @media (max-width:600px){
   body.portfolio .masonry{ columns:2; column-gap:10px; }
-  body.portfolio .piece{ margin-bottom:12px; }
+  body.portfolio .capSize{ white-space:nowrap; }
+
+body.portfolio .piece{ margin-bottom:12px; }
   body.portfolio .cap{ padding:6px 2px 0; }
   body.portfolio .capTitle{ font-size:11px; letter-spacing:.04em; }
   body.portfolio .capMeta{ font-size:11px; margin-top:3px; }
+  body.portfolio .cap .capTech{ display:none; } /* vignettes : seulement la taille */
   body.portfolio .badge{ font-size:10px; padding:3px 7px; margin-top:4px; }
   body.portfolio .imgWrap::after{ font-size:11px; }
 }

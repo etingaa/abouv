@@ -138,6 +138,7 @@
     /* le contenu (transparent) laisse passer souris et doigt vers le défilé, sauf en-tête et pied */
     .container{pointer-events:none;}
     .top, .bottom{position:relative;z-index:4;pointer-events:auto;}
+    .top{z-index:10;} /* le menu téléphone passe au-dessus du pied de page */
     .bottom{padding-bottom:18px;}
 
     /* prefers-reduced-motion : les œuvres restent affichées, mais immobiles (voir le script) */

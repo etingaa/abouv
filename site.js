@@ -53,6 +53,7 @@
     }
     setHeaderVar();
     window.addEventListener("resize", setHeaderVar);
+    window.addEventListener("load", setHeaderVar); // polices chargées
 
     // fond commun : du haut de l'écran jusqu'au bas de ce qui est accroché (header ou filtres)
     const shade = document.createElement("div");
@@ -87,9 +88,27 @@
     const nav = top && top.querySelector(".top__nav");
     if (!nav) return;
 
-    setupCompactHeader(top, nav);
-
     nav.id = nav.id || "mainNav";
+
+    // menu téléphone : ordre d'apparition des liens, puis réseaux + langue en bas
+    nav.querySelectorAll(".nav__link").forEach((a, i) => a.style.setProperty("--i", i));
+    const foot = document.createElement("div");
+    foot.className = "menuFoot";
+    document.querySelectorAll(".bottom__left a").forEach(a => foot.appendChild(a.cloneNode(true)));
+    const langs = document.createElement("div");
+    langs.className = "menuFoot__lang";
+    const cur = document.documentElement.lang === "en" ? "en" : "fr";
+    [["fr", "fra"], ["en", "eng"]].forEach(([l, label]) => {
+      const a = document.createElement("a");
+      a.href = "?lang=" + l;
+      a.textContent = label;
+      a.lang = l;
+      if (l === cur) a.setAttribute("aria-current", "true");
+      langs.appendChild(a);
+    });
+    foot.appendChild(langs);
+    nav.appendChild(foot);
+
     const btn = document.createElement("button");
     btn.type = "button";
     btn.className = "menuBtn";
@@ -108,6 +127,9 @@
       document.documentElement.classList.toggle("menu-open", open);
     }
     setOpen(false);
+
+    // après l'ajout du bouton Menu : la hauteur mesurée du header est la bonne
+    setupCompactHeader(top, nav);
 
     btn.addEventListener("click", () => setOpen(!top.classList.contains("is-open")));
     nav.addEventListener("click", (e) => { if (e.target.closest("a")) setOpen(false); });

@@ -275,8 +275,11 @@
     }
 
     // "Huile sur Toile · 60 x 120 cm" (sans les champs vides) — technique traduite en anglais
+    // la technique est masquée sur téléphone dans les vignettes (styles.css) ; la taille reste
     function metaLine(a){
-      return [a.technique && t(a.technique), a.size].filter(Boolean).map(escapeHtml).join(" · ");
+      const tech = a.technique ? `<span class="capTech">${escapeHtml(t(a.technique))}</span>` : "";
+      const size = a.size ? `<span class="capSize">${escapeHtml(a.size.replace(/\s*x\s*/i, " × "))}</span>` : "";
+      return tech && size ? `${tech}<span class="capTech"> · </span>${size}` : tech || size;
     }
 
     /* =========================

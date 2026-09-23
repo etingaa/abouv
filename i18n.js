@@ -76,7 +76,7 @@
     "Toutes les expositions": "All exhibitions",
     "Période": "Period",
     "Années": "",                          // « Années 1990 » -> « 1990s » (voir expositions.html)
-    "Personnelle — au-dessus de la ligne": "Solo — above the line",
+    "— au-dessus de la ligne": "— above the line",
     "Plus ancien": "Earlier",
     "Plus récent": "Later",
     "Parcourir la ligne du temps": "Browse the timeline",
