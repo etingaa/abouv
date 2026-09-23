@@ -281,11 +281,21 @@ body.portfolio .tab[aria-pressed="true"]{
   background:rgba(255,255,255,.10);
   border-color:rgba(255,255,255,.28);
 }
-/* point vert : un filtre est choisi dans cet onglet */
-body.portfolio .tab.has-filter::after{
-  content:""; width:6px; height:6px; border-radius:50%;
-  background:#3ddc84;
+/* Onglets principaux : nom + choix en cours + flèche ; un clic déplie les choix */
+body.portfolio .tab--group{ gap:6px; }
+body.portfolio #groups{ gap:6px; }
+body.portfolio .tab__value{ color:rgba(255,255,255,.42); font-weight:500; }
+body.portfolio .tab__caret{
+  width:10px; height:6px; margin-left:2px;
+  fill:none; stroke:currentColor; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round;
+  opacity:.6; transition: transform var(--ease);
 }
+body.portfolio .tab--group[aria-expanded="true"] .tab__caret{ transform:rotate(180deg); }
+/* un filtre est choisi : le choix ressort et l'onglet est entouré */
+body.portfolio .tab--group.has-filter{ border-color:rgba(255,255,255,.28); }
+body.portfolio .tab--group.has-filter .tab__value{ color:#fff; font-weight:600; }
+/* onglet déplié */
+body.portfolio .tab--group[aria-expanded="true"]{ color:#fff; background:var(--fill-hover); }
 
 /* Ligne des choix, sous les onglets principaux */
 body.portfolio .subtabs{
@@ -347,35 +357,6 @@ body.portfolio .search input:focus{ border-color:rgba(255,255,255,.45); backgrou
   body.portfolio .tabs > *, body.portfolio .subtabs > *{ flex:0 0 auto; }
 }
 
-/* Chips actives */
-body.portfolio .filterChips{
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-}
-
-body.portfolio .chip{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  padding:6px 10px;
-  border:1px solid var(--line);
-  background: var(--fill-hover);
-  border-radius: 8px;
-  font-size: 13px;
-  color: rgba(255,255,255,.92);
-}
-
-body.portfolio .chip button{
-  border:0;
-  background: transparent;
-  color: rgba(255,255,255,.75);
-  cursor:pointer;
-  font-size: 16px;
-  line-height: 1;
-  padding: 0;
-}
-body.portfolio .chip button:hover{ color:#fff; }
 
 /* Tout effacer */
 body.portfolio .resetBtn{
@@ -385,7 +366,7 @@ body.portfolio .resetBtn{
 }
 body.portfolio .resetBtn:hover{ color:#fff; }
 
-/* Chips actives + nombre d'œuvres */
+/* Tout effacer + nombre d'œuvres */
 body.portfolio .metaRow{
   display:flex;
   align-items:center;

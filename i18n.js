@@ -91,7 +91,7 @@
     "Catégorie": "Category",
     "Collection": "Collection",
     "Format": "Size",
-    "Disponible": "Availability",          // bouton de filtre
+    "Disponibilité": "Availability",       // onglet de filtre (portfolio)
     "statut|Disponible": "Available",
     "statut|Vendue": "Sold",
     "DISPONIBLE": "AVAILABLE",

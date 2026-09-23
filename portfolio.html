@@ -41,11 +41,12 @@
       <section class="toolbar" aria-label="Filtres">
         <div class="toolbar__row">
           <h1 class="title">Portfolio</h1>
+          <!-- chaque onglet affiche son choix en cours ; un clic déplie les choix en dessous -->
           <div class="tabs" id="groups" aria-label="Filtrer par">
-            <button class="tab" type="button" data-group="category">Collection</button>
-            <button class="tab" type="button" data-group="technique">Technique</button>
-            <button class="tab" type="button" data-group="format">Format</button>
-            <button class="tab" type="button" data-group="status">Disponible</button>
+            <button class="tab tab--group" type="button" data-group="category" aria-expanded="false" aria-controls="subtabs"><span class="tab__name">Collection</span><span class="tab__value" translate="no"></span><svg class="tab__caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg></button>
+            <button class="tab tab--group" type="button" data-group="technique" aria-expanded="false" aria-controls="subtabs"><span class="tab__name">Technique</span><span class="tab__value" translate="no"></span><svg class="tab__caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg></button>
+            <button class="tab tab--group" type="button" data-group="format" aria-expanded="false" aria-controls="subtabs"><span class="tab__name">Format</span><span class="tab__value" translate="no"></span><svg class="tab__caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg></button>
+            <button class="tab tab--group" type="button" data-group="status" aria-expanded="false" aria-controls="subtabs"><span class="tab__name">Disponibilité</span><span class="tab__value" translate="no"></span><svg class="tab__caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg></button>
           </div>
           <label class="search">
             <svg class="search__icon" viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="m13 13 4 4"/></svg>
@@ -53,13 +54,12 @@
           </label>
         </div>
         <!-- choix de l'onglet ouvert (+ tailles quand une forme est choisie dans Format) -->
-        <div class="subtabs" id="subtabs" translate="no"></div>
+        <div class="subtabs" id="subtabs" translate="no" hidden></div>
         <div class="subtabs subtabs--sizes" id="sizes" translate="no" hidden></div>
       </section>
 
-      <!-- Filtres actifs + nombre d'œuvres affichées -->
+      <!-- Tout effacer + nombre d'œuvres affichées -->
       <div class="metaRow">
-        <div class="filterChips" id="chips" translate="no"></div>
         <button class="resetBtn" id="reset" type="button" hidden>Tout effacer</button>
         <div class="count" id="count" aria-live="polite">Chargement…</div>
       </div>
@@ -114,7 +114,6 @@
       reset: document.getElementById("reset"),
       masonry: document.getElementById("masonry"),
       count: document.getElementById("count"),
-      chips: document.getElementById("chips"),
       groups: document.getElementById("groups"),
       subtabs: document.getElementById("subtabs"),
       sizes: document.getElementById("sizes"),
@@ -151,7 +150,7 @@
       format:    { key: "shape",     all: "Tous",   label: shapeLabel, values: ["carre","paysage","portrait"] },
       status:    { key: "status",    all: "Tous",   label: statusLabel, values: ["disponible","vendue"] },
     };
-    let activeGroup = "category";
+    let activeGroup = null;   // onglet déplié (null = tous repliés)
 
     /* =========================
        HELPERS
@@ -354,32 +353,6 @@
       return sizeNorm.replace(/\s*x\s*/g," × ").replace(/\s*cm\s*/g," cm");
     }
 
-    function renderChips(){
-      const chips = [];
-      filters.category.forEach(v => chips.push({ key:"category", label: t(v), raw: v }));
-      filters.technique.forEach(v => chips.push({ key:"technique", label: t(v), raw: v }));
-      filters.shape.forEach(v => chips.push({ key:"shape", label: shapeLabel(v), raw: v }));
-      filters.size.forEach(v => chips.push({ key:"size", label: prettySize(v), raw: v }));
-      filters.status.forEach(v => chips.push({ key:"status", label: statusLabel(v), raw: v }));
-
-      els.chips.innerHTML = "";
-      chips.forEach(c => {
-        const chip = document.createElement("span");
-        chip.className = "chip";
-        chip.innerHTML = `
-          <span>${escapeHtml(c.label)}</span>
-          <button type="button" aria-label="${escapeHtml(t("Retirer"))}">×</button>
-        `;
-        chip.querySelector("button").addEventListener("click", () => {
-          // raw = valeur d'origine (le libellé affiché peut être traduit)
-          filters[c.key].delete(c.raw);
-          if(c.key === "shape") filters.size.clear();
-          render();
-        });
-        els.chips.appendChild(chip);
-      });
-    }
-
     /* =========================
        FILTERING + RENDER
        ========================= */
@@ -435,19 +408,36 @@
       });
     }
 
+    // choix en cours d'un onglet, affiché à côté de son nom (« Toutes » s'il n'y a pas de filtre)
+    function groupValue(name){
+      const g = GROUPS[name];
+      const v = [...filters[g.key]][0];
+      if(!v) return t(g.all);
+      if(name === "format" && filters.size.size) return `${g.label(v)} · ${prettySize([...filters.size][0])}`;
+      return g.label(v);
+    }
+
     function renderTabs(){
       els.groups.querySelectorAll(".tab").forEach(btn => {
-        const g = btn.dataset.group;
-        btn.setAttribute("aria-pressed", String(g === activeGroup));
-        btn.classList.toggle("has-filter", filters[GROUPS[g].key].size > 0);
+        const name = btn.dataset.group;
+        const on = filters[GROUPS[name].key].size > 0;
+        btn.setAttribute("aria-expanded", String(name === activeGroup));
+        btn.classList.toggle("has-filter", on);
+        btn.querySelector(".tab__value").textContent = groupValue(name);
       });
+
+      els.subtabs.hidden = !activeGroup;
+      els.sizes.hidden = true;
+      if(!activeGroup) return;
 
       const g = GROUPS[activeGroup];
       const pool = artworks.filter(a => matchArtwork(a, g.key === "shape" ? ["shape","size"] : [g.key]));
       const values = g.values || uniq(artworks.map(a => a[g.key]).filter(Boolean));
       fillChoices(els.subtabs, g.key, g.all, [{ value: "", n: pool.length }]
         .concat(values.map(v => ({ value: v, label: g.label(v), n: pool.filter(a => a[g.key] === v).length }))),
-        g.key === "shape" ? () => filters.size.clear() : null);
+        g.key === "shape"
+          ? () => { filters.size.clear(); if(!filters.shape.size) activeGroup = null; }
+          : () => { activeGroup = null; });
 
       // Format : une fois la forme choisie, ses tailles en dessous
       const showSizes = activeGroup === "format" && filters.shape.size > 0;
@@ -457,7 +447,8 @@
         const area = (v) => { const d = parseDims(v); return d ? d.w * d.h : 0; };
         const sizes = uniq(sizePool.map(a => a.sizeNorm).filter(Boolean)).sort((a, b) => area(a) - area(b));
         fillChoices(els.sizes, "size", "Toutes", [{ value: "", n: sizePool.length }]
-          .concat(sizes.map(v => ({ value: v, label: prettySize(v), n: sizePool.filter(a => a.sizeNorm === v).length }))));
+          .concat(sizes.map(v => ({ value: v, label: prettySize(v), n: sizePool.filter(a => a.sizeNorm === v).length }))),
+          () => { activeGroup = null; });
       }
     }
 
@@ -468,7 +459,6 @@
 
     function render(){
       renderTabs();
-      renderChips();
       els.reset.hidden = !hasActiveFilters();
 
       const list = artworks.filter(a => matchArtwork(a));
@@ -593,8 +583,15 @@
     els.groups.addEventListener("click", (e) => {
       const btn = e.target.closest(".tab");
       if(!btn) return;
-      activeGroup = btn.dataset.group;
+      activeGroup = (activeGroup === btn.dataset.group) ? null : btn.dataset.group;
       renderTabs();
+    });
+
+    // clic en dehors de la barre ou Échap : on replie
+    document.addEventListener("click", (e) => {
+      // composedPath : le bouton cliqué a pu être retiré de la page entre-temps (choix redessinés)
+      const inside = e.composedPath().some(n => n.classList && n.classList.contains("toolbar"));
+      if(activeGroup && !inside){ activeGroup = null; renderTabs(); }
     });
 
     els.modalClose.addEventListener("click", closeModal);
@@ -612,6 +609,12 @@
       if(els.modal.open){
         if(e.key === "ArrowLeft") showArtwork(modalIndex - 1);
         if(e.key === "ArrowRight") showArtwork(modalIndex + 1);
+      }
+      else if(e.key === "Escape" && activeGroup){
+        const btn = els.groups.querySelector(`[data-group="${activeGroup}"]`);
+        activeGroup = null;
+        renderTabs();
+        btn.focus();
       }
     });
 
