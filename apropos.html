@@ -18,120 +18,86 @@
   <title>À propos — Annick Bouvattier</title>
 
   <style>
-    :root{
-      --bg:#02253A;
-      --ink:#fff;
-      --soft:rgba(255,255,255,.82);
-      --faint:rgba(255,255,255,.55);
-      --border:rgba(255,255,255,.18);
+    /* ===== Biographie : photo à gauche (accrochée au défilement), texte à droite ===== */
+    .about{
+      display:grid; grid-template-columns:minmax(260px, .8fr) 1.2fr; gap:56px; align-items:start;
+      margin-bottom:56px;
     }
-    /* Page */
-    h1{margin:0;font-size:28px;font-weight:800;letter-spacing:-.02em}
-
-    /* Card layout */
-   .aboutCard{
-  margin-top: 8px;
-  display: grid;
-  grid-template-columns: 1.1fr .9fr;
-  gap: 56px;
-  align-items: start;
-}
-@media (max-width: 980px){
-  .aboutCard{
-    grid-template-columns: 1fr;
-    gap: 36px;
-  }
-}
-
-
-   .aboutText{
-  padding: 0;
-}
-
-.aboutText p{
-  margin: 0 0 18px;
-  color: var(--soft);
-  font-size: 16px;
-  line-height: 1.75;
-  max-width: 64ch;
-}
-
-.aboutText strong{
-  color:#fff;
-  font-weight:800;
-}
-    @media (max-width: 980px){
-      .aboutText{border-right:0;border-bottom:1px solid rgba(255,255,255,.10);}
+    .about__photo{
+      position:sticky; top:calc(var(--shade-h, 90px) + 16px);
+      margin:0; border-radius:var(--radius-card); overflow:hidden;
+      border:1px solid rgba(255,255,255,.12);
+      aspect-ratio:4 / 5; background:#0b1c28;
     }
+    .about__photo img{ width:100%; height:100%; object-fit:cover; display:block; filter:grayscale(100%) contrast(1.05); }
+    .about__text p{ margin:0 0 18px; max-width:64ch; color:var(--ink-soft); font-size:16px; line-height:1.75; }
+    .about__text p:first-child{ font-size:19px; line-height:1.6; color:#fff; }
+    .about__text strong{ color:#fff; font-weight:700; }
 
-    .aboutText p{
-      margin:0 0 14px;
-      color:var(--soft);
-      font-size:16px;
-      line-height:1.75;
-      max-width: 62ch;
+    /* ===== Repères : quelques chiffres et liens ===== */
+    .facts{ display:grid; grid-template-columns:repeat(4, 1fr); gap:8px; margin-bottom:14px; }
+    .fact{
+      display:flex; flex-direction:column; gap:6px;
+      padding:16px; border:1px solid transparent; border-radius:var(--radius);
+      background:rgba(255,255,255,.03);
+      transition:background-color var(--ease), border-color var(--ease);
     }
-    .aboutText strong{color:#fff;font-weight:800}
+    a.fact:hover{ background:rgba(255,255,255,.07); border-color:rgba(255,255,255,.2); }
+    .fact__big{ font-size:22px; font-weight:700; letter-spacing:-.01em; }
+    .fact__small{ font-size:13px; color:var(--ink-faint); line-height:1.45; }
+    a.fact .fact__small::after{ content:" →"; }
+    .ctaRow{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:56px; }
+    .ctaRow a{
+      display:inline-flex; align-items:center; gap:6px; height:32px; padding:0 12px;
+      border:1px solid rgba(255,255,255,.14); border-radius:8px; background:rgba(255,255,255,.03);
+      font-size:13px; font-weight:500; transition:background-color var(--ease), border-color var(--ease);
+    }
+    .ctaRow a:hover{ background:rgba(255,255,255,.1); border-color:rgba(255,255,255,.28); }
 
-    .aboutMedia{
-      padding:18px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
+    /* ===== FAQ : questions dépliables ===== */
+    .faq{ max-width:860px; border-top:1px solid rgba(255,255,255,.09); }
+    .faq details{ border-bottom:1px solid rgba(255,255,255,.09); }
+    .faq summary{
+      display:flex; align-items:center; justify-content:space-between; gap:16px;
+      padding:18px 2px; cursor:pointer; list-style:none;
+      font-size:16px; font-weight:600; color:rgba(255,255,255,.88);
+      transition:color var(--ease);
+    }
+    .faq summary::-webkit-details-marker{ display:none; }
+    .faq summary:hover, .faq details[open] summary{ color:#fff; }
+    /* + qui devient − à l'ouverture */
+    .faq summary::after{
+      content:""; flex:none; width:26px; height:26px; border-radius:8px;
+      border:1px solid rgba(255,255,255,.14);
       background:
-        radial-gradient(900px 520px at 70% 20%, rgba(255,255,255,.16), rgba(255,255,255,0) 60%),
-        linear-gradient(120deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
+        linear-gradient(currentColor, currentColor) center / 10px 1.5px no-repeat,
+        linear-gradient(currentColor, currentColor) center / 1.5px 10px no-repeat;
+      transition:background-size .3s ease, background-color var(--ease), border-color var(--ease);
     }
+    .faq summary:hover::after{ background-color:rgba(255,255,255,.08); border-color:rgba(255,255,255,.26); }
+    .faq details[open] summary::after{ background-size:10px 1.5px, 1.5px 0; }
+    .faq__a{ padding:0 44px 20px 2px; animation:faqIn .35s ease; }
+    .faq__a p{ margin:0 0 10px; color:var(--ink-soft); line-height:1.7; font-size:15px; max-width:70ch; }
+    .faq__a a{ color:#fff; border-bottom:1px solid rgba(255,255,255,.35); }
+    .faq__a a:hover{ border-bottom-color:#fff; }
+    @keyframes faqIn{ from{ opacity:0; transform:translateY(-4px); } to{ opacity:1; transform:none; } }
 
-    .photoFrame{
-  width: min(520px, 100%);
-  aspect-ratio: 4 / 5;
-  overflow: hidden;
-  position: relative;
-}
-
-.photoFrame img{
-  width:100%;
-  height:100%;
-  object-fit: cover;
-  display:block;
-  filter: grayscale(100%) contrast(1.05);
-  opacity: .95;
-}
-
-.photoFrame::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  background: linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,0,0,.22));
-  pointer-events:none;
-}
-
-    /* Petit encart optionnel */
-    .facts{
-      margin-top:16px;
-      padding-top:16px;
-      border-top:1px solid rgba(255,255,255,.10);
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
+    @media (max-width:900px){
+      .about{ grid-template-columns:1fr; gap:28px; }
+      .about__photo{ position:static; max-width:420px; }
+      .facts{ grid-template-columns:repeat(2, 1fr); }
     }
-    .chip{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:8px 10px;
-      border:1px solid var(--line);
-      background:var(--fill);
-      border-radius:8px;
-      color:rgba(255,255,255,.88);
-      font-size:13px;
-      white-space:nowrap;
+    @media (max-width:600px){
+      .about__text p:first-child{ font-size:17px; }
+      .faq summary{ font-size:15px; padding:16px 0; }
+      .faq__a{ padding-right:0; }
     }
+    @media (prefers-reduced-motion: reduce){ .faq__a{ animation:none; } .faq summary::after{ transition:none; } }
   </style>
 </head>
 
-<body>
+<body class="apropos">
+  <div class="page">
   <div class="container">
     <header class="top">
       <a class="brand" href="index.html">ANNICK&nbsp;BOUVATTIER</a>
@@ -149,8 +115,11 @@
     <h1 class="sr-only">À propos</h1>
     <div class="sectionHead"><h2 class="sectionTitle">Biographie</h2></div>
 
-    <section class="aboutCard" aria-label="Biographie">
-      <div class="aboutText">
+    <section class="about" aria-label="Biographie">
+      <figure class="about__photo">
+        <img src="images/annickbouvattier.jpg" alt="Annick Bouvattier dans son atelier" />
+      </figure>
+      <div class="about__text">
         <!-- Biographie : version française et version anglaise côte à côte (i18n.js affiche la bonne) -->
         <div data-lang="fr">
           <p><strong>Annick Bouvattier</strong> est née à Nevers. Son père, pédiatre et amateur d’art, lui transmet dès sa prime enfance le <strong>goût de l’art et de la peinture</strong>.</p>
@@ -175,16 +144,93 @@
 
           <p>Annick Bouvattier mainly paints <strong>women</strong>, in plays of <strong>light and shadow</strong>. They live their femininity without false modesty, indifferent to the gaze of others.</p>
         </div>
-
-      </div>
-
-      <div class="aboutMedia" aria-label="Photo atelier">
-        <!-- Remplace le src par ton image -->
-        <div class="photoFrame">
-          <img src="images/annickbouvattier.jpg" alt="Annick Bouvattier en atelier" />
-        </div>
       </div>
     </section>
+
+    <div class="sectionHead"><h2 class="sectionTitle">Repères</h2></div>
+    <section class="facts" aria-label="Repères">
+      <div class="fact"><span class="fact__big">Nevers</span><span class="fact__small">Ville natale</span></div>
+      <div class="fact"><span class="fact__big">Huile au couteau</span><span class="fact__small">Lissée, en transparence</span></div>
+      <a class="fact" href="expositions.html"><span class="fact__big" id="factExpos">40 expositions</span><span class="fact__small" id="factSince">Depuis 1992</span></a>
+      <a class="fact" href="galeries.html"><span class="fact__big" id="factGaleries">5 galeries</span><span class="fact__small">France et États-Unis</span></a>
+    </section>
+    <div class="ctaRow">
+      <a href="portfolio.html">Voir les œuvres</a>
+      <a href="contact.html">Écrire à l'artiste</a>
+    </div>
+
+    <div class="sectionHead"><h2 class="sectionTitle">Questions fréquentes</h2></div>
+    <section class="faq" aria-label="Questions fréquentes">
+      <!-- Questions / réponses : version française et version anglaise (i18n.js affiche la bonne) -->
+      <div data-lang="fr">
+        <details>
+          <summary>Comment acquérir une œuvre ?</summary>
+          <div class="faq__a">
+            <p>Les œuvres disponibles sont signalées « Disponible » dans le <a href="portfolio.html">portfolio</a>. Ouvrez la fiche d'une œuvre puis « Demander des informations » : le formulaire de contact s'ouvre avec son titre déjà indiqué.</p>
+            <p>Certaines œuvres sont également présentées dans les <a href="galeries.html">galeries partenaires</a> et sur <a href="https://www.saatchiart.com/bouvattier" target="_blank" rel="noopener noreferrer">Saatchi Art</a>.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Où voir les tableaux en vrai ?</summary>
+          <div class="faq__a">
+            <p>Plusieurs galeries présentent le travail d'Annick Bouvattier, en France et aux États-Unis : leurs adresses et itinéraires sont sur la page <a href="galeries.html">Galeries</a>. Les expositions passées sont retracées sur la page <a href="expositions.html">Expositions</a>.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Est-il possible de commander une œuvre ?</summary>
+          <div class="faq__a">
+            <p>Le portfolio rassemble plusieurs œuvres réalisées sur commande (collection « Commandes »). Pour un projet, décrivez-le — sujet, format souhaité, délai — via le <a href="contact.html">formulaire de contact</a>.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Quelle technique utilise Annick Bouvattier ?</summary>
+          <div class="faq__a">
+            <p>La peinture à l'huile au couteau, apprise auprès de Pierre Ramel. Elle la travaille lissée, sans épaisseur de matière, tout en transparence.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Journaliste, organisateur : qui contacter ?</summary>
+          <div class="faq__a">
+            <p>Les parutions sont réunies sur la page <a href="presse.html">Presse</a>. Pour une interview, une exposition ou une demande de visuels, écrivez via le <a href="contact.html">formulaire de contact</a>.</p>
+          </div>
+        </details>
+      </div>
+
+      <div data-lang="en">
+        <details>
+          <summary>How can I buy a painting?</summary>
+          <div class="faq__a">
+            <p>Available works are marked “Available” in the <a href="portfolio.html">portfolio</a>. Open a work, then “Request information”: the contact form opens with its title already filled in.</p>
+            <p>Some works are also shown in <a href="galeries.html">partner galleries</a> and on <a href="https://www.saatchiart.com/bouvattier" target="_blank" rel="noopener noreferrer">Saatchi Art</a>.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Where can I see the paintings in person?</summary>
+          <div class="faq__a">
+            <p>Several galleries show Annick Bouvattier's work, in France and the United States: addresses and directions are on the <a href="galeries.html">Galleries</a> page. Past exhibitions are traced on the <a href="expositions.html">Exhibitions</a> page.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Can I commission a painting?</summary>
+          <div class="faq__a">
+            <p>The portfolio includes several commissioned works (“Commissions” collection). To discuss a project, describe it — subject, preferred size, timing — through the <a href="contact.html">contact form</a>.</p>
+          </div>
+        </details>
+        <details>
+          <summary>What technique does Annick Bouvattier use?</summary>
+          <div class="faq__a">
+            <p>Palette-knife oil painting, learned from Pierre Ramel. She works it smooth, without impasto, in transparent layers.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Press or event organizer: who should I contact?</summary>
+          <div class="faq__a">
+            <p>Publications are gathered on the <a href="presse.html">Press</a> page. For an interview, an exhibition or image requests, write through the <a href="contact.html">contact form</a>.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
     <footer class="bottom">
         <div class="bottom__left">
           <a class="bottom__link" href="https://www.instagram.com/annick.bouvattier/" target="_blank" rel="noopener noreferrer">instagram</a>
@@ -194,6 +240,17 @@
         <a class="bottom__link bottom__link--legal" href="mentions-legales.html">mentions légales</a>
       </footer>
   </div>
+  </div>
+  <script src="expos-data.js"></script>
+  <script>
+    // Repères : nombre d'expositions et première année, lus dans expos-data.js
+    document.addEventListener("DOMContentLoaded", () => {
+      const ex = window.EXPOS || [];
+      if(!ex.length) return;
+      document.getElementById("factExpos").textContent = `${ex.length} ${t("expositions")}`;
+      document.getElementById("factSince").textContent = `${t("Depuis")} ${Math.min(...ex.map(e => e.year))}`;
+    });
+  </script>
 </body>
 </html>
 

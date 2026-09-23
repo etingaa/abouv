@@ -14,6 +14,11 @@
   <script src="i18n.js"></script>
   <script src="site.js"></script>
   <link rel="preload" href="fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <!-- Leaflet (vue carte) -->
+  <link rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossorigin="" />
   <link rel="stylesheet" href="styles.css" />
   <title>Expositions — Annick Bouvattier</title>
 
@@ -181,6 +186,54 @@
     @media (min-width:601px){ .expositions .search{ width:280px; } }
     .empty{ margin:14px 0 0; color:var(--ink-faint); }
     .tlLayout{ display:flex; flex-direction:column; }
+    .tlLayout[hidden]{ display:none; }
+
+    /* ===== Bascule ligne du temps / carte ===== */
+    .viewSwitch{
+      display:inline-flex; gap:2px; padding:2px; margin-left:auto;
+      border:1px solid rgba(255,255,255,.14); border-radius:9px;
+    }
+    .viewSwitch .tab{ height:26px; padding:0 9px; font-size:13px; gap:6px; }
+    .viewSwitch svg{ width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
+    .expositions .toolbar__row .search{ margin-left:0; }
+
+    /* ===== Vue carte ===== */
+    .expoMapWrap{
+      position:relative; isolation:isolate;
+      height:min(620px, calc(100vh - var(--shade-h, 140px) - 40px)); min-height:420px;
+      border:1px solid rgba(255,255,255,.12); border-radius:var(--radius-card); overflow:hidden;
+      background:#0b1c28;
+    }
+    #expoMap{ position:absolute; inset:0; background:#0b1c28; }
+    /* pastille : taille selon le nombre d'expositions dans la ville */
+    .expoPin{ background:none; border:0; }
+    .expoPin b{
+      position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+      display:flex; align-items:center; justify-content:center;
+      width:var(--s); height:var(--s); border-radius:50%;
+      background:rgba(232,192,122,.9); color:#02253A;
+      border:2px solid #02253A; box-shadow:0 0 0 1px rgba(232,192,122,.6), 0 4px 14px rgba(0,0,0,.35);
+      font:700 11px/1 Inter, system-ui, sans-serif;
+      transition:opacity .3s ease, transform .25s ease, filter .3s ease;
+    }
+    .expoPin:hover b{ transform:translate(-50%,-50%) scale(1.12); }
+    .expoPin.is-dim b{ opacity:.22; filter:grayscale(1); }
+    /* bulle : les expositions de la ville */
+    .expoPop{ min-width:220px; max-width:260px; font-family:Inter, system-ui, sans-serif; }
+    .expoPop__city{ margin:0 0 8px; font-size:13px; font-weight:700; }
+    .expoPop ul{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:6px; max-height:220px; overflow:auto; }
+    .expoPop li{ display:grid; grid-template-columns:38px 1fr; gap:6px; font-size:12px; line-height:1.35; }
+    .expoPop li.is-dim{ opacity:.35; }
+    .expoPop li b{ font-variant-numeric:tabular-nums; color:rgba(255,255,255,.6); font-weight:600; }
+    .expoPop li span::before{ content:""; display:inline-block; width:6px; height:6px; margin-right:6px; border-radius:50%; background:var(--type-color); vertical-align:1px; }
+    .expoPop li[data-type="solo"]{ --type-color:#e8c07a; }
+    .expoPop li[data-type="group"]{ --type-color:#8fc1ff; }
+    .expoPop li[data-type="salon"]{ --type-color:#c7a6ff; }
+    .expoPop__go{
+      margin-top:10px; padding:0; border:0; background:none; cursor:pointer;
+      font:inherit; font-size:12px; color:#e8c07a;
+    }
+    .expoPop__go:hover{ color:#f3d59c; }
 
     /* Téléphone : la ligne du temps devient verticale (ligne à gauche, expositions à droite)
        et se parcourt en faisant défiler la page. */
@@ -212,6 +265,12 @@
       .tlNav, .tlHint{ display:none; }
       .tlKey__where{ display:none; }
       .tlFoot{ margin:0 0 18px; order:-1; }
+    }
+    @media (max-width:600px){
+      .viewSwitch{ order:2; margin-left:0; }
+      .viewSwitch .tab{ flex:1; justify-content:center; }
+      .expositions .toolbar__row .search{ order:3; }
+      .expoMapWrap{ height:62vh; min-height:360px; margin:0 -20px; border-radius:0; border-left:0; border-right:0; }
     }
     @media (prefers-reduced-motion: reduce){
       .tlCard, .tlDot{ transition:none; }
@@ -256,6 +315,11 @@
             <div class="group" data-group="country"><button class="tab tab--group" type="button" data-group="country" aria-expanded="false" aria-controls="subtabs"><span class="tab__name">Pays</span><span class="tab__value" translate="no"></span><svg class="tab__caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg></button><button class="group__clear" type="button" aria-label="Retirer ce filtre" title="Retirer ce filtre" hidden><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 2l6 6M8 2l-6 6"/></svg></button></div>
             <div class="group" data-group="decade"><button class="tab tab--group" type="button" data-group="decade" aria-expanded="false" aria-controls="subtabs"><span class="tab__name">Période</span><span class="tab__value" translate="no"></span><svg class="tab__caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg></button><button class="group__clear" type="button" aria-label="Retirer ce filtre" title="Retirer ce filtre" hidden><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 2l6 6M8 2l-6 6"/></svg></button></div>
         </div>
+        <!-- bascule ligne du temps / carte -->
+        <div class="viewSwitch" role="group" aria-label="Affichage">
+          <button class="tab" type="button" data-view="timeline" aria-pressed="true"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M2 10h16"/><circle cx="6" cy="10" r="2"/><circle cx="14" cy="10" r="2"/><path d="M6 4v4M14 12v4"/></svg><span>Ligne du temps</span></button>
+          <button class="tab" type="button" data-view="map" aria-pressed="false"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 18s-6-5.2-6-10a6 6 0 0 1 12 0c0 4.8-6 10-6 10z"/><circle cx="10" cy="8" r="2"/></svg><span>Carte</span></button>
+        </div>
         <label class="search">
           <svg class="search__icon" viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="m13 13 4 4"/></svg>
           <input id="q" type="search" placeholder="Rechercher" aria-label="Rechercher une exposition" />
@@ -266,7 +330,7 @@
     </section>
 
     <!-- Ligne du temps (+ légende, placée au-dessus sur téléphone) -->
-    <div class="tlLayout">
+    <div class="tlLayout" id="timelineView">
     <section class="tlWrap" aria-label="Ligne du temps des expositions">
       <div class="tl" id="tl" tabindex="0">
         <div class="tlTrack" id="track" translate="no"></div>
@@ -288,6 +352,11 @@
       <p class="tlHint">Faites glisser la ligne du temps, ou utilisez le curseur.</p>
     </div>
     </div>
+
+    <!-- Vue carte : une pastille par ville, avec son nombre d'expositions -->
+    <section class="expoMapWrap" id="mapView" aria-label="Carte des expositions" hidden>
+      <div id="expoMap" class="darkMap"></div>
+    </section>
     <p class="empty" id="empty" hidden>Aucune exposition ne correspond aux filtres.</p>
 
     <footer class="bottom">
@@ -301,6 +370,9 @@
   </div>
   </div>
 
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+          crossorigin=""></script>
   <script src="expos-data.js"></script>
   <script>
     const expos = window.EXPOS || [];
@@ -325,6 +397,10 @@
       prev: document.getElementById("prev"),
       next: document.getElementById("next"),
       empty: document.getElementById("empty"),
+      timelineView: document.getElementById("timelineView"),
+      mapView: document.getElementById("mapView"),
+      mapEl: document.getElementById("expoMap"),
+      viewBtns: document.querySelectorAll(".viewSwitch .tab"),
     };
 
     /* =========================
@@ -514,8 +590,101 @@
       els.empty.hidden = n !== 0;
       renderTabs();
 
+      updateMap(fromFilter);
+
       // la ligne du temps glisse vers l'exposition correspondante la plus récente
-      if(fromFilter && on && hits.size) scrollToYear(Math.max(...hits));
+      if(fromFilter && on && hits.size && view === "timeline") scrollToYear(Math.max(...hits));
+    }
+
+    /* =========================
+       VUE CARTE (Leaflet, créée à la première ouverture)
+       ========================= */
+
+    let view = "timeline";
+    let map = null;
+    const cityPins = []; // { city, list, marker }
+
+    function setView(v){
+      view = v;
+      els.viewBtns.forEach(b => b.setAttribute("aria-pressed", String(b.dataset.view === v)));
+      els.timelineView.hidden = v !== "timeline";
+      els.mapView.hidden = v !== "map";
+      if(v === "map"){
+        if(!map) buildMap();
+        if(map){ map.invalidateSize(); updateMap(false); }
+      }
+      else requestAnimationFrame(syncScrub);
+    }
+
+    function buildMap(){
+      if(!window.L){
+        els.mapEl.innerHTML = `<p style="padding:20px;color:rgba(255,255,255,.75)">${t("La carte n'a pas pu être chargée.")}</p>`;
+        return;
+      }
+      map = L.map(els.mapEl, { scrollWheelZoom:false, zoomSnap:.25, maxBounds:[[-85,-180],[85,180]], maxBoundsViscosity:1 });
+      map.setView([46.5, 2.5], 5); // point de départ (Leaflet ne peut pas « voler » sans position initiale)
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom:18, attribution:"&copy; OpenStreetMap" }).addTo(map);
+      els.mapEl.addEventListener("wheel", (e) => {
+        if(!e.ctrlKey && !e.metaKey) return;
+        e.preventDefault();
+        map.setZoom(map.getZoom() + (e.deltaY < 0 ? .5 : -.5));
+      }, { passive:false });
+
+      const cities = window.EXPO_CITIES || {};
+      const byCity = new Map();
+      expos.forEach(e => { if(!byCity.has(e.city)) byCity.set(e.city, []); byCity.get(e.city).push(e); });
+      byCity.forEach((list, city) => {
+        const pos = cities[city];
+        if(!pos) return;
+        list.sort((a,b) => b.year - a.year);
+        const marker = L.marker(pos, { icon: pinIcon(list.length), riseOnHover:true, keyboard:true, title:t(city) }).addTo(map);
+        marker.bindPopup(() => popupHtml(city, list), { maxWidth:280 });
+        marker.on("popupopen", (ev) => {
+          ev.popup.getElement().querySelector(".expoPop__go")?.addEventListener("click", () => {
+            const hit = list.find(e => matches(e)) || list[0];
+            map.closePopup();
+            setView("timeline");
+            requestAnimationFrame(() => scrollToYear(hit.year));
+          });
+        });
+        cityPins.push({ city, list, marker });
+      });
+      new ResizeObserver(() => map.invalidateSize()).observe(els.mapEl);
+    }
+
+    function pinIcon(n){
+      const size = Math.round(20 + Math.min(n, 8) * 3); // 1 expo : 23 px … 8 et plus : 44 px
+      return L.divIcon({ className:"expoPin", html:`<b style="--s:${size}px">${n}</b>`, iconSize:[size, size], iconAnchor:[size/2, size/2], popupAnchor:[0, -size/2] });
+    }
+
+    function popupHtml(city, list){
+      const items = list.map(e => `<li data-type="${e.type}"${hasFilters() && !matches(e) ? ' class="is-dim"' : ""}>
+        <b>${e.year}</b><span>${escapeHtml(e.title)}</span></li>`).join("");
+      return `<div class="expoPop"><p class="expoPop__city">${escapeHtml(t(city))} · ${escapeHtml(t(list[0].country))}</p>
+        <ul>${items}</ul><button class="expoPop__go" type="button">${t("Voir sur la ligne du temps")} →</button></div>`;
+    }
+
+    // pastilles : nombre d'expositions qui correspondent, estompées sinon ; la carte se recadre
+    function updateMap(animate){
+      if(!map) return;
+      const on = hasFilters();
+      const pts = [];
+      cityPins.forEach(p => {
+        const n = on ? p.list.filter(e => matches(e)).length : p.list.length;
+        p.marker.setIcon(pinIcon(n || p.list.length));
+        p.marker.getElement()?.classList.toggle("is-dim", on && !n);
+        if(!on || n) pts.push(p.marker.getLatLng());
+      });
+      if(!pts.length) return;
+      // sans filtre : on cadre l'Europe (presque toutes les expositions), les États-Unis restent à un glissé
+      if(!on){
+        const europe = pts.filter(ll => ll.lng > -12 && ll.lng < 25);
+        if(europe.length) pts.splice(0, pts.length, ...europe);
+      }
+      const opts = { padding:[50, 50], maxZoom:9 };
+      if(pts.length === 1) map[animate ? "flyTo" : "setView"](pts[0], 9, animate ? { duration:.9 } : {});
+      else if(animate) map.flyToBounds(pts, { ...opts, duration:.9 });
+      else map.fitBounds(pts, opts);
     }
 
     /* =========================
@@ -590,6 +759,9 @@
       if(e.key === "ArrowLeft"){ e.preventDefault(); els.tl.scrollBy({ left: -240, behavior: "smooth" }); }
       if(e.key === "ArrowRight"){ e.preventDefault(); els.tl.scrollBy({ left: 240, behavior: "smooth" }); }
     });
+
+    // bascule ligne du temps / carte
+    els.viewBtns.forEach(b => b.addEventListener("click", () => setView(b.dataset.view)));
 
     // filtres
     els.q.addEventListener("input", () => { filters.q = els.q.value || ""; apply(true); });

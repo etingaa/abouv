@@ -782,6 +782,19 @@ body.portfolio img{
 }
 
 /* =========================
+   CARTES (Leaflet) assorties au thème sombre — galeries et expositions
+   ========================= */
+/* Carte assortie au thème sombre : tuiles OSM inversées (aucun service tiers en plus) */
+.darkMap .leaflet-tile-pane{ filter: invert(1) hue-rotate(180deg) brightness(.85) contrast(.9) saturate(.6); }
+.darkMap .leaflet-popup-content-wrapper, .darkMap .leaflet-popup-tip{ background:#0b1c28; color:#fff; }
+.darkMap .leaflet-popup-content-wrapper{ border:1px solid rgba(255,255,255,.18); border-radius:12px; }
+.darkMap .leaflet-popup-close-button{ color:rgba(255,255,255,.7); }
+.darkMap .leaflet-bar a{ background:#0b1c28; color:#fff; border-bottom-color:rgba(255,255,255,.18); }
+.darkMap .leaflet-bar a:hover{ background:#163042; }
+.darkMap .leaflet-control-attribution{ background:rgba(11,28,40,.8); color:rgba(255,255,255,.6); }
+.darkMap .leaflet-control-attribution a{ color:rgba(255,255,255,.8); }
+
+/* =========================
    GALERIES : carte + liste reliées (script.js)
    ========================= */
 body.galeries{ background:#02253A; }
@@ -871,8 +884,8 @@ body.galeries{ background:#02253A; }
 @keyframes pinPulse{ from{ transform:scale(1); opacity:.8; } to{ transform:scale(3.4); opacity:0; } }
 
 /* bulle de la carte */
-#map .leaflet-popup-content-wrapper{ padding:0; }
-#map .leaflet-popup-content{ margin:10px 12px; }
+.darkMap .leaflet-popup-content-wrapper{ padding:0; }
+.darkMap .leaflet-popup-content{ margin:10px 12px; }
 .galPop{ display:flex; flex-direction:column; gap:3px; font-family:Inter, system-ui, sans-serif; }
 .galPop strong{ font-size:13px; }
 .galPop span{ font-size:12px; opacity:.75; }

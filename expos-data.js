@@ -44,3 +44,30 @@ window.EXPOS = [
   { year: 1993, title: "Salon d’Automne (Grand Palais)", city: "Paris", country: "France", type: "salon" },
   { year: 1992, title: "Exposition d’Été", city: "Decize", country: "France", type: "group" }
 ];
+
+// Position des villes (vue carte de la page Expositions). Une ville ajoutée ci-dessus
+// sans position ici n'apparaît simplement pas sur la carte.
+window.EXPO_CITIES = {
+  "Bordeaux": [44.8378, -0.5792],
+  "Paris": [48.8566, 2.3522],
+  "Toulouse": [43.6047, 1.4442],
+  "Clermont-Ferrand": [45.7772, 3.0870],
+  "Cannes": [43.5528, 7.0174],
+  "Nevers": [46.9896, 3.1590],
+  "Bruxelles": [50.8503, 4.3517],
+  "Strasbourg": [48.5734, 7.7521],
+  "Perpignan": [42.6887, 2.8948],
+  "Laguna Beach, Carmel": [33.5427, -117.7854],
+  "Biarritz": [43.4832, -1.5586],
+  "Mougins": [43.6000, 6.9950],
+  "Lausanne": [46.5197, 6.6323],
+  "Anvers": [51.2194, 4.4025],
+  "Hardelot-sur-Mer": [50.6360, 1.5830],
+  "Londres": [51.5074, -0.1278],
+  "La Baule": [47.2863, -2.3920],
+  "New York": [40.7128, -74.0060],
+  "Dijon": [47.3220, 5.0415],
+  "Marzy": [46.9811, 3.0931],
+  "Decize": [46.8283, 3.4611],
+  "Bourges": [47.0810, 2.3988],
+};

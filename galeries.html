@@ -25,18 +25,6 @@
 
   <link rel="stylesheet" href="styles.css">
 
-  <!-- garde-fou : hauteur de la carte -->
-  <style>
-    /* Carte assortie au thème sombre : tuiles OSM inversées (aucun service tiers en plus) */
-    #map .leaflet-tile-pane{ filter: invert(1) hue-rotate(180deg) brightness(.85) contrast(.9) saturate(.6); }
-    #map .leaflet-popup-content-wrapper, #map .leaflet-popup-tip{ background:#0b1c28; color:#fff; }
-    #map .leaflet-popup-content-wrapper{ border:1px solid rgba(255,255,255,.18); border-radius:12px; }
-    #map .leaflet-popup-close-button{ color:rgba(255,255,255,.7); }
-    #map .leaflet-bar a{ background:#0b1c28; color:#fff; border-bottom-color:rgba(255,255,255,.18); }
-    #map .leaflet-bar a:hover{ background:#163042; }
-    #map .leaflet-control-attribution{ background:rgba(11,28,40,.8); color:rgba(255,255,255,.6); }
-    #map .leaflet-control-attribution a{ color:rgba(255,255,255,.8); }
-  </style>
 </head>
 
 <body class="galeries">
@@ -76,7 +64,7 @@
       <!-- Carte + liste, reliées : survoler l'une met l'autre en évidence -->
       <div class="galCard">
         <section class="galMap" aria-label="Carte des galeries">
-          <div id="map"></div>
+          <div id="map" class="darkMap"></div>
         </section>
         <aside class="galSide" aria-label="Liste des galeries">
           <div class="galList" id="list" translate="no"></div>
