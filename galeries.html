@@ -29,6 +29,16 @@
     .galMap{ min-height:520px; position:relative; }
     #map{ position:absolute; inset:0; width:100%; height:100%; }
     @media (max-width:1050px){ .galMap{ min-height:420px; } }
+
+    /* Carte assortie au thème sombre : tuiles OSM inversées (aucun service tiers en plus) */
+    #map .leaflet-tile-pane{ filter: invert(1) hue-rotate(180deg) brightness(.85) contrast(.9) saturate(.6); }
+    #map .leaflet-popup-content-wrapper, #map .leaflet-popup-tip{ background:#0b1c28; color:#fff; }
+    #map .leaflet-popup-content-wrapper{ border:1px solid rgba(255,255,255,.18); border-radius:12px; }
+    #map .leaflet-popup-close-button{ color:rgba(255,255,255,.7); }
+    #map .leaflet-bar a{ background:#0b1c28; color:#fff; border-bottom-color:rgba(255,255,255,.18); }
+    #map .leaflet-bar a:hover{ background:#163042; }
+    #map .leaflet-control-attribution{ background:rgba(11,28,40,.8); color:rgba(255,255,255,.6); }
+    #map .leaflet-control-attribution a{ color:rgba(255,255,255,.8); }
   </style>
 </head>
 
@@ -72,7 +82,12 @@
       </div>
 
     <footer class="siteFooter">
-      <a href="mentions-legales.html">Mentions légales</a>
+      <div class="siteFooter__social">
+        <a href="https://www.instagram.com/annick.bouvattier/" target="_blank" rel="noopener noreferrer">instagram</a>
+        <a href="https://www.facebook.com/annick.bouvattier/" target="_blank" rel="noopener noreferrer">facebook</a>
+        <a href="https://www.saatchiart.com/bouvattier" target="_blank" rel="noopener noreferrer">saatchi art</a>
+      </div>
+      <a class="siteFooter__legal" href="mentions-legales.html">mentions légales</a>
     </footer>
   </div>
   </div>

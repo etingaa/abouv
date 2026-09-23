@@ -52,7 +52,12 @@
     let markers = [];
 
     if (hasMap) {
-      map = L.map(mapDiv, { scrollWheelZoom: true });
+      map = L.map(mapDiv, {
+        scrollWheelZoom: true,
+        // pas de zone vide au-delà des pôles (bande sombre en haut de la carte)
+        maxBounds: [[-85, -180], [85, 180]],
+        maxBoundsViscosity: 1,
+      });
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxZoom: 18,
         attribution: "&copy; OpenStreetMap",
@@ -92,7 +97,9 @@
       markers = [];
 
       list.forEach((g) => {
-        const m = L.marker([g.lat, g.lng]).addTo(group);
+        const m = L.circleMarker([g.lat, g.lng], {
+          radius: 7, color: "#02253A", weight: 2, fillColor: "#fff", fillOpacity: 1,
+        }).addTo(group);
         m.bindPopup(popupHtml(g));
         markers.push(m);
       });
