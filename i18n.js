@@ -33,6 +33,7 @@
     "retour à l'accueil": "back to home",
     "Fermer": "Close",
     "Rechercher": "Search",
+    "Rechercher parmi": "Search",          // « Rechercher parmi 117 œuvres »
     "Filtres": "Filters",
     "Pays": "Country",
     "Langue": "Language",

@@ -41,28 +41,24 @@
       <section class="toolbar" aria-label="Filtres">
         <div class="toolbar__row">
           <h1 class="sr-only">Portfolio</h1>
-          <!-- chaque onglet affiche son choix en cours ; un clic déplie les choix en dessous -->
+          <!-- chaque onglet affiche son choix en cours ; un clic déplie les choix en dessous ; × retire le filtre -->
           <div class="tabs" id="groups" aria-label="Filtrer par">
-            <button class="tab tab--group" type="button" data-group="category" aria-expanded="false" aria-controls="subtabs"><span class="tab__name">Collection</span><span class="tab__value" translate="no"></span><svg class="tab__caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg></button>
-            <button class="tab tab--group" type="button" data-group="technique" aria-expanded="false" aria-controls="subtabs"><span class="tab__name">Technique</span><span class="tab__value" translate="no"></span><svg class="tab__caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg></button>
-            <button class="tab tab--group" type="button" data-group="format" aria-expanded="false" aria-controls="subtabs"><span class="tab__name">Format</span><span class="tab__value" translate="no"></span><svg class="tab__caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg></button>
-            <button class="tab tab--group" type="button" data-group="status" aria-expanded="false" aria-controls="subtabs"><span class="tab__name">Disponibilité</span><span class="tab__value" translate="no"></span><svg class="tab__caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg></button>
+            <div class="group" data-group="category"><button class="tab tab--group" type="button" data-group="category" aria-expanded="false" aria-controls="subtabs"><span class="tab__name">Collection</span><span class="tab__value" translate="no"></span><svg class="tab__caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg></button><button class="group__clear" type="button" aria-label="Retirer ce filtre" title="Retirer ce filtre" hidden><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 2l6 6M8 2l-6 6"/></svg></button></div>
+            <div class="group" data-group="technique"><button class="tab tab--group" type="button" data-group="technique" aria-expanded="false" aria-controls="subtabs"><span class="tab__name">Technique</span><span class="tab__value" translate="no"></span><svg class="tab__caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg></button><button class="group__clear" type="button" aria-label="Retirer ce filtre" title="Retirer ce filtre" hidden><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 2l6 6M8 2l-6 6"/></svg></button></div>
+            <div class="group" data-group="format"><button class="tab tab--group" type="button" data-group="format" aria-expanded="false" aria-controls="subtabs"><span class="tab__name">Format</span><span class="tab__value" translate="no"></span><svg class="tab__caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg></button><button class="group__clear" type="button" aria-label="Retirer ce filtre" title="Retirer ce filtre" hidden><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 2l6 6M8 2l-6 6"/></svg></button></div>
+            <div class="group" data-group="status"><button class="tab tab--group" type="button" data-group="status" aria-expanded="false" aria-controls="subtabs"><span class="tab__name">Disponibilité</span><span class="tab__value" translate="no"></span><svg class="tab__caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg></button><button class="group__clear" type="button" aria-label="Retirer ce filtre" title="Retirer ce filtre" hidden><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 2l6 6M8 2l-6 6"/></svg></button></div>
           </div>
           <label class="search">
             <svg class="search__icon" viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="m13 13 4 4"/></svg>
             <input id="q" type="search" placeholder="Rechercher" aria-label="Rechercher une œuvre" />
+            <!-- nombre d'œuvres : affiché dans le placeholder, annoncé ici aux lecteurs d'écran -->
+            <span class="sr-only" id="count" aria-live="polite">Chargement…</span>
           </label>
         </div>
         <!-- choix de l'onglet ouvert (+ tailles quand une forme est choisie dans Format) -->
         <div class="subtabs" id="subtabs" translate="no" hidden></div>
         <div class="subtabs subtabs--sizes" id="sizes" translate="no" hidden></div>
       </section>
-
-      <!-- Tout effacer + nombre d'œuvres affichées -->
-      <div class="metaRow">
-        <button class="resetBtn" id="reset" type="button" hidden>Tout effacer</button>
-        <div class="count" id="count" aria-live="polite">Chargement…</div>
-      </div>
 
       <section class="masonry" id="masonry" aria-label="Œuvres" translate="no"></section>
     <footer class="bottom">
@@ -111,7 +107,6 @@
 
     const els = {
       q: document.getElementById("q"),
-      reset: document.getElementById("reset"),
       masonry: document.getElementById("masonry"),
       count: document.getElementById("count"),
       groups: document.getElementById("groups"),
@@ -426,7 +421,8 @@
         const name = btn.dataset.group;
         const on = filters[GROUPS[name].key].size > 0;
         btn.setAttribute("aria-expanded", String(name === activeGroup));
-        btn.classList.toggle("has-filter", on);
+        btn.parentElement.classList.toggle("has-filter", on);
+        btn.nextElementSibling.hidden = !on;
         btn.querySelector(".tab__value").textContent = groupValue(name);
       });
 
@@ -453,14 +449,8 @@
       }
     }
 
-    function hasActiveFilters(){
-      return Boolean(filters.q.trim() || filters.category.size || filters.technique.size ||
-        filters.shape.size || filters.size.size || filters.status.size);
-    }
-
     function render(){
       renderTabs();
-      els.reset.hidden = !hasActiveFilters();
 
       const list = artworks.filter(a => matchArtwork(a));
       currentList = list;
@@ -512,7 +502,9 @@
         els.masonry.appendChild(item);
       });
 
-      els.count.textContent = `${list.length} ${t(list.length>1 ? "œuvres" : "œuvre")}`;
+      const n = `${list.length} ${t(list.length>1 ? "œuvres" : "œuvre")}`;
+      els.count.textContent = n;
+      els.q.placeholder = `${t("Rechercher parmi")} ${n}`;
     }
 
     /* =========================
@@ -568,20 +560,15 @@
       render();
     });
 
-    els.reset.addEventListener("click", ()=>{
-      filters.q = "";
-      filters.category.clear();
-      filters.technique.clear();
-      filters.shape.clear();
-      filters.size.clear();
-      filters.status.clear();
-
-      els.q.value = "";
-
-      render();
-    });
-
     els.groups.addEventListener("click", (e) => {
+      const clear = e.target.closest(".group__clear");
+      if(clear){
+        const g = GROUPS[clear.parentElement.dataset.group];
+        filters[g.key].clear();
+        if(g.key === "shape") filters.size.clear();
+        render();
+        return;
+      }
       const btn = e.target.closest(".tab");
       if(!btn) return;
       activeGroup = (activeGroup === btn.dataset.group) ? null : btn.dataset.group;
