@@ -28,9 +28,7 @@
       --chip2:rgba(255,255,255,.12);
     }
     /* Page head */
-    .headRow{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin:18px 0 10px}
     h1{margin:0;font-size:28px;font-weight:800;letter-spacing:-.02em}
-    .meta{color:var(--faint);font-size:14px}
 
     /* "En ce moment" */
     .now{
@@ -184,10 +182,7 @@
       </nav>
     </header>
 
-    <div class="headRow">
-      <h1>Expositions</h1>
-      <div class="meta" id="meta"></div>
-    </div>
+    <h1 class="sr-only">Expositions</h1>
 
     <!-- En ce moment (optionnel) -->
     <section class="now" id="now" hidden>
@@ -201,6 +196,7 @@
     </section>
 
     <!-- Filtres -->
+    <div class="sectionHead"><h2 class="sectionTitle">Toutes les expositions</h2><div class="sectionMeta" id="meta"></div></div>
     <section class="filters" aria-label="Filtres">
       <div class="field">
         <label class="label" for="q">Rechercher</label>

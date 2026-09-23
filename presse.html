@@ -19,20 +19,13 @@
   <style>
     body.presse{ background:#02253A; }
 
-    .headRow{
-      display:flex;
-      justify-content:space-between;
-      align-items:baseline;
-      margin:18px 0;
-    }
     h1{ margin:0; font-size:28px; font-weight:800; }
-    .meta{ color:rgba(255,255,255,.55); font-size:14px; }
 
     .presseLayout{
       display:grid;
       grid-template-columns: 1.1fr .9fr;
       gap:32px;
-      margin-top:24px;
+      margin-top:8px;
       align-items:center;
     }
     @media (max-width:900px){
@@ -231,10 +224,8 @@
       </nav>
     </header>
 
-    <!-- TITRE -->
-    <div class="headRow">
-      <h1>Presse</h1>
-    </div>
+    <h1 class="sr-only">Presse</h1>
+    <div class="sectionHead"><h2 class="sectionTitle">Parutions</h2></div>
 
     <!-- CONTENU -->
     <section class="presseLayout">

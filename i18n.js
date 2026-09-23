@@ -71,6 +71,10 @@
 
     /* ---------- À propos ---------- */
     "Biographie": "Biography",
+    "Où voir les œuvres": "Where to see the work",
+    "Toutes les expositions": "All exhibitions",
+    "Parutions": "Publications",
+    "Écrire un message": "Send a message",
     "Photo atelier": "Studio photo",
     "Annick Bouvattier en atelier": "Annick Bouvattier in her studio",
 

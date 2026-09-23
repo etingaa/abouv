@@ -28,17 +28,12 @@
       --chip:rgba(255,255,255,.08);
       --chip2:rgba(255,255,255,.12);
     }
-    /* Page head */
-    .headRow{
-      display:flex;align-items:baseline;justify-content:space-between;
-      gap:16px;margin:18px 0 14px;
-    }
     h1{margin:0;font-size:28px;font-weight:800;letter-spacing:-.02em}
-    .lead{margin:10px 0 0;color:var(--soft);max-width:760px;line-height:1.6}
+    .lead{margin:0;color:var(--soft);max-width:760px;line-height:1.6}
 
     /* Card */
     .card{
-      margin-top:14px;
+      margin-top:18px;
       border:1px solid var(--border);
       border-radius:var(--radius-card);
       background:var(--fill);
@@ -107,12 +102,9 @@
       </nav>
     </header>
 
-    <div class="headRow">
-      <div>
-        <h1>Contact</h1>
-        <p class="lead">Écrivez-moi ici, je vous réponds dès que possible.</p>
-      </div>
-    </div>
+    <h1 class="sr-only">Contact</h1>
+    <div class="sectionHead"><h2 class="sectionTitle">Écrire un message</h2></div>
+    <p class="lead">Écrivez-moi ici, je vous réponds dès que possible.</p>
 
     <section class="card" aria-label="Formulaire de contact">
       <form id="contactForm" action="https://formspree.io/f/xdalokdl" method="POST">

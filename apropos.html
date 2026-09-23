@@ -26,13 +26,11 @@
       --border:rgba(255,255,255,.18);
     }
     /* Page */
-    .headRow{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin:18px 0 10px}
     h1{margin:0;font-size:28px;font-weight:800;letter-spacing:-.02em}
-    .meta{color:var(--faint);font-size:14px}
 
     /* Card layout */
    .aboutCard{
-  margin-top: 28px;
+  margin-top: 8px;
   display: grid;
   grid-template-columns: 1.1fr .9fr;
   gap: 56px;
@@ -148,10 +146,8 @@
       </nav>
     </header>
 
-    <div class="headRow">
-      <h1>À propos</h1>
-      <div class="meta">Biographie</div>
-    </div>
+    <h1 class="sr-only">À propos</h1>
+    <div class="sectionHead"><h2 class="sectionTitle">Biographie</h2></div>
 
     <section class="aboutCard" aria-label="Biographie">
       <div class="aboutText">

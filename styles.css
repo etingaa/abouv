@@ -106,14 +106,40 @@ a{ color: inherit; text-decoration: none; }
 .bottom__link:hover{color:#fff;}
 .bottom__link--legal{margin-left:auto;font-size:13px;color:rgba(255,255,255,.4);}
 .bottom__link--legal:hover{color:rgba(255,255,255,.75);}
-/* HEADER */
+/* HEADER : séparé du contenu par une fine ligne sur toute la largeur de l'écran */
+.page{ overflow-x:clip; } /* la ligne déborde du conteneur sans créer de défilement horizontal */
 .top{
+  position:relative;
   display:flex;
   align-items:center;
   justify-content:space-between;
   padding: 18px 0;
+  margin-bottom: 28px;
   gap: 20px;
 }
+.top::after{
+  content:"";
+  position:absolute; bottom:0; left:50%;
+  width:100vw; height:1px;
+  transform:translateX(-50%);
+  background:rgba(255,255,255,.09);
+  pointer-events:none;
+}
+
+/* TITRES DE PARTIES : petit libellé en capitales espacées + info à droite, fine ligne dessous.
+   (Le nom de la page n'est pas répété : l'onglet actif du menu l'indique déjà ;
+   il reste en <h1 class="sr-only"> pour Google et les lecteurs d'écran.) */
+.sectionHead{
+  display:flex; align-items:baseline; justify-content:space-between; gap:16px;
+  margin:0 0 18px; padding-bottom:10px;
+  border-bottom:1px solid rgba(255,255,255,.09);
+}
+.sectionTitle{
+  margin:0;
+  font-size:12px; font-weight:600; letter-spacing:.14em; text-transform:uppercase;
+  color:rgba(255,255,255,.62);
+}
+.sectionMeta{ font-size:13px; color:var(--ink-faint); white-space:nowrap; }
 
 .brand{
   font-size: 22px;
@@ -195,7 +221,7 @@ a{ color: inherit; text-decoration: none; }
 .menuBtn{ display:none; }
 
 @media (max-width: 760px){
-  .top{ padding: 12px 0; }
+  .top{ padding: 12px 0; margin-bottom: 20px; }
   .brand{ font-size: 18px; padding-bottom: 0; }
 
   .menuBtn{
@@ -250,17 +276,12 @@ body.portfolio .container{
 
 /* Barre d'outils : titre + onglets principaux + recherche, puis les choix de l'onglet ouvert */
 body.portfolio .toolbar{
-  padding: 18px 0 0;
+  padding: 0;
   border-bottom: 1px solid rgba(255,255,255,.12);
 }
 body.portfolio .toolbar__row{
   display:flex; flex-wrap:wrap; align-items:center;
   gap:12px 16px;
-}
-body.portfolio .title{
-  margin:0 6px 0 0;
-  font-size:22px;
-  font-weight:800;
 }
 
 /* Onglets (principaux et choix) : fins, l'onglet actif est entouré */
@@ -342,9 +363,7 @@ body.portfolio .search input:focus{ border-color:rgba(255,255,255,.45); backgrou
 
 /* Téléphone : onglets et choix défilent du doigt, recherche sur toute la largeur */
 @media (max-width:600px){
-  body.portfolio .toolbar{ padding-top:10px; }
   body.portfolio .toolbar__row{ gap:10px; }
-  body.portfolio .title{ font-size:20px; }
   body.portfolio .search{ order:3; width:100%; }
   body.portfolio .tabs,
   body.portfolio .subtabs{
@@ -653,18 +672,8 @@ body.galeries{
   background: #02253A;
 }
 
-.galHead{
-  display:flex;
-  align-items:baseline;
-  justify-content:space-between;
-  gap:16px;
-  margin:14px 0 10px;
-}
-.galH1{ margin:0; font-size:28px; font-weight:800; }
-.galMeta{ color: var(--ink-faint); font-size:14px; }
-
 .galCard{
-  margin-top:12px;
+  margin-top:0;
   display:grid;
   grid-template-columns: 1.25fr .75fr;
   gap:0;
