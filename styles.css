@@ -128,48 +128,63 @@ a{ color: inherit; text-decoration: none; }
 
 /* =========================
    HEADER COMPACT (classe .is-compact posée par site.js dès qu'on descend)
+   Chaque mot se transforme sur place en icône : les liens gardent leur taille,
+   le mot s'efface en flou pendant que l'icône apparaît au même endroit.
    ========================= */
-/* fond pleine largeur, légèrement flouté, qui n'apparaît qu'en mode compact */
-.top::before{
+:root{ --header-h: 74px; } /* hauteur actuelle du header (mise à jour par site.js) */
+
+/* fond pleine largeur translucide et flouté : on devine les tableaux qui passent dessous */
+.top::before,
+body.portfolio .toolbar::before{
   content:"";
   position:absolute; top:0; bottom:0; left:50%;
   width:100vw; transform:translateX(-50%);
-  background:rgba(2,37,58,.78);
-  -webkit-backdrop-filter:blur(14px) saturate(1.2);
-  backdrop-filter:blur(14px) saturate(1.2);
-  opacity:0; transition:opacity .25s ease;
+  background:rgba(2,37,58,.62);
+  -webkit-backdrop-filter:blur(16px) saturate(1.3);
+  backdrop-filter:blur(16px) saturate(1.3);
   pointer-events:none; z-index:-1;
 }
+.top::before{ opacity:0; transition:opacity .3s ease; }
 .top.is-compact{ padding:8px 0; }
 .top.is-compact::before{ opacity:1; }
 
-/* nom → monogramme */
-.brand__short{ display:none; }
-.top.is-compact .brand__full{ display:none; }
-.top.is-compact .brand__short{
+/* mot et icône superposés : l'un s'efface en flou, l'autre apparaît au même endroit */
+.brand, .nav__link{ position:relative; }
+.brand__full, .nav__text{
+  display:inline-block;
+  transition: opacity .3s ease, filter .3s ease, transform .3s ease;
+}
+.brand__short, .nav__icon{
+  position:absolute; left:50%; top:50%;
+  opacity:0; filter:blur(6px);
+  transform:translate(-50%,-50%) scale(.6);
+  transition: opacity .3s ease, filter .3s ease, transform .3s ease;
+  pointer-events:none;
+}
+.brand__short{
+  left:0; transform:translate(0,-50%) scale(.6); transform-origin:left center;
   display:inline-flex; align-items:center; justify-content:center;
   width:34px; height:34px;
   border:1px solid rgba(255,255,255,.28); border-radius:var(--radius);
-  font-size:13px; letter-spacing:.06em; padding:0;
+  font-size:13px; letter-spacing:.06em;
+}
+.nav__icon{
+  width:18px; height:18px;
+  fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round;
+}
+.top.is-compact .brand__full,
+.top.is-compact .nav__text{ opacity:0; filter:blur(6px); transform:scale(.85); }
+.top.is-compact .nav__icon{ opacity:1; filter:none; transform:translate(-50%,-50%) scale(1); }
+.top.is-compact .brand__short{ opacity:1; filter:none; transform:translate(0,-50%) scale(1); }
+
+/* téléphone : le menu est déjà un bouton, seul le nom devient « AB » ; menu plein écran en mots */
+@media (max-width: 760px){
+  .nav__icon{ display:none; }
+  .top.is-compact .nav__text{ opacity:1; filter:none; transform:none; }
 }
 
-/* mots → icônes (grand écran seulement : sur téléphone le menu est déjà un bouton) */
-.nav__icon{ display:none; }
+/* infobulle : le mot sous l'icône au survol */
 @media (min-width: 761px){
-  .top.is-compact .top__nav{ gap:2px; }
-  .top.is-compact .nav__link{
-    position:relative;
-    display:inline-flex; align-items:center; justify-content:center;
-    width:36px; height:34px; padding:0;
-  }
-  .top.is-compact .nav__icon{
-    display:block; width:18px; height:18px;
-    fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round;
-  }
-  .top.is-compact .nav__text{
-    position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap;
-  }
-  /* infobulle : le mot sous l'icône au survol */
   .top.is-compact .nav__link::after{
     content:attr(data-tip);
     position:absolute; top:calc(100% + 8px); left:50%;
@@ -182,16 +197,9 @@ a{ color: inherit; text-decoration: none; }
   }
   .top.is-compact .nav__link:hover::after,
   .top.is-compact .nav__link:focus-visible::after{ opacity:1; transform:translate(-50%, 0); }
-
-  /* petite apparition au changement de mode */
-  .top.has-toggled .nav__icon,
-  .top.has-toggled .nav__text,
-  .top.has-toggled .brand > span{ animation:headerIn .28s ease; }
 }
-@keyframes headerIn{ from{ opacity:0; transform:translateY(-3px); } to{ opacity:1; transform:none; } }
 @media (prefers-reduced-motion: reduce){
-  .top::before{ transition:none; }
-  .top.has-toggled .nav__icon, .top.has-toggled .nav__text, .top.has-toggled .brand > span{ animation:none; }
+  .top::before, .brand__full, .nav__text, .brand__short, .nav__icon{ transition:none; }
 }
 
 /* TITRES DE PARTIES : petit libellé en capitales espacées + info à droite, fine ligne dessous.
@@ -346,8 +354,9 @@ body.portfolio .container{
 /* Barre d'outils : titre + onglets principaux + recherche, puis les choix de l'onglet ouvert */
 /* même trait que sous le header et sous les titres de parties, même espacement (12px) partout */
 body.portfolio .toolbar{
-  padding: 0 0 12px;
-  margin-bottom: 20px;
+  position:sticky; top:var(--header-h); z-index:40; /* reste accrochée sous le header au défilement */
+  padding: 10px 0 12px;
+  margin: -10px 0 20px;
   border-bottom: 1px solid rgba(255,255,255,.09);
 }
 body.portfolio .toolbar__row{

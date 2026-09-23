@@ -49,9 +49,15 @@
       top.style.marginBottom = "";
       const baseMargin = parseFloat(getComputedStyle(top).marginBottom) || 0;
       top.classList.toggle("is-compact", on);
-      top.classList.add("has-toggled");
       if (on) top.style.marginBottom = (baseMargin + before - top.offsetHeight) + "px";
+      setHeaderVar();
     }
+    // hauteur du header, pour accrocher dessous ce qui doit rester visible (filtres du portfolio)
+    function setHeaderVar(){
+      document.documentElement.style.setProperty("--header-h", top.offsetHeight + "px");
+    }
+    setHeaderVar();
+    window.addEventListener("resize", setHeaderVar);
     let queued = false;
     function onScroll(){
       if (queued) return;
