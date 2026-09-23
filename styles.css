@@ -979,8 +979,8 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible, summary:focus-v
 .form input:focus, .form textarea:focus{ border-color:rgba(var(--ochre-rgb),.55); }
 
 /* bouton principal (Envoyer) : ocre plein */
-.sendBtn{ background:var(--ochre); border-color:var(--ochre); color:#1c1407; }
-.sendBtn:hover{ background:var(--ochre-hi); border-color:var(--ochre-hi); }
+.form .sendBtn{ background:var(--ochre); border-color:var(--ochre); color:#1c1407; }
+.form .sendBtn:hover{ background:var(--ochre-hi); border-color:var(--ochre-hi); }
 
 /* tuiles-liens et boutons fins */
 a.fact:hover{ border-color:rgba(var(--ochre-rgb),.45); }
@@ -988,8 +988,8 @@ a.fact .fact__small::after{ color:var(--ochre); }
 .thinBtn:hover, .ctaRow a:hover, .galBtn:hover{ border-color:rgba(var(--ochre-rgb),.5); }
 
 /* liens dans le texte */
-.faq__a a, .formNote a, .legal a{ border-bottom-color:rgba(var(--ochre-rgb),.55); }
-.faq__a a:hover, .formNote a:hover, .legal a:hover{ color:var(--ochre-hi); border-bottom-color:var(--ochre-hi); }
+.faq .faq__a a, .form .formNote a, main.legal a{ border-bottom-color:rgba(var(--ochre-rgb),.55); }
+.faq .faq__a a:hover, .form .formNote a:hover, main.legal a:hover{ color:var(--ochre-hi); border-bottom-color:var(--ochre-hi); }
 .faq details[open] summary::after{ border-color:rgba(var(--ochre-rgb),.5); color:var(--ochre); }
 
 /* portfolio : cadre ocre au survol d'une œuvre, bouton de la fiche */
@@ -1004,13 +1004,21 @@ body.portfolio .modal__cta:hover{ background:rgba(var(--ochre-rgb),.24); }
 /* expositions : années qui correspondent au filtre */
 .tlYear.is-hit .tlDot{ background:var(--ochre); border-color:var(--ochre); }
 
-/* fond : bleu nuit avec une lueur chaude très diffuse (ocre en haut à droite, rouge sourd en bas à gauche) */
+/* FOND : plusieurs bleus fondus (pétrole en haut à droite, indigo à gauche, sarcelle en bas)
+   + un grain très fin façon toile, pour donner de la matière au bleu. Fixe au défilement. */
 body, body.portfolio, body.galeries, body.presse{
   background:
-    radial-gradient(1100px 620px at 88% -8%, rgba(var(--ochre-rgb),.085), transparent 62%),
-    radial-gradient(900px 620px at -8% 108%, rgba(var(--red-rgb),.06), transparent 60%),
-    var(--bg);
+    radial-gradient(1100px 760px at 92% -12%, rgba(28,104,140,.55), transparent 62%),
+    radial-gradient(900px 900px at -14% 34%, rgba(16,44,104,.62), transparent 62%),
+    radial-gradient(1000px 720px at 62% 118%, rgba(10,86,100,.5), transparent 62%),
+    radial-gradient(700px 480px at 40% 40%, rgba(var(--ochre-rgb),.035), transparent 70%),
+    linear-gradient(180deg, #032b44 0%, #021d31 100%);
   background-attachment:fixed;
+}
+body::before{
+  content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
+  opacity:.07; mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1.4 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 /* expositions : liseré de couleur selon le type (personnelle, collective, salon) */
