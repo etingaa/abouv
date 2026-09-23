@@ -237,14 +237,14 @@ body.portfolio .container{
   body.portfolio .container{ padding:16px 20px 40px; }
 }
 
-/* Barre d'outils : titre + onglets à gauche, filtres + recherche à droite */
+/* Barre d'outils : titre + onglets principaux + recherche, puis les choix de l'onglet ouvert */
 body.portfolio .toolbar{
-  display:flex;
-  flex-wrap:wrap;
-  align-items:center;
-  gap:12px 20px;
-  padding: 18px 0 14px;
+  padding: 18px 0 0;
   border-bottom: 1px solid rgba(255,255,255,.12);
+}
+body.portfolio .toolbar__row{
+  display:flex; flex-wrap:wrap; align-items:center;
+  gap:12px 16px;
 }
 body.portfolio .title{
   margin:0 6px 0 0;
@@ -252,14 +252,15 @@ body.portfolio .title{
   font-weight:800;
 }
 
-/* Onglets par catégorie (le nombre d'œuvres dans une pastille) */
+/* Onglets (principaux et choix) : l'onglet actif est entouré */
 body.portfolio .tabs{ display:flex; flex-wrap:wrap; gap:4px; }
 body.portfolio .tab{
+  position:relative;
   display:inline-flex; align-items:center; gap:8px;
   height:38px; padding:0 12px;
   border:1px solid transparent; border-radius:10px;
   background:none; color:rgba(255,255,255,.72);
-  font:inherit; font-size:14px; font-weight:600; white-space:nowrap;
+  font:inherit; font-size:15px; font-weight:600; white-space:nowrap;
   cursor:pointer;
   transition: background-color .15s ease, color .15s ease;
 }
@@ -269,6 +270,21 @@ body.portfolio .tab[aria-pressed="true"]{
   background:rgba(255,255,255,.10);
   border-color:rgba(255,255,255,.28);
 }
+/* point vert : un filtre est choisi dans cet onglet */
+body.portfolio .tab.has-filter::after{
+  content:""; width:6px; height:6px; border-radius:50%;
+  background:#3ddc84;
+}
+
+/* Ligne des choix, sous les onglets principaux */
+body.portfolio .subtabs{
+  display:flex; flex-wrap:wrap; gap:4px;
+  margin-top:12px; padding:12px 0 14px;
+  border-top:1px solid rgba(255,255,255,.08);
+}
+body.portfolio .subtabs--sizes{ margin-top:0; padding-top:0; border-top:0; }
+body.portfolio .tab--sub{ height:34px; padding:0 10px; font-size:14px; }
+body.portfolio .subtabs--sizes .tab--sub{ height:30px; font-size:13px; font-weight:500; }
 body.portfolio .tab__count{
   min-width:22px; height:20px; padding:0 6px;
   display:inline-flex; align-items:center; justify-content:center;
@@ -279,17 +295,12 @@ body.portfolio .tab__count{
 }
 body.portfolio .tab[aria-pressed="true"] .tab__count{ background:rgba(255,255,255,.2); color:#fff; }
 
-body.portfolio .toolbar__end{
-  display:flex; align-items:center; gap:8px;
-  margin-left:auto;
-}
-body.portfolio .filterPills{ display:flex; align-items:center; gap:8px; }
-
 /* Recherche avec loupe */
 body.portfolio .search{
   position:relative;
   display:flex; align-items:center;
   width:220px;
+  margin-left:auto;
 }
 body.portfolio .search__icon{
   position:absolute; left:12px;
@@ -308,27 +319,21 @@ body.portfolio .search input{
 body.portfolio .search input::placeholder{ color:rgba(255,255,255,.45); }
 body.portfolio .search input:focus{ border-color:rgba(255,255,255,.45); background:rgba(255,255,255,.08); }
 
-/* Écran moyen : filtres + recherche passent sous les onglets, sur toute la largeur */
-@media (max-width:1100px){
-  body.portfolio .toolbar__end{ margin-left:0; width:100%; }
-  body.portfolio .search{ margin-left:auto; }
-}
-
-/* Téléphone : onglets et filtres défilent du doigt, recherche sur toute la largeur */
+/* Téléphone : onglets et choix défilent du doigt, recherche sur toute la largeur */
 @media (max-width:600px){
-  body.portfolio .toolbar{ gap:10px; padding-top:10px; }
-  body.portfolio .title{ width:100%; font-size:20px; }
+  body.portfolio .toolbar{ padding-top:10px; }
+  body.portfolio .toolbar__row{ gap:10px; }
+  body.portfolio .title{ font-size:20px; }
+  body.portfolio .search{ order:3; width:100%; }
   body.portfolio .tabs,
-  body.portfolio .filterPills{
+  body.portfolio .subtabs{
     flex-wrap:nowrap;
-    width:calc(100% + 40px); margin:0 -20px; padding:0 20px 2px;
+    width:calc(100% + 40px); margin-left:-20px; margin-right:-20px; padding-left:20px; padding-right:20px;
     overflow-x:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch;
   }
   body.portfolio .tabs::-webkit-scrollbar,
-  body.portfolio .filterPills::-webkit-scrollbar{ display:none; }
-  body.portfolio .tabs > *, body.portfolio .filterPills > *{ flex:0 0 auto; }
-  body.portfolio .toolbar__end{ flex-direction:column-reverse; align-items:stretch; gap:10px; }
-  body.portfolio .search{ width:100%; }
+  body.portfolio .subtabs::-webkit-scrollbar{ display:none; }
+  body.portfolio .tabs > *, body.portfolio .subtabs > *{ flex:0 0 auto; }
 }
 
 /* Chips actives */
@@ -361,84 +366,13 @@ body.portfolio .chip button{
 }
 body.portfolio .chip button:hover{ color:#fff; }
 
-/* Dropdown */
-body.portfolio .dd{ position: relative; }
-
-body.portfolio .pillBtn{
-  height:38px;
-  border-radius: 10px;
-  border:1px solid rgba(255,255,255,.22);
-  background: rgba(255,255,255,.04);
-  color:#fff;
-  padding: 0 12px;
-  font-weight:600;
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  cursor:pointer;
-  user-select:none;
-  font-size:14px;
+/* Tout effacer */
+body.portfolio .resetBtn{
+  background:none; border:0; padding:4px 2px; cursor:pointer;
+  font:inherit; font-size:13px; color:rgba(255,255,255,.6);
+  text-decoration:underline; text-underline-offset:3px;
 }
-body.portfolio .pillBtn:hover{ background: rgba(255,255,255,.10); }
-body.portfolio .pillBtn--ghost{ background:none; border-color:transparent; color:rgba(255,255,255,.7); }
-body.portfolio .pillBtn--ghost:hover{ color:#fff; }
-
-body.portfolio .pillCount{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  min-width: 18px;
-  height:18px;
-  padding:0 6px;
-  border-radius: 999px;
-  background: rgba(255,255,255,.18);
-  font-size: 12px;
-  color: rgba(255,255,255,.9);
-}
-body.portfolio .pillCount:empty{ display:none; }
-
-body.portfolio .pillCaret{
-  opacity:.8;
-  font-size: 12px;
-}
-
-/* panneau dropdown */
-body.portfolio .ddPanel{
-  position:absolute;
-  top: calc(38px + 8px);
-  left:0;
-  min-width: 260px;
-  max-height: 320px;
-  overflow:auto;
-  padding:10px;
-  border-radius: 14px;
-  border:1px solid rgba(255,255,255,.18);
-  background: rgba(7,16,24,.92);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 18px 50px rgba(0,0,0,.35);
-  display:none;
-  z-index: 50;
-}
-body.portfolio .dd.is-open .ddPanel{ display:block; }
-
-body.portfolio .ddRow{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:8px 8px;
-  border-radius: 10px;
-  cursor:pointer;
-}
-body.portfolio .ddRow:hover{ background: rgba(255,255,255,.06); }
-
-body.portfolio .ddRow input{ accent-color: #3ddc84; }
-
-body.portfolio .ddLabel{
-  flex:1;
-  font-size:14px;
-  color: rgba(255,255,255,.92);
-}
+body.portfolio .resetBtn:hover{ color:#fff; }
 
 /* Chips actives + nombre d'œuvres */
 body.portfolio .metaRow{
@@ -710,19 +644,6 @@ body.portfolio .statusMsg{
   line-height: 1.6;
 }
 body.portfolio .statusMsg a{ border-bottom:1px solid rgba(255,255,255,.5); }
-
-/* Mobile : le menu déroulant devient un panneau en bas d'écran (plus de débordement) */
-@media (max-width:600px){
-  body.portfolio .ddPanel{
-    position: fixed;
-    left: 12px;
-    right: 12px;
-    bottom: 12px;
-    top: auto;
-    min-width: 0;
-    max-height: 60vh;
-  }
-}
 
 body.portfolio img{
   user-select: none;

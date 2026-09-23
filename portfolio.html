@@ -19,23 +19,6 @@
 
   <link rel="stylesheet" href="styles.css">
 
-  <!-- mini styles pour sous-titres dans le dropdown "Format" -->
-  <style>
-    body.portfolio .ddHeading{
-      margin: 8px 6px 6px;
-      font-size: 12px;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,.65);
-      font-weight: 900;
-    }
-    body.portfolio .ddSep{
-      height:1px;
-      background: rgba(255,255,255,.14);
-      margin: 10px 6px;
-      border-radius: 99px;
-    }
-  </style>
 </head>
 
 <body class="portfolio">
@@ -54,55 +37,30 @@
         </nav>
       </header>
 
-      <!-- Barre d'outils : titre, onglets par catégorie, filtres, recherche -->
+      <!-- Barre d'outils : onglets principaux + recherche, puis les choix de l'onglet ouvert -->
       <section class="toolbar" aria-label="Filtres">
-        <h1 class="title">Portfolio</h1>
-
-        <!-- Catégorie (colonne C) : un onglet par catégorie, avec le nombre d'œuvres -->
-        <div class="tabs" id="tabs" aria-label="Catégorie" translate="no"></div>
-
-        <div class="toolbar__end">
-          <div class="filterPills">
-          <!-- Technique -->
-          <div class="dd" data-key="technique">
-            <button class="pillBtn" type="button" aria-haspopup="true" aria-expanded="false">
-              Technique <span class="pillCount" data-count="technique"></span>
-              <span class="pillCaret">▾</span>
-            </button>
-            <div class="ddPanel" role="group" aria-label="Technique" data-panel="technique"></div>
+        <div class="toolbar__row">
+          <h1 class="title">Portfolio</h1>
+          <div class="tabs" id="groups" aria-label="Filtrer par">
+            <button class="tab" type="button" data-group="category">Collection</button>
+            <button class="tab" type="button" data-group="technique">Technique</button>
+            <button class="tab" type="button" data-group="format">Format</button>
+            <button class="tab" type="button" data-group="status">Disponible</button>
           </div>
-
-          <!-- Format (Forme + tailles) -->
-          <div class="dd" data-key="format">
-            <button class="pillBtn" type="button" aria-haspopup="true" aria-expanded="false">
-              Format <span class="pillCount" data-count="format"></span>
-              <span class="pillCaret">▾</span>
-            </button>
-            <div class="ddPanel" role="group" aria-label="Format" data-panel="format"></div>
-          </div>
-
-          <!-- Disponible -->
-          <div class="dd" data-key="status">
-            <button class="pillBtn" type="button" aria-haspopup="true" aria-expanded="false">
-              Disponible <span class="pillCount" data-count="status"></span>
-              <span class="pillCaret">▾</span>
-            </button>
-            <div class="ddPanel" role="group" aria-label="Disponible" data-panel="status"></div>
-          </div>
-
-          <button class="pillBtn pillBtn--ghost" id="reset" type="button" hidden>Tout effacer</button>
-          </div>
-
           <label class="search">
             <svg class="search__icon" viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="m13 13 4 4"/></svg>
             <input id="q" type="search" placeholder="Rechercher" aria-label="Rechercher une œuvre" />
           </label>
         </div>
+        <!-- choix de l'onglet ouvert (+ tailles quand une forme est choisie dans Format) -->
+        <div class="subtabs" id="subtabs" translate="no"></div>
+        <div class="subtabs subtabs--sizes" id="sizes" translate="no" hidden></div>
       </section>
 
-      <!-- Chips actives + nombre d'œuvres affichées -->
+      <!-- Filtres actifs + nombre d'œuvres affichées -->
       <div class="metaRow">
         <div class="filterChips" id="chips" translate="no"></div>
+        <button class="resetBtn" id="reset" type="button" hidden>Tout effacer</button>
         <div class="count" id="count" aria-live="polite">Chargement…</div>
       </div>
 
@@ -157,7 +115,9 @@
       masonry: document.getElementById("masonry"),
       count: document.getElementById("count"),
       chips: document.getElementById("chips"),
-      tabs: document.getElementById("tabs"),
+      groups: document.getElementById("groups"),
+      subtabs: document.getElementById("subtabs"),
+      sizes: document.getElementById("sizes"),
 
       modal: document.getElementById("modal"),
       modalImg: document.getElementById("modalImg"),
@@ -169,39 +129,29 @@
       modalCta: document.getElementById("modalCta"),
     };
 
-    const ddEls = {
-      technique: document.querySelector('.dd[data-key="technique"]'),
-      format: document.querySelector('.dd[data-key="format"]'),
-      status: document.querySelector('.dd[data-key="status"]'),
-    };
-
-    const panels = {
-      technique: document.querySelector('[data-panel="technique"]'),
-      format: document.querySelector('[data-panel="format"]'),
-      status: document.querySelector('[data-panel="status"]'),
-    };
-
-    const countBadges = {
-      technique: document.querySelector('[data-count="technique"]'),
-      format: document.querySelector('[data-count="format"]'),
-      status: document.querySelector('[data-count="status"]'),
-    };
-
     let artworks = [];
     let sizesMap = {};      // nom de fichier -> [largeur, hauteur] de la miniature
     let currentList = [];   // œuvres actuellement affichées (après filtres)
     let modalIndex = -1;
 
-    // filtres multi
+    // un choix par onglet (Set vide = tous)
     const filters = {
       q: "",
-      category: new Set(),  // un seul onglet à la fois ; vide = toutes
+      category: new Set(),
       technique: new Set(),
-      // format = 2 sous-filtres dans le même dropdown
       shape: new Set(),    // "carre" | "paysage" | "portrait"
-      size: new Set(),     // ex: "100 x 81 cm" normalisé
+      size: new Set(),     // ex: "100 x 81 cm" normalisé (visible une fois la forme choisie)
       status: new Set(),   // "disponible" | "vendue"
     };
+
+    // onglets principaux -> filtre concerné, libellé de « tout », libellé de chaque choix
+    const GROUPS = {
+      category:  { key: "category",  all: "Toutes", label: v => t(v) },
+      technique: { key: "technique", all: "Toutes", label: v => t(v) },
+      format:    { key: "shape",     all: "Tous",   label: shapeLabel, values: ["carre","paysage","portrait"] },
+      status:    { key: "status",    all: "Tous",   label: statusLabel, values: ["disponible","vendue"] },
+    };
+    let activeGroup = "category";
 
     /* =========================
        HELPERS
@@ -335,24 +285,6 @@
       return [a.technique && t(a.technique), a.size].filter(Boolean).map(escapeHtml).join(" · ");
     }
 
-    function setBadgeCount(key){
-      let n = 0;
-      if(key === "format"){
-        n = filters.shape.size + filters.size.size;
-      }else{
-        n = filters[key].size;
-      }
-      countBadges[key].textContent = n ? String(n) : "";
-    }
-
-    function closeAllDropdowns(){
-      Object.values(ddEls).forEach(dd => {
-        dd.classList.remove("is-open");
-        const btn = dd.querySelector("button[aria-expanded]");
-        if(btn) btn.setAttribute("aria-expanded", "false");
-      });
-    }
-
     /* =========================
        LOAD
        ========================= */
@@ -415,212 +347,22 @@
     }
 
     /* =========================
-       PANELS (Category / Technique / Status)
-       ========================= */
-
-    function buildSimplePanel(key, options, labelFn = (v) => v){
-      const panel = panels[key];
-      panel.innerHTML = "";
-
-      options.forEach(v => {
-        const row = document.createElement("label");
-        row.className = "ddRow";
-
-        const input = document.createElement("input");
-        input.type = "checkbox";
-        input.value = v;
-        input.checked = filters[key].has(v);
-
-        const label = document.createElement("span");
-        label.className = "ddLabel";
-        label.textContent = labelFn(v);
-
-        input.addEventListener("change", () => {
-          if(input.checked) filters[key].add(v);
-          else filters[key].delete(v);
-
-          setBadgeCount(key);
-          renderChips();
-          render();
-        });
-
-        row.appendChild(input);
-        row.appendChild(label);
-        panel.appendChild(row);
-      });
-
-      setBadgeCount(key);
-    }
-
-    /* =========================
-       PANEL FORMAT (Forme + Tailles)
-       ========================= */
-
-    function addHeading(panel, text){
-      const h = document.createElement("div");
-      h.className = "ddHeading";
-      h.textContent = text;
-      panel.appendChild(h);
-    }
-
-    function addSeparator(panel){
-      const sep = document.createElement("div");
-      sep.className = "ddSep";
-      panel.appendChild(sep);
-    }
-
-    function addCheckboxRow(panel, checked, labelText, onChange){
-      const row = document.createElement("label");
-      row.className = "ddRow";
-
-      const input = document.createElement("input");
-      input.type = "checkbox";
-      input.checked = checked;
-
-      const label = document.createElement("span");
-      label.className = "ddLabel";
-      label.textContent = labelText;
-
-      input.addEventListener("change", () => onChange(input.checked));
-
-      row.appendChild(input);
-      row.appendChild(label);
-      panel.appendChild(row);
-    }
-
-    function buildFormatPanel(){
-  const panel = panels.format;
-  panel.innerHTML = "";
-
-  const sizesByShape = {
-    carre: uniq(artworks.filter(a => a.shape === "carre").map(a => a.sizeNorm).filter(Boolean)),
-    paysage: uniq(artworks.filter(a => a.shape === "paysage").map(a => a.sizeNorm).filter(Boolean)),
-    portrait: uniq(artworks.filter(a => a.shape === "portrait").map(a => a.sizeNorm).filter(Boolean)),
-  };
-
-  function prettySize(sizeNorm){
-    return sizeNorm.replace(/\s*x\s*/g," × ").replace(/\s*cm\s*/g," cm");
-  }
-
-  function groupBlock(shapeKey){
-    const label = shapeLabel(shapeKey);
-    const isOn = filters.shape.has(shapeKey);
-    const list = sizesByShape[shapeKey];
-
-    // Ligne Carré / Paysage / Portrait avec checkbox
-    const row = document.createElement("label");
-    row.className = "ddRow";
-
-    const input = document.createElement("input");
-    input.type = "checkbox";
-    input.checked = isOn;
-
-    const text = document.createElement("span");
-    text.className = "ddLabel";
-    text.style.fontWeight = "900";
-    text.style.letterSpacing = ".08em";
-    text.style.textTransform = "uppercase";
-    text.textContent = label;
-
-    input.addEventListener("change", () => {
-      if(input.checked) filters.shape.add(shapeKey);
-      else filters.shape.delete(shapeKey);
-
-      setBadgeCount("format");
-      renderChips();
-      render();
-
-      // reconstruit le panel pour afficher/cacher les tailles
-      buildFormatPanel();
-    });
-
-    row.appendChild(input);
-    row.appendChild(text);
-    panel.appendChild(row);
-
-    // Tailles visibles uniquement si la forme est cochée
-    if(input.checked){
-      const wrap = document.createElement("div");
-      wrap.style.padding = "4px 0 10px 34px";  // indentation
-      wrap.style.display = "grid";
-      wrap.style.gap = "6px";
-
-      list.forEach(sizeNorm => {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.textContent = prettySize(sizeNorm);
-
-        // style minimal sans toucher ton CSS
-        btn.style.textAlign = "left";
-        btn.style.padding = "8px 10px";
-        btn.style.borderRadius = "10px";
-        btn.style.border = "1px solid rgba(255,255,255,.18)";
-        btn.style.background = filters.size.has(sizeNorm)
-          ? "rgba(61,220,132,.18)"
-          : "rgba(255,255,255,.06)";
-        btn.style.color = "rgba(255,255,255,.92)";
-        btn.style.cursor = "pointer";
-
-        btn.addEventListener("click", () => {
-          if(filters.size.has(sizeNorm)) filters.size.delete(sizeNorm);
-          else filters.size.add(sizeNorm);
-
-          setBadgeCount("format");
-          renderChips();
-          render();
-
-          // refresh visuel
-          buildFormatPanel();
-        });
-
-        wrap.appendChild(btn);
-      });
-
-      panel.appendChild(wrap);
-    }
-
-    // séparateur entre groupes
-    const sep = document.createElement("div");
-    sep.className = "ddSep";
-    panel.appendChild(sep);
-  }
-
-  groupBlock("carre");
-  groupBlock("paysage");
-  groupBlock("portrait");
-
-  setBadgeCount("format");
-}
-
-
-    function hydrateDropdowns(){
-      const techniques = uniq(artworks.map(a => a.technique).filter(Boolean));
-      const statuses = ["disponible","vendue"];
-
-      buildSimplePanel("technique", techniques, t);
-      buildFormatPanel();
-      buildSimplePanel("status", statuses, statusLabel);
-    }
-
-    /* =========================
        CHIPS
        ========================= */
 
+    function prettySize(sizeNorm){
+      return sizeNorm.replace(/\s*x\s*/g," × ").replace(/\s*cm\s*/g," cm");
+    }
+
     function renderChips(){
       const chips = [];
-
+      filters.category.forEach(v => chips.push({ key:"category", label: t(v), raw: v }));
       filters.technique.forEach(v => chips.push({ key:"technique", label: t(v), raw: v }));
-
       filters.shape.forEach(v => chips.push({ key:"shape", label: shapeLabel(v), raw: v }));
-      filters.size.forEach(v => {
-        const display = v.replace(/\s*x\s*/g," × ").replace(/\s*cm\s*/g," cm");
-        chips.push({ key:"size", label: display, raw: v });
-      });
-
-      filters.status.forEach(v => chips.push({ key:"status", label: t(v==="vendue"?"VENDUE":"DISPONIBLE"), raw: v }));
+      filters.size.forEach(v => chips.push({ key:"size", label: prettySize(v), raw: v }));
+      filters.status.forEach(v => chips.push({ key:"status", label: statusLabel(v), raw: v }));
 
       els.chips.innerHTML = "";
-
       chips.forEach(c => {
         const chip = document.createElement("span");
         chip.className = "chip";
@@ -628,36 +370,13 @@
           <span>${escapeHtml(c.label)}</span>
           <button type="button" aria-label="${escapeHtml(t("Retirer"))}">×</button>
         `;
-
         chip.querySelector("button").addEventListener("click", () => {
           // raw = valeur d'origine (le libellé affiché peut être traduit)
           filters[c.key].delete(c.raw);
-
-          setBadgeCount("technique");
-          setBadgeCount("format");
-          setBadgeCount("status");
-
-          // rebuild format panel to sync checkboxes
-          buildFormatPanel();
-
-          // rebuild other panels to sync checkboxes
-          syncSimplePanel("technique");
-          syncSimplePanel("status");
-
-          renderChips();
+          if(c.key === "shape") filters.size.clear();
           render();
         });
-
         els.chips.appendChild(chip);
-      });
-    }
-
-    function syncSimplePanel(key){
-      const panel = panels[key];
-      const inputs = panel.querySelectorAll('input[type="checkbox"]');
-      inputs.forEach(inp => {
-        const v = inp.value;
-        inp.checked = filters[key].has(v);
       });
     }
 
@@ -665,20 +384,21 @@
        FILTERING + RENDER
        ========================= */
 
-    // ignoreCategory : sert à compter les œuvres de chaque onglet avec les autres filtres
-    function matchArtwork(a, ignoreCategory = false){
+    // ignore : filtres à ne pas appliquer (pour compter les œuvres de chaque choix d'un onglet)
+    function matchArtwork(a, ignore = []){
+      const on = (key) => filters[key].size && !ignore.includes(key);
       if(a.broken) return false; // image introuvable (ni miniature ni original)
       const q = (filters.q||"").trim().toLowerCase();
       if(q && !a.title.toLowerCase().includes(q)) return false;
 
-      if(!ignoreCategory && filters.category.size && !filters.category.has(a.category)) return false;
-      if(filters.technique.size && !filters.technique.has(a.technique)) return false;
+      if(on("category") && !filters.category.has(a.category)) return false;
+      if(on("technique") && !filters.technique.has(a.technique)) return false;
 
       // Format : forme + tailles (AND)
-      if(filters.shape.size && !filters.shape.has(a.shape)) return false;
-      if(filters.size.size && !filters.size.has(a.sizeNorm)) return false;
+      if(on("shape") && !filters.shape.has(a.shape)) return false;
+      if(on("size") && !filters.size.has(a.sizeNorm)) return false;
 
-      if(filters.status.size && !filters.status.has(a.status)) return false;
+      if(on("status") && !filters.status.has(a.status)) return false;
 
       return true;
     }
@@ -691,31 +411,54 @@
     }
 
     /* =========================
-       ONGLETS (Catégorie)
+       ONGLETS
        ========================= */
 
-    function renderTabs(){
-      const pool = artworks.filter(a => matchArtwork(a, true));
-      const categories = uniq(artworks.map(a => a.category).filter(Boolean));
-      const active = [...filters.category][0] || "";
-
-      const tabs = [{ value: "", label: t("Toutes"), n: pool.length }]
-        .concat(categories.map(c => ({ value: c, label: t(c), n: pool.filter(a => a.category === c).length })));
-
-      els.tabs.innerHTML = "";
-      tabs.forEach(tab => {
+    // une ligne de choix : « Tous » + un bouton par valeur, avec le nombre d'œuvres (les choix vides sont masqués)
+    function fillChoices(box, key, allLabel, items, onPick){
+      const active = [...filters[key]][0] || "";
+      box.innerHTML = "";
+      items.forEach(it => {
+        if(!it.n && it.value && it.value !== active) return;
         const btn = document.createElement("button");
         btn.type = "button";
-        btn.className = "tab";
-        btn.setAttribute("aria-pressed", String(tab.value === active));
-        btn.innerHTML = `<span>${escapeHtml(tab.label)}</span><span class="tab__count">${tab.n}</span>`;
+        btn.className = "tab tab--sub";
+        btn.setAttribute("aria-pressed", String(it.value === active));
+        btn.innerHTML = `<span>${escapeHtml(it.value ? it.label : t(allLabel))}</span><span class="tab__count">${it.n}</span>`;
         btn.addEventListener("click", () => {
-          filters.category.clear();
-          if(tab.value) filters.category.add(tab.value);
+          filters[key].clear();
+          if(it.value) filters[key].add(it.value);
+          onPick && onPick();
           render();
         });
-        els.tabs.appendChild(btn);
+        box.appendChild(btn);
       });
+    }
+
+    function renderTabs(){
+      els.groups.querySelectorAll(".tab").forEach(btn => {
+        const g = btn.dataset.group;
+        btn.setAttribute("aria-pressed", String(g === activeGroup));
+        btn.classList.toggle("has-filter", filters[GROUPS[g].key].size > 0);
+      });
+
+      const g = GROUPS[activeGroup];
+      const pool = artworks.filter(a => matchArtwork(a, g.key === "shape" ? ["shape","size"] : [g.key]));
+      const values = g.values || uniq(artworks.map(a => a[g.key]).filter(Boolean));
+      fillChoices(els.subtabs, g.key, g.all, [{ value: "", n: pool.length }]
+        .concat(values.map(v => ({ value: v, label: g.label(v), n: pool.filter(a => a[g.key] === v).length }))),
+        g.key === "shape" ? () => filters.size.clear() : null);
+
+      // Format : une fois la forme choisie, ses tailles en dessous
+      const showSizes = activeGroup === "format" && filters.shape.size > 0;
+      els.sizes.hidden = !showSizes;
+      if(showSizes){
+        const sizePool = artworks.filter(a => matchArtwork(a, ["size"]));
+        const area = (v) => { const d = parseDims(v); return d ? d.w * d.h : 0; };
+        const sizes = uniq(sizePool.map(a => a.sizeNorm).filter(Boolean)).sort((a, b) => area(a) - area(b));
+        fillChoices(els.sizes, "size", "Toutes", [{ value: "", n: sizePool.length }]
+          .concat(sizes.map(v => ({ value: v, label: prettySize(v), n: sizePool.filter(a => a.sizeNorm === v).length }))));
+      }
     }
 
     function hasActiveFilters(){
@@ -725,6 +468,7 @@
 
     function render(){
       renderTabs();
+      renderChips();
       els.reset.hidden = !hasActiveFilters();
 
       const list = artworks.filter(a => matchArtwork(a));
@@ -843,28 +587,15 @@
 
       els.q.value = "";
 
-      // rebuild panels to reset checks
-      hydrateDropdowns();
-
-      renderChips();
       render();
     });
 
-    Object.values(ddEls).forEach(dd => {
-      const btn = dd.querySelector(".pillBtn");
-      btn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        const isOpen = dd.classList.contains("is-open");
-        closeAllDropdowns();
-        if(!isOpen){
-          dd.classList.add("is-open");
-          btn.setAttribute("aria-expanded", "true");
-        }
-      });
+    els.groups.addEventListener("click", (e) => {
+      const btn = e.target.closest(".tab");
+      if(!btn) return;
+      activeGroup = btn.dataset.group;
+      renderTabs();
     });
-
-    document.addEventListener("click", () => closeAllDropdowns());
-    Object.values(panels).forEach(p => p.addEventListener("click", (e) => e.stopPropagation()));
 
     els.modalClose.addEventListener("click", closeModal);
     els.modalPrev.addEventListener("click", ()=> showArtwork(modalIndex - 1));
@@ -881,14 +612,6 @@
       if(els.modal.open){
         if(e.key === "ArrowLeft") showArtwork(modalIndex - 1);
         if(e.key === "ArrowRight") showArtwork(modalIndex + 1);
-        return;
-      }
-      if(e.key === "Escape"){
-        const open = Object.values(ddEls).find(dd => dd.classList.contains("is-open"));
-        if(open){
-          closeAllDropdowns();
-          open.querySelector(".pillBtn").focus();
-        }
       }
     });
 
@@ -899,8 +622,6 @@
     document.addEventListener("DOMContentLoaded", async () => {
       try{
         artworks = await loadArtworksFromSheet();
-        hydrateDropdowns();
-        renderChips();
         render();
       } catch(err){
         console.error(err);

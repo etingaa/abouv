@@ -89,6 +89,7 @@
     "Rechercher une œuvre…": "Search artworks…",
     "Rechercher une œuvre": "Search artworks",
     "Catégorie": "Category",
+    "Collection": "Collection",
     "Format": "Size",
     "Disponible": "Availability",          // bouton de filtre
     "statut|Disponible": "Available",
