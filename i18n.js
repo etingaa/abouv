@@ -96,6 +96,13 @@
     "galeries": "galleries",
     "site": "website",
     "itinéraire": "directions",
+    "Site": "Website",
+    "Itinéraire": "Directions",
+    "Appeler": "Call",
+    "Ville": "City",
+    "ici depuis": "here since",
+    "ici en": "here in",
+    "Rechercher une galerie": "Search galleries",
     "La carte n'a pas pu être chargée. La liste des galeries reste disponible.":
       "The map could not be loaded. The list of galleries is still available.",
 

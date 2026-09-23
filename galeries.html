@@ -27,11 +27,6 @@
 
   <!-- garde-fou : hauteur de la carte -->
   <style>
-    body.galeries{ background-image:none; background:#02253A; }
-    .galMap{ min-height:520px; position:relative; }
-    #map{ position:absolute; inset:0; width:100%; height:100%; }
-    @media (max-width:1050px){ .galMap{ min-height:420px; } }
-
     /* Carte assortie au thème sombre : tuiles OSM inversées (aucun service tiers en plus) */
     #map .leaflet-tile-pane{ filter: invert(1) hue-rotate(180deg) brightness(.85) contrast(.9) saturate(.6); }
     #map .leaflet-popup-content-wrapper, #map .leaflet-popup-tip{ background:#0b1c28; color:#fff; }
@@ -62,21 +57,28 @@
       </header>
 
       <h1 class="sr-only">Galeries</h1>
-      <div class="sectionHead"><h2 class="sectionTitle">Où voir les œuvres</h2><div class="sectionMeta" id="meta"></div></div>
+      <!-- Filtres : même barre que le portfolio et les expositions -->
+      <section class="toolbar" aria-label="Filtres">
+        <div class="toolbar__row">
+          <div class="tabs" id="groups" aria-label="Filtrer par">
+            <div class="group" data-group="country"><button class="tab tab--group" type="button" data-group="country" aria-expanded="false" aria-controls="subtabs"><span class="tab__name">Pays</span><span class="tab__value" translate="no"></span><svg class="tab__caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg></button><button class="group__clear" type="button" aria-label="Retirer ce filtre" title="Retirer ce filtre" hidden><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 2l6 6M8 2l-6 6"/></svg></button></div>
+            <div class="group" data-group="city"><button class="tab tab--group" type="button" data-group="city" aria-expanded="false" aria-controls="subtabs"><span class="tab__name">Ville</span><span class="tab__value" translate="no"></span><svg class="tab__caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg></button><button class="group__clear" type="button" aria-label="Retirer ce filtre" title="Retirer ce filtre" hidden><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 2l6 6M8 2l-6 6"/></svg></button></div>
+          </div>
+          <label class="search">
+            <svg class="search__icon" viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="m13 13 4 4"/></svg>
+            <input id="q" type="search" placeholder="Rechercher" aria-label="Rechercher une galerie" />
+            <span class="sr-only" id="count" aria-live="polite"></span>
+          </label>
+        </div>
+        <div class="subtabs" id="subtabs" translate="no" hidden></div>
+      </section>
 
+      <!-- Carte + liste, reliées : survoler l'une met l'autre en évidence -->
       <div class="galCard">
         <section class="galMap" aria-label="Carte des galeries">
           <div id="map"></div>
         </section>
-
         <aside class="galSide" aria-label="Liste des galeries">
-          <div class="galTitle">Rechercher</div>
-          <div class="galSearchRow">
-            <input id="q" class="galInput" type="search" placeholder="Nom, ville, pays…" />
-            <button class="galBtn" id="reset" type="button">Reset</button>
-          </div>
-
-          <div class="galTitle">Galeries</div>
           <div class="galList" id="list" translate="no"></div>
         </aside>
       </div>
@@ -98,7 +100,8 @@
           integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
           crossorigin=""></script>
 
-  <!-- logique de la page (carte, liste, recherche) -->
+  <!-- expositions (pour « 4 expositions ici depuis 2005 »), puis la logique de la page -->
+  <script src="expos-data.js"></script>
   <script src="./script.js"></script>
 
 </body>
