@@ -263,58 +263,58 @@ body.portfolio .title{
   font-weight:800;
 }
 
-/* Onglets (principaux et choix) : l'onglet actif est entouré */
-body.portfolio .tabs{ display:flex; flex-wrap:wrap; gap:4px; }
+/* Onglets (principaux et choix) : fins, l'onglet actif est entouré */
+body.portfolio .tabs{ display:flex; flex-wrap:wrap; gap:2px; }
 body.portfolio .tab{
   position:relative;
-  display:inline-flex; align-items:center; gap:8px;
-  height:38px; padding:0 12px;
-  border:1px solid transparent; border-radius:10px;
-  background:none; color:rgba(255,255,255,.72);
-  font:inherit; font-size:15px; font-weight:600; white-space:nowrap;
+  display:inline-flex; align-items:center; gap:6px;
+  height:30px; padding:0 9px;
+  border:1px solid transparent; border-radius:8px;
+  background:none; color:rgba(255,255,255,.68);
+  font:inherit; font-size:14px; font-weight:500; white-space:nowrap;
   cursor:pointer;
-  transition: background-color .15s ease, color .15s ease;
+  transition: background-color var(--ease), color var(--ease);
 }
 body.portfolio .tab:hover{ color:#fff; background:rgba(255,255,255,.06); }
 body.portfolio .tab[aria-pressed="true"]{
   color:#fff;
-  background:rgba(255,255,255,.10);
-  border-color:rgba(255,255,255,.28);
+  background:rgba(255,255,255,.08);
+  border-color:rgba(255,255,255,.26);
 }
 /* Onglets principaux : nom + choix en cours + flèche ; un clic déplie les choix */
-body.portfolio .tab--group{ gap:6px; }
-body.portfolio #groups{ gap:6px; }
-body.portfolio .tab__value{ color:rgba(255,255,255,.42); font-weight:500; }
+body.portfolio .tab--group{ gap:5px; }
+body.portfolio #groups{ gap:4px; }
+body.portfolio .tab__value{ color:rgba(255,255,255,.4); }
 body.portfolio .tab__caret{
-  width:10px; height:6px; margin-left:2px;
-  fill:none; stroke:currentColor; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round;
-  opacity:.6; transition: transform var(--ease);
+  width:9px; height:6px; margin-left:1px;
+  fill:none; stroke:currentColor; stroke-width:1.4; stroke-linecap:round; stroke-linejoin:round;
+  opacity:.55; transition: transform var(--ease);
 }
 body.portfolio .tab--group[aria-expanded="true"] .tab__caret{ transform:rotate(180deg); }
 /* un filtre est choisi : le choix ressort et l'onglet est entouré */
-body.portfolio .tab--group.has-filter{ border-color:rgba(255,255,255,.28); }
-body.portfolio .tab--group.has-filter .tab__value{ color:#fff; font-weight:600; }
+body.portfolio .tab--group.has-filter{ border-color:rgba(255,255,255,.26); }
+body.portfolio .tab--group.has-filter .tab__value{ color:#fff; }
 /* onglet déplié */
-body.portfolio .tab--group[aria-expanded="true"]{ color:#fff; background:var(--fill-hover); }
+body.portfolio .tab--group[aria-expanded="true"]{ color:#fff; background:rgba(255,255,255,.08); }
 
 /* Ligne des choix, sous les onglets principaux */
 body.portfolio .subtabs{
-  display:flex; flex-wrap:wrap; gap:4px;
-  margin-top:12px; padding:12px 0 14px;
+  display:flex; flex-wrap:wrap; gap:2px 4px;
+  margin-top:10px; padding:8px 0 10px;
   border-top:1px solid rgba(255,255,255,.08);
 }
 body.portfolio .subtabs--sizes{ margin-top:0; padding-top:0; border-top:0; }
-body.portfolio .tab--sub{ height:34px; padding:0 10px; font-size:14px; }
-body.portfolio .subtabs--sizes .tab--sub{ height:30px; font-size:13px; font-weight:500; }
+body.portfolio .tab--sub{ height:28px; padding:0 8px; font-size:13px; }
+body.portfolio .subtabs--sizes .tab--sub{ height:26px; font-size:12px; }
 body.portfolio .tab__count{
-  min-width:22px; height:20px; padding:0 6px;
+  min-width:18px; height:16px; padding:0 5px;
   display:inline-flex; align-items:center; justify-content:center;
-  border-radius:6px;
-  background:rgba(255,255,255,.10);
-  font-size:12px; font-weight:600; color:rgba(255,255,255,.75);
+  border-radius:5px;
+  background:rgba(255,255,255,.08);
+  font-size:11px; font-weight:500; color:rgba(255,255,255,.6);
   font-variant-numeric: tabular-nums;
 }
-body.portfolio .tab[aria-pressed="true"] .tab__count{ background:rgba(255,255,255,.2); color:#fff; }
+body.portfolio .tab[aria-pressed="true"] .tab__count{ background:rgba(255,255,255,.16); color:#fff; }
 
 /* Recherche avec loupe */
 body.portfolio .search{
@@ -324,17 +324,17 @@ body.portfolio .search{
   margin-left:auto;
 }
 body.portfolio .search__icon{
-  position:absolute; left:12px;
-  width:16px; height:16px;
+  position:absolute; left:11px;
+  width:14px; height:14px;
   fill:none; stroke:rgba(255,255,255,.55); stroke-width:1.6; stroke-linecap:round;
   pointer-events:none;
 }
 body.portfolio .search input{
-  width:100%; height:38px;
-  padding:0 12px 0 36px;
-  border:1px solid rgba(255,255,255,.22); border-radius:10px;
+  width:100%; height:32px;
+  padding:0 10px 0 32px;
+  border:1px solid rgba(255,255,255,.22); border-radius:8px;
   background:rgba(255,255,255,.04);
-  color:#fff; font:inherit; font-size:14px;
+  color:#fff; font:inherit; font-size:13px;
   outline:none;
 }
 body.portfolio .search input::placeholder{ color:rgba(255,255,255,.45); }

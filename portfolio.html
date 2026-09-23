@@ -133,7 +133,7 @@
     let currentList = [];   // œuvres actuellement affichées (après filtres)
     let modalIndex = -1;
 
-    // un choix par onglet (Set vide = tous)
+    // plusieurs choix par onglet (Set vide = tous)
     const filters = {
       q: "",
       category: new Set(),
@@ -388,20 +388,22 @@
        ========================= */
 
     // une ligne de choix : « Tous » + un bouton par valeur, avec le nombre d'œuvres (les choix vides sont masqués)
-    function fillChoices(box, key, allLabel, items, onPick){
-      const active = [...filters[key]][0] || "";
+    // plusieurs choix possibles : un clic coche / décoche, « Toutes » efface la ligne
+    function fillChoices(box, key, allLabel, items, onChange){
+      const set = filters[key];
       box.innerHTML = "";
       items.forEach(it => {
-        if(!it.n && it.value && it.value !== active) return;
+        if(!it.n && it.value && !set.has(it.value)) return;
         const btn = document.createElement("button");
         btn.type = "button";
         btn.className = "tab tab--sub";
-        btn.setAttribute("aria-pressed", String(it.value === active));
+        btn.setAttribute("aria-pressed", String(it.value ? set.has(it.value) : set.size === 0));
         btn.innerHTML = `<span>${escapeHtml(it.value ? it.label : t(allLabel))}</span><span class="tab__count">${it.n}</span>`;
         btn.addEventListener("click", () => {
-          filters[key].clear();
-          if(it.value) filters[key].add(it.value);
-          onPick && onPick();
+          if(!it.value) set.clear();
+          else if(set.has(it.value)) set.delete(it.value);
+          else set.add(it.value);
+          onChange && onChange();
           render();
         });
         box.appendChild(btn);
@@ -409,12 +411,14 @@
     }
 
     // choix en cours d'un onglet, affiché à côté de son nom (« Toutes » s'il n'y a pas de filtre)
+    // onglet replié : le 1er choix + le nombre d'autres (« Danseuses +2 »)
     function groupValue(name){
       const g = GROUPS[name];
-      const v = [...filters[g.key]][0];
-      if(!v) return t(g.all);
-      if(name === "format" && filters.size.size) return `${g.label(v)} · ${prettySize([...filters.size][0])}`;
-      return g.label(v);
+      const short = (list) => list[0] + (list.length > 1 ? ` +${list.length - 1}` : "");
+      const vals = [...filters[g.key]].map(g.label);
+      if(!vals.length) return t(g.all);
+      if(name === "format" && filters.size.size) return `${short(vals)} · ${short([...filters.size].map(prettySize))}`;
+      return short(vals);
     }
 
     function renderTabs(){
@@ -435,11 +439,9 @@
       const values = g.values || uniq(artworks.map(a => a[g.key]).filter(Boolean));
       fillChoices(els.subtabs, g.key, g.all, [{ value: "", n: pool.length }]
         .concat(values.map(v => ({ value: v, label: g.label(v), n: pool.filter(a => a[g.key] === v).length }))),
-        g.key === "shape"
-          ? () => { filters.size.clear(); if(!filters.shape.size) activeGroup = null; }
-          : () => { activeGroup = null; });
+        g.key === "shape" ? () => filters.size.clear() : null);
 
-      // Format : une fois la forme choisie, ses tailles en dessous
+      // Format : une fois une forme choisie, ses tailles en dessous
       const showSizes = activeGroup === "format" && filters.shape.size > 0;
       els.sizes.hidden = !showSizes;
       if(showSizes){
@@ -447,8 +449,7 @@
         const area = (v) => { const d = parseDims(v); return d ? d.w * d.h : 0; };
         const sizes = uniq(sizePool.map(a => a.sizeNorm).filter(Boolean)).sort((a, b) => area(a) - area(b));
         fillChoices(els.sizes, "size", "Toutes", [{ value: "", n: sizePool.length }]
-          .concat(sizes.map(v => ({ value: v, label: prettySize(v), n: sizePool.filter(a => a.sizeNorm === v).length }))),
-          () => { activeGroup = null; });
+          .concat(sizes.map(v => ({ value: v, label: prettySize(v), n: sizePool.filter(a => a.sizeNorm === v).length }))));
       }
     }
 
