@@ -54,58 +54,55 @@
         </nav>
       </header>
 
-      <!-- Chips actives -->
-      <div class="filterChips" id="chips" translate="no"></div>
+      <!-- Barre d'outils : titre, onglets par catégorie, filtres, recherche -->
+      <section class="toolbar" aria-label="Filtres">
+        <h1 class="title">Portfolio</h1>
 
-      <!-- Barre de filtres -->
-      <section class="filterBar" aria-label="Filtres">
-        <div class="field field--search">
-          <input id="q" class="pillInput" type="search" placeholder="Rechercher une œuvre…" aria-label="Rechercher une œuvre" />
-        </div>
+        <!-- Catégorie (colonne C) : un onglet par catégorie, avec le nombre d'œuvres -->
+        <div class="tabs" id="tabs" aria-label="Catégorie" translate="no"></div>
 
-        <div class="filterPills">
-        <!-- Catégorie (colonne C) -->
-        <div class="dd" data-key="category">
-          <button class="pillBtn" type="button" aria-haspopup="true" aria-expanded="false">
-            Catégorie <span class="pillCount" data-count="category"></span>
-            <span class="pillCaret">▾</span>
-          </button>
-          <div class="ddPanel" role="group" aria-label="Catégorie" data-panel="category"></div>
-        </div>
+        <div class="toolbar__end">
+          <div class="filterPills">
+          <!-- Technique -->
+          <div class="dd" data-key="technique">
+            <button class="pillBtn" type="button" aria-haspopup="true" aria-expanded="false">
+              Technique <span class="pillCount" data-count="technique"></span>
+              <span class="pillCaret">▾</span>
+            </button>
+            <div class="ddPanel" role="group" aria-label="Technique" data-panel="technique"></div>
+          </div>
 
-        <!-- Technique -->
-        <div class="dd" data-key="technique">
-          <button class="pillBtn" type="button" aria-haspopup="true" aria-expanded="false">
-            Technique <span class="pillCount" data-count="technique"></span>
-            <span class="pillCaret">▾</span>
-          </button>
-          <div class="ddPanel" role="group" aria-label="Technique" data-panel="technique"></div>
-        </div>
+          <!-- Format (Forme + tailles) -->
+          <div class="dd" data-key="format">
+            <button class="pillBtn" type="button" aria-haspopup="true" aria-expanded="false">
+              Format <span class="pillCount" data-count="format"></span>
+              <span class="pillCaret">▾</span>
+            </button>
+            <div class="ddPanel" role="group" aria-label="Format" data-panel="format"></div>
+          </div>
 
-        <!-- Format (Forme + tailles) -->
-        <div class="dd" data-key="format">
-          <button class="pillBtn" type="button" aria-haspopup="true" aria-expanded="false">
-            Format <span class="pillCount" data-count="format"></span>
-            <span class="pillCaret">▾</span>
-          </button>
-          <div class="ddPanel" role="group" aria-label="Format" data-panel="format"></div>
-        </div>
+          <!-- Disponible -->
+          <div class="dd" data-key="status">
+            <button class="pillBtn" type="button" aria-haspopup="true" aria-expanded="false">
+              Disponible <span class="pillCount" data-count="status"></span>
+              <span class="pillCaret">▾</span>
+            </button>
+            <div class="ddPanel" role="group" aria-label="Disponible" data-panel="status"></div>
+          </div>
 
-        <!-- Disponible -->
-        <div class="dd" data-key="status">
-          <button class="pillBtn" type="button" aria-haspopup="true" aria-expanded="false">
-            Disponible <span class="pillCount" data-count="status"></span>
-            <span class="pillCaret">▾</span>
-          </button>
-          <div class="ddPanel" role="group" aria-label="Disponible" data-panel="status"></div>
-        </div>
+          <button class="pillBtn pillBtn--ghost" id="reset" type="button" hidden>Tout effacer</button>
+          </div>
 
-        <button class="pillBtn pillBtn--ghost" id="reset" type="button">Tout effacer</button>
+          <label class="search">
+            <svg class="search__icon" viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="m13 13 4 4"/></svg>
+            <input id="q" type="search" placeholder="Rechercher" aria-label="Rechercher une œuvre" />
+          </label>
         </div>
       </section>
 
+      <!-- Chips actives + nombre d'œuvres affichées -->
       <div class="metaRow">
-        <h1 class="title">Portfolio</h1>
+        <div class="filterChips" id="chips" translate="no"></div>
         <div class="count" id="count" aria-live="polite">Chargement…</div>
       </div>
 
@@ -160,6 +157,7 @@
       masonry: document.getElementById("masonry"),
       count: document.getElementById("count"),
       chips: document.getElementById("chips"),
+      tabs: document.getElementById("tabs"),
 
       modal: document.getElementById("modal"),
       modalImg: document.getElementById("modalImg"),
@@ -172,21 +170,18 @@
     };
 
     const ddEls = {
-      category: document.querySelector('.dd[data-key="category"]'),
       technique: document.querySelector('.dd[data-key="technique"]'),
       format: document.querySelector('.dd[data-key="format"]'),
       status: document.querySelector('.dd[data-key="status"]'),
     };
 
     const panels = {
-      category: document.querySelector('[data-panel="category"]'),
       technique: document.querySelector('[data-panel="technique"]'),
       format: document.querySelector('[data-panel="format"]'),
       status: document.querySelector('[data-panel="status"]'),
     };
 
     const countBadges = {
-      category: document.querySelector('[data-count="category"]'),
       technique: document.querySelector('[data-count="technique"]'),
       format: document.querySelector('[data-count="format"]'),
       status: document.querySelector('[data-count="status"]'),
@@ -200,7 +195,7 @@
     // filtres multi
     const filters = {
       q: "",
-      category: new Set(),
+      category: new Set(),  // un seul onglet à la fois ; vide = toutes
       technique: new Set(),
       // format = 2 sous-filtres dans le même dropdown
       shape: new Set(),    // "carre" | "paysage" | "portrait"
@@ -599,11 +594,9 @@
 
 
     function hydrateDropdowns(){
-      const categories = uniq(artworks.map(a => a.category).filter(Boolean));
       const techniques = uniq(artworks.map(a => a.technique).filter(Boolean));
       const statuses = ["disponible","vendue"];
 
-      buildSimplePanel("category", categories, t);
       buildSimplePanel("technique", techniques, t);
       buildFormatPanel();
       buildSimplePanel("status", statuses, statusLabel);
@@ -616,7 +609,6 @@
     function renderChips(){
       const chips = [];
 
-      filters.category.forEach(v => chips.push({ key:"category", label: t(v), raw: v }));
       filters.technique.forEach(v => chips.push({ key:"technique", label: t(v), raw: v }));
 
       filters.shape.forEach(v => chips.push({ key:"shape", label: shapeLabel(v), raw: v }));
@@ -641,7 +633,6 @@
           // raw = valeur d'origine (le libellé affiché peut être traduit)
           filters[c.key].delete(c.raw);
 
-          setBadgeCount("category");
           setBadgeCount("technique");
           setBadgeCount("format");
           setBadgeCount("status");
@@ -650,7 +641,6 @@
           buildFormatPanel();
 
           // rebuild other panels to sync checkboxes
-          syncSimplePanel("category");
           syncSimplePanel("technique");
           syncSimplePanel("status");
 
@@ -675,12 +665,13 @@
        FILTERING + RENDER
        ========================= */
 
-    function matchArtwork(a){
+    // ignoreCategory : sert à compter les œuvres de chaque onglet avec les autres filtres
+    function matchArtwork(a, ignoreCategory = false){
       if(a.broken) return false; // image introuvable (ni miniature ni original)
       const q = (filters.q||"").trim().toLowerCase();
       if(q && !a.title.toLowerCase().includes(q)) return false;
 
-      if(filters.category.size && !filters.category.has(a.category)) return false;
+      if(!ignoreCategory && filters.category.size && !filters.category.has(a.category)) return false;
       if(filters.technique.size && !filters.technique.has(a.technique)) return false;
 
       // Format : forme + tailles (AND)
@@ -699,8 +690,44 @@
       requestAnimationFrame(() => { renderQueued = false; render(); });
     }
 
+    /* =========================
+       ONGLETS (Catégorie)
+       ========================= */
+
+    function renderTabs(){
+      const pool = artworks.filter(a => matchArtwork(a, true));
+      const categories = uniq(artworks.map(a => a.category).filter(Boolean));
+      const active = [...filters.category][0] || "";
+
+      const tabs = [{ value: "", label: t("Toutes"), n: pool.length }]
+        .concat(categories.map(c => ({ value: c, label: t(c), n: pool.filter(a => a.category === c).length })));
+
+      els.tabs.innerHTML = "";
+      tabs.forEach(tab => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "tab";
+        btn.setAttribute("aria-pressed", String(tab.value === active));
+        btn.innerHTML = `<span>${escapeHtml(tab.label)}</span><span class="tab__count">${tab.n}</span>`;
+        btn.addEventListener("click", () => {
+          filters.category.clear();
+          if(tab.value) filters.category.add(tab.value);
+          render();
+        });
+        els.tabs.appendChild(btn);
+      });
+    }
+
+    function hasActiveFilters(){
+      return Boolean(filters.q.trim() || filters.category.size || filters.technique.size ||
+        filters.shape.size || filters.size.size || filters.status.size);
+    }
+
     function render(){
-      const list = artworks.filter(matchArtwork);
+      renderTabs();
+      els.reset.hidden = !hasActiveFilters();
+
+      const list = artworks.filter(a => matchArtwork(a));
       currentList = list;
 
       els.masonry.innerHTML = "";
