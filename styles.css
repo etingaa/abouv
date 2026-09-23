@@ -109,7 +109,7 @@ a{ color: inherit; text-decoration: none; }
 /* HEADER : séparé du contenu par une fine ligne sur toute la largeur de l'écran */
 .page{ overflow-x:clip; } /* la ligne déborde du conteneur sans créer de défilement horizontal */
 .top{
-  position:relative;
+  position:sticky; top:0; z-index:50; /* reste en haut de l'écran quand on descend */
   display:flex;
   align-items:center;
   justify-content:space-between;
@@ -124,6 +124,74 @@ a{ color: inherit; text-decoration: none; }
   transform:translateX(-50%);
   background:rgba(255,255,255,.09);
   pointer-events:none;
+}
+
+/* =========================
+   HEADER COMPACT (classe .is-compact posée par site.js dès qu'on descend)
+   ========================= */
+/* fond pleine largeur, légèrement flouté, qui n'apparaît qu'en mode compact */
+.top::before{
+  content:"";
+  position:absolute; top:0; bottom:0; left:50%;
+  width:100vw; transform:translateX(-50%);
+  background:rgba(2,37,58,.78);
+  -webkit-backdrop-filter:blur(14px) saturate(1.2);
+  backdrop-filter:blur(14px) saturate(1.2);
+  opacity:0; transition:opacity .25s ease;
+  pointer-events:none; z-index:-1;
+}
+.top.is-compact{ padding:8px 0; }
+.top.is-compact::before{ opacity:1; }
+
+/* nom → monogramme */
+.brand__short{ display:none; }
+.top.is-compact .brand__full{ display:none; }
+.top.is-compact .brand__short{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:34px; height:34px;
+  border:1px solid rgba(255,255,255,.28); border-radius:var(--radius);
+  font-size:13px; letter-spacing:.06em; padding:0;
+}
+
+/* mots → icônes (grand écran seulement : sur téléphone le menu est déjà un bouton) */
+.nav__icon{ display:none; }
+@media (min-width: 761px){
+  .top.is-compact .top__nav{ gap:2px; }
+  .top.is-compact .nav__link{
+    position:relative;
+    display:inline-flex; align-items:center; justify-content:center;
+    width:36px; height:34px; padding:0;
+  }
+  .top.is-compact .nav__icon{
+    display:block; width:18px; height:18px;
+    fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round;
+  }
+  .top.is-compact .nav__text{
+    position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap;
+  }
+  /* infobulle : le mot sous l'icône au survol */
+  .top.is-compact .nav__link::after{
+    content:attr(data-tip);
+    position:absolute; top:calc(100% + 8px); left:50%;
+    transform:translate(-50%, -4px);
+    padding:5px 8px; border-radius:6px;
+    background:#0b1c28; border:1px solid rgba(255,255,255,.14);
+    font-size:12px; font-weight:500; color:#fff; white-space:nowrap;
+    opacity:0; pointer-events:none;
+    transition:opacity var(--ease), transform var(--ease);
+  }
+  .top.is-compact .nav__link:hover::after,
+  .top.is-compact .nav__link:focus-visible::after{ opacity:1; transform:translate(-50%, 0); }
+
+  /* petite apparition au changement de mode */
+  .top.has-toggled .nav__icon,
+  .top.has-toggled .nav__text,
+  .top.has-toggled .brand > span{ animation:headerIn .28s ease; }
+}
+@keyframes headerIn{ from{ opacity:0; transform:translateY(-3px); } to{ opacity:1; transform:none; } }
+@media (prefers-reduced-motion: reduce){
+  .top::before{ transition:none; }
+  .top.has-toggled .nav__icon, .top.has-toggled .nav__text, .top.has-toggled .brand > span{ animation:none; }
 }
 
 /* TITRES DE PARTIES : petit libellé en capitales espacées + info à droite, fine ligne dessous.
@@ -212,6 +280,7 @@ a{ color: inherit; text-decoration: none; }
 
 @media (max-width: 860px) and (min-width: 761px){
   .top{ flex-direction: column; align-items:flex-start; gap: 10px; }
+  .top.is-compact{ flex-direction: row; align-items:center; }
   .top__nav{ justify-content: flex-start; gap: 2px; margin-left: -14px; }
 }
 
@@ -686,6 +755,7 @@ body.galeries{
 
 .galMap{
   position: relative;
+  isolation: isolate; /* les calques Leaflet restent sous le header collant */
   background:#0b1c28;
   border-right: 1px solid rgba(255,255,255,.14);
   min-height: 620px;
