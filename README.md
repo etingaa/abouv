@@ -28,7 +28,7 @@ Sans miniature, le site retombe sur l'image d'origine (plus lourde, mais elle s'
 Une seule copie de chaque page : les pages sont écrites en français et `i18n.js` les traduit en anglais
 à l'affichage. Toute modification de mise en page ou de style vaut donc pour les deux langues.
 
-- **Choix de la langue** : sélecteur FR / EN ajouté automatiquement dans le menu (choix mémorisé).
+- **Choix de la langue** : menu déroulant « FR ▾ » ajouté automatiquement dans le pied de page, à droite de « mentions légales » (choix mémorisé).
   Sans choix, un navigateur en français voit le site en français, les autres en anglais.
   Lien direct vers une langue : `portfolio.html?lang=en`.
 - **Ajouter ou modifier un texte** : l'écrire en français dans la page, puis ajouter la ligne

@@ -278,35 +278,74 @@
   }
 
   /* =========================
-     Sélecteur FR / EN (ajouté dans le menu de chaque page)
+     Sélecteur de langue : menu déroulant « FR ▾ » dans le pied de page,
+     juste à droite du lien « mentions légales », à la même taille
      ========================= */
 
+  const NAMES = { fr: "Français", en: "English" };
+
+  function switchTo(l){
+    if (l === lang) return;
+    store(l);
+    const url = new URL(location.href);
+    url.searchParams.delete("lang");
+    location.replace(url.href);
+  }
+
   function addSwitch(){
-    const nav = document.querySelector(".top__nav");
-    if (!nav) return;
+    const footer = document.querySelector("footer.siteFooter, footer.bottom");
+    if (!footer) return;
+    const legal = footer.lastElementChild; // « mentions légales » (ou « retour à l'accueil »)
+    if (!legal) return;
+
     const box = document.createElement("span");
-    box.className = "langSwitch";
-    box.setAttribute("role", "group");
-    box.setAttribute("aria-label", t("Langue"));
-    LANGS.forEach((l, i) => {
-      if (i) box.insertAdjacentHTML("beforeend", '<span class="langSwitch__sep" aria-hidden="true">/</span>');
-      const b = document.createElement("button");
-      b.type = "button";
-      b.className = "langSwitch__btn";
-      b.lang = l;
-      b.textContent = l.toUpperCase();
-      b.setAttribute("aria-label", l === "fr" ? "Français" : "English");
-      b.setAttribute("aria-pressed", String(l === lang));
-      b.addEventListener("click", () => {
-        if (l === lang) return;
-        store(l);
-        const url = new URL(location.href);
-        url.searchParams.delete("lang");
-        location.replace(url.href);
-      });
-      box.appendChild(b);
+    box.className = "langMenu";
+
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "langMenu__btn";
+    btn.setAttribute("aria-haspopup", "true");
+    btn.setAttribute("aria-expanded", "false");
+    btn.setAttribute("aria-label", t("Langue") + " : " + NAMES[lang]);
+    btn.innerHTML = lang.toUpperCase() +
+      '<svg class="langMenu__caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg>';
+
+    const list = document.createElement("div");
+    list.className = "langMenu__list";
+    list.hidden = true;
+    LANGS.forEach(l => {
+      const o = document.createElement("button");
+      o.type = "button";
+      o.className = "langMenu__opt";
+      o.lang = l;
+      o.textContent = NAMES[l];
+      if (l === lang) o.setAttribute("aria-current", "true");
+      o.addEventListener("click", () => switchTo(l));
+      list.appendChild(o);
     });
-    nav.appendChild(box);
+
+    const setOpen = (open) => {
+      list.hidden = !open;
+      btn.setAttribute("aria-expanded", String(open));
+    };
+    btn.addEventListener("click", (e) => { e.stopPropagation(); setOpen(list.hidden); });
+    document.addEventListener("click", () => setOpen(false));
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !list.hidden) { setOpen(false); btn.focus(); }
+    });
+
+    box.append(btn, list);
+
+    // lien + menu regroupés, pour que le menu reste collé au lien
+    const pair = document.createElement("span");
+    pair.className = "langPair";
+    legal.replaceWith(pair);
+    pair.append(legal, box);
+
+    // même taille et même couleur que le lien
+    const cs = getComputedStyle(legal);
+    box.style.fontSize = cs.fontSize;
+    btn.style.color = cs.color;
   }
 
   document.addEventListener("DOMContentLoaded", () => {

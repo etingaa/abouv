@@ -130,16 +130,32 @@ a{ color: inherit; text-decoration: none; }
 .nav__link:hover{ border-bottom-color: rgba(255,255,255,.5); }
 .nav__link.is-active{ border-bottom-color: #fff; }
 
-/* Sélecteur de langue FR / EN (ajouté par i18n.js) */
-.langSwitch{ display:inline-flex; align-items:center; gap:4px; margin-left:6px; padding-bottom:6px; }
-.langSwitch__btn{
-  background:none; border:0; padding:4px 2px; cursor:pointer;
-  font:inherit; font-size:13px; font-weight:600; letter-spacing:.06em;
-  color: rgba(255,255,255,.45);
+/* Sélecteur de langue (ajouté par i18n.js dans le pied de page, à droite de « mentions légales ») */
+.langPair{ display:inline-flex; align-items:baseline; gap:14px; margin-left:auto; }
+.langMenu{ position:relative; }
+.langMenu__btn{
+  display:inline-flex; align-items:center; gap:5px;
+  background:none; border:0; padding:0; cursor:pointer;
+  font:inherit; font-size:inherit; letter-spacing:.04em;
 }
-.langSwitch__btn:hover{ color: rgba(255,255,255,.8); }
-.langSwitch__btn[aria-pressed="true"]{ color:#fff; }
-.langSwitch__sep{ color: rgba(255,255,255,.3); font-size:13px; }
+.langMenu__btn:hover, .langMenu__btn[aria-expanded="true"]{ color:#fff !important; }
+.langMenu__caret{ width:9px; height:6px; fill:none; stroke:currentColor; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; }
+.langMenu__btn[aria-expanded="true"] .langMenu__caret{ transform:rotate(180deg); }
+/* le menu s'ouvre vers le haut (on est en bas de page) */
+.langMenu__list{
+  position:absolute; right:0; bottom:calc(100% + 8px); z-index:60;
+  min-width:120px; padding:6px;
+  background:#0b1c28; border:1px solid rgba(255,255,255,.18); border-radius:10px;
+  box-shadow:0 12px 32px rgba(0,0,0,.4);
+  display:flex; flex-direction:column;
+}
+.langMenu__opt{
+  background:none; border:0; border-radius:6px; padding:8px 10px; cursor:pointer; text-align:left;
+  font:inherit; font-size:14px; color:rgba(255,255,255,.8); white-space:nowrap;
+}
+.langMenu__opt:hover{ background:rgba(255,255,255,.08); color:#fff; }
+.langMenu__opt[aria-current="true"]{ color:#fff; font-weight:600; }
+.langMenu__opt[aria-current="true"]::after{ content:" ✓"; }
 
 @media (max-width: 860px){
   .top{ flex-direction: column; align-items:flex-start; gap: 10px; }
