@@ -34,28 +34,8 @@
     .about__text p:first-child{ font-size:19px; line-height:1.6; color:#fff; }
     .about__text strong{ color:#fff; font-weight:700; }
 
-    /* ===== Repères : quelques chiffres et liens ===== */
-    .facts{ display:grid; grid-template-columns:repeat(4, 1fr); gap:8px; margin-bottom:14px; }
-    .fact{
-      display:flex; flex-direction:column; gap:6px;
-      padding:16px; border:1px solid transparent; border-radius:var(--radius);
-      background:rgba(255,255,255,.03);
-      transition:background-color var(--ease), border-color var(--ease);
-    }
-    a.fact:hover{ background:rgba(255,255,255,.07); border-color:rgba(255,255,255,.2); }
-    .fact__big{ font-size:22px; font-weight:700; letter-spacing:-.01em; }
-    .fact__small{ font-size:13px; color:var(--ink-faint); line-height:1.45; }
-    a.fact .fact__small::after{ content:" →"; }
-    .ctaRow{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:56px; }
-    .ctaRow a{
-      display:inline-flex; align-items:center; gap:6px; height:32px; padding:0 12px;
-      border:1px solid rgba(255,255,255,.14); border-radius:8px; background:rgba(255,255,255,.03);
-      font-size:13px; font-weight:500; transition:background-color var(--ease), border-color var(--ease);
-    }
-    .ctaRow a:hover{ background:rgba(255,255,255,.1); border-color:rgba(255,255,255,.28); }
-
     /* ===== FAQ : questions dépliables ===== */
-    .faq{ max-width:860px; border-top:1px solid rgba(255,255,255,.09); }
+    .faq{ max-width:860px; border-top:1px solid rgba(255,255,255,.09); scroll-margin-top:calc(var(--shade-h, 90px) + 60px); }
     .faq details{ border-bottom:1px solid rgba(255,255,255,.09); }
     .faq summary{
       display:flex; align-items:center; justify-content:space-between; gap:16px;
@@ -85,7 +65,6 @@
     @media (max-width:900px){
       .about{ grid-template-columns:1fr; gap:28px; }
       .about__photo{ position:static; max-width:420px; }
-      .facts{ grid-template-columns:repeat(2, 1fr); }
     }
     @media (max-width:600px){
       .about__text p:first-child{ font-size:17px; }
@@ -160,7 +139,7 @@
     </div>
 
     <div class="sectionHead"><h2 class="sectionTitle">Questions fréquentes</h2></div>
-    <section class="faq" aria-label="Questions fréquentes">
+    <section class="faq" id="faq" aria-label="Questions fréquentes">
       <!-- Questions / réponses : version française et version anglaise (i18n.js affiche la bonne) -->
       <div data-lang="fr">
         <details>

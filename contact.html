@@ -19,75 +19,66 @@
 
 
   <style>
-    :root{
-      --bg:#02253A;
-      --ink:#fff;
-      --soft:rgba(255,255,255,.82);
-      --faint:rgba(255,255,255,.55);
-      --border:rgba(255,255,255,.18);
-      --chip:rgba(255,255,255,.08);
-      --chip2:rgba(255,255,255,.12);
-    }
-    h1{margin:0;font-size:28px;font-weight:800;letter-spacing:-.02em}
-    .lead{margin:0;color:var(--soft);max-width:760px;line-height:1.6}
+    /* ===== Formulaire à gauche, « Ailleurs » à droite ===== */
+    .contact{ display:grid; grid-template-columns:minmax(0, 1.25fr) minmax(0, .75fr); gap:48px; align-items:start; }
+    .lead{ margin:0 0 20px; color:var(--ink-soft); line-height:1.6; }
 
-    /* Card */
-    .card{
-      margin-top:18px;
-      border:1px solid var(--border);
-      border-radius:var(--radius-card);
-      background:var(--fill);
-      padding: 24px;
-      max-width: 560px;   /* le formulaire remplit le cadre, aligné sous le titre */
+    .form{
+      margin:0; display:grid; grid-template-columns:1fr 1fr; gap:14px 12px;
+      padding:22px; border:1px solid rgba(255,255,255,.12); border-radius:var(--radius-card);
+      background:rgba(255,255,255,.02);
     }
+    .field{ display:flex; flex-direction:column; gap:6px; min-width:0; }
+    .field--full{ grid-column:1 / -1; }
+    .field__label{ font-size:12px; font-weight:500; color:var(--ink-faint); }
+    .field__label em{ font-style:normal; color:rgba(255,255,255,.35); }
+    .form input, .form textarea{
+      width:100%; height:38px; padding:0 12px;
+      border:1px solid rgba(255,255,255,.14); border-radius:8px;
+      background:rgba(255,255,255,.03); color:#fff;
+      font:inherit; font-size:14px; outline:none;
+      transition:border-color var(--ease), background-color var(--ease);
+    }
+    .form textarea{ height:auto; min-height:150px; padding:10px 12px; resize:vertical; line-height:1.5; }
+    .form input:hover, .form textarea:hover{ border-color:rgba(255,255,255,.26); }
+    .form input:focus, .form textarea:focus{ border-color:rgba(255,255,255,.4); background:rgba(255,255,255,.06); }
 
-    /* Formspree form styling (simple) */
-    form{margin:0;display:grid;gap:12px}
-    label{display:grid;gap:6px;color:var(--faint);font-size:12px;letter-spacing:.06em;text-transform:uppercase;font-weight:800}
-    input, textarea{
-      width:100%;
-      border:1px solid var(--line);
-      background:var(--fill);
-      color:var(--ink);
-      border-radius:var(--radius);
-      padding:10px 12px;
-      outline:none;
-      font-size:14px;
-      text-transform:none;
-      letter-spacing:normal;
-      font-weight:500;
-    }
-    input{height:40px}
-    textarea{min-height:160px;resize:vertical}
-    input::placeholder, textarea::placeholder{color:rgba(255,255,255,.45)}
-    input:focus, textarea:focus{
-      border-color:var(--line-strong);
-      background:rgba(255,255,255,.08);
-    }
-    /* Bouton principal : plein, pour se distinguer des champs */
-    button{
-      height:40px;
-      padding:0 20px;
-      border-radius:var(--radius);
-      border:1px solid #fff;
-      background:#fff;
-      color:var(--bg);
-      font:inherit; font-size:14px; font-weight:700;
-      cursor:pointer;
-      width: fit-content;
-      transition: background-color var(--ease), border-color var(--ease);
-    }
-    button:hover{background:rgba(255,255,255,.85);border-color:rgba(255,255,255,.85)}
+    /* Sujet : mêmes onglets que les filtres */
+    .topics{ display:flex; flex-wrap:wrap; gap:4px; }
 
-    .formNote{margin:0;font-size:12px;line-height:1.5;color:var(--faint)}
-    .formNote a{border-bottom:1px solid rgba(255,255,255,.35)}
-    .formStatus{margin:0;line-height:1.5;color:var(--soft)}
-    .formStatus.is-error{color:#ff9b9b}
-    button:disabled{opacity:.6;cursor:progress}
+    .form__foot{ display:flex; flex-wrap:wrap; align-items:center; gap:12px 16px; }
+    .sendBtn{
+      height:36px; padding:0 18px;
+      border:1px solid #fff; border-radius:8px; background:#fff; color:var(--bg);
+      font:inherit; font-size:14px; font-weight:600; cursor:pointer;
+      transition:background-color var(--ease), border-color var(--ease);
+    }
+    .sendBtn:hover{ background:rgba(255,255,255,.85); border-color:rgba(255,255,255,.85); }
+    .sendBtn:disabled{ opacity:.6; cursor:progress; }
+    .formNote{ margin:0; flex:1; min-width:220px; font-size:12px; line-height:1.5; color:var(--ink-faint); }
+    .formNote a{ border-bottom:1px solid rgba(255,255,255,.35); }
+    .formStatus{ grid-column:1 / -1; margin:0; line-height:1.5; color:var(--ink-soft); }
+    .formStatus.is-error{ color:#ff9b9b; }
+
+    /* Ailleurs : tuiles empilées */
+    .elsewhere .facts{ grid-template-columns:1fr; }
+    .elsewhere .fact__big{ font-size:18px; }
+
+    @media (max-width:900px){
+      .contact{ grid-template-columns:1fr; gap:40px; }
+      .elsewhere .facts{ grid-template-columns:repeat(2, 1fr); }
+    }
+    @media (max-width:600px){
+      .form{ grid-template-columns:1fr; padding:16px; }
+      .form input{ height:42px; font-size:16px; } /* 16 px : iOS ne zoome pas sur le champ */
+      .form textarea{ font-size:16px; }
+      .topics .tab{ height:32px; }
+    }
   </style>
 </head>
 
-<body>
+<body class="contactPage">
+  <div class="page">
   <div class="container">
     <header class="top">
       <a class="brand" href="index.html">ANNICK&nbsp;BOUVATTIER</a>
@@ -103,53 +94,76 @@
     </header>
 
     <h1 class="sr-only">Contact</h1>
-    <div class="sectionHead"><h2 class="sectionTitle">Écrire un message</h2></div>
-    <p class="lead">Écrivez-moi ici, je vous réponds dès que possible.</p>
+    <div class="contact">
+      <section aria-label="Formulaire de contact">
+        <div class="sectionHead"><h2 class="sectionTitle">Écrire un message</h2></div>
+        <p class="lead">Écrivez-moi ici, je vous réponds dès que possible.</p>
 
-    <section class="card" aria-label="Formulaire de contact">
-      <form id="contactForm" action="https://formspree.io/f/xdalokdl" method="POST">
-        <label>
-          Email
-          <input type="email" name="email" autocomplete="email" required>
-        </label>
+        <form class="form" id="contactForm" action="https://formspree.io/f/xdalokdl" method="POST">
+          <!-- Sujet : envoyé avec le message (champ « Sujet ») -->
+          <div class="field field--full">
+            <span class="field__label" id="topicLabel">Sujet</span>
+            <div class="topics" role="radiogroup" aria-labelledby="topicLabel">
+              <button class="tab tab--sub" type="button" role="radio" data-topic="Acquisition">Acquisition</button>
+              <button class="tab tab--sub" type="button" role="radio" data-topic="Commande">Commande</button>
+              <button class="tab tab--sub" type="button" role="radio" data-topic="Presse">Presse</button>
+              <button class="tab tab--sub" type="button" role="radio" data-topic="Autre">Autre</button>
+            </div>
+            <input type="hidden" name="Sujet" id="topicField" value="">
+          </div>
 
-        <label>
-          Prénom
-          <input type="text" name="Prénom" autocomplete="given-name" required>
-        </label>
+          <label class="field">
+            <span class="field__label">Prénom</span>
+            <input type="text" name="Prénom" autocomplete="given-name" required>
+          </label>
+          <label class="field">
+            <span class="field__label">Nom</span>
+            <input type="text" name="Nom" autocomplete="family-name" required>
+          </label>
+          <label class="field field--full">
+            <span class="field__label">Email</span>
+            <input type="email" name="email" autocomplete="email" required>
+          </label>
+          <label class="field">
+            <span class="field__label">Organisation <em>(facultatif)</em></span>
+            <input type="text" name="Organisation" autocomplete="organization">
+          </label>
+          <label class="field">
+            <span class="field__label">Pays <em>(facultatif)</em></span>
+            <input type="text" name="Pays" autocomplete="country-name">
+          </label>
+          <label class="field field--full">
+            <span class="field__label">Message</span>
+            <textarea name="message" id="message" required></textarea>
+          </label>
 
-        <label>
-          Nom
-          <input type="text" name="Nom" autocomplete="family-name" required>
-        </label>
+          <!-- anti-spam : champ invisible, rempli uniquement par les robots (ignoré par Formspree) -->
+          <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true"
+                 style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+          <input type="hidden" name="_subject" value="Nouveau message depuis le site Annick Bouvattier">
+          <!-- langue du site au moment de l'envoi : pour savoir en quelle langue répondre -->
+          <input type="hidden" name="Langue" id="langField" value="fr">
 
-        <label>
-          Organisation
-          <input type="text" name="Organisation" autocomplete="organization">
-        </label>
+          <div class="form__foot field--full">
+            <button class="sendBtn" type="submit" id="submitBtn">Envoyer</button>
+            <p class="formNote">Les informations saisies servent uniquement à répondre à votre demande. <a href="mentions-legales.html">En savoir plus</a></p>
+          </div>
+          <p id="formStatus" class="formStatus" role="status" aria-live="polite" hidden></p>
+        </form>
+      </section>
 
-        <label>
-          Pays
-          <input type="text" name="Pays" autocomplete="country-name">
-        </label>
+      <aside class="elsewhere" aria-label="Ailleurs">
+        <div class="sectionHead"><h2 class="sectionTitle">Ailleurs</h2></div>
+        <div class="facts">
+          <a class="fact" href="https://www.instagram.com/annick.bouvattier/" target="_blank" rel="noopener noreferrer"><span class="fact__big">Instagram</span><span class="fact__small">@annick.bouvattier</span></a>
+          <a class="fact" href="https://www.facebook.com/annick.bouvattier/" target="_blank" rel="noopener noreferrer"><span class="fact__big">Facebook</span><span class="fact__small">annick.bouvattier</span></a>
+          <a class="fact" href="https://www.saatchiart.com/bouvattier" target="_blank" rel="noopener noreferrer"><span class="fact__big">Saatchi Art</span><span class="fact__small">Œuvres en ligne</span></a>
+          <a class="fact" href="galeries.html"><span class="fact__big">Galeries</span><span class="fact__small">Voir les tableaux en vrai</span></a>
+          <a class="fact" href="apropos.html#faq"><span class="fact__big">Questions fréquentes</span><span class="fact__small">Acquisition, commandes, presse</span></a>
+        </div>
+      </aside>
+    </div>
 
-        <label>
-          Message
-          <textarea name="message" id="message" required></textarea>
-        </label>
-
-        <!-- anti-spam : champ invisible, rempli uniquement par les robots (ignoré par Formspree) -->
-        <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true"
-               style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
-        <input type="hidden" name="_subject" value="Nouveau message depuis le site Annick Bouvattier">
-        <!-- langue du site au moment de l'envoi : pour savoir en quelle langue répondre -->
-        <input type="hidden" name="Langue" id="langField" value="fr">
-
-        <button type="submit" id="submitBtn">Envoyer</button>
-        <p class="formNote">Les informations saisies servent uniquement à répondre à votre demande. <a href="mentions-legales.html">En savoir plus</a></p>
-        <p id="formStatus" class="formStatus" role="status" aria-live="polite" hidden></p>
-      </form>
-    </section>
     <footer class="bottom">
         <div class="bottom__left">
           <a class="bottom__link" href="https://www.instagram.com/annick.bouvattier/" target="_blank" rel="noopener noreferrer">instagram</a>
@@ -158,6 +172,7 @@
         </div>
         <a class="bottom__link bottom__link--legal" href="mentions-legales.html">mentions légales</a>
       </footer>
+  </div>
   </div>
 
   <script>
@@ -168,8 +183,25 @@
     const msg = document.getElementById("message");
     document.getElementById("langField").value = I18N.lang === "en" ? "anglais" : "français";
 
+    // Sujet : un seul choix, envoyé dans le champ caché « Sujet »
+    const topicField = document.getElementById("topicField");
+    const topics = document.querySelectorAll("[data-topic]");
+    function setTopic(v){
+      topicField.value = v;
+      topics.forEach(b => b.setAttribute("aria-checked", String(b.dataset.topic === v)));
+      topics.forEach(b => b.setAttribute("aria-pressed", String(b.dataset.topic === v)));
+    }
+    topics.forEach(b => b.addEventListener("click", () => setTopic(topicField.value === b.dataset.topic ? "" : b.dataset.topic)));
+    setTopic("");
+
+    // Arrivée depuis « Demander des informations » (portfolio) ou la page Presse : sujet pré-choisi
+    const params = new URLSearchParams(location.search);
+    const sujet = (params.get("sujet") || "").toLowerCase();
+    if (sujet === "presse") setTopic("Presse");
+
     // Arrivée depuis « Demander des informations » sur le portfolio : message pré-rempli
-    const oeuvre = new URLSearchParams(location.search).get("oeuvre");
+    const oeuvre = params.get("oeuvre");
+    if (oeuvre) setTopic("Acquisition");
     if (oeuvre && !msg.value) {
       msg.value = t("Bonjour,\n\nJe souhaiterais avoir des informations sur l'œuvre « {oeuvre} ».\n\nMerci,", { oeuvre: oeuvre.slice(0, 120) });
     }
@@ -194,6 +226,7 @@
         });
         if (!res.ok) throw new Error("HTTP " + res.status);
         form.reset();
+        setTopic("");
         say(t("Merci, votre message a bien été envoyé. Je vous réponds dès que possible."));
       } catch (err) {
         console.warn("Envoi AJAX impossible, envoi classique.", err);

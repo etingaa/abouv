@@ -201,6 +201,32 @@ html.is-scrolled .toolbar{ border-bottom-color:transparent; }
   .shade, .nav__text, .nav__icon{ transition:none; }
 }
 
+/* TUILES (Repères d'À propos, Ressources de Presse, Ailleurs de Contact)
+   un grand mot + une ligne discrète ; une tuile-lien s'éclaire au survol et finit par → */
+.facts{ display:grid; grid-template-columns:repeat(4, 1fr); gap:8px; margin-bottom:14px; }
+.fact{
+  display:flex; flex-direction:column; gap:6px;
+  padding:16px; border:1px solid transparent; border-radius:var(--radius);
+  background:rgba(255,255,255,.03);
+  transition:background-color var(--ease), border-color var(--ease);
+}
+a.fact:hover{ background:rgba(255,255,255,.07); border-color:rgba(255,255,255,.2); }
+.fact__big{ font-size:22px; font-weight:700; letter-spacing:-.01em; }
+.fact__small{ font-size:13px; color:var(--ink-faint); line-height:1.45; }
+a.fact .fact__small::after{ content:" →"; }
+@media (max-width:900px){ .facts{ grid-template-columns:repeat(2, 1fr); } }
+
+/* Boutons fins (même format que les onglets) */
+.ctaRow{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:56px; }
+.thinBtn, .ctaRow a{
+  display:inline-flex; align-items:center; gap:6px; height:32px; padding:0 12px;
+  border:1px solid rgba(255,255,255,.14); border-radius:8px; background:rgba(255,255,255,.03);
+  color:#fff; font:inherit; font-size:13px; font-weight:500; cursor:pointer;
+  transition:background-color var(--ease), border-color var(--ease);
+}
+.thinBtn:hover, .ctaRow a:hover{ background:rgba(255,255,255,.1); border-color:rgba(255,255,255,.28); }
+.thinBtn svg{ width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
+
 /* TITRES DE PARTIES : petit libellé en capitales espacées + info à droite, fine ligne dessous.
    (Le nom de la page n'est pas répété : l'onglet actif du menu l'indique déjà ;
    il reste en <h1 class="sr-only"> pour Google et les lecteurs d'écran.) */
