@@ -18,156 +18,182 @@
   <title>Expositions — Annick Bouvattier</title>
 
   <style>
-    :root{
-      --bg:#02253A;
-      --ink:#fff;
-      --soft:rgba(255,255,255,.82);
-      --faint:rgba(255,255,255,.55);
-      --border:rgba(255,255,255,.18);
-      --chip:rgba(255,255,255,.08);
-      --chip2:rgba(255,255,255,.12);
-    }
-    /* Page head */
-    h1{margin:0;font-size:28px;font-weight:800;letter-spacing:-.02em}
-
-    /* "En ce moment" */
+    /* ===== En ce moment (optionnel) ===== */
     .now{
-      border:1px solid var(--border);
-      border-radius:var(--radius-card);
-      overflow:hidden;
-      background:rgba(255,255,255,.04);
-      display:grid;
-      grid-template-columns: 1.2fr 1fr;
-      min-height: 220px;
+      margin-bottom:24px;
+      border:1px solid var(--border); border-radius:var(--radius-card);
+      overflow:hidden; background:var(--fill);
+      display:grid; grid-template-columns:1.2fr 1fr; min-height:220px;
     }
-    @media (max-width:900px){.now{grid-template-columns:1fr}}
+    @media (max-width:900px){ .now{ grid-template-columns:1fr; } }
     .now__img{
       background:
         radial-gradient(900px 520px at 30% 20%, rgba(255,255,255,.20), rgba(255,255,255,0) 60%),
         linear-gradient(120deg, rgba(255,255,255,.10), rgba(255,255,255,.02));
       min-height:220px;
     }
-    .now__body{padding:18px 18px 16px;display:flex;flex-direction:column;gap:10px}
-    .kicker{font-size:12px;letter-spacing:.10em;text-transform:uppercase;color:var(--faint)}
-    .now__title{margin:0;font-size:18px;font-weight:800}
-    .now__line{color:var(--soft);line-height:1.55}
+    .now__body{ padding:18px 18px 16px; display:flex; flex-direction:column; gap:10px; }
+    .kicker{ font-size:12px; letter-spacing:.10em; text-transform:uppercase; color:var(--ink-faint); }
+    .now__title{ margin:0; font-size:18px; font-weight:800; }
+    .now__line{ color:var(--ink-soft); line-height:1.55; }
     .btn{
-      display:inline-flex;align-items:center;justify-content:center;
-      width:max-content;height:var(--control-h);
-      border:1px solid var(--line);
-      background:var(--fill);
-      color:var(--ink);
-      font:inherit;font-size:14px;font-weight:600;
-      padding:0 12px;
-      border-radius:var(--radius);
-      cursor:pointer;
+      display:inline-flex; align-items:center; justify-content:center;
+      width:max-content; height:var(--control-h); padding:0 12px;
+      border:1px solid var(--line); border-radius:var(--radius); background:var(--fill);
+      color:#fff; font:inherit; font-size:14px; font-weight:600; cursor:pointer;
       transition:background-color var(--ease);
     }
-    .btn:hover{background:var(--fill-hover)}
+    .btn:hover{ background:var(--fill-hover); }
 
-    /* Filters */
-    .filters{
-      margin-top:14px;
-      border:1px solid var(--border);
-      border-radius:var(--radius-card);
-      padding:12px;
-      background:var(--fill);
-      display:grid;
-      grid-template-columns: 1.2fr 1fr 1fr 1fr auto;
-      gap:10px;
-      align-items:end;
+    /* ===== Timeline =====
+       Une ligne du temps horizontale qu'on fait glisser : personnelles au-dessus de la ligne,
+       collectives et salons en dessous. Les années sans exposition sont resserrées. */
+    .tlWrap{ position:relative; margin:4px 0 0; }
+    .tl{
+      position:relative;
+      overflow-x:auto; overflow-y:hidden;
+      scrollbar-width:none; -webkit-overflow-scrolling:touch;
+      cursor:grab; user-select:none;
+      /* fondu sur les bords : on devine qu'il y a une suite */
+      -webkit-mask-image:linear-gradient(to right, transparent 0, #000 48px, #000 calc(100% - 48px), transparent 100%);
+      mask-image:linear-gradient(to right, transparent 0, #000 48px, #000 calc(100% - 48px), transparent 100%);
     }
-    @media (max-width:1050px){.filters{grid-template-columns:1fr 1fr 1fr}}
-    @media (max-width:680px){
-      /* téléphone : recherche sur toute la largeur, puis les 3 listes côte à côte */
-      .filters{grid-template-columns:repeat(3,minmax(0,1fr));padding:10px;gap:8px}
-      .filters .field:first-child, .filters #reset{grid-column:1/-1}
-      .filters select{padding:8px 6px;font-size:13px}
-      .filters #reset{width:100%;padding:8px}
-      .label{font-size:11px}
-      .yearHead{padding:12px 14px}
-      .items{padding:8px}
-      .expo{padding:10px}
+    .tl::-webkit-scrollbar{ display:none; }
+    .tl.is-dragging{ cursor:grabbing; }
+    .tl.is-dragging .tlCard{ pointer-events:none; }
+    .tlTrack{
+      position:relative;
+      display:flex; align-items:stretch;
+      width:max-content;
+      padding:0 48px;
     }
+    /* la ligne du temps */
+    .tlTrack::before{
+      content:""; position:absolute; left:0; right:0; top:var(--axis-y);
+      height:1px; background:linear-gradient(to right, rgba(255,255,255,.08), rgba(255,255,255,.3) 8%, rgba(255,255,255,.3) 92%, rgba(255,255,255,.08));
+    }
+    .tlYear{
+      position:relative;
+      display:grid; grid-template-rows:var(--lane-top, auto) 44px auto;
+      width:220px; padding:0 10px;
+    }
+    .tlYear.is-empty{ width:26px; padding:0; }
+    .tlLane{ display:flex; flex-direction:column; gap:8px; }
+    .tlLane--top{ justify-content:flex-end; padding-bottom:12px; }
+    .tlLane--bottom{ justify-content:flex-start; padding-top:12px; }
+    /* trait vertical qui relie les cartes à la ligne */
+    .tlLane--top:not(:empty)::after,
+    .tlLane--bottom:not(:empty)::before{
+      content:""; align-self:center; width:1px; height:12px; flex:none;
+      background:rgba(255,255,255,.22);
+    }
+    .tlLane--top:not(:empty)::after{ margin-bottom:-12px; }
+    .tlLane--bottom:not(:empty)::before{ margin-top:-12px; }
 
-    .field{display:flex;flex-direction:column;gap:6px;min-width:0}
-    .label{font-size:12px;color:var(--faint);letter-spacing:.06em;text-transform:uppercase}
-    input,select{
-      color-scheme:dark; /* listes déroulantes sombres (sinon texte blanc sur fond blanc sous Windows) */
-      height:var(--control-h);width:100%;
-      border:1px solid var(--line);
-      background:var(--fill);
-      color:var(--ink);
-      border-radius:var(--radius);
-      padding:0 12px;
-      outline:none;
-      font-size:14px;
+    .tlAxis{
+      position:relative;
+      display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px;
     }
-    input::placeholder{color:rgba(255,255,255,.45)}
-    input:focus,select:focus{border-color:var(--line-strong);background:rgba(255,255,255,.08)}
+    .tlDot{
+      width:9px; height:9px; border-radius:50%;
+      background:#02253A; border:1.5px solid rgba(255,255,255,.7);
+      transition:background-color var(--ease), transform var(--ease);
+    }
+    .tlYear.is-hit .tlDot{ background:#fff; transform:scale(1.15); }
+    .tlYear.is-empty .tlDot{ width:3px; height:3px; border:0; background:rgba(255,255,255,.3); }
+    .tlYearLabel{
+      position:absolute; top:calc(50% + 10px);
+      font-size:12px; font-weight:600; letter-spacing:.04em; color:rgba(255,255,255,.62);
+      font-variant-numeric:tabular-nums;
+    }
+    .tlYear.is-hit .tlYearLabel{ color:#fff; }
+    .tlYear.is-empty .tlYearLabel{ display:none; }
+    .tlYear.is-empty.is-decade .tlYearLabel{ display:block; font-size:10px; color:rgba(255,255,255,.35); }
 
-    /* Timeline */
-    .timeline{margin-top:18px;display:flex;flex-direction:column;gap:18px}
-    .yearBlock{
-      border:1px solid var(--border);
-      border-radius:var(--radius-card);
-      background:rgba(255,255,255,.04);
-      overflow:hidden;
+    .tlCard{
+      padding:10px 12px;
+      border:1px solid transparent; border-radius:var(--radius);
+      background:rgba(255,255,255,.05);
+      transition:opacity .3s ease, filter .3s ease, background-color var(--ease), border-color var(--ease), transform .3s ease;
     }
-    .yearHead{
-      display:flex;justify-content:space-between;align-items:baseline;
-      padding:14px 16px;
-      border-bottom:1px solid rgba(255,255,255,.10);
-      background:rgba(255,255,255,.02);
+    .tlCard:hover{ background:rgba(255,255,255,.09); border-color:rgba(255,255,255,.2); }
+    .tlCard__title{ margin:0; font-size:13px; font-weight:700; line-height:1.3; }
+    .tlCard__meta{ margin:3px 0 0; font-size:12px; color:var(--ink-soft); line-height:1.4; }
+    .tlCard__type{
+      display:inline-flex; align-items:center; gap:6px; margin-top:6px;
+      font-size:11px; color:rgba(255,255,255,.6);
     }
-    .year{font-size:18px;font-weight:800}
-    .yearCount{color:var(--faint);font-size:14px}
+    .tlCard__type::before{ content:""; width:6px; height:6px; border-radius:50%; background:var(--type-color); }
+    .tlCard[data-type="solo"]{ --type-color:#e8c07a; }
+    .tlCard[data-type="group"]{ --type-color:#8fc1ff; }
+    .tlCard[data-type="salon"]{ --type-color:#c7a6ff; }
+    /* filtre actif : ce qui ne correspond pas passe en transparence */
+    .tlCard.is-dim{ opacity:.16; filter:grayscale(1); }
 
-    .items{
-      padding:10px 12px 12px;
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:10px;
-    }
-    @media (max-width:900px){.items{grid-template-columns:1fr}}
+    /* légende des couleurs, sous la ligne du temps */
+    .tlFoot{ display:flex; flex-wrap:wrap; align-items:center; gap:6px 18px; margin:14px 0 0; }
+    .tlKey{ display:inline-flex; align-items:center; gap:6px; font-size:12px; color:rgba(255,255,255,.62); }
+    .tlKey::before{ content:""; width:7px; height:7px; border-radius:50%; background:var(--type-color); }
+    .tlKey[data-type="solo"]{ --type-color:#e8c07a; }
+    .tlKey[data-type="group"]{ --type-color:#8fc1ff; }
+    .tlKey[data-type="salon"]{ --type-color:#c7a6ff; }
 
-    /* ✅ NOUVEAU : si une seule expo, on fait une colonne */
-    .items.is-single{
-      grid-template-columns: 1fr;
+    /* curseur pour parcourir la ligne du temps */
+    .tlNav{ display:flex; align-items:center; gap:10px; margin-top:18px; }
+    .tlArrow{
+      flex:none; width:30px; height:30px;
+      display:inline-flex; align-items:center; justify-content:center;
+      border:1px solid rgba(255,255,255,.14); border-radius:8px; background:rgba(255,255,255,.03);
+      color:#fff; cursor:pointer; transition:background-color var(--ease), border-color var(--ease);
     }
+    .tlArrow:hover{ background:rgba(255,255,255,.08); border-color:rgba(255,255,255,.26); }
+    .tlArrow svg{ width:12px; height:12px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+    .tlScrub{ position:relative; flex:1; height:30px; }
+    .tlScrub__ticks{ position:absolute; inset:0; pointer-events:none; }
+    .tlScrub__tick{
+      position:absolute; top:50%; width:1px; height:8px; transform:translateY(-50%);
+      background:rgba(255,255,255,.3);
+    }
+    .tlScrub__tick.is-dim{ background:rgba(255,255,255,.1); }
+    .tlScrub__label{
+      position:absolute; top:calc(50% + 8px); transform:translateX(-50%);
+      font-size:10px; color:rgba(255,255,255,.4); font-variant-numeric:tabular-nums;
+    }
+    .tlScrub input{
+      position:absolute; inset:0; width:100%; margin:0;
+      -webkit-appearance:none; appearance:none; background:transparent; cursor:pointer;
+    }
+    .tlScrub input::-webkit-slider-runnable-track{ height:2px; background:rgba(255,255,255,.12); border-radius:2px; }
+    .tlScrub input::-moz-range-track{ height:2px; background:rgba(255,255,255,.12); border-radius:2px; }
+    .tlScrub input::-webkit-slider-thumb{
+      -webkit-appearance:none; width:var(--thumb-w, 60px); height:16px; margin-top:-7px;
+      border-radius:6px; border:1px solid rgba(255,255,255,.45); background:rgba(255,255,255,.14);
+      -webkit-backdrop-filter:blur(4px); backdrop-filter:blur(4px);
+    }
+    .tlScrub input::-moz-range-thumb{
+      width:var(--thumb-w, 60px); height:16px;
+      border-radius:6px; border:1px solid rgba(255,255,255,.45); background:rgba(255,255,255,.14);
+    }
+    .tlScrub input:focus-visible{ outline:none; }
+    .tlScrub input:focus-visible::-webkit-slider-thumb{ border-color:#fff; }
 
-    /* (optionnel mais joli) : si tu veux éviter que la carte s'étire trop */
-    .items.is-single .expo{
-      max-width: 920px;
-      justify-self: start; /* mets center si tu préfères centré */
-    }
+    .tlHint{ margin:0 0 0 auto; font-size:12px; color:rgba(255,255,255,.4); }
+    @media (min-width:601px){ .expositions .search{ width:280px; } }
+    .empty{ margin:14px 0 0; color:var(--ink-faint); }
 
-    .expo{
-      border:1px solid transparent;
-      border-radius:var(--radius);
-      padding:12px 12px 11px;
-      background:var(--fill);
-      transition:background-color var(--ease);
-      display:flex;
-      flex-direction:column;
-      gap:6px;
+    @media (max-width:600px){
+      .tlYear{ width:180px; padding:0 6px; }
+      .tlYear.is-empty{ width:18px; }
+      .tlArrow{ display:none; }
     }
-    .expo:hover{background:rgba(255,255,255,.07)}
-    .expoTitle{margin:0;font-weight:800;font-size:14px;letter-spacing:.02em}
-    .expoMeta{margin:0;color:var(--soft);font-size:13px;line-height:1.5}
-    .tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:2px}
-    .tag{
-      font-size:12px;padding:4px 8px;border-radius:6px;
-      border:0;
-      background:rgba(255,255,255,.10);
-      color:var(--soft);
+    @media (prefers-reduced-motion: reduce){
+      .tlCard, .tlDot{ transition:none; }
     }
-
-    .empty{margin-top:14px;color:var(--faint)}
   </style>
 </head>
 
-<body>
+<body class="expositions">
+  <div class="page">
   <div class="container">
     <header class="top">
       <a class="brand" href="index.html">ANNICK&nbsp;BOUVATTIER</a>
@@ -184,7 +210,7 @@
 
     <h1 class="sr-only">Expositions</h1>
 
-    <!-- En ce moment (optionnel) -->
+    <!-- En ce moment (optionnel : voir nowExpo dans le script) -->
     <section class="now" id="now" hidden>
       <div class="now__img" aria-hidden="true"></div>
       <div class="now__body">
@@ -195,39 +221,46 @@
       </div>
     </section>
 
-    <!-- Filtres -->
-    <div class="sectionHead"><h2 class="sectionTitle">Toutes les expositions</h2><div class="sectionMeta" id="meta"></div></div>
-    <section class="filters" aria-label="Filtres">
-      <div class="field">
-        <label class="label" for="q">Rechercher</label>
-        <input id="q" type="search" placeholder="Galerie, ville, pays…" />
+    <!-- Filtres : même barre que le portfolio -->
+    <section class="toolbar" aria-label="Filtres">
+      <div class="toolbar__row">
+        <div class="tabs" id="groups" aria-label="Filtrer par">
+            <div class="group" data-group="type"><button class="tab tab--group" type="button" data-group="type" aria-expanded="false" aria-controls="subtabs"><span class="tab__name">Type</span><span class="tab__value" translate="no"></span><svg class="tab__caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg></button><button class="group__clear" type="button" aria-label="Retirer ce filtre" title="Retirer ce filtre" hidden><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 2l6 6M8 2l-6 6"/></svg></button></div>
+            <div class="group" data-group="country"><button class="tab tab--group" type="button" data-group="country" aria-expanded="false" aria-controls="subtabs"><span class="tab__name">Pays</span><span class="tab__value" translate="no"></span><svg class="tab__caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg></button><button class="group__clear" type="button" aria-label="Retirer ce filtre" title="Retirer ce filtre" hidden><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 2l6 6M8 2l-6 6"/></svg></button></div>
+            <div class="group" data-group="decade"><button class="tab tab--group" type="button" data-group="decade" aria-expanded="false" aria-controls="subtabs"><span class="tab__name">Période</span><span class="tab__value" translate="no"></span><svg class="tab__caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg></button><button class="group__clear" type="button" aria-label="Retirer ce filtre" title="Retirer ce filtre" hidden><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 2l6 6M8 2l-6 6"/></svg></button></div>
+        </div>
+        <label class="search">
+          <svg class="search__icon" viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="m13 13 4 4"/></svg>
+          <input id="q" type="search" placeholder="Rechercher" aria-label="Rechercher une exposition" />
+          <span class="sr-only" id="count" aria-live="polite"></span>
+        </label>
       </div>
-      <div class="field">
-        <label class="label" for="type">Type</label>
-        <select id="type">
-          <option value="all">Tous</option>
-          <option value="solo">Personnelle</option>
-          <option value="group">Collective</option>
-          <option value="salon">Salon / Art fair</option>
-        </select>
-      </div>
-      <div class="field">
-        <label class="label" for="country">Pays</label>
-        <select id="country">
-          <option value="all">Tous</option>
-        </select>
-      </div>
-      <div class="field">
-        <label class="label" for="year">Année</label>
-        <select id="year">
-          <option value="all">Toutes</option>
-        </select>
-      </div>
-      <button class="btn" id="reset" type="button">Réinitialiser</button>
+      <div class="subtabs" id="subtabs" translate="no" hidden></div>
     </section>
 
-    <section class="timeline" id="timeline" translate="no"></section>
+    <!-- Ligne du temps -->
+    <section class="tlWrap" aria-label="Ligne du temps des expositions">
+      <div class="tl" id="tl" tabindex="0">
+        <div class="tlTrack" id="track" translate="no"></div>
+      </div>
+    </section>
+
+    <div class="tlNav">
+      <button class="tlArrow" id="prev" type="button" aria-label="Plus ancien"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M8 2 4 6l4 4"/></svg></button>
+      <div class="tlScrub">
+        <div class="tlScrub__ticks" id="ticks" aria-hidden="true"></div>
+        <input id="scrub" type="range" min="0" max="1000" value="1000" aria-label="Parcourir la ligne du temps" />
+      </div>
+      <button class="tlArrow" id="next" type="button" aria-label="Plus récent"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="m4 2 4 4-4 4"/></svg></button>
+    </div>
+    <div class="tlFoot">
+      <span class="tlKey" data-type="solo">Personnelle — au-dessus de la ligne</span>
+      <span class="tlKey" data-type="group">Collective</span>
+      <span class="tlKey" data-type="salon">Salon / Art fair</span>
+      <p class="tlHint">Faites glisser la ligne du temps, ou utilisez le curseur.</p>
+    </div>
     <p class="empty" id="empty" hidden>Aucune exposition ne correspond aux filtres.</p>
+
     <footer class="bottom">
         <div class="bottom__left">
           <a class="bottom__link" href="https://www.instagram.com/annick.bouvattier/" target="_blank" rel="noopener noreferrer">instagram</a>
@@ -236,6 +269,7 @@
         </div>
         <a class="bottom__link bottom__link--legal" href="mentions-legales.html">mentions légales</a>
       </footer>
+  </div>
   </div>
 
   <script>
@@ -283,70 +317,34 @@
       { year: 1992, title: "Exposition d’Été", city: "Decize", country: "France", type: "group" }
     ];
 
-    // Optionnel : "en ce moment"
+    // Optionnel : exposition en cours, affichée au-dessus de la ligne du temps
+    // ex. { title: "Galerie …", line: "Du 3 au 28 mars · Paris", url: "https://…" }
     const nowExpo = null;
 
     const els = {
-      meta: document.getElementById("meta"),
       now: document.getElementById("now"),
       nowTitle: document.getElementById("nowTitle"),
       nowLine: document.getElementById("nowLine"),
       nowBtn: document.getElementById("nowBtn"),
       q: document.getElementById("q"),
-      type: document.getElementById("type"),
-      country: document.getElementById("country"),
-      year: document.getElementById("year"),
-      reset: document.getElementById("reset"),
-      timeline: document.getElementById("timeline"),
+      count: document.getElementById("count"),
+      groups: document.getElementById("groups"),
+      subtabs: document.getElementById("subtabs"),
+      tl: document.getElementById("tl"),
+      track: document.getElementById("track"),
+      ticks: document.getElementById("ticks"),
+      scrub: document.getElementById("scrub"),
+      prev: document.getElementById("prev"),
+      next: document.getElementById("next"),
       empty: document.getElementById("empty"),
     };
 
-    function uniq(arr){ return [...new Set(arr)].sort((a,b)=> (""+a).localeCompare(""+b)); }
+    /* =========================
+       FILTRES (même fonctionnement que le portfolio)
+       ========================= */
 
-    function hydrate(){
-      els.meta.textContent = `${expos.length} ${t("expositions")}`;
-
-      if(nowExpo){
-        els.now.hidden = false;
-        els.nowTitle.textContent = nowExpo.title;
-        els.nowLine.textContent = nowExpo.line;
-        els.nowBtn.href = nowExpo.url;
-      }
-
-      uniq(expos.map(e=>e.country)).forEach(c=>{
-        const o=document.createElement("option");
-        o.value=c; o.textContent=t(c);
-        els.country.appendChild(o);
-      });
-
-      const years = uniq(expos.map(e=>e.year)).sort((a,b)=>b-a);
-      years.forEach(y=>{
-        const o=document.createElement("option");
-        o.value=String(y); o.textContent=String(y);
-        els.year.appendChild(o);
-      });
-    }
-
-    function matches(e, f){
-      const q = f.q.trim().toLowerCase();
-      // recherche dans les 2 langues (« Londres » comme « London »)
-      const hay = `${e.title} ${e.city} ${e.country} ${t(e.city)} ${t(e.country)} ${e.year} ${e.note||""}`.toLowerCase();
-      if(q && !hay.includes(q)) return false;
-      if(f.type !== "all" && e.type !== f.type) return false;
-      if(f.country !== "all" && e.country !== f.country) return false;
-      if(f.year !== "all" && String(e.year) !== f.year) return false;
-      return true;
-    }
-
-    function groupByYear(list){
-      const m = new Map();
-      list.forEach(e=>{
-        const y = e.year;
-        if(!m.has(y)) m.set(y, []);
-        m.get(y).push(e);
-      });
-      return [...m.entries()].sort((a,b)=> b[0]-a[0]);
-    }
+    const decadeOf = (y) => Math.floor(y / 10) * 10;
+    const filters = { q: "", type: new Set(), country: new Set(), decade: new Set() };
 
     function typeLabel(type){
       if(type==="solo") return t("Personnelle");
@@ -355,74 +353,284 @@
       return "";
     }
 
-    function render(){
-      const f = {
-        q: els.q.value || "",
-        type: els.type.value,
-        country: els.country.value,
-        year: els.year.value,
-      };
+    const GROUPS = {
+      type:    { all: "Tous",   label: typeLabel, values: ["solo","group","salon"], of: e => e.type },
+      country: { all: "Tous",   label: v => t(v), of: e => e.country },
+      decade:  { all: "Toutes", label: v => (t("Années") ? t("Années") + " " + v : v + "s"), of: e => decadeOf(e.year) },
+    };
+    GROUPS.country.values = uniq(expos.map(e => e.country));
+    GROUPS.decade.values = uniq(expos.map(e => decadeOf(e.year))).sort((a,b) => a - b);
+    let activeGroup = null;
 
-      const filtered = expos.filter(e=>matches(e,f));
-      els.timeline.innerHTML = "";
-      els.empty.hidden = filtered.length !== 0;
-
-      const blocks = groupByYear(filtered);
-
-      blocks.forEach(([year, items])=>{
-        const block = document.createElement("article");
-        block.className = "yearBlock";
-        block.innerHTML = `
-          <header class="yearHead">
-            <div class="year">${year}</div>
-            <div class="yearCount">${items.length} ${t(items.length>1 ? "expositions" : "exposition")}</div>
-          </header>
-          <div class="items"></div>
-        `;
-        const wrap = block.querySelector(".items");
-
-        /* ✅ NOUVEAU : si une seule carte, on force 1 colonne */
-        if(items.length === 1) wrap.classList.add("is-single");
-
-        items.forEach(e=>{
-          const card = document.createElement("div");
-          card.className = "expo";
-          card.innerHTML = `
-            <p class="expoTitle">${escapeHtml(e.title)}</p>
-            <p class="expoMeta">${escapeHtml(t(e.city))} · ${escapeHtml(t(e.country))}${e.note ? " · " + escapeHtml(e.note) : ""}</p>
-            <div class="tags">
-              <span class="tag">${typeLabel(e.type)}</span>
-            </div>
-          `;
-          wrap.appendChild(card);
-        });
-
-        els.timeline.appendChild(block);
-      });
-    }
+    function uniq(arr){ return [...new Set(arr)].sort((a,b)=> (""+a).localeCompare(""+b, "fr")); }
 
     function escapeHtml(s){
       return String(s)
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
+        .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;").replaceAll("'","&#039;");
     }
 
-    els.q.addEventListener("input", render);
-    [els.type, els.country, els.year].forEach(sel => sel.addEventListener("change", render));
+    // ignore : filtre à ne pas appliquer (pour compter les expositions de chaque choix d'un onglet)
+    function matches(e, ignore){
+      const q = filters.q.trim().toLowerCase();
+      // recherche dans les 2 langues (« Londres » comme « London »)
+      const hay = `${e.title} ${e.city} ${e.country} ${t(e.city)} ${t(e.country)} ${e.year}`.toLowerCase();
+      if(q && !hay.includes(q)) return false;
+      for(const key of Object.keys(GROUPS)){
+        if(key !== ignore && filters[key].size && !filters[key].has(GROUPS[key].of(e))) return false;
+      }
+      return true;
+    }
+    const hasFilters = () => Boolean(filters.q.trim() || filters.type.size || filters.country.size || filters.decade.size);
 
-    els.reset.addEventListener("click", ()=>{
-      els.q.value="";
-      els.type.value="all";
-      els.country.value="all";
-      els.year.value="all";
-      render();
+    function groupValue(name){
+      const g = GROUPS[name];
+      const vals = [...filters[name]].map(g.label);
+      if(!vals.length) return t(g.all);
+      return vals[0] + (vals.length > 1 ? ` +${vals.length - 1}` : "");
+    }
+
+    function renderTabs(){
+      els.groups.querySelectorAll(".tab").forEach(btn => {
+        const name = btn.dataset.group, on = filters[name].size > 0;
+        btn.setAttribute("aria-expanded", String(name === activeGroup));
+        btn.parentElement.classList.toggle("has-filter", on);
+        btn.nextElementSibling.hidden = !on;
+        btn.querySelector(".tab__value").textContent = groupValue(name);
+      });
+
+      els.subtabs.hidden = !activeGroup;
+      if(!activeGroup) return;
+      const g = GROUPS[activeGroup], set = filters[activeGroup];
+      const pool = expos.filter(e => matches(e, activeGroup));
+      els.subtabs.innerHTML = "";
+      [{ value: null, n: pool.length }].concat(g.values.map(v => ({ value: v, n: pool.filter(e => g.of(e) === v).length })))
+        .forEach(it => {
+          if(it.value !== null && !it.n && !set.has(it.value)) return;
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "tab tab--sub";
+          btn.setAttribute("aria-pressed", String(it.value === null ? set.size === 0 : set.has(it.value)));
+          btn.innerHTML = `<span>${escapeHtml(it.value === null ? t(g.all) : g.label(it.value))}</span><span class="tab__count">${it.n}</span>`;
+          btn.addEventListener("click", () => {
+            if(it.value === null) set.clear();
+            else if(set.has(it.value)) set.delete(it.value);
+            else set.add(it.value);
+            apply(true);
+          });
+          els.subtabs.appendChild(btn);
+        });
+    }
+
+    /* =========================
+       LIGNE DU TEMPS
+       ========================= */
+
+    const minYear = Math.min(...expos.map(e => e.year));
+    const maxYear = Math.max(...expos.map(e => e.year));
+    const cards = [];   // { el, expo }
+    const yearEls = {}; // année -> colonne
+
+    function buildTimeline(){
+      const byYear = new Map();
+      expos.forEach(e => { if(!byYear.has(e.year)) byYear.set(e.year, []); byYear.get(e.year).push(e); });
+
+      for(let y = minYear; y <= maxYear; y++){
+        const list = byYear.get(y) || [];
+        const col = document.createElement("div");
+        col.className = "tlYear" + (list.length ? "" : " is-empty") + (y % 10 === 0 ? " is-decade" : "");
+        col.dataset.year = y;
+        col.innerHTML = `<div class="tlLane tlLane--top"></div>
+          <div class="tlAxis"><span class="tlDot"></span><span class="tlYearLabel">${y}</span></div>
+          <div class="tlLane tlLane--bottom"></div>`;
+        const top = col.querySelector(".tlLane--top"), bottom = col.querySelector(".tlLane--bottom");
+        list.forEach(e => {
+          const card = document.createElement("article");
+          card.className = "tlCard";
+          card.dataset.type = e.type;
+          card.innerHTML = `<p class="tlCard__title">${escapeHtml(e.title)}</p>
+            <p class="tlCard__meta">${escapeHtml(t(e.city))} · ${escapeHtml(t(e.country))}</p>
+            <span class="tlCard__type">${typeLabel(e.type)}</span>`;
+          (e.type === "solo" ? top : bottom).appendChild(card);
+          cards.push({ el: card, expo: e });
+        });
+        yearEls[y] = col;
+        els.track.appendChild(col);
+      }
+
+      alignAxis();
+      window.addEventListener("resize", alignAxis);
+
+      // graduations du curseur : une par année avec exposition, libellé par décennie
+      for(let y = minYear; y <= maxYear; y++){
+        if(byYear.has(y)){
+          const tick = document.createElement("span");
+          tick.className = "tlScrub__tick";
+          tick.dataset.year = y;
+          tick.style.left = ((y - minYear) / (maxYear - minYear) * 100) + "%";
+          els.ticks.appendChild(tick);
+        }
+        if(y % 10 === 0 || y === minYear || y === maxYear){
+          const label = document.createElement("span");
+          label.className = "tlScrub__label";
+          label.textContent = y;
+          label.style.left = ((y - minYear) / (maxYear - minYear) * 100) + "%";
+          els.ticks.appendChild(label);
+        }
+      }
+    }
+
+    // même hauteur au-dessus de la ligne pour toutes les années (= la plus haute pile mesurée)
+    function alignAxis(){
+      els.track.style.removeProperty("--lane-top");
+      let h = 0;
+      els.track.querySelectorAll(".tlLane--top").forEach(l => { h = Math.max(h, l.offsetHeight); });
+      els.track.style.setProperty("--lane-top", h + "px");
+      els.track.style.setProperty("--axis-y", (h + 22) + "px");
+    }
+
+    // défilement doux vers une année (centrée)
+    function scrollToYear(y, smooth = true){
+      const col = yearEls[y];
+      if(!col) return;
+      const left = col.offsetLeft + col.offsetWidth / 2 - els.tl.clientWidth / 2;
+      els.tl.scrollTo({ left, behavior: smooth ? "smooth" : "auto" });
+    }
+
+    /* =========================
+       RENDU
+       ========================= */
+
+    function apply(fromFilter){
+      const on = hasFilters();
+      const hits = new Set();
+      let n = 0;
+      cards.forEach(({ el, expo }) => {
+        const ok = matches(expo);
+        el.classList.toggle("is-dim", on && !ok);
+        if(ok){ n++; hits.add(expo.year); }
+      });
+      Object.entries(yearEls).forEach(([y, col]) => col.classList.toggle("is-hit", on && hits.has(+y)));
+      els.ticks.querySelectorAll(".tlScrub__tick").forEach(tk => tk.classList.toggle("is-dim", on && !hits.has(+tk.dataset.year)));
+
+      const label = `${n} ${t(n > 1 ? "expositions" : "exposition")}`;
+      els.count.textContent = label;
+      els.q.placeholder = `${t("Rechercher parmi")} ${label}`;
+      els.empty.hidden = n !== 0;
+      renderTabs();
+
+      // la ligne du temps glisse vers l'exposition correspondante la plus récente
+      if(fromFilter && on && hits.size) scrollToYear(Math.max(...hits));
+    }
+
+    /* =========================
+       INTERACTIONS
+       ========================= */
+
+    // glisser à la souris (au doigt : défilement natif), avec élan au lâcher
+    (() => {
+      let down = false, startX = 0, startLeft = 0, lastX = 0, lastT = 0, v = 0, moved = false, raf = 0;
+      els.tl.addEventListener("pointerdown", (e) => {
+        if(e.pointerType !== "mouse" || e.button !== 0) return;
+        cancelAnimationFrame(raf);
+        down = true; moved = false;
+        startX = lastX = e.clientX; startLeft = els.tl.scrollLeft; lastT = performance.now(); v = 0;
+      });
+      window.addEventListener("pointermove", (e) => {
+        if(!down) return;
+        const dx = e.clientX - startX;
+        if(!moved && Math.abs(dx) > 4){ moved = true; els.tl.classList.add("is-dragging"); }
+        if(!moved) return;
+        els.tl.scrollLeft = startLeft - dx;
+        const now = performance.now();
+        v = (e.clientX - lastX) / Math.max(1, now - lastT);
+        lastX = e.clientX; lastT = now;
+      });
+      window.addEventListener("pointerup", () => {
+        if(!down) return;
+        down = false;
+        els.tl.classList.remove("is-dragging");
+        if(!moved) return;
+        let speed = -v * 16; // px par image
+        const glide = () => {
+          if(Math.abs(speed) < 0.5) return;
+          els.tl.scrollLeft += speed;
+          speed *= 0.94;
+          raf = requestAnimationFrame(glide);
+        };
+        glide();
+      });
+    })();
+
+    // molette verticale -> défilement horizontal, sauf aux extrémités (la page reprend la main)
+    els.tl.addEventListener("wheel", (e) => {
+      if(Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+      const max = els.tl.scrollWidth - els.tl.clientWidth;
+      const atStart = els.tl.scrollLeft <= 0 && e.deltaY < 0;
+      const atEnd = els.tl.scrollLeft >= max - 1 && e.deltaY > 0;
+      if(atStart || atEnd) return;
+      e.preventDefault();
+      els.tl.scrollLeft += e.deltaY;
+    }, { passive: false });
+
+    // curseur <-> ligne du temps
+    function syncScrub(){
+      const max = els.tl.scrollWidth - els.tl.clientWidth;
+      els.scrub.value = max > 0 ? Math.round(els.tl.scrollLeft / max * 1000) : 0;
+      // largeur de la poignée = part visible de la ligne du temps
+      const ratio = els.tl.clientWidth / els.tl.scrollWidth;
+      els.scrub.style.setProperty("--thumb-w", Math.max(28, ratio * els.scrub.clientWidth) + "px");
+    }
+    els.tl.addEventListener("scroll", syncScrub, { passive: true });
+    window.addEventListener("resize", syncScrub);
+    els.scrub.addEventListener("input", () => {
+      const max = els.tl.scrollWidth - els.tl.clientWidth;
+      els.tl.scrollLeft = els.scrub.value / 1000 * max;
     });
 
-    hydrate();
-    render();
+    const page = () => els.tl.clientWidth * 0.8;
+    els.prev.addEventListener("click", () => els.tl.scrollBy({ left: -page(), behavior: "smooth" }));
+    els.next.addEventListener("click", () => els.tl.scrollBy({ left: page(), behavior: "smooth" }));
+    els.tl.addEventListener("keydown", (e) => {
+      if(e.key === "ArrowLeft"){ e.preventDefault(); els.tl.scrollBy({ left: -240, behavior: "smooth" }); }
+      if(e.key === "ArrowRight"){ e.preventDefault(); els.tl.scrollBy({ left: 240, behavior: "smooth" }); }
+    });
+
+    // filtres
+    els.q.addEventListener("input", () => { filters.q = els.q.value || ""; apply(true); });
+    els.groups.addEventListener("click", (e) => {
+      const clear = e.target.closest(".group__clear");
+      if(clear){ filters[clear.parentElement.dataset.group].clear(); apply(false); return; }
+      const btn = e.target.closest(".tab");
+      if(!btn) return;
+      activeGroup = (activeGroup === btn.dataset.group) ? null : btn.dataset.group;
+      renderTabs();
+    });
+    document.addEventListener("click", (e) => {
+      const inside = e.composedPath().some(n => n.classList && n.classList.contains("toolbar"));
+      if(activeGroup && !inside){ activeGroup = null; renderTabs(); }
+    });
+    document.addEventListener("keydown", (e) => {
+      if(e.key === "Escape" && activeGroup){
+        const btn = els.groups.querySelector(`.tab[data-group="${activeGroup}"]`);
+        activeGroup = null; renderTabs(); btn.focus();
+      }
+    });
+
+    /* =========================
+       INIT
+       ========================= */
+
+    if(nowExpo){
+      els.now.hidden = false;
+      els.nowTitle.textContent = nowExpo.title;
+      els.nowLine.textContent = nowExpo.line;
+      els.nowBtn.href = nowExpo.url;
+    }
+    buildTimeline();
+    apply(false);
+    // on arrive sur les expositions les plus récentes
+    requestAnimationFrame(() => { els.tl.scrollLeft = els.tl.scrollWidth; syncScrub(); });
   </script>
 </body>
 </html>

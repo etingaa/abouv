@@ -3,7 +3,7 @@
 // qui ouvre la navigation en plein écran. (Styles : styles.css, « MENU TÉLÉPHONE ».)
 // Header compact : dès qu'on descend, le header reste en haut de l'écran et devient
 // une barre d'icônes ; il reprend ses mots en haut de page. Un seul fond flouté (.shade)
-// couvre le header et ce qui reste accroché dessous (filtres du portfolio).
+// couvre le header et ce qui reste accroché dessous (barres de filtres).
 // (Styles : styles.css, « HEADER COMPACT ».)
 // Chargé dans le <head> de chaque page, après i18n.js.
 
@@ -47,7 +47,7 @@
       if (on) top.style.marginBottom = (baseMargin + before - top.offsetHeight) + "px";
       setHeaderVar();
     }
-    // hauteur du header, pour accrocher dessous ce qui doit rester visible (filtres du portfolio)
+    // hauteur du header, pour accrocher dessous ce qui doit rester visible (barres de filtres)
     function setHeaderVar(){
       document.documentElement.style.setProperty("--header-h", top.offsetHeight + "px");
     }
@@ -59,7 +59,7 @@
     shade.className = "shade";
     shade.setAttribute("aria-hidden", "true");
     document.body.prepend(shade);
-    const stuck = document.querySelector("body.portfolio .toolbar") || top;
+    const stuck = document.querySelector(".toolbar") || top;
     function setShade(){
       document.documentElement.style.setProperty("--shade-h", Math.max(0, stuck.getBoundingClientRect().bottom) + "px");
     }
