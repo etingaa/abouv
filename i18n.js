@@ -283,6 +283,7 @@
      ========================= */
 
   const NAMES = { fr: "Français", en: "English" };
+  const SHORT = { fr: "fra", en: "eng" };
 
   function switchTo(l){
     if (l === lang) return;
@@ -293,7 +294,7 @@
   }
 
   function addSwitch(){
-    const footer = document.querySelector("footer.siteFooter, footer.bottom");
+    const footer = document.querySelector("footer.bottom");
     if (!footer) return;
     const legal = footer.lastElementChild; // « mentions légales » (ou « retour à l'accueil »)
     if (!legal) return;
@@ -307,7 +308,7 @@
     btn.setAttribute("aria-haspopup", "true");
     btn.setAttribute("aria-expanded", "false");
     btn.setAttribute("aria-label", t("Langue") + " : " + NAMES[lang]);
-    btn.innerHTML = lang.toUpperCase() +
+    btn.innerHTML = SHORT[lang] +
       '<svg class="langMenu__caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg>';
 
     const list = document.createElement("div");
@@ -318,7 +319,8 @@
       o.type = "button";
       o.className = "langMenu__opt";
       o.lang = l;
-      o.textContent = NAMES[l];
+      o.textContent = SHORT[l];
+      o.setAttribute("aria-label", NAMES[l]);
       if (l === lang) o.setAttribute("aria-current", "true");
       o.addEventListener("click", () => switchTo(l));
       list.appendChild(o);

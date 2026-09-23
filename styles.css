@@ -80,16 +80,22 @@ a{ color: inherit; text-decoration: none; }
   .container{ padding: 16px 20px 40px; }
 }
 
-/* PIED DE PAGE */
-.siteFooter{
-  margin-top: auto;
-  padding-top: 48px;
-  font-size: 13px;
-  color: var(--ink-faint);
+/* PIED DE PAGE — identique sur toutes les pages :
+   réseaux à gauche, mentions légales + langue (ajoutée par i18n.js) à droite */
+.bottom{
+  margin-top:auto;
+  padding-top:48px;
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:10px 24px;
 }
-.siteFooter a{ border-bottom: 1px solid rgba(255,255,255,.3); }
-.siteFooter a:hover{ color:#fff; border-bottom-color:#fff; }
-
+.bottom__left{display:flex;flex-wrap:wrap;gap:6px 18px;}
+.bottom__link{font-size:14px;color:var(--ink-soft);}
+.bottom__link:hover{color:#fff;}
+.bottom__link--legal{margin-left:auto;font-size:13px;color:rgba(255,255,255,.4);}
+.bottom__link--legal:hover{color:rgba(255,255,255,.75);}
 /* HEADER */
 .top{
   display:flex;
