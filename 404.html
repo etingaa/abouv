@@ -15,7 +15,13 @@
     .notFound{ margin-top:48px; max-width:52ch; }
     .notFound h1{ margin:0 0 12px; font-size:28px; font-weight:800; }
     .notFound p{ margin:0 0 20px; color:var(--ink-soft); line-height:1.6; }
-    .notFound a.back{ border-bottom:1px solid rgba(255,255,255,.5); padding-bottom:2px; margin-right:18px; }
+    .notFound .actions{ display:flex; flex-wrap:wrap; gap:8px; }
+    .notFound a.back{
+      display:inline-flex; align-items:center; height:var(--control-h); padding:0 14px;
+      border:1px solid var(--line); border-radius:var(--radius); background:var(--fill);
+      font-size:14px; font-weight:600; transition:background-color var(--ease);
+    }
+    .notFound a.back:hover{ background:var(--fill-hover); }
   </style>
 </head>
 <body>
@@ -36,8 +42,10 @@
     <main class="notFound">
       <h1>Page introuvable</h1>
       <p>Cette page n'existe pas ou a été déplacée.</p>
-      <a class="back" href="index.html">Retour à l'accueil</a>
-      <a class="back" href="portfolio.html">Voir le portfolio</a>
+      <div class="actions">
+        <a class="back" href="index.html">Retour à l'accueil</a>
+        <a class="back" href="portfolio.html">Voir le portfolio</a>
+      </div>
     </main>
     <footer class="bottom">
         <div class="bottom__left">

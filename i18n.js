@@ -345,11 +345,7 @@
     pair.className = "langPair";
     legal.replaceWith(pair);
     pair.append(legal, box);
-
-    // même taille et même couleur que le lien
-    const cs = getComputedStyle(legal);
-    box.style.fontSize = cs.fontSize;
-    btn.style.color = cs.color;
+    // même taille et même couleur que le lien : styles.css (.langMenu__btn)
   }
 
   document.addEventListener("DOMContentLoaded", () => {

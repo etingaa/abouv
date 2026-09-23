@@ -35,7 +35,7 @@
     /* "En ce moment" */
     .now{
       border:1px solid var(--border);
-      border-radius:18px;
+      border-radius:var(--radius-card);
       overflow:hidden;
       background:rgba(255,255,255,.04);
       display:grid;
@@ -54,24 +54,26 @@
     .now__title{margin:0;font-size:18px;font-weight:800}
     .now__line{color:var(--soft);line-height:1.55}
     .btn{
-      width:max-content;
-      border:1px solid var(--border);
-      background:rgba(255,255,255,.14);
+      display:inline-flex;align-items:center;justify-content:center;
+      width:max-content;height:var(--control-h);
+      border:1px solid var(--line);
+      background:var(--fill);
       color:var(--ink);
-      font-weight:700;
-      padding:10px 12px;
-      border-radius:12px;
+      font:inherit;font-size:14px;font-weight:600;
+      padding:0 12px;
+      border-radius:var(--radius);
       cursor:pointer;
+      transition:background-color var(--ease);
     }
-    .btn:hover{background:rgba(255,255,255,.18)}
+    .btn:hover{background:var(--fill-hover)}
 
     /* Filters */
     .filters{
       margin-top:14px;
       border:1px solid var(--border);
-      border-radius:14px;
+      border-radius:var(--radius-card);
       padding:12px;
-      background:rgba(255,255,255,.04);
+      background:var(--fill);
       display:grid;
       grid-template-columns: 1.2fr 1fr 1fr 1fr auto;
       gap:10px;
@@ -82,7 +84,7 @@
       /* téléphone : recherche sur toute la largeur, puis les 3 listes côte à côte */
       .filters{grid-template-columns:repeat(3,minmax(0,1fr));padding:10px;gap:8px}
       .filters .field:first-child, .filters #reset{grid-column:1/-1}
-      .filters select{height:40px;padding:8px 6px;font-size:13px}
+      .filters select{padding:8px 6px;font-size:13px}
       .filters #reset{width:100%;padding:8px}
       .label{font-size:11px}
       .yearHead{padding:12px 14px}
@@ -94,23 +96,23 @@
     .label{font-size:12px;color:var(--faint);letter-spacing:.06em;text-transform:uppercase}
     input,select{
       color-scheme:dark; /* listes déroulantes sombres (sinon texte blanc sur fond blanc sous Windows) */
-      height:44px;width:100%;
-      border:1px solid var(--border);
-      background:rgba(255,255,255,.08);
+      height:var(--control-h);width:100%;
+      border:1px solid var(--line);
+      background:var(--fill);
       color:var(--ink);
-      border-radius:12px;
-      padding:10px 12px;
+      border-radius:var(--radius);
+      padding:0 12px;
       outline:none;
       font-size:14px;
     }
     input::placeholder{color:rgba(255,255,255,.45)}
-    input:focus,select:focus{border-color:rgba(255,255,255,.35);background:rgba(255,255,255,.12)}
+    input:focus,select:focus{border-color:var(--line-strong);background:rgba(255,255,255,.08)}
 
     /* Timeline */
     .timeline{margin-top:18px;display:flex;flex-direction:column;gap:18px}
     .yearBlock{
       border:1px solid var(--border);
-      border-radius:18px;
+      border-radius:var(--radius-card);
       background:rgba(255,255,255,.04);
       overflow:hidden;
     }
@@ -143,22 +145,23 @@
     }
 
     .expo{
-      border:1px solid rgba(255,255,255,.14);
-      border-radius:16px;
+      border:1px solid transparent;
+      border-radius:var(--radius);
       padding:12px 12px 11px;
-      background:rgba(255,255,255,.03);
+      background:var(--fill);
+      transition:background-color var(--ease);
       display:flex;
       flex-direction:column;
       gap:6px;
     }
-    .expo:hover{border-color:rgba(255,255,255,.26);background:rgba(255,255,255,.05)}
+    .expo:hover{background:rgba(255,255,255,.07)}
     .expoTitle{margin:0;font-weight:800;font-size:14px;letter-spacing:.02em}
     .expoMeta{margin:0;color:var(--soft);font-size:13px;line-height:1.5}
     .tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:2px}
     .tag{
-      font-size:12px;padding:6px 8px;border-radius:999px;
-      border:1px solid rgba(255,255,255,.18);
-      background:rgba(255,255,255,.06);
+      font-size:12px;padding:4px 8px;border-radius:6px;
+      border:0;
+      background:rgba(255,255,255,.10);
       color:var(--soft);
     }
 

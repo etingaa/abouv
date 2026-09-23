@@ -16,6 +16,16 @@
   --ink-soft: rgba(255,255,255,.82);
   --ink-faint: rgba(255,255,255,.55);
   --border: rgba(255,255,255,.18);
+
+  /* Style commun des boutons, champs, onglets et cartes (repris des onglets du portfolio) */
+  --radius: 10px;                      /* boutons, champs, onglets */
+  --radius-card: 14px;                 /* cadres et cartes */
+  --control-h: 38px;                   /* hauteur des boutons et champs */
+  --fill: rgba(255,255,255,.04);       /* fond au repos */
+  --fill-hover: rgba(255,255,255,.10); /* fond au survol / actif */
+  --line: rgba(255,255,255,.22);       /* bordure au repos */
+  --line-strong: rgba(255,255,255,.45);/* bordure au focus */
+  --ease: .15s ease;
 }
 
 *{ box-sizing: border-box; }
@@ -152,7 +162,8 @@ a{ color: inherit; text-decoration: none; }
 .langMenu__btn{
   display:inline-flex; align-items:center; gap:5px;
   background:none; border:0; padding:0; cursor:pointer;
-  font:inherit; font-size:inherit; letter-spacing:.04em;
+  font:inherit; font-size:13px; letter-spacing:.04em;
+  color:rgba(255,255,255,.4); /* comme « mentions légales » */
 }
 .langMenu__btn:hover, .langMenu__btn[aria-expanded="true"]{ color:#fff !important; }
 .langMenu__caret{ width:9px; height:6px; fill:none; stroke:currentColor; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; }
@@ -348,9 +359,9 @@ body.portfolio .chip{
   align-items:center;
   gap:8px;
   padding:6px 10px;
-  border:1px solid rgba(255,255,255,.22);
-  background: rgba(255,255,255,.08);
-  border-radius: 999px;
+  border:1px solid var(--line);
+  background: var(--fill-hover);
+  border-radius: 8px;
   font-size: 13px;
   color: rgba(255,255,255,.92);
 }
@@ -453,6 +464,7 @@ body.portfolio .badge{
   margin-top:6px;
   padding:4px 10px;
   border:1px solid var(--border);
+  border-radius:6px;
   background: rgba(255,255,255,.06);
   font-size:12px;
   font-weight:800;
@@ -626,13 +638,15 @@ body.portfolio .modal__cta{
   display:inline-flex;
   align-items:center;
   margin-top:6px;
-  padding:9px 18px;
-  border-radius:999px;
-  border:1px solid rgba(255,255,255,.35);
-  background: rgba(255,255,255,.10);
+  height:var(--control-h);
+  padding:0 14px;
+  border-radius:var(--radius);
+  border:1px solid var(--line);
+  background: var(--fill-hover);
   color:#fff;
   font-size:14px;
-  font-weight:700;
+  font-weight:600;
+  transition: background-color var(--ease);
 }
 body.portfolio .modal__cta:hover{ background: rgba(255,255,255,.18); }
 
@@ -675,7 +689,7 @@ body.galeries{
   gap:0;
   align-items: stretch;
   border:1px solid var(--border);
-  border-radius:18px;
+  border-radius:var(--radius-card);
   overflow:hidden;
   background: rgba(255,255,255,.04);
   min-height: 620px;
@@ -733,10 +747,10 @@ body.galeries{
 
 .galInput{
   width:100%;
-  height:44px;
-  border-radius:12px;
-  border:1px solid var(--border);
-  background: rgba(255,255,255,.08);
+  height:var(--control-h);
+  border-radius:var(--radius);
+  border:1px solid var(--line);
+  background: var(--fill);
   color:#fff;
   padding:10px 12px;
   outline:none;
@@ -744,22 +758,23 @@ body.galeries{
 }
 .galInput::placeholder{ color: rgba(255,255,255,.45); }
 .galInput:focus{
-  border-color: rgba(255,255,255,.35);
-  background: rgba(255,255,255,.12);
+  border-color: var(--line-strong);
+  background: rgba(255,255,255,.08);
 }
 
 .galBtn{
-  height:44px;
-  padding:0 14px;
-  border-radius:12px;
-  border:1px solid var(--border);
-  background: rgba(255,255,255,.14);
+  height:var(--control-h);
+  padding:0 12px;
+  border-radius:var(--radius);
+  border:1px solid var(--line);
+  background: var(--fill);
   color:#fff;
-  font-weight:800;
+  font:inherit; font-size:14px; font-weight:600;
   cursor:pointer;
   white-space:nowrap;
+  transition: background-color var(--ease);
 }
-.galBtn:hover{ background: rgba(255,255,255,.18); }
+.galBtn:hover{ background: var(--fill-hover); }
 
 .galList{
   display:flex;
@@ -773,21 +788,17 @@ body.galeries{
 }
 
 body.galeries .item{
-  border:1px solid rgba(255,255,255,.14);
-  border-radius:16px;
+  border:1px solid transparent;
+  border-radius:var(--radius);
   padding:12px;
-  background: rgba(255,255,255,.03);
+  background: var(--fill);
   cursor:pointer;
-  transition: background .12s ease, border-color .12s ease, transform .12s ease;
+  transition: background-color var(--ease), border-color var(--ease);
 }
-body.galeries .item:hover{
-  background: rgba(255,255,255,.05);
-  border-color: rgba(255,255,255,.26);
-  transform: translateY(-1px);
-}
+body.galeries .item:hover{ background: rgba(255,255,255,.07); }
 body.galeries .item.is-active{
-  border-color: rgba(255,255,255,.40);
-  background: rgba(255,255,255,.06);
+  border-color: rgba(255,255,255,.28);
+  background: var(--fill-hover);
 }
 body.galeries .name{ margin:0; font-weight:800; font-size:14px; }
 body.galeries .sub{
