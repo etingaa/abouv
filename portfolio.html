@@ -12,6 +12,7 @@
   <meta property="og:description" content="Portfolio d'Annick Bouvattier : peintures à l'huile et sculptures, à filtrer par catégorie, technique, format et disponibilité." />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <script src="i18n.js"></script>
+  <script src="site.js"></script>
   <link rel="preload" href="fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
   <title>Portfolio — Annick Bouvattier</title>
 
@@ -62,6 +63,7 @@
           <input id="q" class="pillInput" type="search" placeholder="Rechercher une œuvre…" aria-label="Rechercher une œuvre" />
         </div>
 
+        <div class="filterPills">
         <!-- Catégorie (colonne C) -->
         <div class="dd" data-key="category">
           <button class="pillBtn" type="button" aria-haspopup="true" aria-expanded="false">
@@ -99,6 +101,7 @@
         </div>
 
         <button class="pillBtn pillBtn--ghost" id="reset" type="button">Tout effacer</button>
+        </div>
       </section>
 
       <div class="metaRow">

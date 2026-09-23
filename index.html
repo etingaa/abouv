@@ -12,6 +12,7 @@
   <meta property="og:description" content="Annick Bouvattier, artiste peintre : peintures à l'huile et portraits de femmes, en jeux d'ombre et de lumière." />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <script src="i18n.js"></script>
+  <script src="site.js"></script>
   <link rel="preload" href="fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
   <title>Annick Bouvattier — Artiste peintre</title>
 
@@ -32,7 +33,10 @@
       position:fixed;
       inset:0;
       z-index:1;
-      pointer-events:none;
+      cursor:grab;
+      touch-action:pan-y;      /* glisser horizontal = défilé ; le reste = navigateur */
+      user-select:none;
+      -webkit-user-select:none;
       background:
         radial-gradient(1100px 700px at 20% 15%, rgba(255,255,255,.12), rgba(255,255,255,0) 60%),
         radial-gradient(900px 600px at 70% 70%, rgba(255,255,255,.10), rgba(255,255,255,0) 55%);
@@ -128,7 +132,12 @@
       pointer-events:none;
     }
 
-    .top, .bottom{position:relative;z-index:4;}
+    .galleryWall.is-dragging{cursor:grabbing;}
+    .galleryWall img{-webkit-user-drag:none;pointer-events:none;}
+
+    /* le contenu (transparent) laisse passer souris et doigt vers le défilé, sauf en-tête et pied */
+    .container{pointer-events:none;}
+    .top, .bottom{position:relative;z-index:4;pointer-events:auto;}
     .bottom{padding-bottom:18px;}
 
     /* prefers-reduced-motion : les œuvres restent affichées, mais immobiles (voir le script) */
@@ -183,7 +192,9 @@
     const MANIFEST_URL = "images/manifest.json";
     const IMAGES_PREFIX = "images/";
     const THUMBS_PREFIX = "images/thumbs/"; // voir scripts/make-thumbs.py
-    const SPEED = 70;        // px/s
+    const SPEED = 70;        // px/s : vitesse du défilement automatique
+    const EASE = 0.9;        // s : temps pour revenir à la vitesse normale après un lancer
+    const MAX_V = 4000;      // px/s : vitesse maximale d'un lancer
 
     const track = document.getElementById("track");
     const set = document.getElementById("set");
@@ -221,6 +232,7 @@
 
       const img = document.createElement("img");
       img.alt = "";
+      img.draggable = false;
       img.loading = "eager";
       img.decoding = "async";
       const name = encodeURIComponent(src);
@@ -288,10 +300,8 @@
 
       const manifest = shuffle(await loadManifest());
 
-      // remplir + buffer (mouvement réduit : juste de quoi remplir l'écran, immobile)
-      const count = prefersReducedMotion
-        ? Math.ceil(window.innerWidth / 240) + 1
-        : Math.max(18, Math.ceil(window.innerWidth / 260) + 16);
+      // remplir + buffer
+      const count = Math.max(18, Math.ceil(window.innerWidth / 260) + 16);
 
       const pieces = [];
       const imgs = [];
@@ -314,9 +324,6 @@
       // reflow
       await twoFrames();
 
-      // mouvement réduit : les œuvres restent affichées, sans défilement
-      if (prefersReducedMotion) return;
-
       // clone pour boucle parfaite
       const clone = set.cloneNode(true);
       track.appendChild(clone);
@@ -338,14 +345,68 @@
 
       // départ hors écran à gauche
       x = -loopW;
-      let last = performance.now();
 
+      // Défilement automatique, manipulable : on attrape le mur (souris ou doigt) pour le faire
+      // avancer / reculer ; lâché avec élan, il file puis ralentit jusqu'à sa vitesse normale.
+      // Molette / trackpad : accélère ou freine. Mouvement réduit : immobile, mais manipulable.
+      const wall = document.querySelector(".galleryWall");
+      const target = prefersReducedMotion ? 0 : SPEED;
+      let v = target;          // vitesse actuelle (px/s)
+      let dragging = false;
+      let dragV = 0, lastX = 0, lastT = 0;
+
+      function wrap(){
+        if (x >= 0) x -= loopW;
+        if (x < -loopW) x += loopW;
+      }
+
+      wall.addEventListener("pointerdown", (e) => {
+        if (e.button !== 0) return;
+        dragging = true;
+        dragV = 0;
+        lastX = e.clientX;
+        lastT = performance.now();
+        wall.classList.add("is-dragging");
+        try { wall.setPointerCapture(e.pointerId); } catch (_) {}
+      });
+      wall.addEventListener("pointermove", (e) => {
+        if (!dragging) return;
+        const now = performance.now();
+        const dx = e.clientX - lastX;
+        const dt = Math.max(1, now - lastT) / 1000;
+        x += dx;
+        wrap();
+        dragV = 0.75 * (dx / dt) + 0.25 * dragV;  // vitesse du geste, lissée
+        lastX = e.clientX;
+        lastT = now;
+      });
+      function release(){
+        if (!dragging) return;
+        dragging = false;
+        wall.classList.remove("is-dragging");
+        // geste arrêté avant de lâcher -> pas d'élan
+        const idle = performance.now() - lastT > 80;
+        v = idle ? 0 : Math.max(-MAX_V, Math.min(MAX_V, dragV));
+      }
+      wall.addEventListener("pointerup", release);
+      wall.addEventListener("pointercancel", release);
+      wall.addEventListener("lostpointercapture", release);
+
+      window.addEventListener("wheel", (e) => {
+        const d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? -e.deltaX : e.deltaY;
+        v = Math.max(-MAX_V, Math.min(MAX_V, v + d * 6));
+      }, { passive: true });
+
+      let last = performance.now();
       function tick(now){
         const dt = Math.min(0.05, (now - last) / 1000);
         last = now;
 
-        x += SPEED * dt;
-        if (x >= 0) x -= loopW;
+        if (!dragging) {
+          v += (target - v) * (1 - Math.exp(-dt / EASE));  // retour en douceur à la vitesse normale
+          x += v * dt;
+          wrap();
+        }
 
         track.style.transform = `translate3d(${x}px, -50%, 0)`;
         requestAnimationFrame(tick);

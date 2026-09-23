@@ -36,6 +36,7 @@
     "Filtres": "Filters",
     "Pays": "Country",
     "Langue": "Language",
+    "Menu": "Menu",
     // identiques en anglais
     "Portfolio": "Portfolio", "Contact": "Contact", "Email": "Email", "Message": "Message",
     "Reset": "Reset", "Type": "Type", "Technique": "Technique", "Portrait": "Portrait",
