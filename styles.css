@@ -567,7 +567,6 @@ body.portfolio .piece{ margin-bottom:12px; }
   body.portfolio .capMeta{ font-size:11px; margin-top:3px; }
   body.portfolio .cap .capTech{ display:none; } /* vignettes : seulement la taille */
   body.portfolio .badge{ font-size:10px; padding:3px 7px; margin-top:4px; }
-  body.portfolio .imgWrap::after{ font-size:11px; }
 }
 
 body.portfolio .piece{
@@ -646,23 +645,6 @@ body.portfolio .badge.vendue{
 }
 body.portfolio .badge.vendue::before{ background:var(--red); }
 
-/* Filigrane grille */
-body.portfolio .imgWrap::after{
-  content: "ANNICK BOUVATTIER";
-  position: absolute;
-  inset: 0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size: 20px;
-  font-weight: 900;
-  letter-spacing: .22em;
-  text-transform: uppercase;
-  color: rgba(var(--ink-rgb),.10);
-  pointer-events: none;
-  transform: rotate(-25deg);
-}
-
 /* Modal */
 body.portfolio dialog{
   border: none;
@@ -701,21 +683,6 @@ body.portfolio .modal__img{
   height: auto;
   object-fit: contain;
   display:block;
-}
-body.portfolio .modal__media::after{
-  content: "ANNICK BOUVATTIER";
-  position: absolute;
-  inset: 0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size: 28px;
-  font-weight: 900;
-  letter-spacing: .25em;
-  text-transform: uppercase;
-  color: rgba(var(--ink-rgb),.14);
-  pointer-events: none;
-  transform: rotate(-25deg);
 }
 body.portfolio .modal__info{
   padding: 14px 0 6px;
