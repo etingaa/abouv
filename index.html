@@ -13,6 +13,7 @@
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <script src="i18n.js"></script>
   <script src="site.js"></script>
+  <script src="sheet.js"></script>
   <link rel="preload" href="fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
   <title>Annick Bouvattier — Artiste peintre</title>
 
@@ -221,6 +222,24 @@
       return list;
     }
 
+    // Toiles du mur : lignes du Sheet avec « oui » dans la colonne Accueil (et un Jpg).
+    // Secours sur images/manifest.json si le Sheet est injoignable ou si aucune ligne n'a « oui ».
+    async function loadWallList(){
+      try{
+        const { rows, col } = await abouvSheet.load();
+        const cHome = col("accueil"), cJpg = col("jpg");
+        const list = rows
+          .filter(r => abouvSheet.normalizeHeader(r[cHome]) === "oui")
+          .map(r => String(r[cJpg] || "").trim().replace(/^images\//i, "").replace(/^\/+/, ""))
+          .filter(f => f && f.toUpperCase() !== "N/A");
+        if (list.length) return list;
+        console.warn("Aucune toile avec « oui » dans la colonne Accueil : liste de secours (manifest.json).");
+      }catch(err){
+        console.warn("Sheet injoignable : liste de secours (manifest.json).", err);
+      }
+      return loadManifest();
+    }
+
     function makePiece(src){
       const piece = document.createElement("div");
       piece.className = "piece";
@@ -299,7 +318,7 @@
     async function init(){
       handleResize();
 
-      const manifest = shuffle(await loadManifest());
+      const manifest = shuffle(await loadWallList());
 
       // remplir + buffer
       const count = Math.max(18, Math.ceil(window.innerWidth / 260) + 16);

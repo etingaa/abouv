@@ -13,6 +13,7 @@
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <script src="i18n.js"></script>
   <script src="site.js"></script>
+  <script src="sheet.js"></script>
   <link rel="preload" href="fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
   <title>Portfolio — Annick Bouvattier</title>
 
@@ -95,11 +96,9 @@
        CONFIG
        ========================= */
 
-    const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSmK-RAKlpq_VMnhd78eWdWeMTnCkU3_-411IzeTyzO9j0zbJdkkhzfxlRDZpqzKixpoUgTtAAI_Auw/pub?output=csv";
     const IMG_BASE = "images";
     const THUMB_BASE = "images/thumbs";            // générées par scripts/make-thumbs.py
     const SIZES_URL = "images/thumbs/sizes.json";  // dimensions des miniatures (évite les sauts de mise en page)
-    const CACHE_KEY = "abouv:sheet-csv";           // dernière version du Sheet, si Google est injoignable
 
     /* =========================
        DOM
@@ -162,14 +161,6 @@
         .replaceAll("'","&#039;");
     }
 
-    function normalizeHeader(h){
-      return String(h ?? "")
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .trim();
-    }
-
     function normSize(s){
       return String(s ?? "")
         .toLowerCase()
@@ -203,51 +194,6 @@
       if(key === "paysage") return t("Paysage");
       if(key === "portrait") return t("Portrait");
       return t("Autre");
-    }
-
-    // CSV robuste (gère guillemets + virgules)
-    function parseCSV(text){
-      const rows = [];
-      let row = [];
-      let value = "";
-      let inQuotes = false;
-
-      for(let i=0;i<text.length;i++){
-        const c = text[i];
-        const next = text[i+1];
-
-        if(c === '"' && next === '"'){
-          value += '"';
-          i++;
-          continue;
-        }
-        if(c === '"'){
-          inQuotes = !inQuotes;
-          continue;
-        }
-        if(c === "," && !inQuotes){
-          row.push(value.trim());
-          value = "";
-          continue;
-        }
-        if((c === "\n" || c === "\r") && !inQuotes){
-          if(value.length || row.length){
-            row.push(value.trim());
-            rows.push(row);
-            row = [];
-            value = "";
-          }
-          continue;
-        }
-        value += c;
-      }
-
-      if(value.length || row.length){
-        row.push(value.trim());
-        rows.push(row);
-      }
-
-      return rows;
     }
 
     function cleanNA(v){
@@ -286,22 +232,6 @@
        LOAD
        ========================= */
 
-    async function fetchSheetCSV(){
-      try{
-        const res = await fetch(SHEET_CSV_URL, { cache: "no-store" });
-        if(!res.ok) throw new Error("Impossible de charger la Google Sheet");
-        const csv = await res.text();
-        try{ localStorage.setItem(CACHE_KEY, csv); }catch(_){}
-        return csv;
-      }catch(err){
-        // Google injoignable / Sheet dépubliée : on affiche la dernière version connue
-        let cached = null;
-        try{ cached = localStorage.getItem(CACHE_KEY); }catch(_){}
-        if(cached){ console.warn("Sheet injoignable, utilisation de la copie locale.", err); return cached; }
-        throw err;
-      }
-    }
-
     async function loadSizes(){
       try{
         const res = await fetch(SIZES_URL);
@@ -310,14 +240,8 @@
     }
 
     async function loadArtworksFromSheet(){
-      const [csv, sizes] = await Promise.all([fetchSheetCSV(), loadSizes()]);
+      const [{ rows, col }, sizes] = await Promise.all([abouvSheet.load(), loadSizes()]);
       sizesMap = sizes || {};
-
-      const rows = parseCSV(csv);
-      if(!rows.length) throw new Error("Sheet vide");
-
-      const header = rows.shift().map(normalizeHeader);
-      const col = (name) => header.indexOf(normalizeHeader(name));
 
       // Sheet : Nom | Année | Catégorie | Technique | Format | Disponible | Jpg | Disponible où ? | Accueil
       return rows
