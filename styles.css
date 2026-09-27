@@ -646,20 +646,20 @@ body.portfolio .badge.vendue{
 body.portfolio .badge.vendue::before{ background:var(--red); }
 
 /* Modal */
-body.portfolio dialog{
+dialog.artDialog{
   border: none;
   padding: 0;
   background: transparent;
   max-width: 96vw;
   max-height: 92vh;
 }
-body.portfolio dialog::backdrop{
+dialog.artDialog::backdrop{
   background: rgba(0,0,0,.55);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
 }
 
-body.portfolio .modal{
+.modal{
   position: relative;
   width: min(1200px, 96vw);
   height: min(92vh, 900px);
@@ -668,7 +668,7 @@ body.portfolio .modal{
   background: transparent;
   border: none;
 }
-body.portfolio .modal__media{
+.modal__media{
   position: relative;
   flex: 1;
   min-height: 0;
@@ -676,7 +676,7 @@ body.portfolio .modal__media{
   align-items:center;
   justify-content:center;
 }
-body.portfolio .modal__img{
+.modal__img{
   max-width: 100%;
   max-height: 100%;
   width: auto;
@@ -684,7 +684,7 @@ body.portfolio .modal__img{
   object-fit: contain;
   display:block;
 }
-body.portfolio .modal__info{
+.modal__info{
   padding: 14px 0 6px;
   display:flex;
   flex-direction:column;
@@ -692,7 +692,7 @@ body.portfolio .modal__info{
   text-align:center;
   gap: 6px;
 }
-body.portfolio .modal__h{
+.modal__h{
   margin:0;
   font-size:16px;
   font-weight:900;
@@ -700,20 +700,20 @@ body.portfolio .modal__h{
   text-transform:uppercase;
   color:var(--ink);
 }
-body.portfolio .modal__meta{
+.modal__meta{
   margin:0;
   font-size:14px;
   color: rgba(var(--ink-rgb),.85);
 }
-body.portfolio .statusText{
+.statusText{
   font-weight: 900;
   letter-spacing: .06em;
   text-transform: uppercase;
 }
-body.portfolio .statusText.disponible{ color:var(--green); }
-body.portfolio .statusText.vendue{ color:var(--red); }
+.statusText.disponible{ color:var(--green); }
+.statusText.vendue{ color:var(--red); }
 
-body.portfolio .modal__closeBtn{
+.modal__closeBtn{
   position:absolute;
   top:10px;
   right:10px;
@@ -730,10 +730,10 @@ body.portfolio .modal__closeBtn{
   align-items:center;
   justify-content:center;
 }
-body.portfolio .modal__closeBtn:hover{ background: rgba(0,0,0,.65); }
+.modal__closeBtn:hover{ background: rgba(0,0,0,.65); }
 
 /* Modale : précédent / suivant */
-body.portfolio .modal__navBtn{
+.modal__navBtn{
   position:absolute;
   top:50%;
   transform: translateY(-50%);
@@ -751,13 +751,13 @@ body.portfolio .modal__navBtn{
   align-items:center;
   justify-content:center;
 }
-body.portfolio .modal__navBtn[hidden]{ display:none; }
-body.portfolio .modal__navBtn:hover{ background: rgba(0,0,0,.65); }
-body.portfolio .modal__navBtn--prev{ left:10px; }
-body.portfolio .modal__navBtn--next{ right:10px; }
+.modal__navBtn[hidden]{ display:none; }
+.modal__navBtn:hover{ background: rgba(0,0,0,.65); }
+.modal__navBtn--prev{ left:10px; }
+.modal__navBtn--next{ right:10px; }
 
 /* Modale : demander des informations */
-body.portfolio .modal__cta{
+.modal__cta{
   display:inline-flex;
   align-items:center;
   margin-top:6px;
@@ -771,7 +771,7 @@ body.portfolio .modal__cta{
   font-weight:600;
   transition: background-color var(--ease);
 }
-body.portfolio .modal__cta:hover{ background: rgba(var(--ink-rgb),.18); }
+.modal__cta:hover{ background: rgba(var(--ink-rgb),.18); }
 
 /* Messages d'état (aucun résultat, erreur de chargement) */
 body.portfolio .statusMsg{
@@ -959,10 +959,10 @@ a.fact .fact__small::after{ color:var(--ochre); }
 .faq .faq__a a:hover, .form .formNote a:hover, main.legal a:hover{ color:var(--ochre-hi); border-bottom-color:var(--ochre-hi); }
 .faq details[open] summary::after{ border-color:rgba(var(--ochre-rgb),.5); color:var(--ochre); }
 
-/* portfolio : cadre ocre au survol d'une œuvre, bouton de la fiche */
+/* portfolio : cadre ocre au survol d'une œuvre ; bouton de la fiche (portfolio et accueil) */
 body.portfolio .piece:hover .imgWrap{ border-color:rgba(var(--ochre-rgb),.6); }
-body.portfolio .modal__cta{ border-color:rgba(var(--ochre-rgb),.55); background:rgba(var(--ochre-rgb),.14); }
-body.portfolio .modal__cta:hover{ background:rgba(var(--ochre-rgb),.24); }
+.modal__cta{ border-color:rgba(var(--ochre-rgb),.55); background:rgba(var(--ochre-rgb),.14); }
+.modal__cta:hover{ background:rgba(var(--ochre-rgb),.24); }
 
 /* galeries : galerie choisie */
 .galItem.is-active{ border-color:rgba(var(--ochre-rgb),.5); background:rgba(var(--ochre-rgb),.08); }

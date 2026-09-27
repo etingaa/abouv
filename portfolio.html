@@ -14,6 +14,7 @@
   <script src="i18n.js"></script>
   <script src="site.js"></script>
   <script src="sheet.js"></script>
+  <script src="artwork-modal.js"></script>
   <link rel="preload" href="fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
   <title>Portfolio — Annick Bouvattier</title>
 
@@ -73,31 +74,11 @@
   </div>
   </div>
 
-  <!-- Modal -->
-  <dialog id="modal" aria-labelledby="modalTitle">
-    <div class="modal">
-      <div class="modal__media">
-        <img class="modal__img" id="modalImg" alt="">
-        <button class="modal__closeBtn" id="modalClose" type="button" aria-label="Fermer">×</button>
-        <button class="modal__navBtn modal__navBtn--prev" id="modalPrev" type="button" aria-label="Œuvre précédente">‹</button>
-        <button class="modal__navBtn modal__navBtn--next" id="modalNext" type="button" aria-label="Œuvre suivante">›</button>
-      </div>
-
-      <div class="modal__info">
-        <h2 class="modal__h" id="modalTitle"></h2>
-        <p class="modal__meta" id="modalMeta"></p>
-        <a class="modal__cta" id="modalCta" href="contact.html" hidden>Demander des informations</a>
-      </div>
-    </div>
-  </dialog>
-
   <script>
     /* =========================
        CONFIG
        ========================= */
 
-    const IMG_BASE = "images";
-    const THUMB_BASE = "images/thumbs";            // générées par scripts/make-thumbs.py
     const SIZES_URL = "images/thumbs/sizes.json";  // dimensions des miniatures (évite les sauts de mise en page)
 
     /* =========================
@@ -111,21 +92,11 @@
       groups: document.getElementById("groups"),
       subtabs: document.getElementById("subtabs"),
       sizes: document.getElementById("sizes"),
-
-      modal: document.getElementById("modal"),
-      modalImg: document.getElementById("modalImg"),
-      modalTitle: document.getElementById("modalTitle"),
-      modalMeta: document.getElementById("modalMeta"),
-      modalClose: document.getElementById("modalClose"),
-      modalPrev: document.getElementById("modalPrev"),
-      modalNext: document.getElementById("modalNext"),
-      modalCta: document.getElementById("modalCta"),
     };
 
     let artworks = [];
     let sizesMap = {};      // nom de fichier -> [largeur, hauteur] de la miniature
     let currentList = [];   // œuvres actuellement affichées (après filtres)
-    let modalIndex = -1;
 
     // plusieurs choix par onglet (Set vide = tous)
     const filters = {
@@ -152,14 +123,7 @@
 
     function uniq(arr){ return [...new Set(arr)].sort((a,b)=> (""+a).localeCompare(""+b, "fr")); }
 
-    function escapeHtml(s){
-      return String(s ?? "")
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
-    }
+    const { escapeHtml, metaLine } = abouvModal;
 
     function normSize(s){
       return String(s ?? "")
@@ -196,36 +160,8 @@
       return t("Autre");
     }
 
-    function cleanNA(v){
-      const s = String(v ?? "").trim();
-      if(!s) return "";
-      if(s.toUpperCase() === "N/A") return "";
-      return s;
-    }
-
-    function statusFromSheet(v){
-      const s = String(v ?? "").trim().toUpperCase();
-      return (s === "VENDUE") ? "vendue" : "disponible";
-    }
-
-    function cleanFile(jpg){
-      return String(jpg || "").trim().replace(/^images\//i, "").replace(/^\/+/, "");
-    }
-
-    function buildImagePath(file, base = IMG_BASE){
-      return encodeURI(`${base}/${file}`);
-    }
-
     function statusLabel(s){
       return t(s === "vendue" ? "statut|Vendue" : "statut|Disponible");
-    }
-
-    // "Huile sur Toile · 60 x 120 cm" (sans les champs vides) — technique traduite en anglais
-    // la technique est masquée sur téléphone dans les vignettes (styles.css) ; la taille reste
-    function metaLine(a){
-      const tech = a.technique ? `<span class="capTech">${escapeHtml(t(a.technique))}</span>` : "";
-      const size = a.size ? `<span class="capSize">${escapeHtml(a.size.replace(/\s*x\s*/i, " × "))}</span>` : "";
-      return tech && size ? `${tech}<span class="capTech"> · </span>${size}` : tech || size;
     }
 
     /* =========================
@@ -240,31 +176,14 @@
     }
 
     async function loadArtworksFromSheet(){
-      const [{ rows, col }, sizes] = await Promise.all([abouvSheet.load(), loadSizes()]);
+      const [list, sizes] = await Promise.all([abouvSheet.artworks(), loadSizes()]);
       sizesMap = sizes || {};
 
-      // Sheet : Nom | Année | Catégorie | Technique | Format | Disponible | Jpg | Disponible où ? | Accueil
-      return rows
-        .filter(r => r[col("nom")])
-        .map(r => {
-          const title = cleanNA(r[col("nom")]);
-          const category = cleanNA(r[col("categorie")]);
-          const technique = cleanNA(r[col("technique")]);
-          const formatRaw = cleanNA(r[col("format")]);
-          const status = statusFromSheet(r[col("disponible")]);
-          const where = cleanNA(r[col("disponible ou ?")]);
-          const file = cleanFile(cleanNA(r[col("jpg")]));
-
-          const size = formatRaw ? `${formatRaw} cm` : "";
-          const sizeNorm = size ? normSize(size) : "";
-          const shape = size ? shapeFromSize(sizeNorm) : "unknown";
-
-          const image = file ? buildImagePath(file) : "";
-          const thumb = file ? buildImagePath(file, THUMB_BASE) : "";
-
-          return { title, category, technique, size, sizeNorm, shape, status, where, file, image, thumb };
-        })
-        .filter(a => a.title && a.image);
+      // + format normalisé et orientation, pour les filtres
+      return list.map(a => {
+        const sizeNorm = a.size ? normSize(a.size) : "";
+        return { ...a, sizeNorm, shape: a.size ? shapeFromSize(sizeNorm) : "unknown" };
+      });
     }
 
     /* =========================
@@ -422,9 +341,9 @@
           scheduleRender();
         });
 
-        item.addEventListener("click", ()=> openModal(idx));
+        item.addEventListener("click", ()=> abouvModal.open(currentList, idx));
         item.addEventListener("keydown", (e)=>{
-          if(e.key === "Enter" || e.key === " "){ e.preventDefault(); openModal(idx); }
+          if(e.key === "Enter" || e.key === " "){ e.preventDefault(); abouvModal.open(currentList, idx); }
         });
         els.masonry.appendChild(item);
       });
@@ -437,46 +356,6 @@
     /* =========================
        MODAL
        ========================= */
-
-    function showArtwork(idx){
-      const n = currentList.length;
-      if(!n) return;
-      modalIndex = (idx + n) % n;
-      const a = currentList[modalIndex];
-
-      // miniature tout de suite, puis image d'origine dès qu'elle est chargée
-      els.modalImg.src = a.thumb;
-      els.modalImg.alt = a.title;
-      const full = new Image();
-      full.onload = () => { if(currentList[modalIndex] === a) els.modalImg.src = a.image; };
-      full.src = a.image;
-
-      els.modalTitle.textContent = a.title.toUpperCase();
-
-      const label = t(a.status === "vendue" ? "VENDUE" : "DISPONIBLE");
-      const parts = [];
-      const meta = metaLine(a);
-      if(meta) parts.push(meta);
-      parts.push(`<span class="statusText ${a.status}">${label}</span>` +
-                 (a.status === "disponible" && a.where ? ` · ${escapeHtml(t(a.where))}` : ""));
-      els.modalMeta.innerHTML = parts.join(" · ");
-
-      // œuvre disponible -> lien vers le formulaire, message pré-rempli
-      els.modalCta.hidden = a.status !== "disponible";
-      els.modalCta.href = "contact.html?oeuvre=" + encodeURIComponent(a.title);
-
-      const multi = n > 1;
-      els.modalPrev.hidden = !multi;
-      els.modalNext.hidden = !multi;
-    }
-
-    function openModal(idx){
-      showArtwork(idx);
-      document.body.style.overflow = "hidden"; // pas de scroll de la page derrière
-      els.modal.showModal();
-    }
-
-    function closeModal(){ if(els.modal.open) els.modal.close(); }
 
     /* =========================
        EVENTS
@@ -509,23 +388,8 @@
       if(activeGroup && !inside){ activeGroup = null; renderTabs(); }
     });
 
-    els.modalClose.addEventListener("click", closeModal);
-    els.modalPrev.addEventListener("click", ()=> showArtwork(modalIndex - 1));
-    els.modalNext.addEventListener("click", ()=> showArtwork(modalIndex + 1));
-    // clic sur le fond ou sur la zone vide autour de l'image -> fermer
-    els.modal.addEventListener("click", (e)=>{
-      const t = e.target;
-      if(t === els.modal || t.classList.contains("modal") || t.classList.contains("modal__media")) closeModal();
-    });
-    // "close" couvre aussi la touche Échap gérée nativement par <dialog>
-    els.modal.addEventListener("close", ()=>{ document.body.style.overflow = ""; });
-
     document.addEventListener("keydown", (e)=>{
-      if(els.modal.open){
-        if(e.key === "ArrowLeft") showArtwork(modalIndex - 1);
-        if(e.key === "ArrowRight") showArtwork(modalIndex + 1);
-      }
-      else if(e.key === "Escape" && activeGroup){
+      if(e.key === "Escape" && activeGroup && !abouvModal.isOpen()){
         const btn = els.groups.querySelector(`[data-group="${activeGroup}"]`);
         activeGroup = null;
         renderTabs();

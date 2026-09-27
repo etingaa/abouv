@@ -86,5 +86,42 @@
     return { rows, col: (name) => header.indexOf(normalizeHeader(name)) };
   }
 
-  window.abouvSheet = { load, normalizeHeader };
+  function cleanNA(v){
+    const s = String(v ?? "").trim();
+    return s.toUpperCase() === "N/A" ? "" : s;
+  }
+
+  function cleanFile(jpg){
+    return String(jpg || "").trim().replace(/^images\//i, "").replace(/^\/+/, "");
+  }
+
+  const imagePath = (file) => encodeURI(`images/${file}`);
+  const thumbPath = (file) => encodeURI(`images/thumbs/${file}`); // voir scripts/make-thumbs.py
+
+  // Une œuvre par ligne ayant un Nom et un Jpg.
+  // status : « VENDUE » -> "vendue", toute autre valeur -> "disponible"
+  // home   : false seulement si la colonne Accueil vaut « non »
+  async function artworks(){
+    const { rows, col } = await load();
+    return rows
+      .map(r => {
+        const file = cleanFile(cleanNA(r[col("jpg")]));
+        const format = cleanNA(r[col("format")]);
+        return {
+          title: cleanNA(r[col("nom")]),
+          category: cleanNA(r[col("categorie")]),
+          technique: cleanNA(r[col("technique")]),
+          size: format ? `${format} cm` : "",
+          status: cleanNA(r[col("disponible")]).toUpperCase() === "VENDUE" ? "vendue" : "disponible",
+          where: cleanNA(r[col("disponible ou ?")]),
+          home: normalizeHeader(r[col("accueil")]) !== "non",
+          file,
+          image: file ? imagePath(file) : "",
+          thumb: file ? thumbPath(file) : "",
+        };
+      })
+      .filter(a => a.title && a.file);
+  }
+
+  window.abouvSheet = { load, artworks, imagePath, thumbPath };
 })();

@@ -9,7 +9,7 @@ hébergée dans `fonts/`.
 | Contenu | Source |
 |---|---|
 | **Portfolio** | Google Sheet publié en CSV (URL et lecture dans `sheet.js`, constante `SHEET_CSV_URL`). Colonnes lues : `Nom`, `Catégorie`, `Technique`, `Format`, `Disponible`, `Jpg`, `Disponible où ?`. |
-| **Mur de l'accueil** | Même Sheet : les lignes avec « oui » dans la colonne `Accueil`. Secours : `images/manifest.json`, utilisé seulement si le Sheet est injoignable ou si aucune ligne n'a « oui ». |
+| **Mur de l'accueil** | Même Sheet : toutes les œuvres, sauf celles avec « non » dans la colonne `Accueil`. Un clic sur une toile ouvre sa fiche (même fenêtre que le portfolio, `artwork-modal.js`). Secours : `images/manifest.json`, utilisé seulement si le Sheet est injoignable. |
 | **Galeries** | tableau `galleries` dans `script.js` |
 | **Expositions** | tableau `expos` dans `expositions.html` |
 
@@ -18,7 +18,7 @@ hébergée dans `fonts/`.
 1. Déposer le JPG dans `images/` (le nom de fichier doit être **identique, casse comprise**, à la colonne `Jpg` du Sheet — GitHub Pages distingue majuscules et minuscules).
 2. Générer les miniatures : `python3 scripts/make-thumbs.py` (macOS). Elles vont dans `images/thumbs/`.
 3. Ajouter la ligne dans le Google Sheet.
-4. (Optionnel) mettre « oui » dans la colonne `Accueil` pour l'afficher sur le mur de l'accueil.
+4. Elle apparaît aussi sur le mur de l'accueil, sauf si la colonne `Accueil` vaut « non ».
 5. Commit + push.
 
 Sans miniature, le site retombe sur l'image d'origine (plus lourde, mais elle s'affiche).
