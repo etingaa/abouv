@@ -603,6 +603,8 @@ async function main(){
   function hideTip(){ els.tip.classList.remove("is-on"); tipFor = -1; }
 
   let hintTimer = 0;
+  // écran tactile : on ne choisit pas où aller, toucher sert seulement aux toiles
+  if (matchMedia("(pointer: coarse)").matches) els.hint.textContent = tr("Faites glisser pour regarder autour de vous · touchez une toile pour la découvrir");
   function showHint(){ els.hint.hidden = false; requestAnimationFrame(() => els.hint.classList.add("is-on")); hintTimer = setTimeout(hideHint, 7000); }
   function hideHint(){ clearTimeout(hintTimer); els.hint.classList.remove("is-on"); }
 
@@ -659,7 +661,10 @@ async function main(){
       // souris : clic = fiche dans le portfolio ; doigt : 1er toucher = étiquette, 2e = fiche
       if (e.pointerType === "touch" && tipFor !== h.art){ userInput(); showTip(h.art, e.clientX, e.clientY); return; }
       location.href = portfolioUrl(pieces[h.art].work);
-    } else if (h.floor){ hideTip(); walkTo(h.floor); }
+    } else if (h.floor){
+      hideTip();
+      if (e.pointerType !== "touch") walkTo(h.floor);   // au doigt, toucher sert seulement aux toiles
+    }
   });
   els.stage.addEventListener("pointercancel", () => { drag = null; els.stage.classList.remove("is-dragging"); });
 
