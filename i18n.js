@@ -142,6 +142,8 @@
     "Œuvre suivante": "Next artwork",
     "Ouvrir l'œuvre": "Open artwork",
     "Retirer": "Remove",
+    "Peintures": "Paintings",
+    "Peintures à l'huile": "Oil paintings",
     "Demander des informations": "Request information",
     "Carré": "Square",
     "Paysage": "Landscape",
@@ -350,14 +352,10 @@
     location.replace(url.href);
   }
 
-  function addSwitch(){
-    const footer = document.querySelector("footer.bottom");
-    if (!footer) return;
-    const legal = footer.lastElementChild; // « mentions légales » (ou « retour à l'accueil »)
-    if (!legal) return;
-
+  // Menu de langue : dans le pied de page (« fra ▾ ») et à droite du header (« FR ▾ »)
+  function makeLangMenu(label, extraClass){
     const box = document.createElement("span");
-    box.className = "langMenu";
+    box.className = "langMenu" + (extraClass ? " " + extraClass : "");
 
     const btn = document.createElement("button");
     btn.type = "button";
@@ -365,7 +363,7 @@
     btn.setAttribute("aria-haspopup", "true");
     btn.setAttribute("aria-expanded", "false");
     btn.setAttribute("aria-label", t("Langue") + " : " + NAMES[lang]);
-    btn.innerHTML = SHORT[lang] +
+    btn.innerHTML = label(lang) +
       '<svg class="langMenu__caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg>';
 
     const list = document.createElement("div");
@@ -376,7 +374,7 @@
       o.type = "button";
       o.className = "langMenu__opt";
       o.lang = l;
-      o.textContent = SHORT[l];
+      o.textContent = label(l);
       o.setAttribute("aria-label", NAMES[l]);
       if (l === lang) o.setAttribute("aria-current", "true");
       o.addEventListener("click", () => switchTo(l));
@@ -394,6 +392,18 @@
     });
 
     box.append(btn, list);
+    return box;
+  }
+
+  function addSwitch(){
+    const top = document.querySelector("header.top");
+    if (top) top.appendChild(makeLangMenu(l => l.toUpperCase(), "langMenu--top"));
+
+    const footer = document.querySelector("footer.bottom");
+    if (!footer) return;
+    const legal = footer.lastElementChild; // « mentions légales » (ou « retour à l'accueil »)
+    if (!legal) return;
+    const box = makeLangMenu(l => SHORT[l]);
 
     // lien + menu regroupés, pour que le menu reste collé au lien
     const pair = document.createElement("span");

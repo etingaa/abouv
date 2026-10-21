@@ -4,22 +4,22 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="description" content="Expositions personnelles, collectives et salons d'Annick Bouvattier depuis 1992." />
-  <meta name="theme-color" content="#02253A" />
+  <meta name="theme-color" content="#FFFFFF" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Annick Bouvattier" />
   <meta property="og:locale" content="fr_FR" />
   <meta property="og:title" content="Expositions — Annick Bouvattier" />
   <meta property="og:description" content="Expositions personnelles, collectives et salons d'Annick Bouvattier depuis 1992." />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-  <script src="i18n.js"></script>
-  <script src="site.js"></script>
-  <link rel="preload" href="fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <script src="i18n.js?v=20261020p"></script>
+  <script src="site.js?v=20261020p"></script>
+  <link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
   <!-- Leaflet (vue carte) -->
   <link rel="stylesheet"
         href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
         crossorigin="" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=20261020p" />
   <title>Expositions — Annick Bouvattier</title>
 
   <style>
@@ -32,9 +32,7 @@
     }
     @media (max-width:900px){ .now{ grid-template-columns:1fr; } }
     .now__img{
-      background:
-        radial-gradient(900px 520px at 30% 20%, rgba(var(--ink-rgb),.20), rgba(var(--ink-rgb),0) 60%),
-        linear-gradient(120deg, rgba(var(--ink-rgb),.10), rgba(var(--ink-rgb),.02));
+      background:var(--bg-deep);
       min-height:220px;
     }
     .now__body{ padding:18px 18px 16px; display:flex; flex-direction:column; gap:10px; }
@@ -101,7 +99,7 @@
     }
     .tlDot{
       width:9px; height:9px; border-radius:50%;
-      background:#02253A; border:1.5px solid rgba(var(--ink-rgb),.7);
+      background:var(--bg); border:1.5px solid rgba(var(--ink-rgb),.7);
       transition:background-color var(--ease), transform var(--ease);
     }
     .tlYear.is-hit .tlDot{ background:var(--ink); transform:scale(1.15); }
@@ -113,7 +111,7 @@
     }
     .tlYear.is-hit .tlYearLabel{ color:var(--ink); }
     .tlYear.is-empty .tlYearLabel{ display:none; }
-    .tlYear.is-empty.is-decade .tlYearLabel{ display:block; font-size:10px; color:rgba(var(--ink-rgb),.35); }
+    .tlYear.is-empty.is-decade .tlYearLabel{ display:block; font-size:10px; color:var(--ink-faint); }
 
     .tlCard{
       padding:10px 12px;
@@ -129,9 +127,9 @@
       font-size:11px; color:rgba(var(--ink-rgb),.6);
     }
     .tlCard__type::before{ content:""; width:6px; height:6px; border-radius:50%; background:var(--type-color); }
-    .tlCard[data-type="solo"]{ --type-color:var(--ochre); }
+    .tlCard[data-type="solo"]{ --type-color:var(--accent); }
     .tlCard[data-type="group"]{ --type-color:var(--blue); }
-    .tlCard[data-type="salon"]{ --type-color:var(--green); }
+    .tlCard[data-type="salon"]{ --type-color:var(--ink-faint); }
     /* filtre actif : ce qui ne correspond pas passe en transparence */
     .tlCard.is-dim{ opacity:.16; filter:grayscale(1); }
 
@@ -139,9 +137,9 @@
     .tlFoot{ display:flex; flex-wrap:wrap; align-items:center; gap:6px 18px; margin:14px 0 0; }
     .tlKey{ display:inline-flex; align-items:center; gap:6px; font-size:12px; color:rgba(var(--ink-rgb),.62); }
     .tlKey::before{ content:""; width:7px; height:7px; border-radius:50%; background:var(--type-color); }
-    .tlKey[data-type="solo"]{ --type-color:var(--ochre); }
+    .tlKey[data-type="solo"]{ --type-color:var(--accent); }
     .tlKey[data-type="group"]{ --type-color:var(--blue); }
-    .tlKey[data-type="salon"]{ --type-color:var(--green); }
+    .tlKey[data-type="salon"]{ --type-color:var(--ink-faint); }
 
     /* curseur pour parcourir la ligne du temps */
     .tlNav{ display:flex; align-items:center; gap:10px; margin-top:18px; }
@@ -162,7 +160,7 @@
     .tlScrub__tick.is-dim{ background:rgba(var(--ink-rgb),.1); }
     .tlScrub__label{
       position:absolute; top:calc(50% + 8px); transform:translateX(-50%);
-      font-size:10px; color:rgba(var(--ink-rgb),.4); font-variant-numeric:tabular-nums;
+      font-size:10px; color:var(--ink-faint); font-variant-numeric:tabular-nums;
     }
     .tlScrub input{
       position:absolute; inset:0; width:100%; margin:0;
@@ -182,7 +180,7 @@
     .tlScrub input:focus-visible{ outline:none; }
     .tlScrub input:focus-visible::-webkit-slider-thumb{ border-color:var(--ink); }
 
-    .tlHint{ margin:0 0 0 auto; font-size:12px; color:rgba(var(--ink-rgb),.4); }
+    .tlHint{ margin:0 0 0 auto; font-size:12px; color:var(--ink-faint); }
     @media (min-width:601px){ .expositions .search{ width:280px; } }
     .empty{ margin:14px 0 0; color:var(--ink-faint); }
     .tlLayout{ display:flex; flex-direction:column; }
@@ -202,38 +200,38 @@
       position:relative; isolation:isolate;
       height:min(620px, calc(100vh - var(--shade-h, 140px) - 40px)); min-height:420px;
       border:1px solid rgba(var(--ink-rgb),.12); border-radius:var(--radius-card); overflow:hidden;
-      background:#0b1c28;
+      background:var(--bg-deep);
     }
-    #expoMap{ position:absolute; inset:0; background:#0b1c28; }
+    #expoMap{ position:absolute; inset:0; background:var(--bg-deep); }
     /* pastille : taille selon le nombre d'expositions dans la ville */
     .expoPin{ background:none; border:0; }
     .expoPin b{
       position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
       display:flex; align-items:center; justify-content:center;
       width:var(--s); height:var(--s); border-radius:50%;
-      background:rgba(var(--ochre-rgb),.9); color:#02253A;
-      border:2px solid #02253A; box-shadow:0 0 0 1px rgba(var(--ochre-rgb),.6), 0 4px 14px rgba(0,0,0,.35);
-      font:700 11px/1 Inter, system-ui, sans-serif;
+      background:rgba(var(--accent-rgb),.9); color:var(--bg);
+      border:2px solid var(--bg); box-shadow:0 0 0 1px rgba(var(--accent-rgb),.6);
+      font:700 11px/1 var(--font);
       transition:opacity .3s ease, transform .25s ease, filter .3s ease;
     }
     .expoPin:hover b{ transform:translate(-50%,-50%) scale(1.12); }
     .expoPin.is-dim b{ opacity:.22; filter:grayscale(1); }
     /* bulle : les expositions de la ville */
-    .expoPop{ min-width:220px; max-width:260px; font-family:Inter, system-ui, sans-serif; }
+    .expoPop{ min-width:220px; max-width:260px; font-family:var(--font); }
     .expoPop__city{ margin:0 0 8px; font-size:13px; font-weight:700; }
     .expoPop ul{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:6px; max-height:220px; overflow:auto; }
     .expoPop li{ display:grid; grid-template-columns:38px 1fr; gap:6px; font-size:12px; line-height:1.35; }
     .expoPop li.is-dim{ opacity:.35; }
     .expoPop li b{ font-variant-numeric:tabular-nums; color:rgba(var(--ink-rgb),.6); font-weight:600; }
     .expoPop li span::before{ content:""; display:inline-block; width:6px; height:6px; margin-right:6px; border-radius:50%; background:var(--type-color); vertical-align:1px; }
-    .expoPop li[data-type="solo"]{ --type-color:var(--ochre); }
+    .expoPop li[data-type="solo"]{ --type-color:var(--accent); }
     .expoPop li[data-type="group"]{ --type-color:var(--blue); }
-    .expoPop li[data-type="salon"]{ --type-color:var(--green); }
+    .expoPop li[data-type="salon"]{ --type-color:var(--ink-faint); }
     .expoPop__go{
       margin-top:10px; padding:0; border:0; background:none; cursor:pointer;
-      font:inherit; font-size:12px; color:var(--ochre);
+      font:inherit; font-size:12px; color:var(--accent);
     }
-    .expoPop__go:hover{ color:var(--ochre-hi); }
+    .expoPop__go:hover{ color:var(--accent-hi); }
 
     /* Téléphone : la ligne du temps devient verticale (ligne à gauche, expositions à droite)
        et se parcourt en faisant défiler la page. */
@@ -355,7 +353,7 @@
 
     <!-- Vue carte : une pastille par ville, avec son nombre d'expositions -->
     <section class="expoMapWrap" id="mapView" aria-label="Carte des expositions" hidden>
-      <div id="expoMap" class="darkMap"></div>
+      <div id="expoMap" class="siteMap"></div>
     </section>
     <p class="empty" id="empty" hidden>Aucune exposition ne correspond aux filtres.</p>
 
@@ -373,7 +371,7 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
           integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
           crossorigin=""></script>
-  <script src="expos-data.js"></script>
+  <script src="expos-data.js?v=20261020p"></script>
   <script>
     const expos = window.EXPOS || [];
 
