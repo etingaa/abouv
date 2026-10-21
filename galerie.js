@@ -522,26 +522,19 @@ async function main(){
   view.pos.set(-plan.L / 2 - CFG.vestibule + 1.3, CFG.eye, 0);
   view.yaw = -Math.PI / 2; view.pitch = 0;
 
-  /* ---------- promenade : on tourne lentement autour du banc, le regard posé sur les toiles ----------
-     Boucle en ellipse centrée sur le banc. À chaque instant on regarde la toile la plus en face, côté mur
-     (un peu en avant dans le sens de la marche) ; le regard glisse doucement d'une toile à la suivante. */
-  const WANDER = { speed: .26, idle: 9 };        // m/s ; secondes sans action avant de repartir
-  const ellipse = { rx: Math.max(.9, plan.L / 2 - 2.0), rz: Math.max(.8, plan.S / 2 - 1.8) };
+  /* ---------- promenade : un tour complet du banc en 15 s, le regard tourné vers les murs ----------
+     Pas de saut d'une toile à l'autre : le regard tourne en continu avec la marche (vers le mur,
+     un peu en avant), les toiles défilent naturellement. */
+  const WANDER = { lap: 15, idle: 9 };          // secondes par tour ; secondes sans action avant de repartir
+  const ellipse = { rx: Math.max(.9, plan.L / 2 - 2.4), rz: Math.max(.8, plan.S / 2 - 2.2) };
   const wander = { on: false, theta: Math.PI };
   const onEllipse = (th) => new THREE.Vector3(ellipse.rx * Math.cos(th), CFG.eye, ellipse.rz * Math.sin(th));
   function wanderGaze(th){
     const p = onEllipse(th);
-    const outYaw = Math.atan2(-p.x / ellipse.rx, -p.z / ellipse.rz);                       // vers le mur
-    const walk = new THREE.Vector3(ellipse.rx * Math.sin(th), 0, -ellipse.rz * Math.cos(th)); // sens de la marche (θ décroît)
-    const pref = outYaw + angleDiff(outYaw, Math.atan2(-walk.x, -walk.z)) * .3;
-    let best = null, bestScore = Infinity;
-    for (const pc of pieces){
-      const y = yawTo(p, pc.center), d = Math.abs(angleDiff(pref, y));
-      if (d > 1.25) continue;
-      const score = d + p.distanceTo(pc.center) * .06;
-      if (score < bestScore){ bestScore = score; best = { yaw: y, pitch: Math.atan2(pc.center.y - CFG.eye, Math.hypot(pc.center.x - p.x, pc.center.z - p.z)) }; }
-    }
-    return best || { yaw: pref, pitch: -.03 };
+    const out = new THREE.Vector2(p.x / (ellipse.rx * ellipse.rx), p.z / (ellipse.rz * ellipse.rz)).normalize();  // normale : vers le mur
+    const walk = new THREE.Vector2(ellipse.rx * Math.sin(th), -ellipse.rz * Math.cos(th)).normalize();             // sens de la marche (θ décroît)
+    const dx = out.x * .8 + walk.x * .35, dz = out.y * .8 + walk.y * .35;
+    return { yaw: Math.atan2(-dx, -dz), pitch: -.02 };
   }
   function nearestTheta(pos){
     let best = 0, bd = Infinity;
@@ -680,14 +673,13 @@ async function main(){
       walking = Math.sin(Math.PI * k) * .8;
       if (k >= 1){ const cb = move.onDone; move = null; if (cb) cb(); }
     } else if (wander.on){
-      const r = Math.hypot(ellipse.rx * Math.sin(wander.theta), ellipse.rz * Math.cos(wander.theta)) || 1;
-      wander.theta -= dt * WANDER.speed / r;
+      wander.theta -= dt * Math.PI * 2 / WANDER.lap;
       view.pos.copy(onEllipse(wander.theta));
       // le regard suit sa cible en douceur (pas de rotation brusque)
-      // le regard glisse en douceur vers la toile en face (jamais de rotation brusque)
+      // le regard suit la marche en continu
       const gz = wanderGaze(wander.theta);
-      view.yaw += angleDiff(view.yaw, gz.yaw) * Math.min(1, dt * .6);
-      view.pitch += (gz.pitch - view.pitch) * Math.min(1, dt * .5);
+      view.yaw += angleDiff(view.yaw, gz.yaw) * Math.min(1, dt * 3);
+      view.pitch += (gz.pitch - view.pitch) * Math.min(1, dt * 1.5);
       walking = .55;
     } else if (!drag && lastInput && now - lastInput > WANDER.idle * 1000){
       lastInput = 0;
