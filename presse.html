@@ -168,14 +168,6 @@
       .pdfModal__frame{ display:none; }
       .pdfModal__fallback{ display:flex; }
     }
-
-    /* mise en page magazine : la phrase du dossier en très grand, la couverture en pleine largeur, le texte en colonne */
-    .mag__quote{ margin:24px 0 56px; max-width:16ch; font-size:clamp(34px, 5.2vw, 76px); font-weight:400; line-height:1.05; letter-spacing:-.015em; }
-    .pub{ display:grid; grid-template-columns:1fr; gap:36px; margin-bottom:96px; }
-    .pub__cover{ border:0; border-radius:0; box-shadow:none; }
-    .pub > div{ max-width:56ch; margin-left:auto; margin-right:8%; }
-    .pub__title{ font-size:26px; }
-    @media (max-width:900px){ .pub > div{ margin:0; } }
   </style>
 </head>
 <body class="presse salle salle--presse">
@@ -199,8 +191,6 @@
 
     <h1 class="sr-only">Presse</h1>
     <div class="sectionHead"><h2 class="sectionTitle">Parutions</h2><div class="sectionMeta" id="pubCount"></div></div>
-
-    <p class="mag__quote">« Réussir à sublimer la féminité »</p>
 
     <!-- Une parution (pour en ajouter une : dupliquer l'<article class="pub">) -->
     <article class="pub">

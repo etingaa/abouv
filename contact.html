@@ -80,15 +80,6 @@
       .form textarea{ font-size:16px; }
       .topics .tab{ height:32px; }
     }
-
-    /* mise en page magazine : grand titre à gauche, formulaire à droite */
-    .contactPage .contact{ display:grid; grid-template-columns:.9fr 1.1fr; gap:72px; max-width:none; align-items:start; margin-top:24px; }
-    .mag__side{ position:sticky; top:calc(var(--shade-h, 90px) + 24px); }
-    .mag__quote{ margin:0 0 20px; font-size:clamp(36px, 5vw, 72px); font-weight:400; line-height:1.05; letter-spacing:-.015em; }
-    @media (max-width:900px){
-      .contactPage .contact{ grid-template-columns:1fr; gap:32px; }
-      .mag__side{ position:static; }
-    }
   </style>
 </head>
 
@@ -110,12 +101,9 @@
 
     <h1 class="sr-only">Contact</h1>
     <div class="contact">
-      <div class="mag__side">
-        <p class="mag__quote">Écrire à l'artiste</p>
-        <p class="lead">Une œuvre, une commande, un article : je vous réponds dès que possible.</p>
-      </div>
       <section aria-label="Formulaire de contact">
         <div class="sectionHead"><h2 class="sectionTitle">Écrire un message</h2></div>
+        <p class="lead">Écrivez-moi ici, je vous réponds dès que possible.</p>
 
         <form class="form" id="contactForm" action="https://formspree.io/f/xdalokdl" method="POST">
           <!-- Sujet : envoyé avec le message (champ « Sujet ») -->
