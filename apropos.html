@@ -15,7 +15,7 @@
   <script src="i18n.js?v=20261023k"></script>
   <script src="site.js?v=20261023g"></script>
   <link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="styles.css?v=20261023i" />
+  <link rel="stylesheet" href="styles.css?v=20261024a" />
   <!-- pages préchargées au survol d'un lien : changement de page quasi instantané (la galerie 3D est seulement préchargée) -->
   <script type="speculationrules">
     {"prerender":[{"where":{"and":[{"href_matches":"*.html"},{"not":{"href_matches":"*index.html"}}]},"eagerness":"moderate"}],
@@ -132,17 +132,6 @@
       </div>
     </section>
 
-    <div class="sectionHead"><h2 class="sectionTitle">Repères</h2></div>
-    <section class="facts" aria-label="Repères">
-      <div class="fact"><span class="fact__big">Nevers</span><span class="fact__small">Ville natale</span></div>
-      <div class="fact"><span class="fact__big">Huile au couteau</span><span class="fact__small">Lissée, en transparence</span></div>
-      <a class="fact" href="expositions.html"><span class="fact__big" id="factExpos">40 expositions</span><span class="fact__small" id="factSince">Depuis 1992</span></a>
-      <a class="fact" href="galeries.html"><span class="fact__big" id="factGaleries">5 galeries</span><span class="fact__small">France et États-Unis</span></a>
-    </section>
-    <div class="ctaRow">
-      <a href="portfolio.html">Voir les œuvres</a>
-      <a href="contact.html">Écrire à l'artiste</a>
-    </div>
 
     <div class="sectionHead"><h2 class="sectionTitle">Questions fréquentes</h2></div>
     <section class="faq" id="faq" aria-label="Questions fréquentes">
@@ -226,16 +215,6 @@
       </footer>
   </div>
   </div>
-  <script src="expos-data.js?v=20261022n"></script>
-  <script>
-    // Repères : nombre d'expositions et première année, lus dans expos-data.js
-    document.addEventListener("DOMContentLoaded", () => {
-      const ex = window.EXPOS || [];
-      if(!ex.length) return;
-      document.getElementById("factExpos").textContent = `${ex.length} ${t("expositions")}`;
-      document.getElementById("factSince").textContent = `${t("Depuis")} ${Math.min(...ex.map(e => e.year))}`;
-    });
-  </script>
 </body>
 </html>
 

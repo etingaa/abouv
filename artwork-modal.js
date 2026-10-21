@@ -92,7 +92,7 @@
     const meta = metaLine(a);
     if(meta) parts.push(meta);
     if(a.status){
-      const label = t(a.status === "vendue" ? "VENDUE" : "DISPONIBLE");
+      const label = t(a.status === "vendue" ? "statut|Vendue" : "statut|Disponible");
       parts.push(`<span class="statusText ${a.status}">${label}</span>` +
                  (a.status === "disponible" && a.where ? ` · ${escapeHtml(t(a.where))}` : ""));
     }

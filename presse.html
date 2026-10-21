@@ -21,7 +21,7 @@
      "prefetch":[{"where":{"href_matches":"*index.html"},"eagerness":"moderate"}]}
   </script>
   <title>Presse — Annick Bouvattier</title>
-  <link rel="stylesheet" href="styles.css?v=20261023i" />
+  <link rel="stylesheet" href="styles.css?v=20261024a" />
   <style>
     /* ===== Parution : couverture + texte, en carte ===== */
     .pub{
@@ -218,12 +218,6 @@
       </div>
     </article>
 
-    <div class="sectionHead"><h2 class="sectionTitle">Ressources</h2></div>
-    <section class="facts facts--3" aria-label="Ressources">
-      <a class="fact" href="contact.html?sujet=presse"><span class="fact__big">Interview, visuels</span><span class="fact__small">Écrire à l'artiste</span></a>
-      <a class="fact" href="apropos.html"><span class="fact__big">Biographie</span><span class="fact__small">Parcours et technique</span></a>
-      <a class="fact" href="expositions.html"><span class="fact__big" id="factExpos">40 expositions</span><span class="fact__small" id="factSince">Depuis 1992</span></a>
-    </section>
 
     <footer class="bottom">
         <div class="bottom__left">
@@ -262,17 +256,11 @@
   </div>
 </div>
 
-<script src="expos-data.js?v=20261022n"></script>
 <script>
-// nombre de parutions + repère « 40 expositions depuis 1992 » (lu dans expos-data.js)
+// nombre de parutions
 document.addEventListener("DOMContentLoaded", () => {
   const n = document.querySelectorAll(".pub").length;
   document.getElementById("pubCount").textContent = `${n} ${t(n > 1 ? "parutions" : "parution")}`;
-  const ex = window.EXPOS || [];
-  if(ex.length){
-    document.getElementById("factExpos").textContent = `${ex.length} ${t("expositions")}`;
-    document.getElementById("factSince").textContent = `${t("Depuis")} ${Math.min(...ex.map(e => e.year))}`;
-  }
 });
 </script>
 <script>

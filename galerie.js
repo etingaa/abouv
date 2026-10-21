@@ -763,7 +763,7 @@ async function main(){
   const th0 = Math.PI;                                   // côté porte de la boucle
   const gz0 = wanderGaze(th0);
   travel({ pos: onEllipse(th0), yaw: gz0.yaw, pitch: gz0.pitch }, () => { wander.on = true; wander.theta = th0; }, 4.5);
-  if (!passive) showHint();
+  // (plus de bulle d'aide : le curseur suffit)
   ready.then(() => els.loading.classList.add("is-done"));
 }
 
