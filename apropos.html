@@ -12,10 +12,10 @@
   <meta property="og:title" content="À propos — Annick Bouvattier" />
   <meta property="og:description" content="Biographie d'Annick Bouvattier, artiste peintre : de la mode et du cinéma à la peinture à l'huile au couteau." />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-  <script src="i18n.js?v=20261024b"></script>
+  <script src="i18n.js?v=20261024c"></script>
   <script src="site.js?v=20261023g"></script>
   <link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="styles.css?v=20261024a" />
+  <link rel="stylesheet" href="styles.css?v=20261024d" />
   <!-- pages préchargées au survol d'un lien : changement de page quasi instantané (la galerie 3D est seulement préchargée) -->
   <script type="speculationrules">
     {"prerender":[{"where":{"and":[{"href_matches":"*.html"},{"not":{"href_matches":"*index.html"}}]},"eagerness":"moderate"}],
@@ -41,7 +41,7 @@
     .about__text strong{ color:var(--ink); font-weight:700; }
 
     /* ===== FAQ : questions dépliables ===== */
-    .faq{ max-width:none; border-top:1px solid rgba(var(--ink-rgb),.09); scroll-margin-top:calc(var(--shade-h, 90px) + 60px); }
+    .faq{ max-width:none; border-top:0; scroll-margin-top:calc(var(--shade-h, 90px) + 60px); }
     .faq details{ border-bottom:1px solid rgba(var(--ink-rgb),.09); }
     .faq summary{
       display:flex; align-items:center; justify-content:space-between; gap:16px;
@@ -79,19 +79,6 @@
     }
     @media (prefers-reduced-motion: reduce){ .faq__a{ animation:none; } .faq summary::after{ transition:none; } }
 
-    /* mise en page magazine */
-    .mag{ display:grid; grid-template-columns:1.25fr .75fr; gap:64px; align-items:end; margin:24px 0 96px; }
-    .mag__quote{ margin:0 0 8px; font-size:clamp(34px, 4.6vw, 68px); font-weight:400; line-height:1.08; letter-spacing:-.015em; color:var(--ink); }
-    .mag__photo{ margin:0; }
-    .mag__photo img{ width:100%; display:block; filter:grayscale(100%) contrast(1.05); }
-    .about{ display:block; margin:0 0 96px; }
-    .about__text{ max-width:64ch; margin:0 auto; }
-    .about__text p:first-child{ font-size:22px; }
-    @media (max-width:900px){
-      .mag{ grid-template-columns:1fr; gap:32px; margin-bottom:56px; }
-      .mag__photo{ max-width:420px; }
-      .about__text p:first-child{ font-size:18px; }
-    }
   </style>
 </head>
 
@@ -114,17 +101,34 @@
     <h1 class="sr-only">À propos</h1>
     <div class="sectionHead"><h2 class="sectionTitle">Biographie</h2></div>
 
-    <!-- ouverture façon magazine : une phrase en très grand, la photo en regard -->
-    <div class="mag">
-      <p class="mag__quote">« Elles vivent leur féminité sans fausse pudeur, indifférentes aux regards extérieurs. »</p>
-      <figure class="mag__photo">
-        <img src="images/annickbouvattier.jpg" alt="Annick Bouvattier dans son atelier" />
-      </figure>
-    </div>
+    <p class="ix-lead">Annick Bouvattier peint des femmes, dans des jeux d’ombres et de lumière.</p>
 
-    <section class="about" aria-label="Biographie">
-      <div class="about__text">
-        <!-- Biographie : version française et version anglaise côte à côte (i18n.js affiche la bonne) -->
+    <section class="ix-row" aria-label="Parcours">
+      <h2 class="ix-label">Parcours</h2>
+      <div>
+        <ul class="ix-list" data-lang="fr">
+          <li><span class="ix-list__k">Nevers</span><span class="ix-list__v">Naissance<small>Son père, pédiatre et amateur d’art, lui transmet le goût de la peinture.</small></span></li>
+          <li><span class="ix-list__k">Paris</span><span class="ix-list__v">École Bercot – Marie Rucki<small>Deux ans de formation de styliste ; créations présentées à Paris et à la Villa Médicis.</small></span></li>
+          <li><span class="ix-list__k">Rome</span><span class="ix-list__v">Costumière styliste à Cinecittà<small>Cinéma et publicité ; le goût des couleurs chaudes, sensuelles, profondes.</small></span></li>
+          <li><span class="ix-list__k">Années 1990</span><span class="ix-list__v">Se consacre à la peinture à l’huile<small>Deux années de recherche en autodidacte.</small></span></li>
+          <li><span class="ix-list__k">Pierre Ramel</span><span class="ix-list__v">Quatre ans d’apprentissage<small>La peinture à l’huile au couteau, lissée, sans épaisseur, en transparence.</small></span></li>
+        </ul>
+        <ul class="ix-list" data-lang="en">
+          <li><span class="ix-list__k">Nevers</span><span class="ix-list__v">Born<small>Her father, a pediatrician and art lover, passes on a love of painting.</small></span></li>
+          <li><span class="ix-list__k">Paris</span><span class="ix-list__v">Bercot – Marie Rucki school<small>Two years training as a fashion designer; work shown in Paris and at the Villa Medici.</small></span></li>
+          <li><span class="ix-list__k">Rome</span><span class="ix-list__v">Costume designer at Cinecittà<small>Film and advertising; a taste for warm, sensual, deep colours.</small></span></li>
+          <li><span class="ix-list__k">1990s</span><span class="ix-list__v">Devotes herself to oil painting<small>Two years of self-taught exploration.</small></span></li>
+          <li><span class="ix-list__k">Pierre Ramel</span><span class="ix-list__v">Four years as his pupil<small>Palette-knife oil painting, smooth, without impasto, in transparent layers.</small></span></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="ix-row" aria-label="Biographie">
+      <div class="ix-sticky">
+        <h2 class="ix-label">Biographie</h2>
+        <img class="ix-label__img" src="images/annickbouvattier.jpg" alt="Annick Bouvattier dans son atelier" />
+      </div>
+      <div class="ix-text">
         <div data-lang="fr">
           <p><strong>Annick Bouvattier</strong> est née à Nevers. Son père, pédiatre et amateur d’art, lui transmet dès sa prime enfance le <strong>goût de l’art et de la peinture</strong>.</p>
 
@@ -136,7 +140,6 @@
 
           <p>Annick Bouvattier peint essentiellement <strong>des femmes</strong>, dans des jeux <strong>d’ombres et de lumière</strong>. Elles vivent leur féminité sans fausse pudeur, indifférentes aux regards extérieurs.</p>
         </div>
-
         <div data-lang="en">
           <p><strong>Annick Bouvattier</strong> was born in Nevers, France. Her father, a pediatrician and art lover, passed on to her from early childhood a <strong>love of art and painting</strong>.</p>
 
@@ -151,8 +154,9 @@
       </div>
     </section>
 
-
-    <div class="sectionHead"><h2 class="sectionTitle">Questions fréquentes</h2></div>
+    <section class="ix-row" aria-label="Questions fréquentes">
+      <h2 class="ix-label">Questions</h2>
+      <div>
     <section class="faq" id="faq" aria-label="Questions fréquentes">
       <!-- Questions / réponses : version française et version anglaise (i18n.js affiche la bonne) -->
       <div data-lang="fr">
@@ -221,6 +225,8 @@
             <p>Publications are gathered on the <a href="presse.html">Press</a> page. For an interview, an exhibition or image requests, write through the <a href="contact.html">contact form</a>.</p>
           </div>
         </details>
+      </div>
+    </section>
       </div>
     </section>
 

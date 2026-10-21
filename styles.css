@@ -1070,7 +1070,7 @@ body.portfolio .badge::before{ display:none; }
 .statusText, .statusText.disponible, .statusText.vendue{ color:var(--ink-faint); font-weight:400; letter-spacing:.02em; text-transform:none; }
 
 /* contact : le formulaire seul, sans cadre (les réseaux sont déjà dans le pied de page) */
-.contactPage .contact{ display:block; max-width:680px; }
+.contactPage .contact{ display:block; max-width:none; }
 .contactPage .form{ border:0; background:none; padding:0; }
 
 /* presse : la couverture et deux lignes, sans ombre ni cadre */
@@ -1078,3 +1078,74 @@ body.portfolio .badge::before{ display:none; }
 
 /* header : plus de flou, un simple fond bleu nuit quand on descend */
 body.salle .shade{ background:#070c19; -webkit-backdrop-filter:none; backdrop-filter:none; }
+
+/* =========================
+   INDEX ÉDITORIAL (À propos, Presse, Contact) : une grande phrase, puis des rangées
+   séparées par un filet : intitulé à gauche, contenu à droite
+   ========================= */
+.ix-lead{
+  margin:28px 0 88px; max-width:20ch;
+  font-size:clamp(34px, 5vw, 76px); font-weight:400; line-height:1.04; letter-spacing:-.02em;
+  color:var(--ink);
+}
+.ix-row{
+  display:grid; grid-template-columns:minmax(160px, 1fr) 3fr; gap:24px 48px;
+  padding:28px 0 36px; border-top:1px solid rgba(var(--ink-rgb),.16);
+}
+.ix-row:last-of-type{ border-bottom:1px solid rgba(var(--ink-rgb),.16); margin-bottom:24px; }
+.ix-label{
+  margin:0; font-size:12px; font-weight:500; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--ink-faint);
+}
+.ix-label__img{ display:block; width:100%; max-width:220px; margin-top:22px; filter:grayscale(1) contrast(1.05); }
+.ix-sticky{ position:sticky; top:calc(var(--shade-h, 90px) + 24px); align-self:start; }
+
+/* liste de lignes : date / texte / action */
+.ix-list{ list-style:none; margin:0; padding:0; }
+.ix-list li{
+  display:grid; grid-template-columns:7em 1fr auto; gap:6px 28px; align-items:baseline;
+  padding:14px 0; border-bottom:1px solid rgba(var(--ink-rgb),.08);
+}
+.ix-list li:first-child{ padding-top:0; }
+.ix-list li:last-child{ border-bottom:0; padding-bottom:0; }
+.ix-list__k{ font-size:14px; color:var(--ink-faint); font-variant-numeric:tabular-nums; }
+.ix-list__v{ font-size:clamp(18px, 1.7vw, 24px); line-height:1.3; color:var(--ink); }
+.ix-list__v small{ display:block; margin-top:4px; font-size:14px; color:var(--ink-soft); }
+.ix-list__a{ display:flex; gap:18px; font-size:13px; white-space:nowrap; }
+.ix-link{
+  background:none; border:0; padding:0 0 1px; cursor:pointer; font:inherit; color:var(--ink);
+  border-bottom:1px solid rgba(var(--ink-rgb),.35);
+}
+.ix-link:hover{ border-bottom-color:var(--ink); }
+
+.ix-text{ columns:2; column-gap:48px; }
+.ix-text p{ margin:0 0 16px; break-inside:avoid-column; color:var(--ink-soft); font-size:15px; line-height:1.7; }
+.ix-text strong{ color:var(--ink); font-weight:600; }
+
+/* contact : l'adresse en très grand */
+.ix-mail{
+  display:inline-block; align-self:flex-start; margin:28px 0 88px;
+  font-size:clamp(32px, 5.4vw, 80px); font-weight:400; line-height:1; letter-spacing:-.02em; color:var(--ink);
+  border-bottom:2px solid rgba(var(--ink-rgb),.25); padding-bottom:6px;
+  transition:border-color var(--ease);
+}
+.ix-mail:hover{ border-bottom-color:var(--accent); }
+
+/* formulaire en lignes : pas de cadres, seulement un filet sous chaque champ */
+.ix-form{ max-width:760px; border:0 !important; background:none !important; padding:0 !important; gap:22px 32px !important; }
+.ix-form input, .ix-form textarea{
+  border:0 !important; border-bottom:1px solid rgba(var(--ink-rgb),.25) !important; border-radius:0 !important;
+  background:none !important; padding-left:0 !important; padding-right:0 !important;
+}
+.ix-form textarea{ min-height:120px; }
+.ix-form input:focus, .ix-form textarea:focus{ border-bottom-color:var(--ink) !important; }
+.ix-form .sendBtn{ border-radius:999px; padding:0 26px; height:42px; }
+
+@media (max-width:760px){
+  .ix-lead, .ix-mail{ margin:12px 0 48px; }
+  .ix-row{ grid-template-columns:1fr; gap:16px; padding:22px 0 28px; }
+  .ix-sticky{ position:static; }
+  .ix-label__img{ max-width:160px; margin-top:14px; }
+  .ix-list li{ grid-template-columns:1fr; gap:4px; }
+  .ix-text{ columns:1; }
+}
