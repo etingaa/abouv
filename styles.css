@@ -315,7 +315,7 @@ a.fact .fact__small::after{ content:" →"; }
   .top__nav{ display:none; }
   .top.is-open .brand{ position:relative; z-index:101; }
   .top.is-open .top__nav{
-    display:flex; position:fixed; inset:0; z-index:100;
+    display:flex; position:fixed; inset:0; z-index:100; justify-self:stretch;
     flex-direction:column; align-items:stretch; justify-content:flex-start; flex-wrap:nowrap;
     gap:0; padding:calc(var(--header-h) + 20px) 20px 28px;
     background:var(--bg);
@@ -914,10 +914,10 @@ body.portfolio .piece:hover .imgWrap{ border-color:rgba(var(--accent-rgb),.6); }
 .tlCard[data-type="salon"]{ --type-rgb:94,104,128; }
 
 /* =========================
-   PORTFOLIO — fond de la galerie 3D, flouté (essai, à étendre aux autres pages ensuite)
+   FOND « SALLE » : la galerie 3D floutée derrière chaque page (un angle différent par page)
    La page passe en couleurs claires sur ce fond sombre : on redéfinit les variables de couleur.
    ========================= */
-body.portfolio{
+body.salle{
   --bg: #0b1120;
   --bg-deep: #151c2c;
   --ink-rgb: 236,231,222;
@@ -943,16 +943,29 @@ body.portfolio{
   color-scheme: dark;
 }
 /* la salle, floutée et assombrie, fixe derrière la page */
-body.portfolio::before{
+body.salle::before{
   content:""; position:fixed; inset:-60px; z-index:-2; pointer-events:none;
-  background:#0b1120 url("images/scene/galerie-fond.jpg") center / cover no-repeat;
+  background:#0b1120 var(--salle-img, url("images/scene/salle-portfolio.jpg")) center / cover no-repeat;
   filter:blur(10px) saturate(1.15);
 }
-body.portfolio::after{
+body.salle::after{
   content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
   background:linear-gradient(to bottom, rgba(8,12,22,.5), rgba(8,12,22,.68));
 }
-body.portfolio .shade{ background:rgba(10,15,27,.6); }
-body.portfolio dialog.artDialog::backdrop{ background:rgba(8,12,22,.94); }
-body.portfolio .modal__closeBtn, body.portfolio .modal__navBtn{ background:rgba(255,255,255,.1); border-color:rgba(255,255,255,.25); }
-body.portfolio .modal__closeBtn:hover, body.portfolio .modal__navBtn:hover{ background:rgba(255,255,255,.2); }
+body.salle .shade{ background:rgba(10,15,27,.6); }
+body.salle dialog.artDialog::backdrop{ background:rgba(8,12,22,.94); }
+body.salle .modal__closeBtn, body.salle .modal__navBtn{ background:rgba(255,255,255,.1); border-color:rgba(255,255,255,.25); }
+body.salle .modal__closeBtn:hover, body.salle .modal__navBtn:hover{ background:rgba(255,255,255,.2); }
+body.salle--portfolio{ --salle-img:url("images/scene/salle-portfolio.jpg"); }
+body.salle--galeries{ --salle-img:url("images/scene/salle-galeries.jpg"); }
+body.salle--expositions{ --salle-img:url("images/scene/salle-expositions.jpg"); }
+body.salle--apropos{ --salle-img:url("images/scene/salle-apropos.jpg"); }
+body.salle--presse{ --salle-img:url("images/scene/salle-presse.jpg"); }
+body.salle--contact{ --salle-img:url("images/scene/salle-contact.jpg"); }
+body.salle--mentions{ --salle-img:url("images/scene/salle-mentions.jpg"); }
+body.salle--404{ --salle-img:url("images/scene/salle-404.jpg"); }
+
+/* éléments qui avaient un fond blanc en dur */
+body.salle .siteMap .leaflet-control-attribution{ background:rgba(10,15,27,.7); }
+body.salle .siteMap .leaflet-tile-pane{ filter:grayscale(1) invert(1) brightness(.75) contrast(.9); }
+body.salle .menuBtn, body.salle .top.is-open .top__nav{ color:var(--ink); }
