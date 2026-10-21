@@ -36,84 +36,44 @@ body.gallery3d{ background:#0C1220; overflow:hidden; overscroll-behavior:none; }
 .g3d-hint.is-on{ opacity:1; transform:translate(-50%, 0); }
 
 /* =========================
-   Header : le nom à gauche, « Menu » à droite ; le menu s'ouvre en plein écran par-dessus la salle
+   Header : le même bandeau que sur les autres pages, caché tant qu'on n'appuie pas sur « Menu »
+   (voile blanc sur un calque à part : un flou posé sur .top casserait le menu plein écran du téléphone)
    ========================= */
 .gallery3d .top{
-  display:flex; justify-content:space-between; align-items:center;
-  margin:0; padding:26px 0; position:relative; z-index:20;
+  margin:14px 132px 0 -20px; padding:16px 20px;
+  opacity:0; transform:translateY(-14px); pointer-events:none;
+  transition:opacity .35s ease, transform .45s cubic-bezier(.2,.7,.2,1);
 }
-.gallery3d .brand{ color:#efe9df; text-shadow:0 1px 14px rgba(0,0,0,.45); }
-.gallery3d .top::after{ display:none; }
-.gallery3d .langMenu--top{ display:none; }
-.gallery3d .top__nav{ display:none; }
+.gallery3d .top::before{
+  content:""; position:absolute; inset:0; z-index:-1; border-radius:6px;
+  background:rgba(255,255,255,.8);
+  -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
+  box-shadow:0 2px 14px rgba(0,0,0,.06);
+}
+body.g3d-menu .top{ opacity:1; transform:none; pointer-events:auto; }
 
-.gallery3d .menuBtn{
-  display:inline-flex; align-items:center; gap:12px;
-  position:relative; z-index:101;
-  min-height:44px; padding:0 2px;
-  background:none; border:0; cursor:pointer;
-  color:#efe9df; font:inherit; font-size:13px; font-weight:500; letter-spacing:.16em; text-transform:uppercase;
-  text-shadow:0 1px 14px rgba(0,0,0,.45);
+/* bouton « Menu », seul en haut à droite */
+.g3d-menuBtn{
+  position:fixed; z-index:60; top:24px; right:max(20px, calc(50vw - 700px + 48px));
+  display:inline-flex; align-items:center; gap:12px; height:44px; padding:0 16px;
+  border:0; border-radius:6px; cursor:pointer;
+  background:rgba(255,255,255,.14); color:#f1ece3;
+  -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
+  font:inherit; font-size:12px; font-weight:500; letter-spacing:.16em; text-transform:uppercase;
+  transition:background-color .25s ease, color .25s ease;
 }
-.gallery3d .menuBtn__icon{ position:relative; width:26px; height:12px; }
-.gallery3d .menuBtn__icon i{
+.g3d-menuBtn:hover{ background:rgba(255,255,255,.24); }
+body.g3d-menu .g3d-menuBtn{ background:rgba(255,255,255,.8); color:var(--ink); }
+.g3d-menuBtn__icon{ position:relative; width:22px; height:10px; }
+.g3d-menuBtn__icon i{
   position:absolute; left:0; right:0; height:1.5px; border-radius:2px; background:currentColor;
-  transition:transform .35s cubic-bezier(.6,.05,.3,1), top .35s cubic-bezier(.6,.05,.3,1), width .35s ease;
+  transition:transform .3s ease, top .3s ease;
 }
-.gallery3d .menuBtn__icon i:first-child{ top:0; }
-.gallery3d .menuBtn__icon i:last-child{ top:10px; width:16px; left:auto; }
-.gallery3d .menuBtn:hover .menuBtn__icon i:last-child{ width:26px; }
-.gallery3d .top.is-open .menuBtn__icon i:first-child{ top:5px; transform:rotate(45deg); }
-.gallery3d .top.is-open .menuBtn__icon i:last-child{ top:5px; width:26px; transform:rotate(-45deg); }
-
-/* le menu ouvert : voile bleu nuit flouté, grands titres en serif qui arrivent l'un après l'autre */
-.gallery3d .top.is-open .top__nav{
-  display:flex; position:fixed; inset:0; z-index:100;
-  flex-direction:column; align-items:flex-start; justify-content:center; flex-wrap:nowrap; gap:2px;
-  padding:110px max(28px, 9vw) 90px;
-  background:rgba(9,13,24,.84);
-  -webkit-backdrop-filter:blur(22px) saturate(1.2); backdrop-filter:blur(22px) saturate(1.2);
-  animation:g3dVeil .45s ease both;
-  overflow-y:auto; counter-reset:nav;
-}
-@keyframes g3dVeil{ from{ opacity:0; } to{ opacity:1; } }
-.gallery3d .top.is-open .nav__link{
-  display:flex; align-items:baseline; gap:18px;
-  padding:6px 0; margin:0; border:0; background:none; border-radius:0;
-  font-family:var(--serif); font-weight:400; text-transform:none; letter-spacing:0;
-  font-size:clamp(38px, 6.4vh, 74px); line-height:1.05;
-  color:rgba(239,233,223,.5);
-  text-decoration:none;
-  counter-increment:nav;
-  transition:color .25s ease, transform .35s ease;
-  animation:menuIn .6s cubic-bezier(.2,.7,.2,1) both;
-  animation-delay:calc(var(--i, 0) * 55ms + 120ms);
-}
-.gallery3d .top.is-open .nav__link::before{
-  content:counter(nav, decimal-leading-zero);
-  font-family:var(--font); font-size:12px; letter-spacing:.14em; color:rgba(239,233,223,.4);
-  transform:translateY(-1.1em);
-}
-.gallery3d .top.is-open .nav__link::after{ content:none; }
-.gallery3d .top.is-open .nav__link:hover{ color:#fff; transform:translateX(10px); }
-.gallery3d .top.is-open .nav__link.is-active{ color:#fff; }
-.gallery3d .top.is-open .nav__link.is-active::before{ color:var(--accent); }
-.gallery3d .top.is-open .nav__link:first-child{ border-top:0; }
-
-/* bas du menu : réseaux + langue */
-.gallery3d .top.is-open .menuFoot{
-  display:flex; position:fixed; z-index:101; left:max(28px, 9vw); right:max(28px, 9vw); bottom:32px;
-  flex-wrap:wrap; align-items:center; gap:10px 22px; margin:0; padding:0;
-  animation:menuIn .6s cubic-bezier(.2,.7,.2,1) both; animation-delay:.5s;
-}
-.gallery3d .menuFoot a{ font-size:13px; letter-spacing:.06em; color:rgba(239,233,223,.7); }
-.gallery3d .menuFoot a:hover{ color:#fff; }
-.gallery3d .menuFoot__lang{ margin-left:auto; display:flex; gap:14px; }
-.gallery3d .menuFoot__lang a[aria-current="true"]{ color:#fff; }
-.gallery3d .top.is-open .brand{ position:relative; z-index:101; }
-@media (prefers-reduced-motion: reduce){
-  .gallery3d .top.is-open .top__nav, .gallery3d .top.is-open .nav__link, .gallery3d .top.is-open .menuFoot{ animation:none; }
-}
+.g3d-menuBtn__icon i:first-child{ top:0; }
+.g3d-menuBtn__icon i:last-child{ top:8px; }
+body.g3d-menu .g3d-menuBtn__icon i:first-child{ top:4px; transform:rotate(45deg); }
+body.g3d-menu .g3d-menuBtn__icon i:last-child{ top:4px; transform:rotate(-45deg); }
+@media (prefers-reduced-motion: reduce){ .gallery3d .top{ transition:none; } }
 .gallery3d .shade{ display:none; }
 
 
@@ -151,7 +111,10 @@ body.gallery3d{ background:#0C1220; overflow:hidden; overscroll-behavior:none; }
 }
 
 @media (max-width: 760px){
-  .gallery3d .top{ padding:16px 0; }
+  .gallery3d .top{ margin:10px 120px 0 -6px; padding:10px 12px; }
+  .g3d-menuBtn{ top:12px; right:12px; height:40px; padding:0 12px; }
+  /* téléphone : « Menu » ouvre directement le menu plein écran du site */
+  body.g3d-menu .g3d-menuBtn{ display:none; }
   .gallery3d .bottom{ display:none; }
 }
 

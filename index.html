@@ -33,13 +33,13 @@
     })();
   </script>
 
-  <script src="i18n.js?v=20261022i"></script>
-  <script src="site.js?v=20261022i"></script>
-  <script src="sheet.js?v=20261022i"></script>
+  <script src="i18n.js?v=20261022l"></script>
+  <script src="site.js?v=20261022l"></script>
+  <script src="sheet.js?v=20261022l"></script>
   <link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preload" href="fonts/cormorant-garamond-latin.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="styles.css?v=20261022i" />
-  <link rel="stylesheet" href="galerie.css?v=20261022i" />
+  <link rel="stylesheet" href="styles.css?v=20261022l" />
+  <link rel="stylesheet" href="galerie.css?v=20261022l" />
 
   <!-- Three.js, version épinglée -->
   <script type="importmap">
@@ -50,7 +50,7 @@
       }
     }
   </script>
-  <script type="module" src="galerie.js?v=20261022i"></script>
+  <script type="module" src="galerie.js?v=20261022l"></script>
 </head>
 
 <body class="gallery3d">
@@ -60,7 +60,7 @@
     <div class="container">
       <header class="top">
         <a class="brand" href="index.html">ANNICK&nbsp;BOUVATTIER</a>
-        <nav class="top__nav" aria-label="Navigation principale">
+        <nav class="top__nav" id="mainNav" aria-label="Navigation principale">
           <a class="nav__link is-active" aria-current="page" href="index.html">Accueil</a>
           <a class="nav__link" href="portfolio.html">Portfolio</a>
           <a class="nav__link" href="galeries.html">Galeries</a>
@@ -70,6 +70,10 @@
           <a class="nav__link" href="contact.html">Contact</a>
         </nav>
       </header>
+
+      <button class="g3d-menuBtn" id="menuToggle" type="button" aria-expanded="false" aria-controls="mainNav">
+        <span class="g3d-menuBtn__label">Menu</span><span class="g3d-menuBtn__icon" aria-hidden="true"><i></i><i></i></span>
+      </button>
 
       <main>
         <h1 class="sr-only">Annick Bouvattier — galerie virtuelle</h1>

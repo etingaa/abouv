@@ -69,6 +69,7 @@ async function loadWorks(){
     if (a.status !== "disponible") continue;
     if (/sculpt/i.test(`${a.technique} ${a.category}`)) continue;
     if (!a.cm) { console.warn("Galerie 3D : dimensions illisibles, œuvre ignorée :", a.title, a.size); continue; }
+    if (sizes && !sizes[a.file]) { console.warn("Galerie 3D : image absente de images/thumbs, œuvre ignorée :", a.title, a.file); continue; }
     let w = a.cm.w / 100, h = a.cm.h / 100;
     const px = sizes && sizes[a.file];
     if (px){
@@ -80,8 +81,7 @@ async function loadWorks(){
     if (h > 2.3){ w *= 2.3 / h; h = 2.3; }    // jamais plus haut que 2,3 m
     works.push({ ...a, w, h });
   }
-  const pool = shuffle(works);
-  return { hung: pool.slice(0, CFG.count), easel: pool[CFG.count] || pool[0] };
+  return shuffle(works).slice(0, CFG.count);
 }
 
 /* =========================
@@ -98,40 +98,31 @@ function wallFrames(L, S){
 }
 
 // La salle grandit juste assez pour que tout tienne : petite et chaleureuse.
-// Mur du fond (est, face à la porte) : le nom de l'artiste au milieu, au moins une toile de chaque côté.
-const SIGN_W = 3.0;
+// La salle grandit juste assez pour que tout tienne : petite et chaleureuse.
 function planWalls(works){
-  // on essaie les tailles de salle de la plus petite à la plus grande (surface), largeur et longueur libres
-  const sizes = [];
-  for (let L = 5.6; L < 22; L += .2) for (let S = 4.6; S <= L; S += .2) sizes.push([L, S]);
-  sizes.sort((a, b) => a[0] * a[1] - b[0] * b[1] || Math.abs(a[0] - a[1] * 1.25) - Math.abs(b[0] - b[1] * 1.25));
-  for (const [L, S] of sizes){
+  for (let L = 5.6; L < 30; L += 0.2){
+    const S = Math.max(4.6, Math.round(L * 0.78 * 10) / 10);
     const walls = wallFrames(L, S).map(w => ({ ...w, items: [] }));
-    const avail = (k) => walls[k].len - (k === 1 ? SIGN_W + CFG.gap : 0);
     let k = 0, used = 0, ok = true;
     for (const a of works){
-      while (k < walls.length && CFG.margin * 2 + used + a.w > avail(k)){ k++; used = 0; }
+      while (k < walls.length && CFG.margin * 2 + used + a.w > walls[k].len){ k++; used = 0; }
       if (k >= walls.length){ ok = false; break; }
       walls[k].items.push(a);
       used += a.w + CFG.gap;
     }
-    if (!ok || walls[1].items.length < 2) continue;
-    const back = walls[1].items;
-    back.splice(Math.floor(back.length / 2), 0, { sign: true, w: SIGN_W });
+    if (!ok) continue;
     const placed = [];
-    let sign = null;
     for (const wall of walls){
       const run = wall.items.reduce((s, a) => s + a.w, 0) + CFG.gap * Math.max(0, wall.items.length - 1);
       let x = (wall.len - run) / 2;
       for (const a of wall.items){
         const c = wall.start.clone().addScaledVector(wall.right, x + a.w / 2);
         c.y = CFG.center;
-        if (a.sign) sign = { wall, center: c };
-        else placed.push({ work: a, wall, center: c });
+        placed.push({ work: a, wall, center: c });
         x += a.w + CFG.gap;
       }
     }
-    return { L, S, walls, placed, sign };
+    return { L, S, walls, placed };
   }
   throw new Error("Trop d'œuvres pour la salle");
 }
@@ -346,174 +337,34 @@ function buildRoom(scene, plan, renderer){
     const m = new THREE.Mesh(geo, blackMat); m.position.set(x, railY, z); room.add(m);
   });
 
-  // banc de galerie au centre : plateau de chêne, pieds noirs
+  // banc de galerie au centre : assise bleue, tournée dans la longueur de la salle, le nom brodé sur les côtés
   const bench = new THREE.Group();
-  const top = new THREE.Mesh(new THREE.BoxGeometry(1.5, .06, .42),
-    new THREE.MeshStandardMaterial({ color: 0x8a5a33, roughness: .45 }));
-  top.position.y = .44; bench.add(top);
-  for (const x of [-.66, .66]) for (const z of [-.16, .16]){
-    const leg = new THREE.Mesh(new THREE.BoxGeometry(.03, .41, .03), blackMat);
-    leg.position.set(x, .205, z); bench.add(leg);
+  // côté long du banc (1,70 × 0,14 m) : le nom en ivoire sur le tissu bleu, aux bonnes proportions
+  const nc = document.createElement("canvas");
+  nc.width = 2048; nc.height = Math.round(2048 * .14 / 1.7);
+  const ng = nc.getContext("2d");
+  ng.fillStyle = "#1f3f8f"; ng.fillRect(0, 0, nc.width, nc.height);
+  ng.fillStyle = "#e9e3d6"; ng.textAlign = "center"; ng.textBaseline = "middle";
+  ng.font = `700 ${Math.round(nc.height * .46)}px Archivo, Helvetica, Arial, sans-serif`;
+  if ("letterSpacing" in ng) ng.letterSpacing = `${Math.round(nc.height * .06)}px`;
+  ng.fillText("ANNICK BOUVATTIER", nc.width / 2, nc.height * .54);
+  const nameTex = new THREE.CanvasTexture(nc);
+  nameTex.colorSpace = THREE.SRGBColorSpace;
+  nameTex.anisotropy = 8;
+  const blue = new THREE.MeshStandardMaterial({ color: 0x1f3f8f, roughness: .85 });
+  const nameMat = new THREE.MeshStandardMaterial({ map: nameTex, roughness: .85 });
+  const seat = new THREE.Mesh(new THREE.BoxGeometry(1.7, .14, .46), [blue, blue, blue, blue, nameMat, nameMat]);
+  seat.position.y = .4; bench.add(seat);
+  for (const x of [-.72, .72]) for (const z of [-.17, .17]){
+    const leg = new THREE.Mesh(new THREE.BoxGeometry(.03, .33, .03), blackMat);
+    leg.position.set(x, .165, z); bench.add(leg);
   }
-  for (const x of [-.66, .66]){
-    const bar = new THREE.Mesh(new THREE.BoxGeometry(.03, .03, .32), blackMat);
-    bar.position.set(x, .06, 0); bench.add(bar);
-  }
+  bench.rotation.y = Math.PI / 2;
   bench.position.set(0, 0, 0);
   room.add(bench);
 
   scene.add(room);
   return { room, floor, bench, railY, off };
-}
-
-/* =========================
-   LE NOM DE L'ARTISTE, au milieu du mur du fond, éclairé par un projecteur
-   ========================= */
-
-function buildSign(scene, plan, deco){
-  const { wall, center } = plan.sign;
-  const tex = canvasTexture(2048, (g, s) => {
-    g.clearRect(0, 0, s, s);
-    g.fillStyle = "#ece6db";
-    g.textAlign = "center"; g.textBaseline = "alphabetic";
-    g.font = `700 ${Math.round(s * .092)}px Archivo, Helvetica, Arial, sans-serif`;
-    g.fillText("ANNICK BOUVATTIER", s / 2, s * .5);
-    g.font = `italic 400 ${Math.round(s * .06)}px "Cormorant Garamond", Garamond, serif`;
-    g.fillText(tr("Artiste peintre"), s / 2, s * .6);
-  });
-  tex.wrapS = tex.wrapT = THREE.ClampToEdgeWrapping;
-  const m = new THREE.Mesh(new THREE.PlaneGeometry(SIGN_W, SIGN_W),
-    new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false, toneMapped: false, color: 0xd9d3c8 }));
-  m.position.copy(center).addScaledVector(wall.normal, .004);
-  m.position.y = 1.75 - SIGN_W * .05;
-  m.rotation.y = Math.atan2(wall.normal.x, wall.normal.z);
-  scene.add(m);
-  // projecteur : halo sur le mur derrière le nom
-  const lampPos = center.clone().addScaledVector(wall.normal, deco.off); lampPos.y = deco.railY - .16;
-  const spot = new THREE.SpotLight(0xffeedd, 0, 0, .62, .8, 2);
-  spot.position.copy(lampPos);
-  spot.target.position.set(center.x, 1.7, center.z);
-  spot.userData.power = 9 * lampPos.distanceToSquared(spot.target.position);
-  scene.add(spot, spot.target);
-  return { mesh: m, spot, center: new THREE.Vector3(center.x, 1.75, center.z) };
-}
-
-/* =========================
-   LE COIN DE L'ATELIER : chevalet avec une toile en cours, petite table, palette, pinceaux.
-   Dans le coin à droite en entrant (on ne le voit pas en arrivant, on le découvre en se retournant).
-   ========================= */
-
-// toile en cours : esquisse grise sur la toile apprêtée, la couleur seulement là où la peintre a déjà travaillé
-function inProgressTexture(img){
-  const S = 768, h = Math.round(S * img.height / img.width);
-  const c = document.createElement("canvas"); c.width = S; c.height = h;
-  const g = c.getContext("2d");
-  g.fillStyle = "#efe9de"; g.fillRect(0, 0, S, h);                          // toile apprêtée
-  g.globalAlpha = .55; g.filter = "grayscale(1) contrast(.7) brightness(1.25)";
-  g.drawImage(img, 0, 0, S, h);                                              // esquisse
-  g.globalAlpha = 1; g.filter = "none";
-  // zones déjà peintes : taches irrégulières, plus denses en haut à gauche
-  const col = document.createElement("canvas"); col.width = S; col.height = h;
-  const cg = col.getContext("2d");
-  cg.drawImage(img, 0, 0, S, h);
-  cg.globalCompositeOperation = "destination-in";
-  const rnd = mulberry(5);
-  for (let i = 0; i < 90; i++){
-    const x = rnd() * S * .75, y = rnd() * h * .8, r = 30 + rnd() * 90;
-    if (x / S + y / h > 1.05 + rnd() * .2) continue;
-    const grd = cg.createRadialGradient(x, y, 0, x, y, r);
-    grd.addColorStop(0, "rgba(0,0,0,1)"); grd.addColorStop(.7, "rgba(0,0,0,.9)"); grd.addColorStop(1, "rgba(0,0,0,0)");
-    cg.fillStyle = grd; cg.fillRect(x - r, y - r, r * 2, r * 2);
-  }
-  g.drawImage(col, 0, 0);
-  const t = new THREE.CanvasTexture(c);
-  t.colorSpace = THREE.SRGBColorSpace;
-  return t;
-}
-
-function buildEasel(scene, plan, work, loader){
-  const pos = new THREE.Vector3(-plan.L / 2 + 1.15, 0, plan.S / 2 - 1.1);
-  const face = new THREE.Vector3(-pos.x * .6, 0, -pos.z).normalize();       // la toile regarde la salle
-  const g = new THREE.Group();
-  g.position.copy(pos);
-  g.rotation.y = Math.atan2(face.x, face.z);
-
-  const wood = new THREE.MeshStandardMaterial({ color: 0x7a5232, roughness: .7 });
-  const dark = new THREE.MeshStandardMaterial({ color: 0x151515, roughness: .5, metalness: .3 });
-  const box = (w, h, d, mat, x, y, z, rx = 0, rz = 0) => {
-    const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
-    m.position.set(x, y, z); m.rotation.set(rx, 0, rz); g.add(m); return m;
-  };
-  // chevalet : deux pieds avant, un pied arrière, montant central, tablette
-  box(.035, 1.95, .035, wood, -.32, .97, .05, -.1, -.1);
-  box(.035, 1.95, .035, wood, .32, .97, .05, -.1, .1);
-  box(.035, 1.9, .035, wood, 0, .92, -.42, .32, 0);
-  box(.045, 2.0, .045, wood, 0, 1.0, .02, -.1, 0);
-  box(.78, .035, .07, wood, 0, .78, .13, -.1, 0);
-  // toile sur le chevalet (rapport de l'image), penchée en arrière comme le montant
-  const W = .62, H = Math.min(.95, W * (work ? work.h / work.w : 1.3));
-  const canvasMat = new THREE.MeshBasicMaterial({ color: 0xebe7e0, toneMapped: false });
-  const canvas = box(W, H, .025, wood, 0, .8 + H / 2, .16 - Math.sin(.1) * H / 2, -.1, 0);
-  canvas.material = [wood, wood, wood, wood, canvasMat, wood];   // face avant : la toile en cours
-  box(.08, .04, .06, wood, 0, .8 + H + .03, .16 - Math.sin(.1) * H, -.1, 0);
-  if (work){
-    loader.load(work.thumb, (t) => {
-      canvasMat.map = inProgressTexture(t.image); canvasMat.needsUpdate = true;
-    });
-  }
-
-  // petite table noire à côté, palette et pot de pinceaux
-  const table = new THREE.Group();
-  table.position.set(.75, 0, .2);
-  const top = new THREE.Mesh(new THREE.CylinderGeometry(.24, .24, .025, 32), dark);
-  top.position.y = .7; table.add(top);
-  const leg = new THREE.Mesh(new THREE.CylinderGeometry(.02, .02, .7, 12), dark);
-  leg.position.y = .35; table.add(leg);
-  const foot = new THREE.Mesh(new THREE.CylinderGeometry(.16, .16, .015, 24), dark);
-  foot.position.y = .008; table.add(foot);
-  const palette = new THREE.Mesh(new THREE.CylinderGeometry(.17, .17, .008, 40),
-    new THREE.MeshStandardMaterial({ color: 0x9a7048, roughness: .55 }));
-  palette.scale.set(1.25, 1, .85); palette.position.set(-.03, .717, 0); table.add(palette);
-  const dabs = [0xa3271f, 0x2346a8, 0xf2ead8, 0xc8902e, 0x2c2420, 0x6d3b2a, 0xd9a07a];
-  dabs.forEach((c, i) => {
-    const a = i / dabs.length * Math.PI * 1.6 + .3;
-    const d = new THREE.Mesh(new THREE.SphereGeometry(.022, 12, 8), new THREE.MeshStandardMaterial({ color: c, roughness: .35 }));
-    d.scale.set(1, .35, 1); d.position.set(-.03 + Math.cos(a) * .15, .724, Math.sin(a) * .1); table.add(d);
-  });
-  const jar = new THREE.Mesh(new THREE.CylinderGeometry(.045, .04, .13, 20),
-    new THREE.MeshStandardMaterial({ color: 0xdfe6ea, roughness: .1, metalness: 0, transparent: true, opacity: .55 }));
-  jar.position.set(.13, .78, -.1); table.add(jar);
-  for (let i = 0; i < 6; i++){
-    const b = new THREE.Mesh(new THREE.CylinderGeometry(.005, .007, .3, 6), i % 2 ? wood : dark);
-    b.position.set(.13 + (i - 2.5) * .01, .9, -.1 + ((i * 7) % 5 - 2) * .008);
-    b.rotation.set(((i * 3) % 5 - 2) * .06, 0, (i - 2.5) * .07);
-    table.add(b);
-  }
-  g.add(table);
-
-  // tabouret de la peintre, devant la toile
-  const stool = new THREE.Group();
-  stool.position.set(-.1, 0, .85);
-  const seat = new THREE.Mesh(new THREE.CylinderGeometry(.17, .17, .04, 28), wood);
-  seat.position.y = .62; stool.add(seat);
-  for (let i = 0; i < 3; i++){
-    const a = i / 3 * Math.PI * 2;
-    const l = new THREE.Mesh(new THREE.CylinderGeometry(.015, .015, .64, 8), dark);
-    l.position.set(Math.cos(a) * .11, .31, Math.sin(a) * .11);
-    l.rotation.set(Math.sin(a) * .12, 0, -Math.cos(a) * .12);
-    stool.add(l);
-  }
-  g.add(stool);
-
-  scene.add(g);
-
-  // lampe d'atelier : lumière chaude qui tombe sur la toile en cours
-  const spot = new THREE.SpotLight(0xffe2b8, 0, 0, .55, .7, 2);
-  spot.position.set(pos.x + face.x * 1.4, CFG.ceiling - .3, pos.z + face.z * 1.4);
-  spot.target.position.set(pos.x, 1.1, pos.z);
-  spot.userData.power = 7 * spot.position.distanceToSquared(spot.target.position);
-  scene.add(spot, spot.target);
-  return { spot, center: new THREE.Vector3(pos.x, 1.2, pos.z) };
 }
 
 /* =========================
@@ -596,7 +447,7 @@ function hangArtworks(scene, plan, deco){
 async function main(){
   if (!window.abouvSheet) return fallback("sheet.js absent");
 
-  const { hung: works, easel: easelWork } = await loadWorks();
+  const works = await loadWorks();
   if (!works.length) return fallback("aucune œuvre disponible");
   // polices des textes dessinés dans la salle (nom de l'artiste, cartels)
   try{ await Promise.race([Promise.all([document.fonts.load("700 80px Archivo"), document.fonts.load('italic 400 60px "Cormorant Garamond"')]), new Promise(r => setTimeout(r, 1500))]); }catch(_){}
@@ -630,11 +481,9 @@ async function main(){
 
   const pieces = hangArtworks(scene, plan, deco);
   const n = pieces.length;
-  const sign = buildSign(scene, plan, deco);
 
   // --- textures des toiles
   const loader = new THREE.TextureLoader();
-  const easel = buildEasel(scene, plan, easelWork, loader);
   const maxAniso = Math.min(8, renderer.capabilities.getMaxAnisotropy());
   const prepare = (t) => { t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = maxAniso; return t; };
   let loaded = 0;
@@ -683,12 +532,12 @@ async function main(){
 
   /* ---------- promenade : on tourne lentement autour du banc, le regard posé sur les toiles ----------
      Boucle en ellipse autour du banc ; à chaque instant on regarde l'œuvre la plus en face du côté des murs
-     (toile, nom de l'artiste ou chevalet), et le regard glisse doucement de l'une à la suivante. */
+     et le regard glisse doucement de l'une à la suivante. */
   const WANDER = { speed: .2, idle: 9 };         // m/s ; secondes sans action avant de repartir
   const ellipse = { rx: Math.max(.9, plan.L / 2 - 2.0), rz: Math.max(.8, plan.S / 2 - 1.9) };
   const wander = { on: false, theta: Math.PI };
   const onEllipse = (th) => new THREE.Vector3(ellipse.rx * Math.cos(th), CFG.eye, ellipse.rz * Math.sin(th));
-  const targets = [...pieces.map(p => p.center), sign.center, easel.center];
+  const targets = pieces.map(p => p.center);
   function wanderGaze(th, now){
     const p = onEllipse(th);
     const outYaw = Math.atan2(-p.x / ellipse.rx, -p.z / ellipse.rz);     // vers le mur le plus proche
@@ -828,7 +677,7 @@ async function main(){
   let lights = 0;      // les projecteurs s'allument doucement
   let bob = 0;         // balancement des pas
   let hdCheck = 0;
-  const allSpots = [...pieces.map(p => p.spot), sign.spot, easel.spot];
+  const allSpots = pieces.map(p => p.spot);
   renderer.setAnimationLoop(() => {
     const dt = Math.min(.05, clock.getDelta());
     const now = performance.now();
@@ -874,12 +723,10 @@ async function main(){
 
   /* ---------- arrivée : on franchit la porte et on commence la promenade ---------- */
   await Promise.race([firstLoaded, new Promise(r => setTimeout(r, 2500))]);
-  // on avance lentement jusqu'au milieu de la salle, face au nom de l'artiste, puis on commence le tour
+  // on avance lentement jusqu'à la boucle de promenade, puis on commence le tour
   const th0 = Math.PI;                                   // côté porte de la boucle
-  const entry = onEllipse(th0);
-  travel({ pos: entry, yaw: yawTo(entry, sign.center), pitch: Math.atan2(sign.center.y - CFG.eye, entry.distanceTo(sign.center)) }, () => {
-    wander.on = true; wander.theta = th0;
-  }, 7.5);
+  const gz0 = wanderGaze(th0, performance.now());
+  travel({ pos: onEllipse(th0), yaw: gz0.yaw, pitch: gz0.pitch }, () => { wander.on = true; wander.theta = th0; }, 7.5);
   showHint();
   ready.then(() => els.loading.classList.add("is-done"));
 }
@@ -890,6 +737,33 @@ function metaText(a){
 function escapeHtml(s){
   return String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[c]);
 }
+
+/* =========================
+   MENU : le bandeau du site est caché ; le bouton « Menu » le fait apparaître
+   (sur téléphone, il ouvre directement le menu plein écran du site)
+   ========================= */
+function setupMenu(){
+  const btn = document.getElementById("menuToggle");
+  const label = btn.querySelector(".g3d-menuBtn__label");
+  const top = document.querySelector(".top");
+  const phone = matchMedia("(max-width: 760px)");
+  const set = (on) => {
+    document.body.classList.toggle("g3d-menu", on);
+    btn.setAttribute("aria-expanded", String(on));
+    label.textContent = tr(on ? "Fermer" : "Menu");
+  };
+  btn.addEventListener("click", () => {
+    const on = !document.body.classList.contains("g3d-menu");
+    set(on);
+    if (on && phone.matches){ const siteBtn = top.querySelector(".menuBtn"); if (siteBtn && !top.classList.contains("is-open")) siteBtn.click(); }
+  });
+  // menu plein écran du téléphone refermé -> on recache le bandeau
+  new MutationObserver(() => { if (phone.matches && !top.classList.contains("is-open")) set(false); })
+    .observe(top, { attributes: true, attributeFilter: ["class"] });
+  addEventListener("keydown", (e) => { if (e.key === "Escape") set(false); });
+  document.getElementById("stage").addEventListener("pointerdown", () => set(false));
+}
+setupMenu();
 
 const start = () => main().catch((err) => { console.error(err); fallback("erreur : " + err.message); });
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start); else start();
