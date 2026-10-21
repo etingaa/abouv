@@ -944,9 +944,9 @@ body.salle{
 }
 /* la salle, floutée et assombrie, fixe derrière la page */
 body.salle::before{
-  content:""; position:fixed; inset:-60px; z-index:-2; pointer-events:none;
+  content:""; position:fixed; inset:-120px; z-index:-2; pointer-events:none;
   background:#0b1120 var(--salle-img, url("images/scene/salle-portfolio.jpg")) center / cover no-repeat;
-  filter:blur(10px) saturate(1.15);
+  filter:blur(40px) saturate(1.2);
 }
 body.salle::after{
   content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
