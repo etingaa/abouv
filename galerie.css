@@ -12,7 +12,7 @@
 }
 :root{ --serif: "Cormorant Garamond", Garamond, "Times New Roman", serif; }
 
-body.gallery3d{ background:#EFECE6; overflow:hidden; overscroll-behavior:none; }
+body.gallery3d{ background:#0C1220; overflow:hidden; overscroll-behavior:none; }
 .gallery3d .page{ min-height:100vh; min-height:100dvh; pointer-events:none; }
 .gallery3d .container{ position:relative; z-index:2; min-height:100vh; min-height:100dvh; }
 .gallery3d .top, .gallery3d .bottom, .gallery3d .g3d-skip,
@@ -20,7 +20,20 @@ body.gallery3d{ background:#EFECE6; overflow:hidden; overscroll-behavior:none; }
 
 .g3d-stage{ position:fixed; inset:0; z-index:0; touch-action:none; }
 .g3d-stage canvas{ display:block; width:100%; height:100%; cursor:grab; }
-.g3d-stage.is-hover canvas{ cursor:pointer; }
+.g3d-stage.is-art canvas{ cursor:zoom-in; }
+.g3d-stage.is-floor canvas{ cursor:pointer; }
+.g3d-stage.is-dragging canvas{ cursor:grabbing; }
+
+/* aide, au centre en bas, quelques secondes après l'entrée */
+.g3d-hint{
+  position:fixed; z-index:3; left:50%; bottom:28px; transform:translate(-50%, 8px);
+  max-width:calc(100vw - 32px); margin:0; padding:10px 16px; border-radius:999px;
+  background:rgba(12,18,32,.72); color:rgba(255,255,255,.92);
+  -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+  font-size:12px; letter-spacing:.03em; text-align:center;
+  opacity:0; transition:opacity .6s ease, transform .6s ease; pointer-events:none;
+}
+.g3d-hint.is-on{ opacity:1; transform:translate(-50%, 0); }
 
 /* header : voile blanc translucide au-dessus de la salle
    (sur un calque à part : un flou posé sur .top casserait le menu plein écran du téléphone) */
@@ -57,8 +70,8 @@ body.gallery3d{ background:#EFECE6; overflow:hidden; overscroll-behavior:none; }
 .g3d-entry{
   position:fixed; inset:0; z-index:4;
   display:flex; align-items:center; justify-content:center; padding:24px;
-  background:rgba(239,236,230,.72);
-  -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
+  background:rgba(239,236,230,.82);
+  -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px);
   transition:opacity .9s ease, visibility .9s;
 }
 .g3d-entry.is-gone{ opacity:0; visibility:hidden; pointer-events:none; }
@@ -85,8 +98,8 @@ body.gallery3d{ background:#EFECE6; overflow:hidden; overscroll-behavior:none; }
 .g3d-cartel{
   position:fixed; z-index:3; left:max(20px, calc(50vw - 700px + 48px)); bottom:24px;
   width:min(320px, calc(100vw - 40px)); padding:18px 20px 20px;
-  background:rgba(255,255,255,.9); -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
-  border-radius:2px; box-shadow:0 8px 30px rgba(0,0,0,.08);
+  background:rgba(255,255,255,.96); -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
+  border-radius:2px; box-shadow:0 8px 30px rgba(0,0,0,.25);
   opacity:0; transform:translateY(8px); transition:opacity .45s ease, transform .45s ease;
 }
 .g3d-cartel.is-on{ opacity:1; transform:none; }

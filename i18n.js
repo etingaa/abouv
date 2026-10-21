@@ -139,6 +139,8 @@
     "œuvre": "artwork",
     "œuvres": "artworks",
     "Passer": "Skip",
+    "Dix toiles disponibles, choisies au hasard, accrochées à leur taille réelle.": "Ten available paintings, chosen at random, hung at their actual size.",
+    "Faites glisser pour regarder autour de vous · touchez une toile pour vous en approcher": "Drag to look around · tap a painting to step closer",
     "Une promenade parmi les toiles disponibles, accrochées à leur taille réelle.": "A walk among the available paintings, hung at their actual size.",
     "Chargement des œuvres": "Loading the works",
     "Entrer dans la galerie": "Enter the gallery",
