@@ -150,6 +150,48 @@ a{ color: inherit; text-decoration: none; }
   pointer-events:none;
 }
 html.is-scrolled .shade{ opacity:1; }
+
+/* mot et icône superposés : en descendant, chaque mot s'efface en flou et son icône apparaît au même endroit */
+.nav__link{ position:relative; }
+.nav__text{
+  display:inline-block;
+  /* le soulignement du lien ne traverse pas un inline-block : on le reporte sur le mot */
+  text-decoration:inherit; text-decoration-color:inherit; text-underline-offset:inherit;
+  transition: opacity .3s ease, filter .3s ease, transform .3s ease;
+}
+.nav__icon{
+  position:absolute; left:50%; top:50%;
+  width:19px; height:19px;
+  fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round;
+  opacity:0; filter:blur(6px);
+  transform:translate(-50%,-50%) scale(.6);
+  transition: opacity .3s ease, filter .3s ease, transform .3s ease;
+  pointer-events:none;
+}
+.top.is-compact .nav__text{ opacity:0; filter:blur(6px); transform:scale(.85); }
+.top.is-compact .nav__icon{ opacity:1; filter:none; transform:translate(-50%,-50%) scale(1); }
+.top.is-compact .nav__link{ text-decoration-color:transparent !important; }
+.top.is-compact .nav__link.is-active{ color:var(--accent); }
+@media (max-width: 760px){
+  .nav__icon{ display:none; }
+  .top.is-compact .nav__text{ opacity:1; filter:none; transform:none; }
+}
+/* infobulle : le mot sous l'icône au survol */
+@media (min-width: 761px){
+  .top.is-compact .nav__link::after{
+    content:attr(data-tip);
+    position:absolute; top:calc(100% + 8px); left:50%;
+    transform:translate(-50%, -4px);
+    padding:5px 8px; border-radius:4px;
+    background:var(--bg); border:1px solid rgba(var(--ink-rgb),.14);
+    font-size:11px; font-weight:500; letter-spacing:.06em; color:var(--ink); white-space:nowrap;
+    opacity:0; pointer-events:none;
+    transition:opacity var(--ease), transform var(--ease);
+  }
+  .top.is-compact .nav__link:hover::after,
+  .top.is-compact .nav__link:focus-visible::after{ opacity:1; transform:translate(-50%, 0); }
+}
+@media (prefers-reduced-motion: reduce){ .nav__text, .nav__icon{ transition:none; } }
 .toolbar{ transition:border-color .3s ease; }
 html.is-scrolled .toolbar{ border-bottom-color:transparent; }
 @media (prefers-reduced-motion: reduce){
