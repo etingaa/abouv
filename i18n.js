@@ -372,7 +372,7 @@
     location.replace(url.href);
   }
 
-  // Menu de langue : dans le pied de page (« fra ▾ ») et à droite du header (« FR ▾ »)
+  // Menu de langue, à droite du header (« FR ▾ »)
   function makeLangMenu(label, extraClass){
     const box = document.createElement("span");
     box.className = "langMenu" + (extraClass ? " " + extraClass : "");
@@ -419,18 +419,7 @@
     const top = document.querySelector("header.top");
     if (top) top.appendChild(makeLangMenu(l => l.toUpperCase(), "langMenu--top"));
 
-    const footer = document.querySelector("footer.bottom");
-    if (!footer) return;
-    const legal = footer.lastElementChild; // « mentions légales » (ou « retour à l'accueil »)
-    if (!legal) return;
-    const box = makeLangMenu(l => SHORT[l]);
-
-    // lien + menu regroupés, pour que le menu reste collé au lien
-    const pair = document.createElement("span");
-    pair.className = "langPair";
-    legal.replaceWith(pair);
-    pair.append(legal, box);
-    // même taille et même couleur que le lien : styles.css (.langMenu__btn)
+    // (plus de choix de langue dans le pied de page : il est en haut à droite, et dans le menu du téléphone)
   }
 
   document.addEventListener("DOMContentLoaded", () => {
