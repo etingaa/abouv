@@ -17,9 +17,14 @@
   <!-- pages qui tournent à la souris / au doigt (StPageFlip, licence MIT) -->
   <script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.js"></script>
   <link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <!-- pages préchargées au survol d'un lien : changement de page quasi instantané (la galerie 3D est seulement préchargée) -->
+  <script type="speculationrules">
+    {"prerender":[{"where":{"and":[{"href_matches":"*.html"},{"not":{"href_matches":"*index.html"}}]},"eagerness":"moderate"}],
+     "prefetch":[{"where":{"href_matches":"*index.html"},"eagerness":"moderate"}]}
+  </script>
   <title>Annick Bouvattier — Artiste peintre</title>
 
-  <link rel="stylesheet" href="styles.css?v=20261023h" />
+  <link rel="stylesheet" href="styles.css?v=20261023i" />
 
   <style>
     /* Accueil : un livre d'art ouvert, posé au centre de la table blanche de l'atelier (vue de dessus) */

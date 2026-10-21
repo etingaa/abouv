@@ -753,6 +753,7 @@ async function main(){
     renderer.render(scene, camera);
   });
 
+  requestAnimationFrame(() => requestAnimationFrame(() => els.stage.classList.add("is-ready")));
   // la salle est prête : plus de repli possible
   window.__g3dReady = true;
   clearTimeout(window.__g3dTimer);
