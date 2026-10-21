@@ -1149,3 +1149,80 @@ body.salle .shade{ background:#070c19; -webkit-backdrop-filter:none; backdrop-fi
   .ix-list li{ grid-template-columns:1fr; gap:4px; }
   .ix-text{ columns:1; }
 }
+
+/* =========================
+   FORMULAIRE DE CONTACT (style « dark form ») : champs pilules sombres, cases à cocher,
+   bouton « Envoyer » + rond à flèche, bouton secondaire en contour
+   ========================= */
+.ix-form{ gap:26px 20px !important; }
+.ix-form .field__label{ font-size:13px; font-weight:500; color:var(--ink); }
+.ix-form .field__label em{ color:var(--ink-faint); font-weight:400; }
+.ix-form .req{ color:var(--accent); font-weight:500; }
+.ix-form input, .ix-form textarea{
+  height:56px !important; padding:0 22px !important;
+  border:1px solid transparent !important; border-radius:999px !important;
+  background:rgba(255,255,255,.06) !important;
+  font-size:15px;
+  transition:background-color .2s ease, border-color .2s ease;
+}
+.ix-form textarea{ height:auto !important; min-height:150px; padding:18px 22px !important; border-radius:24px !important; resize:vertical; }
+.ix-form input::placeholder, .ix-form textarea::placeholder{ color:rgba(var(--ink-rgb),.35); }
+.ix-form input:hover, .ix-form textarea:hover{ background:rgba(255,255,255,.08) !important; }
+.ix-form input:focus, .ix-form textarea:focus{ background:rgba(255,255,255,.09) !important; border-color:rgba(var(--ink-rgb),.3) !important; }
+/* champ rempli correctement : petite coche à droite */
+.ix-form input[required]:not(:placeholder-shown):valid{
+  padding-right:52px !important;
+  background:rgba(255,255,255,.06) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%23ece7de' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='10' cy='10' r='7.5'/%3E%3Cpath d='m6.8 10.2 2.2 2.2 4.2-4.6'/%3E%3C/svg%3E") right 20px center / 20px no-repeat !important;
+}
+
+/* sujet : cases à cocher */
+.ix-form .topics{ display:grid; grid-template-columns:repeat(2, max-content); gap:14px 56px; margin-top:6px; }
+.ix-form .topics .tab{
+  height:auto; padding:0; border:0 !important; background:none !important;
+  display:inline-flex; align-items:center; gap:12px;
+  font-size:15px; font-weight:500; color:var(--ink); text-decoration:none !important;
+}
+.ix-form .topics .tab > span:first-child{ text-decoration:none !important; }
+.ix-form .tick{
+  width:20px; height:20px; border-radius:5px; flex:none;
+  border:1.5px solid rgba(var(--ink-rgb),.45);
+  display:inline-flex; align-items:center; justify-content:center;
+  transition:background-color .15s ease, border-color .15s ease;
+}
+.ix-form .topics .tab:hover .tick{ border-color:var(--ink); }
+.ix-form .topics .tab[aria-checked="true"] .tick{
+  background:var(--ink) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%230b1120' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5.5 10.3 3 3 6-6.6'/%3E%3C/svg%3E") center / 16px no-repeat;
+  border-color:var(--ink);
+}
+
+/* pied du formulaire : « Envoyer » + rond blanc à flèche ; à droite, bouton secondaire en contour */
+.ix-form .form__foot{ display:flex; flex-wrap:wrap; align-items:center; gap:16px 18px; margin-top:6px; }
+.ix-form .sendBtn{
+  display:inline-flex; align-items:center; gap:6px; height:auto; padding:0 !important;
+  border:0 !important; background:none !important; cursor:pointer; color:var(--ink);
+}
+.ix-form .sendBtn > span{
+  display:inline-flex; align-items:center; height:56px; padding:0 28px; border-radius:999px;
+  background:rgba(255,255,255,.08); font-size:15px; font-weight:600; transition:background-color .2s ease;
+}
+.ix-form .sendBtn__arrow{
+  width:56px; height:56px; border-radius:50%; background:#f4f1ea; color:#0b1120;
+  display:inline-flex; align-items:center; justify-content:center;
+  transition:transform .3s cubic-bezier(.2,.7,.2,1);
+}
+.ix-form .sendBtn__arrow svg{ width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
+.ix-form .sendBtn:hover > span{ background:rgba(255,255,255,.13); }
+.ix-form .sendBtn:hover .sendBtn__arrow{ transform:translateX(6px) rotate(-45deg); }
+.ix-form .sendBtn:disabled{ opacity:.5; }
+.form__alt{ margin-left:auto; display:inline-flex; align-items:center; gap:12px; font-size:13px; color:var(--ink-faint); }
+.altBtn{
+  display:inline-flex; align-items:center; height:46px; padding:0 22px; border-radius:999px;
+  border:1px solid rgba(var(--ink-rgb),.4); color:var(--ink); font-size:14px; font-weight:500;
+  transition:background-color .2s ease, border-color .2s ease;
+}
+.altBtn:hover{ background:rgba(255,255,255,.06); border-color:var(--ink); }
+.ix-form .formNote{ flex-basis:100%; margin:4px 0 0; }
+@media (max-width:760px){
+  .ix-form .topics{ grid-template-columns:1fr 1fr; gap:14px 20px; }
+  .form__alt{ margin-left:0; }
+}
