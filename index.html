@@ -29,17 +29,17 @@
         var c = document.createElement("canvas");
         if (!(c.getContext("webgl2") || c.getContext("webgl"))) return fallback("WebGL indisponible");
       } catch (e) { return fallback("WebGL indisponible"); }
-      window.__g3dTimer = setTimeout(function () { fallback("chargement > 10 s"); }, 10000);
+      window.__g3dTimer = setTimeout(function () { fallback("salle pas prête en 12 s"); }, 12000);
     })();
   </script>
 
-  <script src="i18n.js?v=20261021c"></script>
-  <script src="site.js?v=20261021b"></script>
-  <script src="sheet.js?v=20261021b"></script>
+  <script src="i18n.js?v=20261022c"></script>
+  <script src="site.js?v=20261022c"></script>
+  <script src="sheet.js?v=20261022c"></script>
   <link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preload" href="fonts/cormorant-garamond-latin.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="styles.css?v=20261021b" />
-  <link rel="stylesheet" href="galerie.css?v=20261021e" />
+  <link rel="stylesheet" href="styles.css?v=20261022c" />
+  <link rel="stylesheet" href="galerie.css?v=20261022c" />
 
   <!-- Three.js, version épinglée -->
   <script type="importmap">
@@ -50,7 +50,7 @@
       }
     }
   </script>
-  <script type="module" src="galerie.js?v=20261021e"></script>
+  <script type="module" src="galerie.js?v=20261022c"></script>
 </head>
 
 <body class="gallery3d">
@@ -76,19 +76,12 @@
       <main>
         <h1 class="sr-only">Annick Bouvattier — galerie virtuelle</h1>
 
-        <!-- Écran d'entrée -->
-        <section class="g3d-entry" id="entry" aria-labelledby="entryTitle">
-          <div class="g3d-entry__inner">
-            <p class="g3d-entry__name" id="entryTitle">Annick Bouvattier</p>
-            <p class="g3d-entry__lead">Dix toiles disponibles, choisies au hasard, accrochées à leur taille réelle.</p>
-            <div class="g3d-progress" role="progressbar" aria-label="Chargement des œuvres" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-              <span class="g3d-progress__bar" id="progressBar"></span>
-            </div>
-            <button class="g3d-enter" id="enterBtn" type="button" disabled>Entrer dans la galerie</button>
-          </div>
-        </section>
+        <!-- chargement des toiles : fine ligne en bas de l'écran -->
+        <div class="g3d-loading" id="loading" role="progressbar" aria-label="Chargement des œuvres" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <span class="g3d-progress__bar" id="progressBar"></span>
+        </div>
 
-        <p class="g3d-hint" id="hint" hidden>Faites glisser pour regarder autour de vous · touchez une toile pour vous en approcher</p>
+        <p class="g3d-hint" id="hint" hidden>Visite automatique · faites glisser pour regarder autour de vous, touchez une toile ou le parquet pour y aller</p>
 
         <!-- Cartel de l'œuvre regardée -->
         <aside class="g3d-cartel" id="cartel" aria-live="polite" hidden>
@@ -101,6 +94,7 @@
 
         <div class="g3d-controls" id="controls" hidden>
           <button type="button" id="prevBtn" aria-label="Œuvre précédente"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg></button>
+          <button type="button" id="playBtn" class="g3d-play" aria-pressed="true" aria-label="Mettre la visite en pause"><svg class="g3d-play__pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M5.5 3.5v9M10.5 3.5v9"/></svg><svg class="g3d-play__play" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3.2v9.6L12.5 8z"/></svg></button>
           <button type="button" id="nextBtn" aria-label="Œuvre suivante"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="m6 3 5 5-5 5"/></svg></button>
         </div>
 

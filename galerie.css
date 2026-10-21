@@ -16,7 +16,7 @@ body.gallery3d{ background:#0C1220; overflow:hidden; overscroll-behavior:none; }
 .gallery3d .page{ min-height:100vh; min-height:100dvh; pointer-events:none; }
 .gallery3d .container{ position:relative; z-index:2; min-height:100vh; min-height:100dvh; }
 .gallery3d .top, .gallery3d .bottom, .gallery3d .g3d-skip,
-.gallery3d .g3d-cartel, .gallery3d .g3d-controls, .gallery3d .g3d-entry{ pointer-events:auto; }
+.gallery3d .g3d-cartel, .gallery3d .g3d-controls{ pointer-events:auto; }
 
 .g3d-stage{ position:fixed; inset:0; z-index:0; touch-action:none; }
 .g3d-stage canvas{ display:block; width:100%; height:100%; cursor:grab; }
@@ -64,33 +64,20 @@ body.gallery3d{ background:#0C1220; overflow:hidden; overscroll-behavior:none; }
 .gallery3d .bottom__left{ display:none; }
 .gallery3d .bottom__link--legal{ margin-left:0; }
 
-/* =========================
-   Écran d'entrée
-   ========================= */
-.g3d-entry{
-  position:fixed; inset:0; z-index:4;
-  display:flex; align-items:center; justify-content:center; padding:24px;
-  background:rgba(239,236,230,.82);
-  -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px);
-  transition:opacity .9s ease, visibility .9s;
+/* chargement : fine ligne en bas, disparaît une fois toutes les toiles chargées */
+.g3d-loading{
+  position:fixed; z-index:3; left:50%; bottom:14px; transform:translateX(-50%);
+  width:160px; height:1px; background:rgba(255,255,255,.18); overflow:hidden;
+  transition:opacity .8s ease;
 }
-.g3d-entry.is-gone{ opacity:0; visibility:hidden; pointer-events:none; }
-.g3d-entry__inner{ max-width:520px; text-align:center; display:flex; flex-direction:column; align-items:center; }
-.g3d-entry__name{
-  margin:0; font-family:var(--serif); font-weight:400; letter-spacing:.02em;
-  font-size:clamp(34px, 6.4vw, 76px); line-height:1; color:var(--ink); white-space:nowrap;
-}
-.g3d-entry__lead{ margin:18px 0 34px; font-size:15px; line-height:1.6; color:var(--ink-soft); }
-.g3d-progress{ width:180px; height:1px; background:rgba(var(--ink-rgb),.15); overflow:hidden; }
-.g3d-progress__bar{ display:block; height:100%; width:0; background:var(--ink); transition:width .3s ease; }
-.g3d-enter{
-  margin-top:28px; height:44px; padding:0 22px;
-  border:1px solid var(--ink); border-radius:2px; background:var(--ink); color:#fff;
-  font:inherit; font-size:13px; font-weight:500; letter-spacing:.12em; text-transform:uppercase;
-  cursor:pointer; transition:background-color var(--ease), color var(--ease), opacity .4s ease;
-}
-.g3d-enter:hover{ background:transparent; color:var(--ink); }
-.g3d-enter:disabled{ opacity:.25; cursor:progress; }
+.g3d-loading.is-done{ opacity:0; }
+.g3d-progress__bar{ display:block; height:100%; width:0; background:rgba(255,255,255,.85); transition:width .3s ease; }
+
+/* pause / reprise de la visite */
+.g3d-play svg{ display:none; }
+.g3d-play[aria-pressed="true"] .g3d-play__pause,
+.g3d-play[aria-pressed="false"] .g3d-play__play{ display:block; }
+.g3d-play__play{ fill:currentColor; stroke:none !important; }
 
 /* =========================
    Cartel (œuvre regardée)
@@ -138,5 +125,5 @@ body.gallery3d{ background:#0C1220; overflow:hidden; overscroll-behavior:none; }
   .gallery3d .bottom{ display:none; }
 }
 @media (prefers-reduced-motion: reduce){
-  .g3d-entry, .g3d-cartel{ transition:none; }
+  .g3d-cartel{ transition:none; }
 }
