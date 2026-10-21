@@ -346,7 +346,7 @@ function buildRoom(scene, plan, renderer){
     g.font = `700 ${Math.round(s * .085)}px Archivo, Helvetica, Arial, sans-serif`;
     g.fillText("ANNICK BOUVATTIER", s / 2, s * .46);
     g.font = `500 ${Math.round(s * .03)}px Archivo, Helvetica, Arial, sans-serif`;
-    g.fillText("P E I N T U R E S", s / 2, s * .56);
+    g.fillText(tr("Artiste-peintre").toUpperCase().split("").join(" "), s / 2, s * .56);   // lettres espacées
   });
   const signMesh = new THREE.Mesh(new THREE.PlaneGeometry(2.4, 2.4), new THREE.MeshStandardMaterial({ map: sign, transparent: true, roughness: .9 }));
   signMesh.position.set(xV + .01, 2.0, 0);
