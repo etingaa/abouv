@@ -15,7 +15,7 @@
 body.gallery3d{ background:#0C1220; overflow:hidden; overscroll-behavior:none; }
 .gallery3d .page{ min-height:100vh; min-height:100dvh; pointer-events:none; }
 .gallery3d .container{ position:relative; z-index:2; min-height:100vh; min-height:100dvh; }
-.gallery3d .top, .gallery3d .bottom, .gallery3d .g3d-skip,
+.gallery3d .top, .gallery3d .bottom,
 .gallery3d .g3d-tip{ pointer-events:auto; }
 
 .g3d-stage{ position:fixed; inset:0; z-index:0; touch-action:none; }
@@ -46,14 +46,6 @@ body.gallery3d{ background:#0C1220; overflow:hidden; overscroll-behavior:none; }
 }
 .gallery3d .shade{ display:none; }
 
-/* « Passer → Voir les œuvres », toujours visible sous le header */
-.g3d-skip{
-  position:fixed; z-index:5; right:max(20px, calc(50vw - 700px + 48px)); top:calc(var(--header-h, 74px) + 24px);
-  font-size:12px; font-weight:500; letter-spacing:.08em; text-transform:uppercase;
-  color:var(--ink); padding:7px 10px; border-radius:4px;
-  background:rgba(255,255,255,.72); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
-}
-.g3d-skip:hover{ background:#fff; }
 
 /* pied de page : petit, en bas à droite */
 .gallery3d .bottom{
@@ -90,7 +82,6 @@ body.gallery3d{ background:#0C1220; overflow:hidden; overscroll-behavior:none; }
 
 @media (max-width: 760px){
   .gallery3d .top{ margin:10px -6px 0; padding:10px 12px; }
-  .g3d-skip{ top:calc(var(--header-h, 64px) + 18px); right:14px; font-size:11px; }
   .gallery3d .bottom{ display:none; }
 }
 
