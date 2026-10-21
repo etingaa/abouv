@@ -95,12 +95,21 @@
     return String(jpg || "").trim().replace(/^images\//i, "").replace(/^\/+/, "");
   }
 
+  // "120 x 81" -> { w: 120, h: 81 } en cm (largeur × hauteur), null si illisible
+  function parseCm(format){
+    const m = String(format || "").replace(",", ".").match(/(\d+(?:\.\d+)?)\s*[x×]\s*(\d+(?:\.\d+)?)/i);
+    if (!m) return null;
+    const w = parseFloat(m[1]), h = parseFloat(m[2]);
+    return w > 0 && h > 0 ? { w, h } : null;
+  }
+
   const imagePath = (file) => encodeURI(`images/${file}`);
   const thumbPath = (file) => encodeURI(`images/thumbs/${file}`); // voir scripts/make-thumbs.py
 
   // Une œuvre par ligne ayant un Nom et un Jpg.
   // status : « VENDUE » -> "vendue", toute autre valeur -> "disponible"
   // home   : false seulement si la colonne Accueil vaut « non »
+  // cm     : dimensions réelles { w, h } en centimètres (null si la colonne Format est illisible)
   async function artworks(){
     const { rows, col } = await load();
     return rows
@@ -112,6 +121,7 @@
           category: cleanNA(r[col("categorie")]),
           technique: cleanNA(r[col("technique")]),
           size: format ? `${format} cm` : "",
+          cm: parseCm(format),
           status: cleanNA(r[col("disponible")]).toUpperCase() === "VENDUE" ? "vendue" : "disponible",
           where: cleanNA(r[col("disponible ou ?")]),
           home: normalizeHeader(r[col("accueil")]) !== "non",
@@ -123,5 +133,5 @@
       .filter(a => a.title && a.file);
   }
 
-  window.abouvSheet = { load, artworks, imagePath, thumbPath };
+  window.abouvSheet = { load, artworks, imagePath, thumbPath, parseCm };
 })();
