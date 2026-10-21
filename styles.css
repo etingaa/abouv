@@ -945,12 +945,19 @@ body.salle{
 /* la salle, floutée et assombrie, fixe derrière la page */
 body.salle::before{
   content:""; position:fixed; inset:-120px; z-index:-2; pointer-events:none;
-  background:#0b1120 var(--salle-img, url("images/scene/salle-portfolio.jpg")) center / cover no-repeat;
-  filter:blur(40px) saturate(1.2);
+  /* essai : bleu nuit en plusieurs nuances (au lieu de la photo floutée de la salle) */
+  background:
+    radial-gradient(60% 55% at 12% 8%, #1f3a6e 0%, rgba(31,58,110,0) 70%),
+    radial-gradient(55% 60% at 92% 22%, #16295a 0%, rgba(22,41,90,0) 70%),
+    radial-gradient(70% 55% at 70% 100%, #1b2f5c 0%, rgba(27,47,92,0) 70%),
+    radial-gradient(50% 45% at 18% 85%, #0f3a52 0%, rgba(15,58,82,0) 70%),
+    radial-gradient(40% 35% at 50% 45%, #241f4a 0%, rgba(36,31,74,0) 70%),
+    #0a1124;
+  filter:blur(30px);
 }
 body.salle::after{
   content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
-  background:linear-gradient(to bottom, rgba(8,12,22,.5), rgba(8,12,22,.68));
+  background:linear-gradient(to bottom, rgba(8,12,22,.15), rgba(8,12,22,.35));
 }
 body.salle .shade{ background:rgba(10,15,27,.6); }
 body.salle dialog.artDialog::backdrop{ background:rgba(8,12,22,.94); }
