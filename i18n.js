@@ -139,6 +139,7 @@
     "œuvre": "artwork",
     "œuvres": "artworks",
     "Passer": "Skip",
+    "Écrivez-moi pour parler d’une œuvre, d’une commande ou d’un projet.": "Write to me about a painting, a commission or a project.",
     "(choisissez ce qui vous amène)": "(pick what brings you here)",
     "Pas encore sûr ?": "Not sure yet?",
     "Écrire un e-mail": "Send an email",

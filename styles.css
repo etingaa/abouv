@@ -1226,3 +1226,29 @@ body.salle .shade{ background:#070c19; -webkit-backdrop-filter:none; backdrop-fi
   .ix-form .topics{ grid-template-columns:1fr 1fr; gap:14px 20px; }
   .form__alt{ margin-left:0; }
 }
+
+/* le formulaire posé dans un grand panneau sombre arrondi, champs en contour */
+.formCard{
+  max-width:860px; margin:0 0 72px;
+  padding:clamp(28px, 5vw, 64px);
+  border-radius:40px;
+  background:linear-gradient(180deg, rgba(30,32,38,.92), rgba(20,22,27,.92));
+  border:1px solid rgba(255,255,255,.07);
+  box-shadow:0 40px 120px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.05);
+}
+.formCard__title{
+  margin:0 0 40px; max-width:22ch;
+  font-size:clamp(24px, 2.6vw, 34px); font-weight:400; line-height:1.2; letter-spacing:-.01em; color:#f4f1ea;
+}
+.formCard .ix-form{ max-width:none; }
+.formCard .ix-form input, .formCard .ix-form textarea{
+  background:transparent !important;
+  border:1.5px solid rgba(255,255,255,.2) !important;
+}
+.formCard .ix-form input:hover, .formCard .ix-form textarea:hover{ border-color:rgba(255,255,255,.32) !important; background:transparent !important; }
+.formCard .ix-form input:focus, .formCard .ix-form textarea:focus{ border-color:rgba(255,255,255,.55) !important; background:rgba(255,255,255,.03) !important; }
+.formCard .ix-form input[required]:not(:placeholder-shown):valid{ background-color:transparent !important; }
+.formCard .ix-form .field__label{ font-weight:400; font-size:14px; }
+.formCard .ix-form .sendBtn > span{ background:rgba(255,255,255,.1); }
+.formCard .ix-form .tick{ border-radius:6px; border-color:rgba(255,255,255,.35); }
+@media (max-width:760px){ .formCard{ border-radius:28px; margin:0 -8px 48px; } }

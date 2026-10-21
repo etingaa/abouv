@@ -12,10 +12,10 @@
   <meta property="og:title" content="Contact — Annick Bouvattier" />
   <meta property="og:description" content="Contacter Annick Bouvattier : renseignement sur une œuvre, une exposition ou une commande." />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-  <script src="i18n.js?v=20261024e"></script>
+  <script src="i18n.js?v=20261024g"></script>
   <script src="site.js?v=20261023g"></script>
   <link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="styles.css?v=20261024f" />
+  <link rel="stylesheet" href="styles.css?v=20261024g" />
   <!-- pages préchargées au survol d'un lien : changement de page quasi instantané (la galerie 3D est seulement préchargée) -->
   <script type="speculationrules">
     {"prerender":[{"where":{"and":[{"href_matches":"*.html"},{"not":{"href_matches":"*index.html"}}]},"eagerness":"moderate"}],
@@ -103,8 +103,8 @@
     <a class="ix-mail" href="mailto:abouvattier@free.fr">abouvattier@free.fr</a>
 
     <div class="contact">
-      <section class="ix-row" aria-label="Formulaire de contact">
-        <h2 class="ix-label">Écrire ici</h2>
+      <section class="formCard" aria-labelledby="formCardTitle">
+        <h2 class="formCard__title" id="formCardTitle">Écrivez-moi pour parler d’une œuvre, d’une commande ou d’un projet.</h2>
         <form class="form ix-form" id="contactForm" action="https://formspree.io/f/xdalokdl" method="POST">
           <!-- Sujet : envoyé avec le message (champ « Sujet ») -->
           <div class="field field--full">
