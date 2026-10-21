@@ -912,3 +912,47 @@ body.portfolio .piece:hover .imgWrap{ border-color:rgba(var(--accent-rgb),.6); }
 .tlCard[data-type="solo"]{ --type-rgb:var(--accent-rgb); }
 .tlCard[data-type="group"]{ --type-rgb:var(--blue-rgb); }
 .tlCard[data-type="salon"]{ --type-rgb:94,104,128; }
+
+/* =========================
+   PORTFOLIO — fond de la galerie 3D, flouté (essai, à étendre aux autres pages ensuite)
+   La page passe en couleurs claires sur ce fond sombre : on redéfinit les variables de couleur.
+   ========================= */
+body.portfolio{
+  --bg: #0b1120;
+  --bg-deep: #151c2c;
+  --ink-rgb: 236,231,222;
+  --ink-soft: rgba(236,231,222,.8);
+  --ink-faint: rgba(236,231,222,.6);
+  --accent-rgb: 236,118,104;
+  --accent-hi: #f3a198;
+  --red-rgb: 236,118,104;
+  --blue-rgb: 146,174,240;
+  --blue-hi: #bccdf6;
+  /* couleurs calculées à partir des précédentes (à redéclarer ici pour qu'elles suivent) */
+  --ink: rgb(var(--ink-rgb));
+  --accent: rgb(var(--accent-rgb));
+  --red: rgb(var(--red-rgb));
+  --blue: rgb(var(--blue-rgb));
+  --border: rgba(var(--ink-rgb),.18);
+  --fill: rgba(var(--ink-rgb),.06);
+  --fill-hover: rgba(var(--ink-rgb),.12);
+  --line: rgba(var(--ink-rgb),.22);
+  --line-strong: rgba(var(--ink-rgb),.45);
+  color: var(--ink);
+  background: #0b1120;
+  color-scheme: dark;
+}
+/* la salle, floutée et assombrie, fixe derrière la page */
+body.portfolio::before{
+  content:""; position:fixed; inset:-60px; z-index:-2; pointer-events:none;
+  background:#0b1120 url("images/scene/galerie-fond.jpg") center / cover no-repeat;
+  filter:blur(26px) saturate(1.15);
+}
+body.portfolio::after{
+  content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
+  background:linear-gradient(to bottom, rgba(8,12,22,.5), rgba(8,12,22,.68));
+}
+body.portfolio .shade{ background:rgba(10,15,27,.6); }
+body.portfolio dialog.artDialog::backdrop{ background:rgba(8,12,22,.94); }
+body.portfolio .modal__closeBtn, body.portfolio .modal__navBtn{ background:rgba(255,255,255,.1); border-color:rgba(255,255,255,.25); }
+body.portfolio .modal__closeBtn:hover, body.portfolio .modal__navBtn:hover{ background:rgba(255,255,255,.2); }
