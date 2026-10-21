@@ -139,6 +139,7 @@
     "œuvre": "artwork",
     "œuvres": "artworks",
     "Passer": "Skip",
+    "Artiste peintre": "Painter",
     "Voir dans le portfolio": "View in the portfolio",
     "Faites glisser pour regarder autour de vous · touchez le parquet pour vous déplacer · survolez une toile": "Drag to look around · tap the floor to move · hover a painting",
     "Visite automatique · faites glisser pour regarder autour de vous, touchez une toile ou le parquet pour y aller": "Automatic tour · drag to look around, tap a painting or the floor to go there",

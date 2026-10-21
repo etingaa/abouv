@@ -80,7 +80,8 @@ async function loadWorks(){
     if (h > 2.3){ w *= 2.3 / h; h = 2.3; }    // jamais plus haut que 2,3 m
     works.push({ ...a, w, h });
   }
-  return shuffle(works).slice(0, CFG.count);
+  const pool = shuffle(works);
+  return { hung: pool.slice(0, CFG.count), easel: pool[CFG.count] || pool[0] };
 }
 
 /* =========================
@@ -97,30 +98,40 @@ function wallFrames(L, S){
 }
 
 // La salle grandit juste assez pour que tout tienne : petite et chaleureuse.
+// Mur du fond (est, face à la porte) : le nom de l'artiste au milieu, au moins une toile de chaque côté.
+const SIGN_W = 3.0;
 function planWalls(works){
-  for (let L = 5.6; L < 30; L += 0.2){
-    const S = Math.max(4.6, Math.round(L * 0.78 * 10) / 10);
+  // on essaie les tailles de salle de la plus petite à la plus grande (surface), largeur et longueur libres
+  const sizes = [];
+  for (let L = 5.6; L < 22; L += .2) for (let S = 4.6; S <= L; S += .2) sizes.push([L, S]);
+  sizes.sort((a, b) => a[0] * a[1] - b[0] * b[1] || Math.abs(a[0] - a[1] * 1.25) - Math.abs(b[0] - b[1] * 1.25));
+  for (const [L, S] of sizes){
     const walls = wallFrames(L, S).map(w => ({ ...w, items: [] }));
+    const avail = (k) => walls[k].len - (k === 1 ? SIGN_W + CFG.gap : 0);
     let k = 0, used = 0, ok = true;
     for (const a of works){
-      while (k < walls.length && CFG.margin * 2 + used + a.w > walls[k].len){ k++; used = 0; }
+      while (k < walls.length && CFG.margin * 2 + used + a.w > avail(k)){ k++; used = 0; }
       if (k >= walls.length){ ok = false; break; }
       walls[k].items.push(a);
       used += a.w + CFG.gap;
     }
-    if (!ok) continue;
+    if (!ok || walls[1].items.length < 2) continue;
+    const back = walls[1].items;
+    back.splice(Math.floor(back.length / 2), 0, { sign: true, w: SIGN_W });
     const placed = [];
+    let sign = null;
     for (const wall of walls){
       const run = wall.items.reduce((s, a) => s + a.w, 0) + CFG.gap * Math.max(0, wall.items.length - 1);
       let x = (wall.len - run) / 2;
       for (const a of wall.items){
         const c = wall.start.clone().addScaledVector(wall.right, x + a.w / 2);
         c.y = CFG.center;
-        placed.push({ work: a, wall, center: c });
+        if (a.sign) sign = { wall, center: c };
+        else placed.push({ work: a, wall, center: c });
         x += a.w + CFG.gap;
       }
     }
-    return { L, S, walls, placed };
+    return { L, S, walls, placed, sign };
   }
   throw new Error("Trop d'œuvres pour la salle");
 }
@@ -255,7 +266,7 @@ function buildRoom(scene, plan, renderer){
 
   const wallMat = new THREE.MeshStandardMaterial({ color: CFG.wall, roughness: .92 });
   const trimMat = new THREE.MeshStandardMaterial({ color: CFG.trim, roughness: .6 });
-  const ceilMat = new THREE.MeshStandardMaterial({ color: 0xece8e1, roughness: 1 });
+  const ceilMat = new THREE.MeshStandardMaterial({ color: 0x55575e, roughness: 1 });
   const blackMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: .45, metalness: .5 });
 
   const pmrem = new THREE.PMREMGenerator(renderer);
@@ -322,23 +333,11 @@ function buildRoom(scene, plan, renderer){
   const jamb = new THREE.BoxGeometry(.16, D.h, .02);
   for (const z of [-D.w / 2, D.w / 2]){ const j = new THREE.Mesh(jamb, trimMat); j.position.set(xW, D.h / 2, z); room.add(j); }
 
-  // vestibule : deux murs latéraux + mur du fond, même bleu, le nom de l'artiste face à l'entrée
+  // vestibule : deux murs latéraux + mur du fond, même bleu
   const xV = xW - V;
   panel(V, H, xW - V / 2, -S / 2, new THREE.Vector3(0, 0, 1));
   panel(V, H, xW - V / 2, S / 2, new THREE.Vector3(0, 0, -1));
   panel(S, H, xV, 0, new THREE.Vector3(1, 0, 0));
-  const sign = canvasTexture(1024, (g, s) => {
-    g.fillStyle = "rgba(236,232,225,.92)";
-    g.textAlign = "center"; g.textBaseline = "middle";
-    g.font = `700 ${Math.round(s * .085)}px Archivo, Helvetica, Arial, sans-serif`;
-    g.fillText("ANNICK BOUVATTIER", s / 2, s * .46);
-    g.font = `500 ${Math.round(s * .03)}px Archivo, Helvetica, Arial, sans-serif`;
-    g.fillText("P E I N T U R E S", s / 2, s * .56);
-  });
-  const signMesh = new THREE.Mesh(new THREE.PlaneGeometry(2.4, 2.4), new THREE.MeshStandardMaterial({ map: sign, transparent: true, roughness: .9 }));
-  signMesh.position.set(xV + .01, 2.0, 0);
-  signMesh.rotation.y = Math.PI / 2;
-  room.add(signMesh);
 
   // rails noirs au plafond, à 1 m des murs accrochés
   const railY = H - .03, off = 1.0;
@@ -352,15 +351,169 @@ function buildRoom(scene, plan, renderer){
   const top = new THREE.Mesh(new THREE.BoxGeometry(1.5, .06, .42),
     new THREE.MeshStandardMaterial({ color: 0x8a5a33, roughness: .45 }));
   top.position.y = .44; bench.add(top);
-  for (const x of [-.65, .65]){
-    const leg = new THREE.Mesh(new THREE.BoxGeometry(.05, .41, .38), blackMat);
-    leg.position.set(x, .205, 0); bench.add(leg);
+  for (const x of [-.66, .66]) for (const z of [-.16, .16]){
+    const leg = new THREE.Mesh(new THREE.BoxGeometry(.03, .41, .03), blackMat);
+    leg.position.set(x, .205, z); bench.add(leg);
   }
-  bench.position.set(.3, 0, 0);
+  for (const x of [-.66, .66]){
+    const bar = new THREE.Mesh(new THREE.BoxGeometry(.03, .03, .32), blackMat);
+    bar.position.set(x, .06, 0); bench.add(bar);
+  }
+  bench.position.set(0, 0, 0);
   room.add(bench);
 
   scene.add(room);
   return { room, floor, bench, railY, off };
+}
+
+/* =========================
+   LE NOM DE L'ARTISTE, au milieu du mur du fond, éclairé par un projecteur
+   ========================= */
+
+function buildSign(scene, plan, deco){
+  const { wall, center } = plan.sign;
+  const tex = canvasTexture(2048, (g, s) => {
+    g.clearRect(0, 0, s, s);
+    g.fillStyle = "#ece6db";
+    g.textAlign = "center"; g.textBaseline = "alphabetic";
+    g.font = `700 ${Math.round(s * .092)}px Archivo, Helvetica, Arial, sans-serif`;
+    g.fillText("ANNICK BOUVATTIER", s / 2, s * .5);
+    g.font = `italic 400 ${Math.round(s * .06)}px "Cormorant Garamond", Garamond, serif`;
+    g.fillText(tr("Artiste peintre"), s / 2, s * .6);
+  });
+  tex.wrapS = tex.wrapT = THREE.ClampToEdgeWrapping;
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(SIGN_W, SIGN_W),
+    new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false, toneMapped: false, color: 0xd9d3c8 }));
+  m.position.copy(center).addScaledVector(wall.normal, .004);
+  m.position.y = 1.75 - SIGN_W * .05;
+  m.rotation.y = Math.atan2(wall.normal.x, wall.normal.z);
+  scene.add(m);
+  // projecteur : halo sur le mur derrière le nom
+  const lampPos = center.clone().addScaledVector(wall.normal, deco.off); lampPos.y = deco.railY - .16;
+  const spot = new THREE.SpotLight(0xffeedd, 0, 0, .62, .8, 2);
+  spot.position.copy(lampPos);
+  spot.target.position.set(center.x, 1.7, center.z);
+  spot.userData.power = 9 * lampPos.distanceToSquared(spot.target.position);
+  scene.add(spot, spot.target);
+  return { mesh: m, spot, center: new THREE.Vector3(center.x, 1.75, center.z) };
+}
+
+/* =========================
+   LE COIN DE L'ATELIER : chevalet avec une toile en cours, petite table, palette, pinceaux.
+   Dans le coin à droite en entrant (on ne le voit pas en arrivant, on le découvre en se retournant).
+   ========================= */
+
+// toile en cours : esquisse grise sur la toile apprêtée, la couleur seulement là où la peintre a déjà travaillé
+function inProgressTexture(img){
+  const S = 768, h = Math.round(S * img.height / img.width);
+  const c = document.createElement("canvas"); c.width = S; c.height = h;
+  const g = c.getContext("2d");
+  g.fillStyle = "#efe9de"; g.fillRect(0, 0, S, h);                          // toile apprêtée
+  g.globalAlpha = .55; g.filter = "grayscale(1) contrast(.7) brightness(1.25)";
+  g.drawImage(img, 0, 0, S, h);                                              // esquisse
+  g.globalAlpha = 1; g.filter = "none";
+  // zones déjà peintes : taches irrégulières, plus denses en haut à gauche
+  const col = document.createElement("canvas"); col.width = S; col.height = h;
+  const cg = col.getContext("2d");
+  cg.drawImage(img, 0, 0, S, h);
+  cg.globalCompositeOperation = "destination-in";
+  const rnd = mulberry(5);
+  for (let i = 0; i < 90; i++){
+    const x = rnd() * S * .75, y = rnd() * h * .8, r = 30 + rnd() * 90;
+    if (x / S + y / h > 1.05 + rnd() * .2) continue;
+    const grd = cg.createRadialGradient(x, y, 0, x, y, r);
+    grd.addColorStop(0, "rgba(0,0,0,1)"); grd.addColorStop(.7, "rgba(0,0,0,.9)"); grd.addColorStop(1, "rgba(0,0,0,0)");
+    cg.fillStyle = grd; cg.fillRect(x - r, y - r, r * 2, r * 2);
+  }
+  g.drawImage(col, 0, 0);
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace;
+  return t;
+}
+
+function buildEasel(scene, plan, work, loader){
+  const pos = new THREE.Vector3(-plan.L / 2 + 1.15, 0, plan.S / 2 - 1.1);
+  const face = new THREE.Vector3(-pos.x * .6, 0, -pos.z).normalize();       // la toile regarde la salle
+  const g = new THREE.Group();
+  g.position.copy(pos);
+  g.rotation.y = Math.atan2(face.x, face.z);
+
+  const wood = new THREE.MeshStandardMaterial({ color: 0x7a5232, roughness: .7 });
+  const dark = new THREE.MeshStandardMaterial({ color: 0x151515, roughness: .5, metalness: .3 });
+  const box = (w, h, d, mat, x, y, z, rx = 0, rz = 0) => {
+    const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
+    m.position.set(x, y, z); m.rotation.set(rx, 0, rz); g.add(m); return m;
+  };
+  // chevalet : deux pieds avant, un pied arrière, montant central, tablette
+  box(.035, 1.95, .035, wood, -.32, .97, .05, -.1, -.1);
+  box(.035, 1.95, .035, wood, .32, .97, .05, -.1, .1);
+  box(.035, 1.9, .035, wood, 0, .92, -.42, .32, 0);
+  box(.045, 2.0, .045, wood, 0, 1.0, .02, -.1, 0);
+  box(.78, .035, .07, wood, 0, .78, .13, -.1, 0);
+  // toile sur le chevalet (rapport de l'image), penchée en arrière comme le montant
+  const W = .62, H = Math.min(.95, W * (work ? work.h / work.w : 1.3));
+  const canvasMat = new THREE.MeshBasicMaterial({ color: 0xebe7e0, toneMapped: false });
+  const canvas = box(W, H, .025, wood, 0, .8 + H / 2, .16 - Math.sin(.1) * H / 2, -.1, 0);
+  canvas.material = [wood, wood, wood, wood, canvasMat, wood];   // face avant : la toile en cours
+  box(.08, .04, .06, wood, 0, .8 + H + .03, .16 - Math.sin(.1) * H, -.1, 0);
+  if (work){
+    loader.load(work.thumb, (t) => {
+      canvasMat.map = inProgressTexture(t.image); canvasMat.needsUpdate = true;
+    });
+  }
+
+  // petite table noire à côté, palette et pot de pinceaux
+  const table = new THREE.Group();
+  table.position.set(.75, 0, .2);
+  const top = new THREE.Mesh(new THREE.CylinderGeometry(.24, .24, .025, 32), dark);
+  top.position.y = .7; table.add(top);
+  const leg = new THREE.Mesh(new THREE.CylinderGeometry(.02, .02, .7, 12), dark);
+  leg.position.y = .35; table.add(leg);
+  const foot = new THREE.Mesh(new THREE.CylinderGeometry(.16, .16, .015, 24), dark);
+  foot.position.y = .008; table.add(foot);
+  const palette = new THREE.Mesh(new THREE.CylinderGeometry(.17, .17, .008, 40),
+    new THREE.MeshStandardMaterial({ color: 0x9a7048, roughness: .55 }));
+  palette.scale.set(1.25, 1, .85); palette.position.set(-.03, .717, 0); table.add(palette);
+  const dabs = [0xa3271f, 0x2346a8, 0xf2ead8, 0xc8902e, 0x2c2420, 0x6d3b2a, 0xd9a07a];
+  dabs.forEach((c, i) => {
+    const a = i / dabs.length * Math.PI * 1.6 + .3;
+    const d = new THREE.Mesh(new THREE.SphereGeometry(.022, 12, 8), new THREE.MeshStandardMaterial({ color: c, roughness: .35 }));
+    d.scale.set(1, .35, 1); d.position.set(-.03 + Math.cos(a) * .15, .724, Math.sin(a) * .1); table.add(d);
+  });
+  const jar = new THREE.Mesh(new THREE.CylinderGeometry(.045, .04, .13, 20),
+    new THREE.MeshStandardMaterial({ color: 0xdfe6ea, roughness: .1, metalness: 0, transparent: true, opacity: .55 }));
+  jar.position.set(.13, .78, -.1); table.add(jar);
+  for (let i = 0; i < 6; i++){
+    const b = new THREE.Mesh(new THREE.CylinderGeometry(.005, .007, .3, 6), i % 2 ? wood : dark);
+    b.position.set(.13 + (i - 2.5) * .01, .9, -.1 + ((i * 7) % 5 - 2) * .008);
+    b.rotation.set(((i * 3) % 5 - 2) * .06, 0, (i - 2.5) * .07);
+    table.add(b);
+  }
+  g.add(table);
+
+  // tabouret de la peintre, devant la toile
+  const stool = new THREE.Group();
+  stool.position.set(-.1, 0, .85);
+  const seat = new THREE.Mesh(new THREE.CylinderGeometry(.17, .17, .04, 28), wood);
+  seat.position.y = .62; stool.add(seat);
+  for (let i = 0; i < 3; i++){
+    const a = i / 3 * Math.PI * 2;
+    const l = new THREE.Mesh(new THREE.CylinderGeometry(.015, .015, .64, 8), dark);
+    l.position.set(Math.cos(a) * .11, .31, Math.sin(a) * .11);
+    l.rotation.set(Math.sin(a) * .12, 0, -Math.cos(a) * .12);
+    stool.add(l);
+  }
+  g.add(stool);
+
+  scene.add(g);
+
+  // lampe d'atelier : lumière chaude qui tombe sur la toile en cours
+  const spot = new THREE.SpotLight(0xffe2b8, 0, 0, .55, .7, 2);
+  spot.position.set(pos.x + face.x * 1.4, CFG.ceiling - .3, pos.z + face.z * 1.4);
+  spot.target.position.set(pos.x, 1.1, pos.z);
+  spot.userData.power = 7 * spot.position.distanceToSquared(spot.target.position);
+  scene.add(spot, spot.target);
+  return { spot, center: new THREE.Vector3(pos.x, 1.2, pos.z) };
 }
 
 /* =========================
@@ -443,8 +596,10 @@ function hangArtworks(scene, plan, deco){
 async function main(){
   if (!window.abouvSheet) return fallback("sheet.js absent");
 
-  const works = await loadWorks();
+  const { hung: works, easel: easelWork } = await loadWorks();
   if (!works.length) return fallback("aucune œuvre disponible");
+  // polices des textes dessinés dans la salle (nom de l'artiste, cartels)
+  try{ await Promise.race([Promise.all([document.fonts.load("700 80px Archivo"), document.fonts.load('italic 400 60px "Cormorant Garamond"')]), new Promise(r => setTimeout(r, 1500))]); }catch(_){}
   const plan = planWalls(works);
 
   // --- moteur
@@ -464,9 +619,10 @@ async function main(){
   // --- décor, ambiance chaude très douce (la vraie lumière vient des projecteurs)
   const deco = buildRoom(scene, plan, renderer);
   scene.add(new THREE.HemisphereLight(0xffe6c7, 0x3a2a1c, .5));
-  const bounce = new THREE.PointLight(0xffdcb0, 6, 0, 2);
-  bounce.position.set(0, 1.9, 0);
+  const bounce = new THREE.PointLight(0xffdcb0, 3, 0, 2);      // lumière renvoyée par le parquet et les murs
+  bounce.position.set(0, 1.4, 0);
   scene.add(bounce);
+
   const vestLight = new THREE.SpotLight(0xffe2bd, 12, 0, .6, .8, 2);
   vestLight.position.set(-plan.L / 2 - CFG.vestibule + 1.4, CFG.ceiling - .1, 0);
   vestLight.target.position.set(-plan.L / 2 - CFG.vestibule, 2, 0);
@@ -474,9 +630,11 @@ async function main(){
 
   const pieces = hangArtworks(scene, plan, deco);
   const n = pieces.length;
+  const sign = buildSign(scene, plan, deco);
 
   // --- textures des toiles
   const loader = new THREE.TextureLoader();
+  const easel = buildEasel(scene, plan, easelWork, loader);
   const maxAniso = Math.min(8, renderer.capabilities.getMaxAnisotropy());
   const prepare = (t) => { t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = maxAniso; return t; };
   let loaded = 0;
@@ -517,25 +675,34 @@ async function main(){
   const ease = (t) => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
   const angleDiff = (a, b) => Math.atan2(Math.sin(b - a), Math.cos(b - a));
 
+  if (/[?&]debug\b/.test(location.search)) window.__g3dView = view;   // tests : placer la caméra à la main
+
   // départ : dans le vestibule, face à la porte
-  view.pos.set(-plan.L / 2 - CFG.vestibule + 1.3, CFG.eye, 0);
+  view.pos.set(-plan.L / 2 - CFG.vestibule + .9, CFG.eye, 0);
   view.yaw = -Math.PI / 2; view.pitch = 0;
 
-  /* ---------- promenade : on fait lentement le tour de la salle, le regard tourné vers les murs ----------
-     Boucle en ellipse à ~1,8 m des murs ; on regarde surtout vers l'extérieur (les toiles), un peu devant soi,
-     avec une légère dérive du regard. Rien ne s'arrête sur une toile en particulier. */
-  const WANDER = { speed: .32, idle: 9 };        // m/s ; secondes sans action avant de repartir
-  const ellipse = { rx: Math.max(.6, plan.L / 2 - 1.9), rz: Math.max(.5, plan.S / 2 - 1.7) };
-  const wander = { on: false, theta: Math.PI, yaw: 0 };
+  /* ---------- promenade : on tourne lentement autour du banc, le regard posé sur les toiles ----------
+     Boucle en ellipse autour du banc ; à chaque instant on regarde l'œuvre la plus en face du côté des murs
+     (toile, nom de l'artiste ou chevalet), et le regard glisse doucement de l'une à la suivante. */
+  const WANDER = { speed: .2, idle: 9 };         // m/s ; secondes sans action avant de repartir
+  const ellipse = { rx: Math.max(.9, plan.L / 2 - 2.0), rz: Math.max(.8, plan.S / 2 - 1.9) };
+  const wander = { on: false, theta: Math.PI };
   const onEllipse = (th) => new THREE.Vector3(ellipse.rx * Math.cos(th), CFG.eye, ellipse.rz * Math.sin(th));
-  function wanderYaw(th, now){
+  const targets = [...pieces.map(p => p.center), sign.center, easel.center];
+  function wanderGaze(th, now){
     const p = onEllipse(th);
-    const out = new THREE.Vector3(p.x / ellipse.rx, 0, p.z / ellipse.rz).normalize();       // vers le mur
-    const tangent = new THREE.Vector3(-ellipse.rx * Math.sin(th), 0, ellipse.rz * Math.cos(th)).normalize();
-    // côté porte (ouest) : pas de toile, on regarde devant soi
-    const a = .78 * THREE.MathUtils.smoothstep(out.x, -.95, -.35);
-    const dir = out.multiplyScalar(a).addScaledVector(tangent, 1 - a);
-    return Math.atan2(-dir.x, -dir.z) + Math.sin(now * .00023) * .22;
+    const outYaw = Math.atan2(-p.x / ellipse.rx, -p.z / ellipse.rz);     // vers le mur le plus proche
+    const tangent = new THREE.Vector3(ellipse.rx * Math.sin(th), 0, -ellipse.rz * Math.cos(th));
+    const aheadYaw = Math.atan2(-tangent.x, -tangent.z);
+    const pref = outYaw + angleDiff(outYaw, aheadYaw) * .3;               // un peu vers l'avant
+    let best = null, bestScore = Infinity;
+    for (const t of targets){
+      const y = yawTo(p, t), d = Math.abs(angleDiff(pref, y));
+      if (d > 1.3) continue;
+      const score = d + p.distanceTo(t) * .06;
+      if (score < bestScore){ bestScore = score; best = { yaw: y, pitch: Math.atan2(t.y - CFG.eye, Math.hypot(t.x - p.x, t.z - p.z)) }; }
+    }
+    return best || { yaw: aheadYaw, pitch: -.03 };
   }
   function nearestTheta(pos){
     let best = 0, bd = Infinity;
@@ -546,9 +713,9 @@ async function main(){
   function startWander(){
     const th = nearestTheta(view.pos);
     const start = onEllipse(th);
-    travel({ pos: start, yaw: wanderYaw(th, performance.now()), pitch: -.03 }, () => {
-      wander.on = true; wander.theta = th; wander.yaw = view.yaw;
-    }, Math.max(1.6, view.pos.distanceTo(start) / .45));
+    const gz = wanderGaze(th, performance.now());
+    travel({ pos: start, yaw: gz.yaw, pitch: gz.pitch }, () => { wander.on = true; wander.theta = th; },
+      Math.max(2, view.pos.distanceTo(start) / .35));
   }
 
   /* ---------- déplacements choisis ---------- */
@@ -661,12 +828,15 @@ async function main(){
   let lights = 0;      // les projecteurs s'allument doucement
   let bob = 0;         // balancement des pas
   let hdCheck = 0;
+  const allSpots = [...pieces.map(p => p.spot), sign.spot, easel.spot];
   renderer.setAnimationLoop(() => {
     const dt = Math.min(.05, clock.getDelta());
     const now = performance.now();
     let walking = 0;
 
-    if (move){
+    if (view.frozen){
+      // (tests) caméra placée à la main
+    } else if (move){
       const k = Math.min(1, (now - move.t0) / move.dur), e = ease(k);
       view.pos.lerpVectors(move.from.pos, move.to.pos, e);
       view.yaw = move.from.yaw + move.dyaw * e;
@@ -677,10 +847,11 @@ async function main(){
       const r = Math.hypot(ellipse.rx * Math.sin(wander.theta), ellipse.rz * Math.cos(wander.theta)) || 1;
       wander.theta -= dt * WANDER.speed / r;
       view.pos.copy(onEllipse(wander.theta));
-      // le regard suit sa cible en douceur (pas de rotation brusque)
-      view.yaw += angleDiff(view.yaw, wanderYaw(wander.theta, now)) * Math.min(1, dt * .9);
-      view.pitch += (-.03 + Math.sin(now * .00017) * .04 - view.pitch) * Math.min(1, dt * .6);
-      walking = .55;
+      // le regard glisse en douceur vers l'œuvre en face (jamais de rotation brusque)
+      const gz = wanderGaze(wander.theta, now);
+      view.yaw += angleDiff(view.yaw, gz.yaw) * Math.min(1, dt * .55);
+      view.pitch += (gz.pitch - view.pitch) * Math.min(1, dt * .5);
+      walking = .45;
     } else if (!drag && lastInput && now - lastInput > WANDER.idle * 1000){
       lastInput = 0;
       startWander();          // plus personne ne touche à rien : on reprend la promenade
@@ -693,7 +864,7 @@ async function main(){
 
     if ((hdCheck += dt) > 1){ hdCheck = 0; if (hdFiles.size) loadNearHD(view.pos); }
     lights = Math.min(1, lights + dt * .8);
-    for (const p of pieces) p.spot.intensity = p.spot.userData.power * lights;
+    for (const sp of allSpots) sp.intensity = sp.userData.power * lights;
     renderer.render(scene, camera);
   });
 
@@ -703,10 +874,12 @@ async function main(){
 
   /* ---------- arrivée : on franchit la porte et on commence la promenade ---------- */
   await Promise.race([firstLoaded, new Promise(r => setTimeout(r, 2500))]);
+  // on avance lentement jusqu'au milieu de la salle, face au nom de l'artiste, puis on commence le tour
   const th0 = Math.PI;                                   // côté porte de la boucle
-  travel({ pos: onEllipse(th0), yaw: wanderYaw(th0, performance.now()), pitch: -.03 }, () => {
-    wander.on = true; wander.theta = th0; wander.yaw = view.yaw;
-  }, 4.5);
+  const entry = onEllipse(th0);
+  travel({ pos: entry, yaw: yawTo(entry, sign.center), pitch: Math.atan2(sign.center.y - CFG.eye, entry.distanceTo(sign.center)) }, () => {
+    wander.on = true; wander.theta = th0;
+  }, 7.5);
   showHint();
   ready.then(() => els.loading.classList.add("is-done"));
 }
