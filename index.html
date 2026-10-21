@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="description" content="Annick Bouvattier, artiste peintre : promenez-vous dans une galerie virtuelle parmi ses toiles disponibles, accrochées à leur taille réelle." />
+  <meta name="theme-color" content="#FFFFFF" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Annick Bouvattier" />
+  <meta property="og:locale" content="fr_FR" />
+  <meta property="og:title" content="Annick Bouvattier — Artiste peintre" />
+  <meta property="og:description" content="Annick Bouvattier, artiste peintre : promenez-vous dans une galerie virtuelle parmi ses toiles disponibles, accrochées à leur taille réelle." />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <title>Annick Bouvattier — Artiste peintre</title>
+
+  <!-- Repli vers l'accueil classique : pas de WebGL, mouvement réduit demandé, ou galerie pas prête en 10 s.
+       (?debug dans l'adresse : pas de repli, pour tester) -->
+  <script>
+    (function () {
+      var debug = /[?&]debug\b/.test(location.search);
+      function fallback(reason) {
+        if (window.__g3dReady) return;
+        console.warn("Galerie 3D : repli vers accueil.html (" + reason + ")");
+        if (!debug) location.replace("accueil.html");
+      }
+      window.__g3dFallback = fallback;
+      if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return fallback("mouvement réduit");
+      try {
+        var c = document.createElement("canvas");
+        if (!(c.getContext("webgl2") || c.getContext("webgl"))) return fallback("WebGL indisponible");
+      } catch (e) { return fallback("WebGL indisponible"); }
+      window.__g3dTimer = setTimeout(function () { fallback("chargement > 10 s"); }, 10000);
+    })();
+  </script>
+
+  <script src="i18n.js?v=20261021a"></script>
+  <script src="site.js?v=20261021a"></script>
+  <script src="sheet.js?v=20261021a"></script>
+  <link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="fonts/cormorant-garamond-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="styles.css?v=20261021a" />
+  <link rel="stylesheet" href="galerie.css?v=20261021a" />
+
+  <!-- Three.js, version épinglée -->
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+      }
+    }
+  </script>
+  <script type="module" src="galerie.js?v=20261021a"></script>
+</head>
+
+<body class="gallery3d">
+  <div class="g3d-stage" id="stage" aria-hidden="true"></div>
+
+  <div class="page">
+    <div class="container">
+      <header class="top">
+        <a class="brand" href="index.html">ANNICK&nbsp;BOUVATTIER</a>
+        <nav class="top__nav" aria-label="Navigation principale">
+          <a class="nav__link" href="accueil.html">Accueil</a>
+          <a class="nav__link" href="portfolio.html">Portfolio</a>
+          <a class="nav__link" href="galeries.html">Galeries</a>
+          <a class="nav__link" href="expositions.html">Expositions</a>
+          <a class="nav__link" href="apropos.html">À propos</a>
+          <a class="nav__link" href="presse.html">Presse</a>
+          <a class="nav__link" href="contact.html">Contact</a>
+        </nav>
+      </header>
+
+      <a class="g3d-skip" href="portfolio.html">Passer <span aria-hidden="true">→</span> Voir les œuvres</a>
+
+      <main>
+        <h1 class="sr-only">Annick Bouvattier — galerie virtuelle</h1>
+
+        <!-- Écran d'entrée -->
+        <section class="g3d-entry" id="entry" aria-labelledby="entryTitle">
+          <div class="g3d-entry__inner">
+            <p class="g3d-entry__name" id="entryTitle">Annick Bouvattier</p>
+            <p class="g3d-entry__lead">Une promenade parmi les toiles disponibles, accrochées à leur taille réelle.</p>
+            <div class="g3d-progress" role="progressbar" aria-label="Chargement des œuvres" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+              <span class="g3d-progress__bar" id="progressBar"></span>
+            </div>
+            <button class="g3d-enter" id="enterBtn" type="button" disabled>Entrer dans la galerie</button>
+          </div>
+        </section>
+
+        <!-- Cartel de l'œuvre regardée -->
+        <aside class="g3d-cartel" id="cartel" aria-live="polite" hidden>
+          <p class="g3d-cartel__count" id="cartelCount"></p>
+          <h2 class="g3d-cartel__title" id="cartelTitle"></h2>
+          <p class="g3d-cartel__meta" id="cartelMeta"></p>
+          <p class="g3d-cartel__price">Prix sur demande</p>
+          <a class="g3d-cartel__cta" id="cartelCta" href="contact.html">Acquérir cette œuvre</a>
+        </aside>
+
+        <div class="g3d-controls" id="controls" hidden>
+          <button type="button" id="prevBtn" aria-label="Œuvre précédente"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg></button>
+          <button type="button" id="nextBtn" aria-label="Œuvre suivante"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="m6 3 5 5-5 5"/></svg></button>
+        </div>
+
+        <!-- Liste des œuvres pour les lecteurs d'écran et les moteurs de recherche (remplie par galerie.js) -->
+        <section class="sr-only" aria-label="Œuvres de la galerie">
+          <ul id="srList"></ul>
+          <noscript><a href="portfolio.html">Voir les œuvres</a></noscript>
+        </section>
+      </main>
+
+      <footer class="bottom">
+        <div class="bottom__left">
+          <a class="bottom__link" href="https://www.instagram.com/annick.bouvattier/" target="_blank" rel="noopener noreferrer">instagram</a>
+          <a class="bottom__link" href="https://www.facebook.com/annick.bouvattier/" target="_blank" rel="noopener noreferrer">facebook</a>
+          <a class="bottom__link" href="https://www.saatchiart.com/bouvattier" target="_blank" rel="noopener noreferrer">saatchi art</a>
+        </div>
+        <a class="bottom__link bottom__link--legal" href="mentions-legales.html">mentions légales</a>
+      </footer>
+    </div>
+  </div>
+</body>
+</html>

@@ -138,6 +138,18 @@
     "Œuvres": "Artworks",
     "œuvre": "artwork",
     "œuvres": "artworks",
+    "Passer": "Skip",
+    "Une promenade parmi les toiles disponibles, accrochées à leur taille réelle.": "A walk among the available paintings, hung at their actual size.",
+    "Chargement des œuvres": "Loading the works",
+    "Entrer dans la galerie": "Enter the gallery",
+    "Prix sur demande": "Price on request",
+    "Acquérir cette œuvre": "Acquire this work",
+    "Œuvres de la galerie": "Works in the gallery",
+    "Annick Bouvattier — galerie virtuelle": "Annick Bouvattier — virtual gallery",
+    "Annick Bouvattier, artiste peintre : promenez-vous dans une galerie virtuelle parmi ses toiles disponibles, accrochées à leur taille réelle.":
+      "Annick Bouvattier, painter: stroll through a virtual gallery among her available paintings, hung at their actual size.",
+    "Bonjour, je suis intéressé(e) par l'œuvre « {oeuvre} »{details}. Pourriez-vous m'indiquer son prix et les modalités d'acquisition ?":
+      "Hello, I am interested in the work “{oeuvre}”{details}. Could you tell me its price and the terms of purchase?",
     "Œuvre précédente": "Previous artwork",
     "Œuvre suivante": "Next artwork",
     "Ouvrir l'œuvre": "Open artwork",

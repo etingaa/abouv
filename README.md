@@ -1,7 +1,7 @@
 # annickbouvattier — site web
 
-Site statique (HTML/CSS/JS, sans framework ni étape de build) : `index`, `portfolio`, `galeries`,
-`expositions`, `apropos`, `presse`, `contact`, `404`. Style commun dans `styles.css`, police Archivo
+Site statique (HTML/CSS/JS, sans framework ni étape de build) : `index` (galerie 3D), `accueil`
+(accueil classique, repli de la galerie), `portfolio`, `galeries`, `expositions`, `apropos`, `presse`, `contact`, `404`. Style commun dans `styles.css`, police Archivo
 hébergée dans `fonts/`.
 
 ## D'où viennent les données
@@ -9,7 +9,8 @@ hébergée dans `fonts/`.
 | Contenu | Source |
 |---|---|
 | **Portfolio** | Google Sheet publié en CSV (URL et lecture dans `sheet.js`, constante `SHEET_CSV_URL`). Colonnes lues : `Nom`, `Catégorie`, `Technique`, `Format`, `Disponible`, `Jpg`, `Disponible où ?`. |
-| **Mur de l'accueil** | Même Sheet : toutes les œuvres, sauf celles avec « non » dans la colonne `Accueil`. Un clic sur une toile ouvre sa fiche (même fenêtre que le portfolio, `artwork-modal.js`). Secours : `images/manifest.json`, utilisé seulement si le Sheet est injoignable. |
+| **Galerie 3D** (`index.html`, `galerie.js`, `galerie.css`) | Même Sheet : seulement les œuvres **disponibles** (pas les sculptures), accrochées à leur taille réelle d'après la colonne `Format` (largeur × hauteur en cm). Une ligne sans format lisible est ignorée (message dans la console). |
+| **Livre de l'accueil classique** (`accueil.html`) | Même Sheet : toutes les œuvres, sauf celles avec « non » dans la colonne `Accueil`. Secours : `images/manifest.json`, utilisé seulement si le Sheet est injoignable. |
 | **Galeries** | tableau `galleries` dans `script.js` |
 | **Expositions** | tableau `expos` dans `expositions.html` |
 
@@ -22,6 +23,17 @@ hébergée dans `fonts/`.
 5. Commit + push.
 
 Sans miniature, le site retombe sur l'image d'origine (plus lourde, mais elle s'affiche).
+
+## Galerie 3D
+
+- Three.js est chargé depuis jsDelivr (version épinglée 0.170.0, voir l'`importmap` d'`index.html`).
+- Repli automatique vers `accueil.html` : pas de WebGL, « mouvement réduit » activé dans le système,
+  ou galerie pas prête en 10 secondes. Ajouter `?debug` à l'adresse désactive le repli (pour tester).
+- Le décor (murs, sol, plafond, rails) est construit dans `buildRoom()` (`galerie.js`), séparé de l'accrochage :
+  c'est la seule fonction à remplacer pour passer à un modèle `.glb` ou à un monde Gaussian splat.
+- **Images HD (facultatif)** : déposer une version haute définition dans `images/hd/` avec **le même nom** que dans
+  `images/`, puis l'ajouter à la liste `images/hd/list.json` (ex. `["ALaPointe.jpg", "DressCode.jpg"]`).
+  La galerie ne charge la HD que pour l'œuvre regardée et ses deux voisines ; sans HD, elle garde la vignette.
 
 ## Version anglaise (FR / EN)
 

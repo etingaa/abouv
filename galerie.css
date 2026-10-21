@@ -1,0 +1,129 @@
+/* =========================
+   GALERIE 3D (index.html) — la salle est dessinée dans un canvas plein écran,
+   le site (header, cartel, boutons) flotte par-dessus.
+   ========================= */
+@font-face{
+  font-family: "Cormorant Garamond";
+  font-style: normal;
+  font-weight: 300 600;
+  font-display: swap;
+  src: url("fonts/cormorant-garamond-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+:root{ --serif: "Cormorant Garamond", Garamond, "Times New Roman", serif; }
+
+body.gallery3d{ background:#EFECE6; overflow:hidden; overscroll-behavior:none; }
+.gallery3d .page{ min-height:100vh; min-height:100dvh; pointer-events:none; }
+.gallery3d .container{ position:relative; z-index:2; min-height:100vh; min-height:100dvh; }
+.gallery3d .top, .gallery3d .bottom, .gallery3d .g3d-skip,
+.gallery3d .g3d-cartel, .gallery3d .g3d-controls, .gallery3d .g3d-entry{ pointer-events:auto; }
+
+.g3d-stage{ position:fixed; inset:0; z-index:0; touch-action:none; }
+.g3d-stage canvas{ display:block; width:100%; height:100%; cursor:grab; }
+.g3d-stage.is-hover canvas{ cursor:pointer; }
+
+/* header : voile blanc translucide au-dessus de la salle
+   (sur un calque à part : un flou posé sur .top casserait le menu plein écran du téléphone) */
+.gallery3d .top{ margin:14px -20px 0; padding:16px 20px; }
+.gallery3d .top::before{
+  content:""; position:absolute; inset:0; z-index:-1; border-radius:6px;
+  background:rgba(255,255,255,.8);
+  -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
+  box-shadow:0 2px 14px rgba(0,0,0,.06);
+}
+.gallery3d .shade{ display:none; }
+
+/* « Passer → Voir les œuvres », toujours visible sous le header */
+.g3d-skip{
+  position:fixed; z-index:5; right:max(20px, calc(50vw - 700px + 48px)); top:calc(var(--header-h, 74px) + 24px);
+  font-size:12px; font-weight:500; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--ink); padding:7px 10px; border-radius:4px;
+  background:rgba(255,255,255,.72); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+}
+.g3d-skip:hover{ background:#fff; }
+
+/* pied de page : petit, en bas à droite */
+.gallery3d .bottom{
+  position:fixed; z-index:3; right:max(20px, calc(50vw - 700px + 48px)); bottom:14px;
+  margin:0; padding:6px 10px; gap:14px; border-radius:4px;
+  background:rgba(255,255,255,.6); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+}
+.gallery3d .bottom__left{ display:none; }
+.gallery3d .bottom__link--legal{ margin-left:0; }
+
+/* =========================
+   Écran d'entrée
+   ========================= */
+.g3d-entry{
+  position:fixed; inset:0; z-index:4;
+  display:flex; align-items:center; justify-content:center; padding:24px;
+  background:rgba(239,236,230,.72);
+  -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
+  transition:opacity .9s ease, visibility .9s;
+}
+.g3d-entry.is-gone{ opacity:0; visibility:hidden; pointer-events:none; }
+.g3d-entry__inner{ max-width:520px; text-align:center; display:flex; flex-direction:column; align-items:center; }
+.g3d-entry__name{
+  margin:0; font-family:var(--serif); font-weight:400; letter-spacing:.02em;
+  font-size:clamp(34px, 6.4vw, 76px); line-height:1; color:var(--ink); white-space:nowrap;
+}
+.g3d-entry__lead{ margin:18px 0 34px; font-size:15px; line-height:1.6; color:var(--ink-soft); }
+.g3d-progress{ width:180px; height:1px; background:rgba(var(--ink-rgb),.15); overflow:hidden; }
+.g3d-progress__bar{ display:block; height:100%; width:0; background:var(--ink); transition:width .3s ease; }
+.g3d-enter{
+  margin-top:28px; height:44px; padding:0 22px;
+  border:1px solid var(--ink); border-radius:2px; background:var(--ink); color:#fff;
+  font:inherit; font-size:13px; font-weight:500; letter-spacing:.12em; text-transform:uppercase;
+  cursor:pointer; transition:background-color var(--ease), color var(--ease), opacity .4s ease;
+}
+.g3d-enter:hover{ background:transparent; color:var(--ink); }
+.g3d-enter:disabled{ opacity:.25; cursor:progress; }
+
+/* =========================
+   Cartel (œuvre regardée)
+   ========================= */
+.g3d-cartel{
+  position:fixed; z-index:3; left:max(20px, calc(50vw - 700px + 48px)); bottom:24px;
+  width:min(320px, calc(100vw - 40px)); padding:18px 20px 20px;
+  background:rgba(255,255,255,.9); -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
+  border-radius:2px; box-shadow:0 8px 30px rgba(0,0,0,.08);
+  opacity:0; transform:translateY(8px); transition:opacity .45s ease, transform .45s ease;
+}
+.g3d-cartel.is-on{ opacity:1; transform:none; }
+.g3d-cartel__count{ margin:0 0 8px; font-size:11px; letter-spacing:.12em; color:var(--ink-faint); font-variant-numeric:tabular-nums; }
+.g3d-cartel__title{ margin:0; font-family:var(--serif); font-weight:500; font-size:28px; line-height:1.1; color:var(--ink); }
+.g3d-cartel__meta{ margin:8px 0 0; font-size:13px; color:var(--ink-soft); }
+.g3d-cartel__price{ margin:14px 0 0; font-size:12px; color:var(--ink-faint); }
+.g3d-cartel__cta{
+  display:inline-block; margin-top:6px; padding-bottom:2px;
+  font-size:13px; font-weight:500; letter-spacing:.04em; color:var(--ink);
+  border-bottom:1px solid var(--accent);
+}
+.g3d-cartel__cta:hover{ color:var(--accent); }
+
+/* ‹ › en bas à droite */
+.g3d-controls{
+  position:fixed; z-index:3; right:max(20px, calc(50vw - 700px + 48px)); bottom:64px;
+  display:flex; gap:8px;
+}
+.g3d-controls button{
+  width:46px; height:46px; display:inline-flex; align-items:center; justify-content:center;
+  border:0; border-radius:50%; background:rgba(255,255,255,.88); color:var(--ink); cursor:pointer;
+  -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px); box-shadow:0 4px 16px rgba(0,0,0,.08);
+  transition:background-color var(--ease);
+}
+.g3d-controls button:hover{ background:#fff; }
+.g3d-controls svg{ width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; }
+
+@media (max-width: 760px){
+  .gallery3d .top{ margin:10px -6px 0; padding:10px 12px; }
+  .g3d-skip{ top:calc(var(--header-h, 64px) + 18px); right:14px; font-size:11px; }
+  .g3d-cartel{ left:12px; right:12px; bottom:12px; width:auto; padding:14px 16px 16px; }
+  .g3d-cartel__title{ font-size:24px; }
+  .g3d-controls{ right:14px; bottom:auto; top:calc(var(--header-h, 64px) + 60px); }
+  .g3d-controls button{ width:40px; height:40px; }
+  .gallery3d .bottom{ display:none; }
+}
+@media (prefers-reduced-motion: reduce){
+  .g3d-entry, .g3d-cartel{ transition:none; }
+}
