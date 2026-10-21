@@ -622,15 +622,18 @@ async function main(){
   };
   let drag = null;
   els.stage.addEventListener("pointerdown", (e) => {
-    drag = { x: e.clientX, y: e.clientY, moved: 0 };
+    // au doigt, un « tap » bouge toujours un peu : seuil plus large qu'à la souris
+    drag = { x: e.clientX, y: e.clientY, x0: e.clientX, y0: e.clientY, moved: 0, looking: false,
+             slop: e.pointerType === "touch" ? 14 : 6 };
     els.stage.setPointerCapture(e.pointerId);
   });
   els.stage.addEventListener("pointermove", (e) => {
     if (drag){
       const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
       drag.x = e.clientX; drag.y = e.clientY;
-      drag.moved += Math.abs(dx) + Math.abs(dy);
-      if (drag.moved > 6){
+      drag.moved = Math.max(drag.moved, Math.hypot(e.clientX - drag.x0, e.clientY - drag.y0));
+      if (drag.looking || drag.moved > drag.slop){
+        drag.looking = true;
         userInput();
         hideTip();
         els.stage.classList.add("is-dragging");
@@ -651,7 +654,7 @@ async function main(){
   els.stage.addEventListener("pointerleave", () => { if (!drag) hideTip(); });
   els.stage.addEventListener("pointerup", (e) => {
     if (!drag) return;
-    const click = drag.moved <= 6;
+    const click = !drag.looking;
     drag = null;
     els.stage.classList.remove("is-dragging");
     if (!click) return;
