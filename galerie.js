@@ -539,7 +539,7 @@ async function main(){
   /* ---------- promenade : un tour complet du banc en 15 s, le regard tourné vers les murs ----------
      Pas de saut d'une toile à l'autre : le regard tourne en continu avec la marche (vers le mur,
      un peu en avant), les toiles défilent naturellement. */
-  const WANDER = { lap: 24, idle: 9 };          // secondes par tour ; secondes sans action avant de repartir
+  const WANDER = { lap: 24, idle: isMobile ? 20 : 9 };          // secondes par tour ; secondes sans action avant de repartir
   const ellipse = { rx: 1.45, rz: 1.0 };          // tout près du banc (1,50 × 0,42 m), on en fait vraiment le tour
   const wander = { on: false, theta: Math.PI };
   const onEllipse = (th) => new THREE.Vector3(ellipse.rx * Math.cos(th), CFG.eye, ellipse.rz * Math.sin(th));
@@ -557,6 +557,7 @@ async function main(){
   }
   let lastInput = 0, move = null;
   function startWander(){
+    hideTip();
     const th = nearestTheta(view.pos);
     const start = onEllipse(th);
     const gz = wanderGaze(th);
@@ -620,7 +621,23 @@ async function main(){
     return null;
   };
   let drag = null;
-  // écran tactile : pas d'interaction, la promenade défile comme une vidéo
+  // écran tactile : la promenade défile comme une vidéo ; toucher une toile la met en pause
+  // et affiche sa petite fiche, toucher ailleurs la relance
+  if (passive){
+    let tap = null;
+    els.stage.addEventListener("pointerdown", (e) => { tap = { x: e.clientX, y: e.clientY }; });
+    els.stage.addEventListener("pointerup", (e) => {
+      if (!tap || Math.hypot(e.clientX - tap.x, e.clientY - tap.y) > 14){ tap = null; return; }
+      tap = null;
+      const h = hit(e.clientX, e.clientY);
+      if (h && h.art !== undefined){
+        userInput(); move = null;
+        showTip(h.art, e.clientX, e.clientY);
+      } else if (tipFor >= 0 || !wander.on){
+        hideTip(); lastInput = 0; startWander();
+      }
+    });
+  }
   if (!passive){
     els.stage.addEventListener("pointerdown", (e) => {
       // au doigt, un « tap » bouge toujours un peu : seuil plus large qu'à la souris

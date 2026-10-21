@@ -19,7 +19,10 @@ body.gallery3d{ background:#0C1220; overflow:hidden; overscroll-behavior:none; }
 .gallery3d .g3d-tip{ pointer-events:auto; }
 
 .g3d-stage{ position:fixed; inset:0; z-index:0; touch-action:none; }
-@media (pointer: coarse){ .g3d-stage{ pointer-events:none; } }   /* écran tactile : la salle défile comme une vidéo */
+/* écran tactile : la petite fiche d'une toile s'affiche en bas de l'écran */
+@media (pointer: coarse){
+  .g3d-tip{ left:16px; right:16px; top:auto; bottom:calc(20px + env(safe-area-inset-bottom)); width:auto; max-width:none; transform:none !important; }
+}
 .g3d-stage canvas{ display:block; width:100%; height:100%; cursor:grab; }
 .g3d-stage.is-art canvas{ cursor:zoom-in; }
 .g3d-stage.is-floor canvas{ cursor:pointer; }
