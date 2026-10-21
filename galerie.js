@@ -603,8 +603,7 @@ async function main(){
   function hideTip(){ els.tip.classList.remove("is-on"); tipFor = -1; }
 
   let hintTimer = 0;
-  // écran tactile : on ne choisit pas où aller, toucher sert seulement aux toiles
-  if (matchMedia("(pointer: coarse)").matches) els.hint.textContent = tr("Faites glisser pour regarder autour de vous · touchez une toile pour la découvrir");
+  const passive = matchMedia("(pointer: coarse)").matches;     // téléphone / tablette : visite non interactive
   function showHint(){ els.hint.hidden = false; requestAnimationFrame(() => els.hint.classList.add("is-on")); hintTimer = setTimeout(hideHint, 7000); }
   function hideHint(){ clearTimeout(hintTimer); els.hint.classList.remove("is-on"); }
 
@@ -621,55 +620,58 @@ async function main(){
     return null;
   };
   let drag = null;
-  els.stage.addEventListener("pointerdown", (e) => {
-    // au doigt, un « tap » bouge toujours un peu : seuil plus large qu'à la souris
-    drag = { x: e.clientX, y: e.clientY, x0: e.clientX, y0: e.clientY, moved: 0, looking: false,
-             slop: e.pointerType === "touch" ? 14 : 6 };
-    els.stage.setPointerCapture(e.pointerId);
-  });
-  els.stage.addEventListener("pointermove", (e) => {
-    if (drag){
-      const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
-      drag.x = e.clientX; drag.y = e.clientY;
-      drag.moved = Math.max(drag.moved, Math.hypot(e.clientX - drag.x0, e.clientY - drag.y0));
-      if (drag.looking || drag.moved > drag.slop){
-        drag.looking = true;
-        userInput();
-        hideTip();
-        els.stage.classList.add("is-dragging");
-        move = null;
-        const k = e.pointerType === "touch" ? .006 : .0042;
-        view.yaw += dx * k;
-        view.pitch = THREE.MathUtils.clamp(view.pitch + dy * k, -.6, .5);
+  // écran tactile : pas d'interaction, la promenade défile comme une vidéo
+  if (!passive){
+    els.stage.addEventListener("pointerdown", (e) => {
+      // au doigt, un « tap » bouge toujours un peu : seuil plus large qu'à la souris
+      drag = { x: e.clientX, y: e.clientY, x0: e.clientX, y0: e.clientY, moved: 0, looking: false,
+               slop: e.pointerType === "touch" ? 14 : 6 };
+      els.stage.setPointerCapture(e.pointerId);
+    });
+    els.stage.addEventListener("pointermove", (e) => {
+      if (drag){
+        const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+        drag.x = e.clientX; drag.y = e.clientY;
+        drag.moved = Math.max(drag.moved, Math.hypot(e.clientX - drag.x0, e.clientY - drag.y0));
+        if (drag.looking || drag.moved > drag.slop){
+          drag.looking = true;
+          userInput();
+          hideTip();
+          els.stage.classList.add("is-dragging");
+          move = null;
+          const k = e.pointerType === "touch" ? .006 : .0042;
+          view.yaw += dx * k;
+          view.pitch = THREE.MathUtils.clamp(view.pitch + dy * k, -.6, .5);
+        }
+        return;
       }
-      return;
-    }
-    if (e.pointerType === "touch") return;
-    const h = hit(e.clientX, e.clientY);
-    const art = h && h.art !== undefined;
-    els.stage.classList.toggle("is-art", art);
-    els.stage.classList.toggle("is-floor", !!(h && h.floor));
-    if (art) showTip(h.art, e.clientX, e.clientY); else hideTip();
-  });
-  els.stage.addEventListener("pointerleave", () => { if (!drag) hideTip(); });
-  els.stage.addEventListener("pointerup", (e) => {
-    if (!drag) return;
-    const click = !drag.looking;
-    drag = null;
-    els.stage.classList.remove("is-dragging");
-    if (!click) return;
-    const h = hit(e.clientX, e.clientY);
-    if (!h){ hideTip(); return; }
-    if (h.art !== undefined){
-      // souris : clic = fiche dans le portfolio ; doigt : 1er toucher = étiquette, 2e = fiche
-      if (e.pointerType === "touch" && tipFor !== h.art){ userInput(); showTip(h.art, e.clientX, e.clientY); return; }
-      location.href = portfolioUrl(pieces[h.art].work);
-    } else if (h.floor){
-      hideTip();
-      if (e.pointerType !== "touch") walkTo(h.floor);   // au doigt, toucher sert seulement aux toiles
-    }
-  });
-  els.stage.addEventListener("pointercancel", () => { drag = null; els.stage.classList.remove("is-dragging"); });
+      if (e.pointerType === "touch") return;
+      const h = hit(e.clientX, e.clientY);
+      const art = h && h.art !== undefined;
+      els.stage.classList.toggle("is-art", art);
+      els.stage.classList.toggle("is-floor", !!(h && h.floor));
+      if (art) showTip(h.art, e.clientX, e.clientY); else hideTip();
+    });
+    els.stage.addEventListener("pointerleave", () => { if (!drag) hideTip(); });
+    els.stage.addEventListener("pointerup", (e) => {
+      if (!drag) return;
+      const click = !drag.looking;
+      drag = null;
+      els.stage.classList.remove("is-dragging");
+      if (!click) return;
+      const h = hit(e.clientX, e.clientY);
+      if (!h){ hideTip(); return; }
+      if (h.art !== undefined){
+        // souris : clic = fiche dans le portfolio ; doigt : 1er toucher = étiquette, 2e = fiche
+        if (e.pointerType === "touch" && tipFor !== h.art){ userInput(); showTip(h.art, e.clientX, e.clientY); return; }
+        location.href = portfolioUrl(pieces[h.art].work);
+      } else if (h.floor){
+        hideTip();
+        if (e.pointerType !== "touch") walkTo(h.floor);   // au doigt, toucher sert seulement aux toiles
+      }
+    });
+    els.stage.addEventListener("pointercancel", () => { drag = null; els.stage.classList.remove("is-dragging"); });
+  }
 
   addEventListener("resize", () => {
     camera.aspect = innerWidth / innerHeight;
@@ -743,7 +745,7 @@ async function main(){
   const th0 = Math.PI;                                   // côté porte de la boucle
   const gz0 = wanderGaze(th0);
   travel({ pos: onEllipse(th0), yaw: gz0.yaw, pitch: gz0.pitch }, () => { wander.on = true; wander.theta = th0; }, 4.5);
-  showHint();
+  if (!passive) showHint();
   ready.then(() => els.loading.classList.add("is-done"));
 }
 
