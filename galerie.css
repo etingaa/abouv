@@ -35,24 +35,34 @@ body.gallery3d{ background:#0C1220; overflow:hidden; overscroll-behavior:none; }
 }
 .g3d-hint.is-on{ opacity:1; transform:translate(-50%, 0); }
 
-/* header : voile blanc translucide au-dessus de la salle
-   (sur un calque à part : un flou posé sur .top casserait le menu plein écran du téléphone) */
-.gallery3d .top{ margin:14px -20px 0; padding:16px 20px; }
-.gallery3d .top::before{
-  content:""; position:absolute; inset:0; z-index:-1; border-radius:6px;
-  background:rgba(255,255,255,.8);
-  -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
-  box-shadow:0 2px 14px rgba(0,0,0,.06);
+/* header : même menu que sur les autres pages, sans bandeau : texte clair posé sur la salle,
+   avec un léger dégradé sombre en haut de l'écran pour la lisibilité */
+.gallery3d .top{ margin:6px 0 0; padding:20px 0; }
+.g3d-stage::after{
+  content:""; position:absolute; left:0; right:0; top:0; height:170px; pointer-events:none;
+  background:linear-gradient(to bottom, rgba(5,8,16,.62), rgba(5,8,16,0));
 }
+.gallery3d .top:not(.is-open) .brand,
+.gallery3d .top:not(.is-open) .nav__link,
+.gallery3d .top:not(.is-open) .langMenu__btn,
+.gallery3d .top:not(.is-open) .menuBtn{
+  color:#efe9df !important;
+  text-shadow:0 1px 12px rgba(0,0,0,.55);
+}
+.gallery3d .top:not(.is-open) .nav__link:hover{ text-decoration-color:#efe9df; }
+.gallery3d .top::after{ display:none; }
 .gallery3d .shade{ display:none; }
 
 
 /* pied de page : petit, en bas à droite */
 .gallery3d .bottom{
   position:fixed; z-index:3; right:max(20px, calc(50vw - 700px + 48px)); bottom:14px;
-  margin:0; padding:6px 10px; gap:14px; border-radius:4px;
-  background:rgba(255,255,255,.6); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+  margin:0; padding:6px 0; gap:14px;
 }
+.gallery3d .bottom .bottom__link--legal, .gallery3d .bottom .langMenu__btn{
+  color:rgba(239,233,223,.72) !important; text-shadow:0 1px 10px rgba(0,0,0,.6);
+}
+.gallery3d .bottom .bottom__link--legal:hover, .gallery3d .bottom .langMenu__btn:hover{ color:#fff !important; }
 .gallery3d .bottom__left{ display:none; }
 .gallery3d .bottom__link--legal{ margin-left:0; }
 
@@ -81,7 +91,7 @@ body.gallery3d{ background:#0C1220; overflow:hidden; overscroll-behavior:none; }
 }
 
 @media (max-width: 760px){
-  .gallery3d .top{ margin:10px -6px 0; padding:10px 12px; }
+  .gallery3d .top{ margin:0; padding:14px 0; }
   .gallery3d .bottom{ display:none; }
 }
 
