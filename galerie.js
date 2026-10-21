@@ -20,7 +20,7 @@ import * as THREE from "three";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 
 const CFG = {
-  count: 10,            // toiles tirées au hasard
+  count: 12,            // toiles tirées au hasard (dont 2 de part et d'autre de la porte)
   eye: 1.6,             // hauteur des yeux (m)
   center: 1.62,         // centre des toiles (m)
   scale: 1.6,           // les toiles sont agrandies (taille réelle × 1,6) pour bien les voir à l'écran
@@ -98,9 +98,15 @@ function wallFrames(L, S){
 }
 
 // La salle grandit juste assez pour que tout tienne : petite et chaleureuse.
-function planWalls(works){
+function planWalls(all){
+  // les deux toiles les plus étroites vont de part et d'autre de la porte (mur ouest), les autres sur les 3 murs
+  const byWidth = all.slice().sort((a, b) => a.w - b.w);
+  const doorPair = byWidth.slice(0, 2);
+  const works = all.filter(a => !doorPair.includes(a));
   for (let L = 5.6; L < 30; L += 0.2){
     const S = Math.max(4.6, Math.round(L * 0.78 * 10) / 10);
+    const side = (S - CFG.door.w) / 2;                       // largeur de mur de chaque côté de la porte
+    if (doorPair.some(a => a.w > side - .6)) continue;
     const walls = wallFrames(L, S).map(w => ({ ...w, items: [] }));
     let k = 0, used = 0, ok = true;
     for (const a of works){
@@ -121,6 +127,12 @@ function planWalls(works){
         x += a.w + CFG.gap;
       }
     }
+    // mur de la porte (ouest), vu de l'intérieur : d'abord le côté sud, puis le côté nord
+    const west = { len: S, start: new THREE.Vector3(-L / 2, 0, S / 2), right: new THREE.Vector3(0, 0, -1), normal: new THREE.Vector3(1, 0, 0) };
+    doorPair.forEach((a, i) => {
+      const z = (i === 0 ? 1 : -1) * (CFG.door.w / 2 + side / 2);
+      placed.push({ work: a, wall: west, center: new THREE.Vector3(-L / 2, CFG.center, z) });
+    });
     return { L, S, walls, placed };
   }
   throw new Error("Trop d'œuvres pour la salle");
@@ -344,7 +356,7 @@ function buildRoom(scene, plan, renderer){
   // rails noirs au plafond, à 1 m des murs accrochés
   const railY = H - .03, off = 1.0;
   const railX = new THREE.BoxGeometry(L - 2 * off + .2, .03, .03), railZ = new THREE.BoxGeometry(.03, .03, S - 2 * off + .2);
-  [[railX, 0, -S / 2 + off], [railX, 0, S / 2 - off], [railZ, L / 2 - off, 0]].forEach(([geo, x, z]) => {
+  [[railX, 0, -S / 2 + off], [railX, 0, S / 2 - off], [railZ, L / 2 - off, 0], [railZ, -L / 2 + off, 0]].forEach(([geo, x, z]) => {
     const m = new THREE.Mesh(geo, blackMat); m.position.set(x, railY, z); room.add(m);
   });
 
@@ -518,6 +530,8 @@ async function main(){
   const ease = (t) => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
   const angleDiff = (a, b) => Math.atan2(Math.sin(b - a), Math.cos(b - a));
 
+  if (/[?&]debug\b/.test(location.search)) window.__g3dView = view;   // tests : placer la caméra à la main
+
   // départ : dans le vestibule, face à la porte
   view.pos.set(-plan.L / 2 - CFG.vestibule + 1.3, CFG.eye, 0);
   view.yaw = -Math.PI / 2; view.pitch = 0;
@@ -526,7 +540,7 @@ async function main(){
      Pas de saut d'une toile à l'autre : le regard tourne en continu avec la marche (vers le mur,
      un peu en avant), les toiles défilent naturellement. */
   const WANDER = { lap: 24, idle: 9 };          // secondes par tour ; secondes sans action avant de repartir
-  const ellipse = { rx: Math.max(.9, plan.L / 2 - 2.4), rz: Math.max(.8, plan.S / 2 - 2.2) };
+  const ellipse = { rx: 1.45, rz: 1.0 };          // tout près du banc (1,50 × 0,42 m), on en fait vraiment le tour
   const wander = { on: false, theta: Math.PI };
   const onEllipse = (th) => new THREE.Vector3(ellipse.rx * Math.cos(th), CFG.eye, ellipse.rz * Math.sin(th));
   function wanderGaze(th){
@@ -667,7 +681,9 @@ async function main(){
     const now = performance.now();
     let walking = 0;
 
-    if (move){
+    if (view.frozen){
+      // (tests) caméra placée à la main
+    } else if (move){
       const k = Math.min(1, (now - move.t0) / move.dur), e = ease(k);
       view.pos.lerpVectors(move.from.pos, move.to.pos, e);
       view.yaw = move.from.yaw + move.dyaw * e;
