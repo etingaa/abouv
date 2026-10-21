@@ -194,16 +194,25 @@
     topics.forEach(b => b.addEventListener("click", () => setTopic(topicField.value === b.dataset.topic ? "" : b.dataset.topic)));
     setTopic("");
 
-    // Arrivée depuis « Demander des informations » (portfolio) ou la page Presse : sujet pré-choisi
+    // Arrivée avec un sujet pré-choisi : page Presse (?sujet=presse), galerie 3D (« Acquérir cette œuvre »)
+    // ou fiche du portfolio (« Demander des informations », ?oeuvre=…)
     const params = new URLSearchParams(location.search);
     const sujet = (params.get("sujet") || "").toLowerCase();
+    const oeuvre = (params.get("oeuvre") || "").slice(0, 120);
     if (sujet === "presse") setTopic("Presse");
+    if (sujet === "acquisition" || oeuvre) setTopic("Acquisition");
 
-    // Arrivée depuis « Demander des informations » sur le portfolio : message pré-rempli
-    const oeuvre = params.get("oeuvre");
-    if (oeuvre) setTopic("Acquisition");
+    // message pré-rempli
     if (oeuvre && !msg.value) {
-      msg.value = t("Bonjour,\n\nJe souhaiterais avoir des informations sur l'œuvre « {oeuvre} ».\n\nMerci,", { oeuvre: oeuvre.slice(0, 120) });
+      if (sujet === "acquisition") {
+        // « Acquérir cette œuvre » : titre, puis technique et dimensions entre parenthèses
+        const technique = (params.get("technique") || "").slice(0, 80);
+        const details = [technique && t(technique), (params.get("dimensions") || "").slice(0, 40)].filter(Boolean).join(", ");
+        msg.value = t("Bonjour, je suis intéressé(e) par l'œuvre « {oeuvre} »{details}. Pourriez-vous m'indiquer son prix et les modalités d'acquisition ?",
+                      { oeuvre, details: details ? ` (${details})` : "" });
+      } else {
+        msg.value = t("Bonjour,\n\nJe souhaiterais avoir des informations sur l'œuvre « {oeuvre} ».\n\nMerci,", { oeuvre });
+      }
     }
 
     function say(text, isError) {

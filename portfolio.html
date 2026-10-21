@@ -402,6 +402,9 @@
        ========================= */
 
     document.addEventListener("DOMContentLoaded", async () => {
+      // ?q=<titre> (liens de la galerie 3D) : recherche pré-remplie
+      const q0 = new URLSearchParams(location.search).get("q");
+      if(q0){ els.q.value = q0.slice(0, 80); filters.q = els.q.value; }
       try{
         artworks = await loadArtworksFromSheet();
         render();
