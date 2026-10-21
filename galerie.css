@@ -15,7 +15,7 @@
 body.gallery3d{ background:#0C1220; overflow:hidden; overscroll-behavior:none; }
 .gallery3d .page{ min-height:100vh; min-height:100dvh; pointer-events:none; }
 .gallery3d .container{ position:relative; z-index:2; min-height:100vh; min-height:100dvh; }
-.gallery3d .top, .gallery3d .bottom,
+.gallery3d .top, .gallery3d .bottom, .gallery3d .g3d-skip,
 .gallery3d .g3d-tip{ pointer-events:auto; }
 
 .g3d-stage{ position:fixed; inset:0; z-index:0; touch-action:none; }
@@ -35,47 +35,25 @@ body.gallery3d{ background:#0C1220; overflow:hidden; overscroll-behavior:none; }
 }
 .g3d-hint.is-on{ opacity:1; transform:translate(-50%, 0); }
 
-/* =========================
-   Header : le même bandeau que sur les autres pages, caché tant qu'on n'appuie pas sur « Menu »
-   (voile blanc sur un calque à part : un flou posé sur .top casserait le menu plein écran du téléphone)
-   ========================= */
-.gallery3d .top{
-  margin:14px 132px 0 -20px; padding:16px 20px;
-  opacity:0; transform:translateY(-14px); pointer-events:none;
-  transition:opacity .35s ease, transform .45s cubic-bezier(.2,.7,.2,1);
-}
+/* header : voile blanc translucide au-dessus de la salle
+   (sur un calque à part : un flou posé sur .top casserait le menu plein écran du téléphone) */
+.gallery3d .top{ margin:14px -20px 0; padding:16px 20px; }
 .gallery3d .top::before{
   content:""; position:absolute; inset:0; z-index:-1; border-radius:6px;
   background:rgba(255,255,255,.8);
   -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
   box-shadow:0 2px 14px rgba(0,0,0,.06);
 }
-body.g3d-menu .top{ opacity:1; transform:none; pointer-events:auto; }
-
-/* bouton « Menu », seul en haut à droite */
-.g3d-menuBtn{
-  position:fixed; z-index:60; top:24px; right:max(20px, calc(50vw - 700px + 48px));
-  display:inline-flex; align-items:center; gap:12px; height:44px; padding:0 16px;
-  border:0; border-radius:6px; cursor:pointer;
-  background:rgba(255,255,255,.14); color:#f1ece3;
-  -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
-  font:inherit; font-size:12px; font-weight:500; letter-spacing:.16em; text-transform:uppercase;
-  transition:background-color .25s ease, color .25s ease;
-}
-.g3d-menuBtn:hover{ background:rgba(255,255,255,.24); }
-body.g3d-menu .g3d-menuBtn{ background:rgba(255,255,255,.8); color:var(--ink); }
-.g3d-menuBtn__icon{ position:relative; width:22px; height:10px; }
-.g3d-menuBtn__icon i{
-  position:absolute; left:0; right:0; height:1.5px; border-radius:2px; background:currentColor;
-  transition:transform .3s ease, top .3s ease;
-}
-.g3d-menuBtn__icon i:first-child{ top:0; }
-.g3d-menuBtn__icon i:last-child{ top:8px; }
-body.g3d-menu .g3d-menuBtn__icon i:first-child{ top:4px; transform:rotate(45deg); }
-body.g3d-menu .g3d-menuBtn__icon i:last-child{ top:4px; transform:rotate(-45deg); }
-@media (prefers-reduced-motion: reduce){ .gallery3d .top{ transition:none; } }
 .gallery3d .shade{ display:none; }
 
+/* « Passer → Voir les œuvres », toujours visible sous le header */
+.g3d-skip{
+  position:fixed; z-index:5; right:max(20px, calc(50vw - 700px + 48px)); top:calc(var(--header-h, 74px) + 24px);
+  font-size:12px; font-weight:500; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--ink); padding:7px 10px; border-radius:4px;
+  background:rgba(255,255,255,.72); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+}
+.g3d-skip:hover{ background:#fff; }
 
 /* pied de page : petit, en bas à droite */
 .gallery3d .bottom{
@@ -111,10 +89,8 @@ body.g3d-menu .g3d-menuBtn__icon i:last-child{ top:4px; transform:rotate(-45deg)
 }
 
 @media (max-width: 760px){
-  .gallery3d .top{ margin:10px 120px 0 -6px; padding:10px 12px; }
-  .g3d-menuBtn{ top:12px; right:12px; height:40px; padding:0 12px; }
-  /* téléphone : « Menu » ouvre directement le menu plein écran du site */
-  body.g3d-menu .g3d-menuBtn{ display:none; }
+  .gallery3d .top{ margin:10px -6px 0; padding:10px 12px; }
+  .g3d-skip{ top:calc(var(--header-h, 64px) + 18px); right:14px; font-size:11px; }
   .gallery3d .bottom{ display:none; }
 }
 
