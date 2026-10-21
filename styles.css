@@ -946,7 +946,7 @@ body.portfolio{
 body.portfolio::before{
   content:""; position:fixed; inset:-60px; z-index:-2; pointer-events:none;
   background:#0b1120 url("images/scene/galerie-fond.jpg") center / cover no-repeat;
-  filter:blur(26px) saturate(1.15);
+  filter:blur(10px) saturate(1.15);
 }
 body.portfolio::after{
   content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
