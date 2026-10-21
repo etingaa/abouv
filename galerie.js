@@ -525,7 +525,7 @@ async function main(){
   /* ---------- promenade : un tour complet du banc en 15 s, le regard tourné vers les murs ----------
      Pas de saut d'une toile à l'autre : le regard tourne en continu avec la marche (vers le mur,
      un peu en avant), les toiles défilent naturellement. */
-  const WANDER = { lap: 15, idle: 9 };          // secondes par tour ; secondes sans action avant de repartir
+  const WANDER = { lap: 24, idle: 9 };          // secondes par tour ; secondes sans action avant de repartir
   const ellipse = { rx: Math.max(.9, plan.L / 2 - 2.4), rz: Math.max(.8, plan.S / 2 - 2.2) };
   const wander = { on: false, theta: Math.PI };
   const onEllipse = (th) => new THREE.Vector3(ellipse.rx * Math.cos(th), CFG.eye, ellipse.rz * Math.sin(th));
@@ -658,7 +658,9 @@ async function main(){
   /* ---------- rendu ---------- */
   const clock = new THREE.Clock();
   let lights = 0;      // les projecteurs s'allument doucement
-  let bob = 0;         // balancement des pas
+  const STEP = .72;    // longueur d'un pas (m)
+  let stride = 0;      // nombre de pas faits (la phase de la marche)
+  let gait = 0;        // amplitude de la marche (0 à l'arrêt, 1 en marche)
   let hdCheck = 0;
   renderer.setAnimationLoop(() => {
     const dt = Math.min(.05, clock.getDelta());
@@ -671,25 +673,36 @@ async function main(){
       view.yaw = move.from.yaw + move.dyaw * e;
       view.pitch = THREE.MathUtils.lerp(move.from.pitch, move.to.pitch ?? move.from.pitch, e);
       walking = Math.sin(Math.PI * k) * .8;
+      stride += dt * walking * 1.6;
       if (k >= 1){ const cb = move.onDone; move = null; if (cb) cb(); }
     } else if (wander.on){
-      wander.theta -= dt * Math.PI * 2 / WANDER.lap;
+      // allure de marche : légère poussée à chaque pas
+      const surge = 1 + .1 * Math.cos(stride * Math.PI * 2);
+      const before = onEllipse(wander.theta);
+      wander.theta -= dt * Math.PI * 2 / WANDER.lap * surge;
       view.pos.copy(onEllipse(wander.theta));
-      // le regard suit sa cible en douceur (pas de rotation brusque)
-      // le regard suit la marche en continu
-      const gz = wanderGaze(wander.theta);
-      view.yaw += angleDiff(view.yaw, gz.yaw) * Math.min(1, dt * 3);
-      view.pitch += (gz.pitch - view.pitch) * Math.min(1, dt * 1.5);
-      walking = .55;
+      stride += before.distanceTo(view.pos) / STEP;
+      // le regard suit la marche, avec les petits mouvements de tête de quelqu'un qui regarde autour de lui
+      const gz = wanderGaze(wander.theta), t = now / 1000;
+      const look = .1 * Math.sin(t * .29) + .045 * Math.sin(t * .71 + 1.3);
+      view.yaw += angleDiff(view.yaw, gz.yaw + look) * Math.min(1, dt * 2.2);
+      view.pitch += (gz.pitch + .025 * Math.sin(t * .23) - view.pitch) * Math.min(1, dt * 1.5);
+      walking = 1;
     } else if (!drag && lastInput && now - lastInput > WANDER.idle * 1000){
       lastInput = 0;
       startWander();          // plus personne ne touche à rien : on reprend la promenade
     }
 
-    bob += dt * walking * 2 * Math.PI * 1.6;
+    // marche : la tête descend à chaque appui (2 fois par foulée), balance de gauche à droite
+    // (1 fois par foulée) et roule très légèrement ; amplitude lissée pour démarrer et s'arrêter en douceur
+    gait += (walking - gait) * Math.min(1, dt * 2.5);
+    const ph = stride * Math.PI * 2;
     camera.position.copy(view.pos);
-    camera.position.y += Math.sin(bob) * .01 * walking;
-    camera.rotation.set(view.pitch + Math.sin(bob * .5) * .002 * walking, view.yaw, Math.sin(bob * .5) * .0018 * walking);
+    camera.position.y += (Math.cos(ph) * .016 - .008) * gait;
+    const sway = Math.sin(ph / 2) * .014 * gait;
+    camera.position.x += Math.cos(view.yaw) * sway;
+    camera.position.z -= Math.sin(view.yaw) * sway;
+    camera.rotation.set(view.pitch + Math.cos(ph) * .003 * gait, view.yaw + Math.sin(ph / 2) * .004 * gait, Math.sin(ph / 2) * .005 * gait);
 
     if ((hdCheck += dt) > 1){ hdCheck = 0; if (hdFiles.size) loadNearHD(view.pos); }
     lights = Math.min(1, lights + dt * .8);
