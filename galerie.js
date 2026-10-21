@@ -8,11 +8,13 @@
 //   - décor       : buildRoom() construit la salle (murs, porte, vestibule, parquet, plafond, rails, banc).
 //                   Seule fonction à remplacer pour passer à un modèle .glb ou à un monde Gaussian splat,
 //                   tant que les repères de murs de planWalls() restent valables.
-//   - lumière     : un vrai projecteur (SpotLight) par toile, ambiance chaude très douce
-//   - navigation  : glisser = regarder à 360° ; clic sur une toile = s'en approcher ; clic sur le sol = y aller ;
-//                   flèches du clavier / boutons ‹ › = toile suivante / précédente
-//   - textures    : vignettes (images/thumbs) ; HD (images/hd/<même nom>) pour l'œuvre regardée et ses voisines,
-//                   si elle figure dans images/hd/list.json
+//   - lumière     : un projecteur (SpotLight) par toile éclaire le mur ; la toile elle-même est affichée
+//                   sans éclairage (couleurs de l'image, jamais surexposées)
+//   - navigation  : promenade automatique lente autour de la salle ; glisser = regarder à 360°,
+//                   clic sur le parquet = y aller, survol d'une toile = étiquette, clic = sa fiche dans le portfolio ;
+//                   la promenade reprend après quelques secondes sans action
+//   - textures    : vignettes (images/thumbs) ; HD (images/hd/<même nom>, si listée dans images/hd/list.json)
+//                   pour les toiles proches de soi
 
 import * as THREE from "three";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
@@ -20,9 +22,10 @@ import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 const CFG = {
   count: 10,            // toiles tirées au hasard
   eye: 1.6,             // hauteur des yeux (m)
-  center: 1.55,         // centre des toiles (m)
-  ceiling: 3.3,         // hauteur sous plafond (m)
-  gap: 1.0,             // espace entre deux toiles (m)
+  center: 1.62,         // centre des toiles (m)
+  scale: 1.6,           // les toiles sont agrandies (taille réelle × 1,6) pour bien les voir à l'écran
+  ceiling: 3.6,         // hauteur sous plafond (m)
+  gap: 1.1,             // espace entre deux toiles (m)
   margin: 0.8,          // espace libre au bout de chaque mur (m)
   thickness: 0.03,      // châssis (m)
   door: { w: 1.4, h: 2.6 },
@@ -39,9 +42,8 @@ const fallback = (reason) => window.__g3dFallback ? window.__g3dFallback(reason)
 
 const $ = (id) => document.getElementById(id);
 const els = {
-  stage: $("stage"), loading: $("loading"), bar: $("progressBar"), hint: $("hint"), play: $("playBtn"),
-  cartel: $("cartel"), count: $("cartelCount"), title: $("cartelTitle"), meta: $("cartelMeta"), cta: $("cartelCta"),
-  controls: $("controls"), prev: $("prevBtn"), next: $("nextBtn"), srList: $("srList"),
+  stage: $("stage"), loading: $("loading"), bar: $("progressBar"), hint: $("hint"),
+  tip: $("tip"), tipTitle: $("tipTitle"), tipMeta: $("tipMeta"), tipLink: $("tipLink"), srList: $("srList"),
 };
 
 /* =========================
@@ -74,6 +76,8 @@ async function loadWorks(){
       if (w !== h && (imgRatio > 1) !== (w > h)) [w, h] = [h, w];
       if (Math.abs(imgRatio - w / h) / (w / h) > 0.15) h = w / imgRatio;
     }
+    w *= CFG.scale; h *= CFG.scale;
+    if (h > 2.3){ w *= 2.3 / h; h = 2.3; }    // jamais plus haut que 2,3 m
     works.push({ ...a, w, h });
   }
   return shuffle(works).slice(0, CFG.count);
@@ -194,21 +198,6 @@ function parquetTextures(){
     }
   }, false);
   return { color, rough };
-}
-
-// grain de la toile (tissage) : carte de relief qui accroche la lumière rasante des projecteurs
-function canvasWeaveTexture(){
-  const t = canvasTexture(64, (g, s) => {
-    g.fillStyle = "rgb(128,128,128)"; g.fillRect(0, 0, s, s);
-    for (let i = 0; i < 8; i++){
-      const y = i * 8;
-      g.fillStyle = i % 2 ? "rgb(150,150,150)" : "rgb(105,105,105)";
-      g.fillRect(0, y + 1, s, 5);
-      g.fillStyle = i % 2 ? "rgb(100,100,100)" : "rgb(155,155,155)";
-      g.fillRect(y + 1, 0, 5, s);
-    }
-  }, false);
-  return t;
 }
 
 // ombre ambiante au pied des murs et au plafond (dégradé vertical)
@@ -386,15 +375,13 @@ function hangArtworks(scene, plan, deco){
   const bodyMat = new THREE.MeshStandardMaterial({ color: 0x141414, roughness: .4, metalness: .6 });
   const lensMat = new THREE.MeshBasicMaterial({ color: 0xfff1d6 });
   const stemGeo = new THREE.CylinderGeometry(.008, .008, .14, 8);
-  const weave = canvasWeaveTexture();
   const pieces = [];
 
   plan.placed.forEach((p, i) => {
     const a = p.work;
-    const bump = weave.clone();
-    bump.needsUpdate = true;
-    bump.repeat.set(a.w * 45, a.h * 45);    // ~ 3,5 fils par cm
-    const face = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: .78, metalness: 0, bumpMap: bump, bumpScale: .35 });
+    // la face affiche l'image telle quelle (sans éclairage ni tone mapping) : couleurs fidèles, jamais brûlées.
+    // Les projecteurs éclairent le mur autour ; une très légère ombre de bord donne le relief.
+    const face = new THREE.MeshBasicMaterial({ color: 0xf2f0ec, toneMapped: false });
     const mesh = new THREE.Mesh(new THREE.BoxGeometry(a.w, a.h, CFG.thickness), [edgeMat, edgeMat, edgeMat, edgeMat, face, edgeMat]);
     const rotY = Math.atan2(p.wall.normal.x, p.wall.normal.z);
     mesh.position.copy(p.center).addScaledVector(p.wall.normal, CFG.thickness / 2 + .01);
@@ -441,7 +428,7 @@ function hangArtworks(scene, plan, deco){
     spot.target.position.copy(p.center);
     const reach = lampPos.distanceTo(p.center);
     spot.angle = Math.min(.75, Math.atan((Math.max(a.w, a.h) * .62 + .3) / reach));
-    spot.userData.power = 23 * reach * reach;   // même éclairement sur la toile quelle que soit la distance
+    spot.userData.power = 9 * reach * reach;   // même éclairement sur la toile quelle que soit la distance
     scene.add(spot, spot.target);
 
     pieces.push({ ...p, mesh, face, spot, hd: false });
@@ -501,137 +488,112 @@ async function main(){
   };
   let firstDone;
   const firstLoaded = new Promise(r => { firstDone = r; });
+  // HD pour les toiles proches (vérifié une fois par seconde)
+  const hdFiles = new Set(((await loadJSON(CFG.hdList)) || []).map(String));
+  function loadNearHD(pos){
+    for (const p of pieces){
+      if (p.hd || !hdFiles.has(p.work.file) || p.center.distanceTo(pos) > 3.5) continue;
+      p.hd = true;
+      loader.load(encodeURI("images/hd/" + p.work.file), (t) => {
+        const old = p.face.map; p.face.map = prepare(t); p.face.needsUpdate = true; if (old) old.dispose();
+      }, undefined, () => {});
+    }
+  }
+
   const ready = Promise.all(pieces.map((p, i) => new Promise((resolve) => {
     const done = (t) => { if (t){ p.face.map = prepare(t); p.face.needsUpdate = true; } tick(); if (loaded >= Math.min(3, n)) firstDone(); resolve(); };
     loader.load(p.work.thumb, done, undefined, () =>
       loader.load(p.work.image, done, undefined, () => { console.warn("Galerie 3D : image introuvable :", p.work.title); done(null); }));
   })));
 
-  const hdFiles = new Set(((await loadJSON(CFG.hdList)) || []).map(String));
-  function loadHD(i){
-    for (const k of [i, (i + 1) % n, (i - 1 + n) % n]){
-      const p = pieces[k];
-      if (p.hd || !hdFiles.has(p.work.file)) continue;
-      p.hd = true;
-      loader.load(encodeURI("images/hd/" + p.work.file), (t) => {
-        const old = p.face.map; p.face.map = prepare(t); p.face.needsUpdate = true; if (old) old.dispose();
-      }, undefined, () => { p.hd = false; });
-    }
-  }
 
   els.srList.innerHTML = pieces.map(p =>
-    `<li><a href="portfolio.html?q=${encodeURIComponent(p.work.title)}">${escapeHtml(p.work.title)}</a> — ${escapeHtml(metaText(p.work))}</li>`).join("");
+    `<li><a href="portfolio.html?oeuvre=${encodeURIComponent(p.work.file)}">${escapeHtml(p.work.title)}</a> — ${escapeHtml(metaText(p.work))}</li>`).join("");
 
   /* ---------- caméra : position + regard (lacet / tangage) ---------- */
   const view = { pos: new THREE.Vector3(), yaw: 0, pitch: 0 };
   const yawTo = (from, to) => Math.atan2(-(to.x - from.x), -(to.z - from.z));
-  const bounds = { x0: -plan.L / 2 + .6, x1: plan.L / 2 - .6, z0: -plan.S / 2 + .6, z1: plan.S / 2 - .6 };
-  const tan = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
+  const bounds = { x0: -plan.L / 2 + .7, x1: plan.L / 2 - .7, z0: -plan.S / 2 + .7, z1: plan.S / 2 - .7 };
   const ease = (t) => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-  const easeWalk = (t) => -(Math.cos(Math.PI * t) - 1) / 2;          // départ et arrêt en douceur
   const angleDiff = (a, b) => Math.atan2(Math.sin(b - a), Math.cos(b - a));
-
-  // point de vue devant une toile : elle occupe environ la moitié de la hauteur de l'écran
-  function viewFor(i, near = false){
-    const p = pieces[i];
-    const fit = Math.max(p.work.h / (2 * tan * (near ? .55 : .42)), p.work.w / (2 * tan * camera.aspect * .6));
-    const d = THREE.MathUtils.clamp(fit, near ? 1.4 : 1.9, plan.S - 1.4);
-    const pos = p.center.clone().addScaledVector(p.wall.normal, d);
-    pos.y = CFG.eye;
-    return { pos, yaw: yawTo(pos, p.center), pitch: Math.atan2(CFG.center - CFG.eye, d) };
-  }
 
   // départ : dans le vestibule, face à la porte
   view.pos.set(-plan.L / 2 - CFG.vestibule + 1.3, CFG.eye, 0);
   view.yaw = -Math.PI / 2; view.pitch = 0;
 
-  /* ---------- visite automatique : on marche de toile en toile, on s'arrête devant chacune ---------- */
-  const TOUR = { speed: .55, dwell: 4.2, idle: 18 };   // m/s, s devant chaque toile, s avant de reprendre
-  const tour = { on: false, phase: "walk", seg: null, index: -1, until: 0, walked: 0 };
-  let move = null, current = -1, facing = -1, lastInput = 0;
-
-  // trajet courbe de la position actuelle vers le point de vue d'une toile (on passe par l'intérieur de la salle)
-  function segmentTo(i){
-    const to = viewFor(i);
-    const from = { pos: view.pos.clone(), yaw: view.yaw, pitch: view.pitch };
-    const mid = from.pos.clone().lerp(to.pos, .5);
-    const inward = new THREE.Vector3(-mid.x, 0, -mid.z);
-    const ctrl = mid.clone().addScaledVector(inward.normalize(), Math.min(1.2, from.pos.distanceTo(to.pos) * .25));
-    const curve = new THREE.QuadraticBezierCurve3(from.pos, ctrl, to.pos);
-    const len = curve.getLength();
-    return { i, from, to, curve, len, t0: performance.now(), dur: Math.max(2.4, len / TOUR.speed) * 1000 };
+  /* ---------- promenade : on fait lentement le tour de la salle, le regard tourné vers les murs ----------
+     Boucle en ellipse à ~1,8 m des murs ; on regarde surtout vers l'extérieur (les toiles), un peu devant soi,
+     avec une légère dérive du regard. Rien ne s'arrête sur une toile en particulier. */
+  const WANDER = { speed: .32, idle: 9 };        // m/s ; secondes sans action avant de repartir
+  const ellipse = { rx: Math.max(.6, plan.L / 2 - 1.9), rz: Math.max(.5, plan.S / 2 - 1.7) };
+  const wander = { on: false, theta: Math.PI, yaw: 0 };
+  const onEllipse = (th) => new THREE.Vector3(ellipse.rx * Math.cos(th), CFG.eye, ellipse.rz * Math.sin(th));
+  function wanderYaw(th, now){
+    const p = onEllipse(th);
+    const out = new THREE.Vector3(p.x / ellipse.rx, 0, p.z / ellipse.rz).normalize();       // vers le mur
+    const tangent = new THREE.Vector3(-ellipse.rx * Math.sin(th), 0, ellipse.rz * Math.cos(th)).normalize();
+    // côté porte (ouest) : pas de toile, on regarde devant soi
+    const a = .78 * THREE.MathUtils.smoothstep(out.x, -.95, -.35);
+    const dir = out.multiplyScalar(a).addScaledVector(tangent, 1 - a);
+    return Math.atan2(-dir.x, -dir.z) + Math.sin(now * .00023) * .22;
   }
-  function startTour(i){
-    tour.on = true;
-    tour.index = i;
-    tour.phase = "walk";
-    tour.seg = segmentTo(i);
-    current = i; facing = -1;
-    hideCartel();
-    loadHD(i);
-    els.play.setAttribute("aria-pressed", "true");
-    els.play.setAttribute("aria-label", tr("Mettre la visite en pause"));
-  }
-  function stopTour(){
-    if (!tour.on) return;
-    tour.on = false;
-    els.play.setAttribute("aria-pressed", "false");
-    els.play.setAttribute("aria-label", tr("Reprendre la visite"));
-  }
-  function nearestInView(){
-    let best = 0, bestScore = Infinity;
-    pieces.forEach((p, i) => {
-      const s = Math.abs(angleDiff(view.yaw, yawTo(view.pos, p.center))) + view.pos.distanceTo(p.center) * .08;
-      if (s < bestScore){ bestScore = s; best = i; }
-    });
+  function nearestTheta(pos){
+    let best = 0, bd = Infinity;
+    for (let k = 0; k < 72; k++){ const th = k / 72 * Math.PI * 2, d = onEllipse(th).distanceTo(pos); if (d < bd){ bd = d; best = th; } }
     return best;
   }
-  function resumeTour(){ startTour(facing >= 0 ? facing : nearestInView()); }
+  let lastInput = 0, move = null;
+  function startWander(){
+    const th = nearestTheta(view.pos);
+    const start = onEllipse(th);
+    travel({ pos: start, yaw: wanderYaw(th, performance.now()), pitch: -.03 }, () => {
+      wander.on = true; wander.theta = th; wander.yaw = view.yaw;
+    }, Math.max(1.6, view.pos.distanceTo(start) / .45));
+  }
 
-  /* ---------- déplacements choisis (souris, doigt, clavier) ---------- */
-  function travel(to, onDone){
+  /* ---------- déplacements choisis ---------- */
+  function travel(to, onDone, dur){
     const dist = view.pos.distanceTo(to.pos);
     move = {
       from: { pos: view.pos.clone(), yaw: view.yaw, pitch: view.pitch },
       to, dyaw: angleDiff(view.yaw, to.yaw ?? view.yaw),
-      t0: performance.now(), dur: (CFG.travel + Math.min(1, dist * .15)) * 1000, onDone,
+      t0: performance.now(), dur: (dur ?? (1.2 + Math.min(1.6, dist * .35))) * 1000, onDone,
     };
-    hideCartel();
   }
-  function userInput(){ lastInput = performance.now(); stopTour(); hideHint(); }
-  function goTo(i){
-    userInput();
-    i = (i + n) % n;
-    current = i;
-    travel(viewFor(i, true), () => { facing = i; showCartel(i); });
-    loadHD(i);
-  }
+  function userInput(){ lastInput = performance.now(); wander.on = false; hideHint(); }
   function walkTo(point){
     userInput();
     const pos = new THREE.Vector3(
       THREE.MathUtils.clamp(point.x, bounds.x0, bounds.x1), CFG.eye, THREE.MathUtils.clamp(point.z, bounds.z0, bounds.z1));
-    travel({ pos, yaw: view.yaw, pitch: Math.min(view.pitch, 0) }, null);
-    facing = -1;
+    travel({ pos, yaw: view.yaw, pitch: view.pitch }, null);
   }
+  // toile -> sa fiche dans le portfolio
+  const portfolioUrl = (a) => "portfolio.html?oeuvre=" + encodeURIComponent(a.file);
 
-  function showCartel(i){
-    const a = pieces[i].work;
-    els.count.textContent = `${i + 1} / ${n}`;
-    els.title.textContent = a.title;
-    els.meta.textContent = metaText(a);
-    const q = new URLSearchParams({ sujet: "acquisition", oeuvre: a.title });
-    if (a.technique) q.set("technique", a.technique);
-    if (a.size) q.set("dimensions", a.size.replace(/\s*x\s*/i, " × "));
-    els.cta.href = "contact.html?" + q.toString();
-    els.cartel.hidden = false;
-    requestAnimationFrame(() => els.cartel.classList.add("is-on"));
+  /* ---------- étiquette au survol d'une toile ---------- */
+  let tipFor = -1;
+  function showTip(i, x, y){
+    if (i !== tipFor){
+      const a = pieces[i].work;
+      els.tipTitle.textContent = a.title;
+      els.tipMeta.textContent = metaText(a);
+      els.tipLink.href = portfolioUrl(a);
+      tipFor = i;
+    }
+    const w = els.tip.offsetWidth || 240, h = els.tip.offsetHeight || 90;
+    const left = Math.min(innerWidth - w - 12, Math.max(12, x + 18));
+    const top = Math.min(innerHeight - h - 12, Math.max(12, y + 18));
+    els.tip.style.transform = `translate(${left}px, ${top}px)`;
+    els.tip.hidden = false;
+    els.tip.classList.add("is-on");
   }
-  function hideCartel(){ els.cartel.classList.remove("is-on"); }
+  function hideTip(){ els.tip.classList.remove("is-on"); tipFor = -1; }
+
   let hintTimer = 0;
-  function showHint(){ els.hint.hidden = false; requestAnimationFrame(() => els.hint.classList.add("is-on")); hintTimer = setTimeout(hideHint, 8000); }
+  function showHint(){ els.hint.hidden = false; requestAnimationFrame(() => els.hint.classList.add("is-on")); hintTimer = setTimeout(hideHint, 7000); }
   function hideHint(){ clearTimeout(hintTimer); els.hint.classList.remove("is-on"); }
 
-  /* ---------- souris / doigt : glisser = regarder à 360°, clic = aller ---------- */
+  /* ---------- souris / doigt ---------- */
   const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
   const meshes = pieces.map(p => p.mesh);
   const hit = (x, y) => {
@@ -655,19 +617,23 @@ async function main(){
       drag.moved += Math.abs(dx) + Math.abs(dy);
       if (drag.moved > 6){
         userInput();
+        hideTip();
         els.stage.classList.add("is-dragging");
         move = null;
-        const k = isMobile ? .006 : .0042;
+        const k = e.pointerType === "touch" ? .006 : .0042;
         view.yaw += dx * k;
         view.pitch = THREE.MathUtils.clamp(view.pitch + dy * k, -.6, .5);
-        if (facing >= 0 && Math.abs(angleDiff(view.yaw, yawTo(view.pos, pieces[facing].center))) > .5){ facing = -1; hideCartel(); }
       }
-    } else if (!isMobile){
-      const h = hit(e.clientX, e.clientY);
-      els.stage.classList.toggle("is-art", !!(h && h.art !== undefined));
-      els.stage.classList.toggle("is-floor", !!(h && h.floor));
+      return;
     }
+    if (e.pointerType === "touch") return;
+    const h = hit(e.clientX, e.clientY);
+    const art = h && h.art !== undefined;
+    els.stage.classList.toggle("is-art", art);
+    els.stage.classList.toggle("is-floor", !!(h && h.floor));
+    if (art) showTip(h.art, e.clientX, e.clientY); else hideTip();
   });
+  els.stage.addEventListener("pointerleave", () => { if (!drag) hideTip(); });
   els.stage.addEventListener("pointerup", (e) => {
     if (!drag) return;
     const click = drag.moved <= 6;
@@ -675,22 +641,14 @@ async function main(){
     els.stage.classList.remove("is-dragging");
     if (!click) return;
     const h = hit(e.clientX, e.clientY);
-    if (!h) return;
-    if (h.art !== undefined) goTo(h.art);
-    else if (h.floor) walkTo(h.floor);
+    if (!h){ hideTip(); return; }
+    if (h.art !== undefined){
+      // souris : clic = fiche dans le portfolio ; doigt : 1er toucher = étiquette, 2e = fiche
+      if (e.pointerType === "touch" && tipFor !== h.art){ userInput(); showTip(h.art, e.clientX, e.clientY); return; }
+      location.href = portfolioUrl(pieces[h.art].work);
+    } else if (h.floor){ hideTip(); walkTo(h.floor); }
   });
   els.stage.addEventListener("pointercancel", () => { drag = null; els.stage.classList.remove("is-dragging"); });
-
-  const step = (d) => goTo(facing >= 0 ? facing + d : (current >= 0 && tour.on ? current + (d > 0 ? 0 : -1) : nearestInView()));
-  addEventListener("keydown", (e) => {
-    if (e.target.closest("input, textarea, select")) return;
-    if (e.key === "ArrowRight") { e.preventDefault(); step(1); }
-    if (e.key === "ArrowLeft")  { e.preventDefault(); step(-1); }
-    if (e.key === " ") { e.preventDefault(); tour.on ? (userInput()) : resumeTour(); }
-  });
-  els.prev.addEventListener("click", () => step(-1));
-  els.next.addEventListener("click", () => step(1));
-  els.play.addEventListener("click", () => { if (tour.on) userInput(); else resumeTour(); });
 
   addEventListener("resize", () => {
     camera.aspect = innerWidth / innerHeight;
@@ -702,6 +660,7 @@ async function main(){
   const clock = new THREE.Clock();
   let lights = 0;      // les projecteurs s'allument doucement
   let bob = 0;         // balancement des pas
+  let hdCheck = 0;
   renderer.setAnimationLoop(() => {
     const dt = Math.min(.05, clock.getDelta());
     const now = performance.now();
@@ -712,36 +671,27 @@ async function main(){
       view.pos.lerpVectors(move.from.pos, move.to.pos, e);
       view.yaw = move.from.yaw + move.dyaw * e;
       view.pitch = THREE.MathUtils.lerp(move.from.pitch, move.to.pitch ?? move.from.pitch, e);
-      walking = Math.sin(Math.PI * k) * .7;
+      walking = Math.sin(Math.PI * k) * .8;
       if (k >= 1){ const cb = move.onDone; move = null; if (cb) cb(); }
-    } else if (tour.on && tour.phase === "walk" && tour.seg){
-      const sg = tour.seg;
-      const k = Math.min(1, (now - sg.t0) / sg.dur), e = easeWalk(k);
-      view.pos.copy(sg.curve.getPoint(e));
-      // le regard suit la marche, puis se pose sur la toile qui arrive
-      const ahead = sg.curve.getTangent(Math.min(.999, e + .02));
-      const walkYaw = Math.atan2(-ahead.x, -ahead.z);
-      const toYaw = yawTo(view.pos, pieces[sg.i].center);
-      const look = THREE.MathUtils.smoothstep(k, .35, .9);
-      view.yaw = sg.from.yaw + angleDiff(sg.from.yaw, walkYaw) * Math.sin(Math.PI * Math.min(1, k * 1.6)) * (1 - look);
-      view.yaw += angleDiff(view.yaw, toYaw) * look;
-      view.pitch = THREE.MathUtils.lerp(sg.from.pitch * (1 - look), sg.to.pitch, look);
-      walking = Math.sin(Math.PI * k);
-      if (k >= 1){ tour.phase = "dwell"; tour.until = now + TOUR.dwell * 1000; facing = sg.i; showCartel(sg.i); }
-    } else if (tour.on && tour.phase === "dwell"){
-      // on reste devant la toile, le regard bouge à peine
-      view.yaw += Math.sin(now * .0006) * .00025;
-      if (now >= tour.until){ hideCartel(); startTour((tour.index + 1) % n); }
-    } else if (!tour.on && !drag && !move && lastInput && now - lastInput > TOUR.idle * 1000){
-      resumeTour();          // on reprend la visite après un moment sans toucher à rien
+    } else if (wander.on){
+      const r = Math.hypot(ellipse.rx * Math.sin(wander.theta), ellipse.rz * Math.cos(wander.theta)) || 1;
+      wander.theta -= dt * WANDER.speed / r;
+      view.pos.copy(onEllipse(wander.theta));
+      // le regard suit sa cible en douceur (pas de rotation brusque)
+      view.yaw += angleDiff(view.yaw, wanderYaw(wander.theta, now)) * Math.min(1, dt * .9);
+      view.pitch += (-.03 + Math.sin(now * .00017) * .04 - view.pitch) * Math.min(1, dt * .6);
+      walking = .55;
+    } else if (!drag && lastInput && now - lastInput > WANDER.idle * 1000){
+      lastInput = 0;
+      startWander();          // plus personne ne touche à rien : on reprend la promenade
     }
 
-    // pas : léger balancement vertical pendant la marche
-    bob += dt * walking * 2 * Math.PI * 1.7;
+    bob += dt * walking * 2 * Math.PI * 1.6;
     camera.position.copy(view.pos);
-    camera.position.y += Math.sin(bob) * .012 * walking;
-    camera.rotation.set(view.pitch + Math.sin(bob * .5) * .0025 * walking, view.yaw, Math.sin(bob * .5) * .002 * walking);
+    camera.position.y += Math.sin(bob) * .01 * walking;
+    camera.rotation.set(view.pitch + Math.sin(bob * .5) * .002 * walking, view.yaw, Math.sin(bob * .5) * .0018 * walking);
 
+    if ((hdCheck += dt) > 1){ hdCheck = 0; if (hdFiles.size) loadNearHD(view.pos); }
     lights = Math.min(1, lights + dt * .8);
     for (const p of pieces) p.spot.intensity = p.spot.userData.power * lights;
     renderer.render(scene, camera);
@@ -751,10 +701,12 @@ async function main(){
   window.__g3dReady = true;
   clearTimeout(window.__g3dTimer);
 
-  /* ---------- arrivée : on franchit la porte dès que les premières toiles sont chargées ---------- */
+  /* ---------- arrivée : on franchit la porte et on commence la promenade ---------- */
   await Promise.race([firstLoaded, new Promise(r => setTimeout(r, 2500))]);
-  els.controls.hidden = false;
-  startTour(0);
+  const th0 = Math.PI;                                   // côté porte de la boucle
+  travel({ pos: onEllipse(th0), yaw: wanderYaw(th0, performance.now()), pitch: -.03 }, () => {
+    wander.on = true; wander.theta = th0; wander.yaw = view.yaw;
+  }, 4.5);
   showHint();
   ready.then(() => els.loading.classList.add("is-done"));
 }

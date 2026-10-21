@@ -33,13 +33,13 @@
     })();
   </script>
 
-  <script src="i18n.js?v=20261022c"></script>
-  <script src="site.js?v=20261022c"></script>
-  <script src="sheet.js?v=20261022c"></script>
+  <script src="i18n.js?v=20261022e"></script>
+  <script src="site.js?v=20261022e"></script>
+  <script src="sheet.js?v=20261022e"></script>
   <link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preload" href="fonts/cormorant-garamond-latin.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="styles.css?v=20261022c" />
-  <link rel="stylesheet" href="galerie.css?v=20261022c" />
+  <link rel="stylesheet" href="styles.css?v=20261022e" />
+  <link rel="stylesheet" href="galerie.css?v=20261022e" />
 
   <!-- Three.js, version épinglée -->
   <script type="importmap">
@@ -50,7 +50,7 @@
       }
     }
   </script>
-  <script type="module" src="galerie.js?v=20261022c"></script>
+  <script type="module" src="galerie.js?v=20261022e"></script>
 </head>
 
 <body class="gallery3d">
@@ -81,21 +81,13 @@
           <span class="g3d-progress__bar" id="progressBar"></span>
         </div>
 
-        <p class="g3d-hint" id="hint" hidden>Visite automatique · faites glisser pour regarder autour de vous, touchez une toile ou le parquet pour y aller</p>
+        <p class="g3d-hint" id="hint" hidden>Faites glisser pour regarder autour de vous · touchez le parquet pour vous déplacer · survolez une toile</p>
 
-        <!-- Cartel de l'œuvre regardée -->
-        <aside class="g3d-cartel" id="cartel" aria-live="polite" hidden>
-          <p class="g3d-cartel__count" id="cartelCount"></p>
-          <h2 class="g3d-cartel__title" id="cartelTitle"></h2>
-          <p class="g3d-cartel__meta" id="cartelMeta"></p>
-          <p class="g3d-cartel__price">Prix sur demande</p>
-          <a class="g3d-cartel__cta" id="cartelCta" href="contact.html">Acquérir cette œuvre</a>
-        </aside>
-
-        <div class="g3d-controls" id="controls" hidden>
-          <button type="button" id="prevBtn" aria-label="Œuvre précédente"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg></button>
-          <button type="button" id="playBtn" class="g3d-play" aria-pressed="true" aria-label="Mettre la visite en pause"><svg class="g3d-play__pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M5.5 3.5v9M10.5 3.5v9"/></svg><svg class="g3d-play__play" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3.2v9.6L12.5 8z"/></svg></button>
-          <button type="button" id="nextBtn" aria-label="Œuvre suivante"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="m6 3 5 5-5 5"/></svg></button>
+        <!-- Étiquette au survol d'une toile -->
+        <div class="g3d-tip" id="tip" hidden>
+          <p class="g3d-tip__title" id="tipTitle"></p>
+          <p class="g3d-tip__meta" id="tipMeta"></p>
+          <a class="g3d-tip__link" id="tipLink" href="portfolio.html">Voir dans le portfolio <span aria-hidden="true">→</span></a>
         </div>
 
         <!-- Liste des œuvres pour les lecteurs d'écran et les moteurs de recherche (remplie par galerie.js) -->

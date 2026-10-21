@@ -11,15 +11,15 @@
   <meta property="og:title" content="Portfolio — Annick Bouvattier" />
   <meta property="og:description" content="Portfolio d'Annick Bouvattier : peintures à l'huile et sculptures, à filtrer par catégorie, technique, format et disponibilité." />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-  <script src="i18n.js?v=20261020p"></script>
-  <script src="site.js?v=20261020p"></script>
-  <script src="sheet.js?v=20261020p"></script>
-  <script src="artwork-modal.js?v=20261020p"></script>
+  <script src="i18n.js?v=20261022e"></script>
+  <script src="site.js?v=20261022e"></script>
+  <script src="sheet.js?v=20261022e"></script>
+  <script src="artwork-modal.js?v=20261022e"></script>
   <link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
   <title>Portfolio — Annick Bouvattier</title>
 
 
-  <link rel="stylesheet" href="styles.css?v=20261020p">
+  <link rel="stylesheet" href="styles.css?v=20261022e">
 
 </head>
 
@@ -408,6 +408,10 @@
       try{
         artworks = await loadArtworksFromSheet();
         render();
+        // ?oeuvre=<fichier> (clic sur une toile de la galerie 3D) : sa fiche s'ouvre directement
+        const wanted = new URLSearchParams(location.search).get("oeuvre");
+        const at = wanted ? currentList.findIndex(a => a.file === wanted || a.title === wanted) : -1;
+        if(at >= 0) abouvModal.open(currentList, at);
       } catch(err){
         console.error(err);
         els.count.textContent = "";
