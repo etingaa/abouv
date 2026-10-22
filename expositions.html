@@ -468,6 +468,50 @@
       padding:6px 0; border:0; background:none; cursor:pointer; font:inherit; font-size:13px; font-weight:500;
       letter-spacing:.06em; text-transform:uppercase; color:var(--ink); border-bottom:1px solid var(--accent);
     }
+    /* ===== mise en scène ===== */
+    /* titre : chaque lettre monte depuis une fente */
+    .xtitle{ display:flex; align-items:flex-start; overflow:hidden; padding-bottom:.06em; }
+    .xtitle__l{ display:inline-block; animation:xLetter .9s cubic-bezier(.2,.8,.2,1) both; animation-delay:calc(var(--k) * 45ms + 120ms); }
+    @keyframes xLetter{ from{ transform:translateY(105%); } to{ transform:none; } }
+
+    /* deux colonnes : compteur d'année accroché à gauche, liste à droite */
+    .tlLayout{ display:grid !important; grid-template-columns:minmax(260px, 1fr) 2.2fr; column-gap:48px; position:relative; }
+    .tlLayout > .tlWrap{ grid-column:2; }
+    .xodo{ grid-column:1; grid-row:1 / span 2; position:sticky; top:calc(var(--shade-h, 90px) + 40px); align-self:start; }
+    .xodo__digits{ display:flex; height:1em; overflow:hidden; font-size:clamp(80px, 9.5vw, 156px); font-weight:700; font-stretch:112%; line-height:1; letter-spacing:-.03em; }
+    .xodo__col{ display:block; height:1em; overflow:hidden; }
+    .xodo__strip{ display:flex; flex-direction:column; transition:transform .9s cubic-bezier(.7,0,.2,1); }
+    .xodo__col:nth-child(2) .xodo__strip{ transition-delay:.05s; } .xodo__col:nth-child(3) .xodo__strip{ transition-delay:.1s; } .xodo__col:nth-child(4) .xodo__strip{ transition-delay:.15s; }
+    .xodo__strip i{ display:block; height:1em; font-style:normal; color:transparent; -webkit-text-stroke:1.5px #fff; background:none; }
+    .xodo__where{ margin:18px 0 0; font-size:13px; font-weight:500; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-faint); min-height:1.2em; }
+
+    /* la liste : plus besoin de la colonne des années (le compteur la remplace) */
+    .tlYear{ grid-template-columns:1fr !important; grid-template-areas:"axis" "top" "bottom" !important; border-top:0 !important; }
+    .tlYear:first-child{ border-bottom:0 !important; }
+    .tlAxis{ position:static !important; padding:34px 0 6px !important; }
+    .tlYearLabel{ font-size:12px !important; font-weight:500 !important; font-stretch:100% !important; letter-spacing:.14em !important; color:var(--ink-faint) !important; }
+    .tlCard{ grid-template-columns:minmax(0, 1.5fr) minmax(0, 1fr) 120px !important; border-top:1px solid rgba(var(--ink-rgb),.1) !important; border-bottom:0 !important; }
+    .tlCard__title{ font-size:clamp(20px, 1.9vw, 28px) !important; }
+    .xdecade{ font-size:clamp(48px, 6vw, 90px) !important; padding-top:64px !important; }
+
+    /* ville en filigrane */
+    .xghost{
+      position:fixed; left:0; right:0; top:50%; z-index:-1; transform:translateY(-50%) scale(.96); pointer-events:none;
+      text-align:center; white-space:nowrap; overflow:hidden;
+      font-size:clamp(90px, 17vw, 300px); font-weight:700; font-stretch:112%; text-transform:uppercase; letter-spacing:-.03em;
+      color:rgba(255,255,255,.035); -webkit-text-stroke:1px rgba(255,255,255,.12);
+      opacity:0; transition:opacity .5s ease, transform .8s cubic-bezier(.2,.7,.2,1);
+    }
+    .xghost.is-on{ opacity:1; transform:translateY(-50%) scale(1); }
+
+    @media (max-width:900px){
+      .tlLayout{ grid-template-columns:1fr; }
+      .tlLayout > .tlWrap{ grid-column:1; }
+      .xodo{ display:none; }
+      .tlYearLabel{ font-size:22px !important; font-weight:700 !important; font-stretch:112% !important; letter-spacing:0 !important; color:var(--ink) !important; }
+      .xghost{ display:none; }
+    }
+    @media (prefers-reduced-motion: reduce){ .xtitle__l{ animation:none; } .xodo__strip{ transition:none; } }
   </style>
 </head>
 
@@ -522,6 +566,10 @@
 
     <!-- Ligne du temps (+ légende, placée au-dessus sur téléphone) -->
     <div class="tlLayout" id="timelineView">
+    <!-- grand compteur d'année, accroché à gauche : il roule jusqu'à l'année qu'on lit -->
+    <aside class="xodo" aria-hidden="true"><div class="xodo__digits"></div><p class="xodo__where"></p></aside>
+    <!-- nom de ville géant, en filigrane derrière la liste, au survol d'une exposition -->
+    <div class="xghost" aria-hidden="true"></div>
     <section class="tlWrap" aria-label="Ligne du temps des expositions">
       <div class="tl" id="tl" tabindex="0">
         <div class="tlTrack" id="track" translate="no"></div>
@@ -687,6 +735,41 @@
       document.querySelectorAll(".tlCard, .xdecade, .tlAxis").forEach((el) => { el.classList.add("rv"); io.observe(el); });
     }
 
+    // compteur d'année « à rouleaux » + ville en filigrane
+    function odometer(){
+      const box = document.querySelector(".xodo__digits"), where = document.querySelector(".xodo__where");
+      const ghost = document.querySelector(".xghost");
+      box.innerHTML = Array.from({ length: 4 }, () => `<span class="xodo__col"><span class="xodo__strip">${"0123456789".split("").map(d => `<i>${d}</i>`).join("")}</span></span>`).join("");
+      const strips = [...box.querySelectorAll(".xodo__strip")];
+      const setYear = (y) => String(y).padStart(4, "0").split("").forEach((d, k) => { strips[k].style.transform = `translateY(${-d * 10}%)`; });
+      const years = Object.keys(yearEls).map(Number);
+      setYear(Math.max(...years));
+      // l'année de l'exposition qui passe au milieu de l'écran (calculé au défilement)
+      Object.entries(yearEls).forEach(([y, el]) => { el.dataset.year = y; });
+      let queued = false, last = null;
+      const update = () => {
+        queued = false;
+        const mid = innerHeight / 2;
+        let best = null, bd = Infinity;
+        for (const c of cards){
+          if (!c.el.offsetParent) continue;
+          const r = c.el.getBoundingClientRect(), d = Math.abs(r.top + r.height / 2 - mid);
+          if (d < bd){ bd = d; best = c; }
+        }
+        if (!best || best === last) return;
+        last = best;
+        setYear(best.expo.year);
+        where.textContent = `${t(best.expo.city)} · ${t(best.expo.country)}`;
+      };
+      addEventListener("scroll", () => { if (!queued){ queued = true; requestAnimationFrame(update); } }, { passive: true });
+      update();
+      // survol : la ville en filigrane, très grande, derrière la liste
+      cards.forEach(c => {
+        c.el.addEventListener("mouseenter", () => { ghost.textContent = t(c.expo.city.split(",")[0]); ghost.classList.add("is-on"); });
+        c.el.addEventListener("mouseleave", () => ghost.classList.remove("is-on"));
+      });
+    }
+
     function decorateTimeline(){
       // intercalaire « années 2010 » en tête (en haut) de chaque décennie : la plus récente année de la décennie
       const byDecade = {};
@@ -818,7 +901,7 @@
         const seq = (hidden) => `<div class="xrun__seq"${hidden ? ' aria-hidden="true"' : ""}>${cities.map(c =>
           `<button type="button" class="xrun__c" data-city="${escapeHtml(c)}"${hidden ? ' tabindex="-1"' : ""}>${escapeHtml(t(c))}</button>`).join("")}</div>`;
         box.innerHTML = `
-          <h2 class="xtitle">${t("Expositions")}<sup></sup></h2>
+          <h2 class="xtitle" aria-label="${t("Expositions")}">${[...t("Expositions")].map((ch, k) => `<span class="xtitle__l" style="--k:${k}" aria-hidden="true">${ch}</span>`).join("")}<sup></sup></h2>
           <p class="xfilter" hidden></p>
           <div class="xrun"><div class="xrun__track">${seq(false)}${seq(true)}</div></div>`;
         box.querySelectorAll(".xrun__c").forEach(b => b.addEventListener("click", () => goCity(b.dataset.city)));
@@ -964,6 +1047,7 @@
     buildTimeline();
     decorateTimeline();
     revealRows();
+    odometer();
     const qParam = new URLSearchParams(location.search).get("q");
     if(qParam){ els.q.value = filters.q = qParam; }
     apply(false);
