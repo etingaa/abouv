@@ -139,6 +139,8 @@
     "œuvre": "artwork",
     "œuvres": "artworks",
     "Passer": "Skip",
+    "Filtrer par": "Filter by",
+    "Annick Bouvattier dans son atelier": "Annick Bouvattier in her studio",
     "L’artiste": "The artist",
     "Écrire →": "Write →",
     "Annick Bouvattier · Atelier": "Annick Bouvattier · Studio",
@@ -327,7 +329,12 @@
   function detect(){
     // 1. lien explicite : page.html?lang=en
     const param = new URLSearchParams(location.search).get("lang");
-    if (LANGS.includes(param)) { store(param); return param; }
+    if (LANGS.includes(param)) {
+      store(param);
+      // adresse nettoyée (le choix est mémorisé) : un « Précédent » ne remet pas l'ancienne langue
+      try { const u = new URL(location.href); u.searchParams.delete("lang"); history.replaceState(history.state, "", u.href); } catch (_) {}
+      return param;
+    }
     // 2. choix mémorisé
     const saved = readStored();
     if (LANGS.includes(saved)) return saved;
@@ -418,10 +425,20 @@
   function switchTo(l){
     if (l === lang) return;
     store(l);
+    // ?lang= dans l'adresse : sinon le navigateur peut ressortir une version de la page déjà
+    // préchargée (règles de préchargement, survol du lien) dans l'ancienne langue
     const url = new URL(location.href);
-    url.searchParams.delete("lang");
+    url.searchParams.set("lang", l);
     location.replace(url.href);
   }
+
+  // Page préchargée ou revenue par « Précédent » dans une langue qui n'est plus la bonne : on la recharge
+  function stale(){
+    const saved = readStored();
+    return LANGS.includes(saved) && saved !== lang && !new URLSearchParams(location.search).get("lang");
+  }
+  if (document.prerendering) document.addEventListener("prerenderingchange", () => { if (stale()) location.reload(); }, { once: true });
+  window.addEventListener("pageshow", (e) => { if (e.persisted && stale()) location.reload(); });
 
   // Menu de langue, à droite du header (« FR ▾ »)
   function makeLangMenu(label, extraClass){
@@ -480,6 +497,6 @@
     if (missing.size) console.info("[i18n] textes sans traduction anglaise :", [...missing]);
   });
 
-  window.I18N = { lang, t };
+  window.I18N = { lang, t, missing };
   window.t = t;
 })();
