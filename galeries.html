@@ -24,17 +24,12 @@
   <style>
     /* Galeries : une carte en points (pas de Leaflet) avec les galeries, puis les galeries en fiches */
     .gx{ position:relative; }
-    /* le titre est posé sur la carte (en haut à gauche) : la carte garde de la hauteur sur les petits écrans */
-    .gx__title{ position:absolute; z-index:2; top:clamp(12px, 3vh, 32px); left:0; margin:0; pointer-events:none; text-shadow:0 2px 24px rgba(8,12,24,.8); font-size:clamp(44px, min(7vw, 12vh), 112px); font-weight:700; font-stretch:112%; text-transform:uppercase; letter-spacing:-.01em; line-height:.9; color:var(--ink); }
-    /* flou sous le titre : la carte passe dessous, estompée */
-    .gx__title::before{ content:""; position:absolute; z-index:-1; inset:-28px -56px -24px -40px; pointer-events:none;
-      background:rgba(8,12,24,.45); -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
-      -webkit-mask-image:radial-gradient(closest-side, #000 55%, transparent); mask-image:radial-gradient(closest-side, #000 55%, transparent); }
+    .gx__title{ margin:clamp(24px, 4vh, 44px) 0 clamp(8px, 2vh, 20px); font-size:clamp(44px, 7vw, 112px); font-weight:700; font-stretch:112%; text-transform:uppercase; letter-spacing:-.01em; line-height:.9; color:var(--ink); }
     .gx__maps{ display:none; }
     .gx__title sup{ font-size:.2em; font-weight:500; letter-spacing:.06em; vertical-align:top; margin-left:.25em; position:relative; top:.6em; color:var(--ink-faint); font-stretch:100%; }
 
     /* carte en points */
-    .gx__map{ position:relative; margin:0 calc(50% - 50vw) clamp(16px, 3vh, 40px); padding-top:clamp(12px, 3vh, 32px); padding:0 max(20px, calc(50vw - 700px + 48px)); }
+    .gx__map{ position:relative; margin:0 calc(50% - 50vw) clamp(40px, 6vh, 72px); padding:0 max(20px, calc(50vw - 700px + 48px)); }
     .gx__map svg{ display:block; width:100%; height:auto; overflow:hidden;
       -webkit-mask-image:radial-gradient(ellipse 75% 85% at 50% 50%, #000 55%, transparent 100%); mask-image:radial-gradient(ellipse 75% 85% at 50% 50%, #000 55%, transparent 100%); }
     .gx__pin{ cursor:pointer; outline:none; }
@@ -49,7 +44,7 @@
     @media (prefers-reduced-motion: reduce){ .gx__pin.is-hot circle.ring{ animation:none; } }
 
     /* accordéon : cinq volets ; replié = numéro + ville à la verticale, ouvert = la galerie en grand */
-    .gx__acc{ display:flex; height:clamp(250px, 44vh, 480px); border-top:1px solid rgba(var(--ink-rgb),.16); border-bottom:1px solid rgba(var(--ink-rgb),.16); }
+    .gx__acc{ display:flex; height:clamp(460px, 68vh, 620px); border-top:1px solid rgba(var(--ink-rgb),.16); border-bottom:1px solid rgba(var(--ink-rgb),.16); }
     .gx__panel{
       position:relative; flex:1 1 0; min-width:0; overflow:hidden; cursor:pointer; outline:none; container-type:size;
       border-left:1px solid rgba(var(--ink-rgb),.16);
@@ -84,11 +79,22 @@
     .gx__acts{ display:flex; flex-wrap:wrap; gap:8px 22px; margin-top:22px; }
     .gx__acts a{ font-size:12px; font-weight:500; letter-spacing:.08em; text-transform:uppercase; color:var(--ink); border-bottom:1px solid transparent; padding-bottom:2px; transition:border-color .2s ease; }
     .gx__acts a:hover{ border-bottom-color:var(--accent); }
+    /* bas du volet ouvert : coordonnées à gauche, grand numéro en contour à droite, sur un filet */
+    .gx__foot{
+      position:absolute; left:clamp(24px, 3vw, 48px); right:clamp(20px, 2.4vw, 36px); bottom:clamp(18px, 2.4vw, 30px);
+      display:flex; align-items:flex-end; justify-content:space-between; gap:20px; min-width:380px;
+      padding-top:14px; border-top:1px solid rgba(var(--ink-rgb),.14);
+      opacity:0; transform:translateY(12px); transition:opacity .4s ease, transform .6s cubic-bezier(.2,.7,.2,1); pointer-events:none;
+    }
+    .gx__panel.is-open .gx__foot{ opacity:1; transform:none; transition-delay:.45s; }
+    .gx__coords{ font-size:11px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint); font-variant-numeric:tabular-nums; }
+    .gx__big{ font-size:clamp(72px, 9vw, 150px); font-weight:700; font-stretch:112%; line-height:.78; letter-spacing:-.03em;
+      color:transparent; -webkit-text-stroke:1.2px rgba(var(--ink-rgb),.35); font-variant-numeric:tabular-nums; }
     @media (prefers-reduced-motion: reduce){ .gx__panel, .gx__body{ transition:none; } }
 
     /* téléphone : les volets s'empilent, tout est visible */
     @media (max-width:760px){
-      .gx__title{ position:static; margin:28px 0 16px; } .gx__title::before{ display:none; }
+      .gx__title{ margin:28px 0 16px; }
       /* deux cartes zoomées à la place de la carte du monde */
       .gx__map{ display:none; }
       .gx__maps{ display:grid; grid-template-columns:1fr; gap:22px; margin:0 0 36px; }
@@ -103,12 +109,14 @@
       .gx__num{ position:static; display:block; margin-top:28px; }
       .gx__body{ position:static; min-width:0; opacity:1; transform:none; pointer-events:auto; padding:12px 0 28px; }
       .gx__city{ font-size:40px; }
+      .gx__foot{ position:static; min-width:0; opacity:1; transform:none; margin:0 0 28px; }
+      .gx__big{ font-size:56px; }
     }
   </style>
 
 
 
-  <link rel="stylesheet" href="styles.css?v=20261025c">
+  <link rel="stylesheet" href="styles.css?v=20261025d">
 
   <!-- seo:head -->
   <link rel="canonical" href="https://annickbouvattier.art/galeries" />
@@ -142,11 +150,11 @@
       <div class="gx" id="gx" translate="no"><!-- seo:galleries -->
       <h2 class="gx__title">Galeries<sup>5</sup></h2>
       <ul class="gx__static">
-        <li><h3>Laguna Beach</h3><p>Galerie Rue Toulouse (French Art Network)</p><p>390 S. Coast Hwy, Laguna Beach, CA 92651 · États-Unis</p><a href="https://www.frenchart.net" target="_blank" rel="noopener noreferrer">frenchart.net</a></li>
-        <li><h3>Lyon</h3><p>Artclub Gallery</p><p>22 Place Bellecour, 69002 Lyon · France</p><a href="https://www.artclub.fr" target="_blank" rel="noopener noreferrer">artclub.fr</a></li>
-        <li><h3>Paris</h3><p>Artclub Gallery</p><p>172 Rue de Rivoli, 75001 Paris · France</p><a href="https://www.artclub.fr" target="_blank" rel="noopener noreferrer">artclub.fr</a></li>
-        <li><h3>New Orleans</h3><p>French Art Network — New Orleans</p><p>509 Rue Royale, New Orleans, LA 70130 · États-Unis</p><a href="https://www.frenchart.net" target="_blank" rel="noopener noreferrer">frenchart.net</a></li>
         <li><h3>Carmel-by-the-Sea</h3><p>French Art Network — Carmel-by-the-Sea</p><p>San Carlos St, Carmel-by-the-Sea, CA 93921 · États-Unis</p><a href="https://www.frenchart.net" target="_blank" rel="noopener noreferrer">frenchart.net</a></li>
+        <li><h3>Laguna Beach</h3><p>Galerie Rue Toulouse (French Art Network)</p><p>390 S. Coast Hwy, Laguna Beach, CA 92651 · États-Unis</p><a href="https://www.frenchart.net" target="_blank" rel="noopener noreferrer">frenchart.net</a></li>
+        <li><h3>New Orleans</h3><p>French Art Network — New Orleans</p><p>509 Rue Royale, New Orleans, LA 70130 · États-Unis</p><a href="https://www.frenchart.net" target="_blank" rel="noopener noreferrer">frenchart.net</a></li>
+        <li><h3>Paris</h3><p>Artclub Gallery</p><p>172 Rue de Rivoli, 75001 Paris · France</p><a href="https://www.artclub.fr" target="_blank" rel="noopener noreferrer">artclub.fr</a></li>
+        <li><h3>Lyon</h3><p>Artclub Gallery</p><p>22 Place Bellecour, 69002 Lyon · France</p><a href="https://www.artclub.fr" target="_blank" rel="noopener noreferrer">artclub.fr</a></li>
       </ul>
       <!-- /seo:galleries --></div>
 
@@ -164,7 +172,7 @@
 
   <!-- expositions (pour « 4 expositions ici depuis 2005 »), puis la logique de la page -->
   <script src="expos-data.js?v=20261022n"></script>
-  <script src="./script.js?v=20261025b"></script>
+  <script src="./script.js?v=20261025c"></script>
 
 </body>
 </html>

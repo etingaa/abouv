@@ -7,14 +7,14 @@
 
   document.addEventListener("DOMContentLoaded", initGaleriesPage);
 
-  // Données. expos : comment retrouver les expositions de la galerie dans expos-data.js
+  // Données, dans l'ordre de la carte (d'ouest en est). expos : comment retrouver les expositions de la galerie dans expos-data.js
   // (le titre contient `title` et la ville contient `city`).
   const GALLERIES = [
-    { name:"Galerie Rue Toulouse (French Art Network)", city:"Laguna Beach", country:"États-Unis", phone:"(949) 549-4546", address:"390 S. Coast Hwy, Laguna Beach, CA 92651", website:"https://www.frenchart.net", lat:33.5427, lng:-117.7831, expos:{ title:"French Art Network", city:"Laguna" } },
-    { name:"Artclub Gallery", city:"Lyon", country:"France", phone:"+33 (0)4 78 37 47 37", address:"22 Place Bellecour, 69002 Lyon", website:"https://www.artclub.fr", lat:45.7579, lng:4.8320, expos:{ title:"Artclub", city:"Lyon" } },
-    { name:"Artclub Gallery", city:"Paris", country:"France", phone:"+33 (0)1 47 03 42 20", address:"172 Rue de Rivoli, 75001 Paris", website:"https://www.artclub.fr", lat:48.8619, lng:2.3341, expos:{ title:"Artclub", city:"Paris" } },
-    { name:"French Art Network — New Orleans", city:"New Orleans", country:"États-Unis", phone:"(504) 581-5881", address:"509 Rue Royale, New Orleans, LA 70130", website:"https://www.frenchart.net", lat:29.9574, lng:-90.0620, expos:{ title:"French Art Network", city:"New Orleans" } },
     { name:"French Art Network — Carmel-by-the-Sea", city:"Carmel-by-the-Sea", country:"États-Unis", phone:"(931) 625-3456", address:"San Carlos St, Carmel-by-the-Sea, CA 93921", website:"https://www.frenchart.net", lat:36.5552, lng:-121.9233, expos:{ title:"French Art Network", city:"Carmel" } },
+    { name:"Galerie Rue Toulouse (French Art Network)", city:"Laguna Beach", country:"États-Unis", phone:"(949) 549-4546", address:"390 S. Coast Hwy, Laguna Beach, CA 92651", website:"https://www.frenchart.net", lat:33.5427, lng:-117.7831, expos:{ title:"French Art Network", city:"Laguna" } },
+    { name:"French Art Network — New Orleans", city:"New Orleans", country:"États-Unis", phone:"(504) 581-5881", address:"509 Rue Royale, New Orleans, LA 70130", website:"https://www.frenchart.net", lat:29.9574, lng:-90.0620, expos:{ title:"French Art Network", city:"New Orleans" } },
+    { name:"Artclub Gallery", city:"Paris", country:"France", phone:"+33 (0)1 47 03 42 20", address:"172 Rue de Rivoli, 75001 Paris", website:"https://www.artclub.fr", lat:48.8619, lng:2.3341, expos:{ title:"Artclub", city:"Paris" } },
+    { name:"Artclub Gallery", city:"Lyon", country:"France", phone:"+33 (0)4 78 37 47 37", address:"22 Place Bellecour, 69002 Lyon", website:"https://www.artclub.fr", lat:45.7579, lng:4.8320, expos:{ title:"Artclub", city:"Lyon" } },
   ];
 
 
@@ -28,6 +28,11 @@
     const all = window.EXPOS || [];
     if (!g.expos) return [];
     return all.filter((e) => e.title.includes(g.expos.title) && e.city.includes(g.expos.city)).sort((a, b) => a.year - b.year);
+  }
+  // « 36,56° N · 121,92° O » (en anglais : W)
+  function coords(g) {
+    const en = document.documentElement.lang === "en", f = (v) => Math.abs(v).toFixed(2).replace(".", en ? "." : ",");
+    return `${f(g.lat)}° ${g.lat >= 0 ? "N" : "S"} · ${f(g.lng)}° ${g.lng >= 0 ? "E" : (en ? "W" : "O")}`;
   }
   function exposLine(g) {
     const list = exposOf(g), n = list.length;
@@ -95,6 +100,7 @@
               ${g.phone ? `<a href="tel:${g.phone.replace(/[^\d+]/g, "")}">${t("Appeler")}</a>` : ""}
             </div>
           </div>
+          <div class="gx__foot" aria-hidden="true"><span class="gx__coords">${coords(g)}</span><span class="gx__big">${String(i + 1).padStart(2, "0")}</span></div>
         </article>`).join("")}
       </div>`;
 
@@ -117,14 +123,5 @@
       p.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } });
     });
 
-    // tout tient dans le premier écran : la carte prend la hauteur qui reste une fois les volets placés
-    const map = box.querySelector(".gx__map svg"), acc = box.querySelector(".gx__acc");
-    const fit = () => {
-      if (innerWidth <= 760) { map.style.maxHeight = ""; return; }
-      const gap = parseFloat(getComputedStyle(map.parentNode).marginBottom) || 0;
-      const room = innerHeight - (map.getBoundingClientRect().top + scrollY) - gap - acc.offsetHeight - 24;
-      map.style.maxHeight = Math.max(150, room) + "px";
-    };
-    addEventListener("resize", fit); fit();
   }
 })();
