@@ -2,6 +2,10 @@
 <html lang="fr">
 <head>
   <meta charset="utf-8" />
+  <!-- GitHub Pages sert cette page pour n'importe quelle adresse introuvable, à n'importe quelle profondeur
+       (ex. …/oeuvres/une-oeuvre-disparue.html) : on ancre les chemins relatifs à la racine du site
+       (le dossier /abouv/ sur etingaa.github.io, sinon la racine du domaine) -->
+  <script>(function(){var m=location.pathname.match(/^\/abouv\//),b=document.createElement("base");b.href=m?m[0]:"/";document.head.appendChild(b);})();</script>
   <style>html{background:#060b18}</style>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="robots" content="noindex" />
