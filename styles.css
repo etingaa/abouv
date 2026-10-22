@@ -1284,20 +1284,27 @@ body.salle .shade{ background:#070c19; -webkit-backdrop-filter:none; backdrop-fi
 @media (max-width:900px){ .contactPage .cx{ grid-template-columns:1fr; } .cx__side{ position:static; } }
 .bigTitle--sub{ margin-top:0; scroll-margin-top:calc(var(--shade-h, 90px) + 24px); }
 
-/* ===== Sous-menu À propos (L'artiste, Presse, Q&A), au survol ===== */
+/* ===== Sous-menu À propos (L'artiste, Presse, Q&A), au survol =====
+   sans cadre : les trois mots descendent l'un après l'autre sous « À propos » ; un trait corail glisse devant celui qu'on survole */
 .nav__item{ position:relative; display:inline-flex; }
 .nav__sub{
-  position:absolute; top:100%; left:50%; z-index:30; display:flex; flex-direction:column; gap:12px;
-  min-width:max-content; margin-top:14px; padding:18px 22px;
-  background:rgba(8,12,24,.94); border:1px solid rgba(236,231,222,.14);
-  -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
-  opacity:0; pointer-events:none; transform:translate(-50%, -6px); transition:opacity .25s ease, transform .25s ease;
+  position:absolute; top:100%; left:0; z-index:30; display:flex; flex-direction:column; align-items:flex-start; gap:10px;
+  min-width:max-content; padding-top:16px; pointer-events:none;
 }
-.nav__sub::before{ content:""; position:absolute; left:0; right:0; top:-16px; height:16px; } /* pont pour garder le survol */
-.nav__item:hover .nav__sub, .nav__item:focus-within .nav__sub{ opacity:1; pointer-events:auto; transform:translate(-50%, 0); }
-.nav__sub a{ font-size:12px; font-weight:500; letter-spacing:.1em; text-transform:uppercase; color:rgba(236,231,222,.72); border-bottom:1px solid transparent; padding-bottom:2px; align-self:flex-start; transition:color .2s ease, border-color .2s ease; }
-.nav__sub a:hover{ color:#fff; border-bottom-color:#ec7668; }
+.nav__sub a{
+  position:relative; font-size:12px; font-weight:500; letter-spacing:.1em; text-transform:uppercase; color:rgba(236,231,222,.7);
+  text-shadow:0 1px 12px rgba(4,8,18,.9), 0 0 2px rgba(4,8,18,.6);
+  opacity:0; transform:translateY(-6px); transition:opacity .3s ease, transform .4s cubic-bezier(.2,.7,.2,1), color .2s ease, padding .3s cubic-bezier(.2,.7,.2,1);
+}
+.nav__sub a::before{ content:""; position:absolute; left:0; top:50%; width:0; height:1.5px; background:#ec7668; transition:width .3s cubic-bezier(.2,.7,.2,1); }
+.nav__item:hover .nav__sub, .nav__item:focus-within .nav__sub{ pointer-events:auto; }
+.nav__item:hover .nav__sub a, .nav__item:focus-within .nav__sub a{ opacity:1; transform:none; }
+.nav__item:hover .nav__sub a:nth-child(2), .nav__item:focus-within .nav__sub a:nth-child(2){ transition-delay:.05s; }
+.nav__item:hover .nav__sub a:nth-child(3), .nav__item:focus-within .nav__sub a:nth-child(3){ transition-delay:.1s; }
+.nav__sub a:hover{ color:#fff; padding-left:20px; transition-delay:0s !important; }
+.nav__sub a:hover::before{ width:12px; }
 .top.is-compact .nav__item:hover .nav__link::after{ opacity:0 !important; } /* pas d'infobulle par-dessus le sous-menu */
+@media (prefers-reduced-motion: reduce){ .nav__sub a{ transform:none; transition:opacity .2s ease, color .2s ease; } }
 @media (max-width:760px){ .nav__item{ display:contents; } .nav__sub{ display:none; } }
 
 /* ===== Contact : formulaire dans la voix du site (plus de panneau ni de pastilles) =====
