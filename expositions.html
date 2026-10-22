@@ -12,7 +12,7 @@
   <meta property="og:title" content="Expositions — Annick Bouvattier" />
   <meta property="og:description" content="Expositions personnelles, collectives et salons d'Annick Bouvattier depuis 1992." />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-  <script src="i18n.js?v=20261024k"></script>
+  <script src="i18n.js?v=20261024o"></script>
   <script src="site.js?v=20261024n"></script>
   <link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="styles.css?v=20261024g" />
@@ -457,6 +457,17 @@
     .xdecade{ font-weight:700 !important; font-stretch:112% !important; letter-spacing:-.02em !important; }
     .tlYearLabel{ font-weight:700 !important; font-stretch:112% !important; letter-spacing:0 !important; }
     .tlCard__title{ font-weight:500 !important; font-stretch:100% !important; }
+    /* défilement des villes : deux suites identiques, la piste glisse d'exactement une suite (boucle sans à-coup) */
+    .xrun__track{ display:flex !important; width:max-content; animation:xrun 70s linear infinite !important; will-change:transform; }
+    .xrun__seq{ display:flex; flex:none; }
+    .xrun__c{ margin:0 !important; padding:0 .9em 0 0 !important; }
+    .xrun__c::after{ content:"" !important; display:inline-block; width:.6em; height:1px; margin:0 0 0 .9em !important; vertical-align:middle; background:rgba(var(--ink-rgb),.3) !important; }
+    .xpills{ display:none !important; }
+    .xfilter{ margin:-16px 0 0; }
+    .xfilter button{
+      padding:6px 0; border:0; background:none; cursor:pointer; font:inherit; font-size:13px; font-weight:500;
+      letter-spacing:.06em; text-transform:uppercase; color:var(--ink); border-bottom:1px solid var(--accent);
+    }
   </style>
 </head>
 
@@ -789,54 +800,35 @@
     }
 
     // en tête : les pays dessinés (villes cliquables), des pastilles pour filtrer par type, et les villes qui défilent
+    // en tête : le titre, puis les villes qui défilent (construites une seule fois pour que le défilement
+    // ne redémarre jamais) ; un clic sur une ville filtre la liste, un second clic (ou « × ») retire le filtre
+    let xsumBuilt = false;
     function renderSummary(n){
       const box = document.getElementById("xsum");
       const list = window.EXPOS || [];
-      const count = (ty) => list.filter(e => e.type === ty).length;
-      const pill = (ty, label, k) => `<button class="xpill" type="button" data-type="${ty}" aria-pressed="${ty ? filters.type.has(ty) : filters.type.size === 0}">${label}<b>${k}</b></button>`;
-      const byCountry = {};
-      list.forEach(e => { (byCountry[e.country] = byCountry[e.country] || {})[e.city] = (byCountry[e.country][e.city] || 0) + 1; });
-      const countries = Object.keys(byCountry).sort((a, b) => Object.values(byCountry[b]).reduce((x, y) => x + y) - Object.values(byCountry[a]).reduce((x, y) => x + y));
-      const cities = [...new Set(list.map(e => e.city))];
-      const run = cities.map(c => `<button type="button" class="xrun__c${filters.q.toLowerCase() === c.toLowerCase() ? " is-on" : ""}" data-city="${escapeHtml(c)}">${escapeHtml(t(c))}</button>`).join("");
-      box.innerHTML = `
-        <h2 class="xtitle">${t("Expositions")}<sup>${n}</sup></h2>
-        <div class="xpills" role="group" aria-label="${t("Type")}">
-          ${pill("", t("Toutes"), list.length)}${pill("solo", t("Personnelles"), count("solo"))}${pill("group", t("Collectives"), count("group"))}${pill("salon", t("Salons"), count("salon"))}
-          ${filters.q ? `<button class="xpill xpill--q" type="button" data-clear="q">${escapeHtml(t(filters.q))}<b>×</b></button>` : ""}
-        </div>
-        <div class="xrun"><div class="xrun__track">${run}<span class="xrun__dup" aria-hidden="true">${run}</span></div></div>`;
-
       const goCity = (c) => {
         filters.q = filters.q.toLowerCase() === c.toLowerCase() ? "" : c;
-        filters.country.clear();
         els.q.value = filters.q;
         apply(true);
         if (filters.q) document.getElementById("tl").scrollIntoView({ behavior: "smooth", block: "start" });
       };
-      box.querySelectorAll(".xpill[data-type]").forEach(b => b.addEventListener("click", () => {
-        filters.type.clear(); if (b.dataset.type) filters.type.add(b.dataset.type); apply(true);
-      }));
-      box.querySelectorAll(".xmap__name").forEach(b => b.addEventListener("click", () => {
-        const c = b.dataset.country;
-        if (filters.country.has(c)) filters.country.delete(c); else { filters.country.clear(); filters.country.add(c); }
-        filters.q = ""; els.q.value = "";
-        apply(true);
-      }));
-      box.querySelectorAll(".xdot").forEach(d => {
-        const cap = d.closest(".xmap").querySelector(".xmap__city");
-        const c = d.dataset.city;
-        const n = (window.EXPOS || []).filter(e => e.city === c).length;
-        const show = () => { cap.textContent = `${t(c)} · ${n}`; };
-        d.addEventListener("mouseenter", show); d.addEventListener("focus", show);
-        d.addEventListener("mouseleave", () => { cap.textContent = ""; }); d.addEventListener("blur", () => { cap.textContent = ""; });
-        d.addEventListener("click", () => goCity(c));
-        d.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " "){ e.preventDefault(); goCity(c); } });
-      });
-      box.querySelectorAll(".xrun__c").forEach(b => b.addEventListener("click", () => goCity(b.dataset.city)));
-      box.querySelectorAll(".xrun__dup button").forEach(b => b.tabIndex = -1);
-      const qc = box.querySelector("[data-clear=q]");
-      if (qc) qc.addEventListener("click", () => goCity(filters.q));
+      if (!xsumBuilt){
+        xsumBuilt = true;
+        const cities = [...new Set(list.map(e => e.city))];
+        const seq = (hidden) => `<div class="xrun__seq"${hidden ? ' aria-hidden="true"' : ""}>${cities.map(c =>
+          `<button type="button" class="xrun__c" data-city="${escapeHtml(c)}"${hidden ? ' tabindex="-1"' : ""}>${escapeHtml(t(c))}</button>`).join("")}</div>`;
+        box.innerHTML = `
+          <h2 class="xtitle">${t("Expositions")}<sup></sup></h2>
+          <p class="xfilter" hidden></p>
+          <div class="xrun"><div class="xrun__track">${seq(false)}${seq(true)}</div></div>`;
+        box.querySelectorAll(".xrun__c").forEach(b => b.addEventListener("click", () => goCity(b.dataset.city)));
+        box.querySelector(".xfilter").addEventListener("click", (e) => { if (e.target.closest("button")) goCity(filters.q); });
+      }
+      box.querySelector(".xtitle sup").textContent = n;
+      box.querySelectorAll(".xrun__c").forEach(b => b.classList.toggle("is-on", filters.q.toLowerCase() === b.dataset.city.toLowerCase()));
+      const f = box.querySelector(".xfilter");
+      f.hidden = !filters.q;
+      f.innerHTML = filters.q ? `<button type="button">${escapeHtml(t(filters.q))} <span aria-hidden="true">×</span><span class="sr-only">${t("Retirer ce filtre")}</span></button>` : "";
     }
 
     function apply(fromFilter){

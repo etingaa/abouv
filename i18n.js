@@ -139,6 +139,7 @@
     "œuvre": "artwork",
     "œuvres": "artworks",
     "Passer": "Skip",
+    "Retirer ce filtre": "Remove this filter",
     "depuis": "since",
     "en": "in",
     "et": "and",
