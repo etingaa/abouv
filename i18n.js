@@ -139,6 +139,8 @@
     "œuvre": "artwork",
     "œuvres": "artworks",
     "Passer": "Skip",
+    "pays": "countries",
+    "Expositions par année": "Exhibitions per year",
     "Personnelles": "Solo",
     "Collectives": "Group",
     "Salons": "Art fairs",
