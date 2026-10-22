@@ -25,7 +25,6 @@
     /* Galeries : une carte en points (pas de Leaflet) avec les galeries, puis les galeries en fiches */
     .gx{ position:relative; }
     .gx__title{ margin:clamp(0px, 3vh - 12px, 28px) 0 clamp(2px, 1.5vh, 16px); font-size:clamp(40px, min(6.4vw, 9.5vh), 104px); font-weight:700; font-stretch:112%; text-transform:uppercase; letter-spacing:-.01em; line-height:.9; color:var(--ink); }
-    .gx__maps{ display:none; }
     .gx__title sup{ font-size:.2em; font-weight:500; letter-spacing:.06em; vertical-align:top; margin-left:.25em; position:relative; top:.6em; color:var(--ink-faint); font-stretch:100%; }
 
     /* carte en points */
@@ -96,30 +95,48 @@
     @media (prefers-reduced-motion: reduce){ .gx__panel, .gx__body{ transition:none; } }
 
     /* téléphone : les volets s'empilent, tout est visible */
+    /* téléphone : une carte qui se recadre sur le pays, puis les galeries en cartes qu'on fait glisser au doigt */
+    .gm, .gm__nav{ display:none; }
     @media (max-width:760px){
-      .gx__title{ margin:28px 0 16px; }
-      /* deux cartes zoomées à la place de la carte du monde */
+      .gx__title{ margin:24px 0 18px; }
       .gx__map{ display:none; }
-      .gx__maps{ display:grid; grid-template-columns:1fr; gap:22px; margin:0 0 36px; }
-      .gx__zoom{ margin:0; }
-      .gx__zoom figcaption{ display:flex; align-items:baseline; gap:8px; margin-bottom:8px; font-size:11px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint); }
-      .gx__zoom figcaption span{ color:var(--ink); }
-      .gx__zoom svg{ display:block; width:100%; height:auto; overflow:hidden; border-top:1px solid rgba(var(--ink-rgb),.12); border-bottom:1px solid rgba(var(--ink-rgb),.12); }
-      .gx__map{ margin-bottom:40px; padding-top:0; }
-      .gx__acc{ flex-direction:column; height:auto; gap:0; }
-      .gx__panel, .gx__panel:hover, .gx__panel.is-open{ container-type:normal; flex:none; border:0; border-radius:0; box-shadow:none; border-top:1px solid rgba(var(--ink-rgb),.16); background:none !important; cursor:default; }
+      .gm{ display:block; position:relative; margin:0 0 16px; border:1px solid rgba(var(--ink-rgb),.16); border-radius:18px; overflow:hidden; }
+      .gm svg{ display:block; width:100%; height:auto; aspect-ratio:2 / 1; }
+      .gm .gm__pin{ cursor:pointer; }
+      .gm .gm__pin text{ font-size:2.1px; }
+      .gm .gm__pin:not(.is-hot) circle.dot{ fill:rgba(var(--accent-rgb),.55); }
+      .gm .gm__pin:not(.is-hot) text{ fill:rgba(var(--ink-rgb),.45); }
+      .gm__cap{ position:absolute; z-index:1; left:14px; top:12px; display:flex; align-items:baseline; gap:8px; font-size:11px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint); }
+      .gm__cap span{ color:var(--ink); }
+
+      /* les galeries : une rangée de cartes arrondies, une à la fois au centre, la suivante dépasse */
+      .gx__acc{ flex-direction:row; height:auto; gap:12px; margin:0 -20px; padding:0 20px 4px;
+        overflow-x:auto; scroll-snap-type:x mandatory; scroll-padding:0 20px; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
+      .gx__acc::-webkit-scrollbar{ display:none; }
+      .gx__panel, .gx__panel:hover{ container-type:normal; flex:0 0 84%; scroll-snap-align:center; cursor:default;
+        border:1px solid rgba(var(--ink-rgb),.16); border-radius:18px; box-shadow:none; background:none !important; padding:20px 20px 18px; }
+      .gx__panel.is-open{ border-color:rgba(var(--ink-rgb),.7); box-shadow:inset 0 0 0 1.5px rgba(var(--ink-rgb),.7); }
       .gx__vcity{ display:none; }
-      .gx__num{ position:static; display:block; margin-top:28px; }
-      .gx__body{ position:static; min-width:0; opacity:1; transform:none; pointer-events:auto; padding:12px 0 28px; }
-      .gx__city{ font-size:40px; }
-      .gx__foot{ position:static; min-width:0; opacity:1; transform:none; margin:0 0 28px; }
-      .gx__big{ font-size:56px; }
+      .gx__num{ position:static; display:block; }
+      .gx__body{ position:static; min-width:0; opacity:1; transform:none; pointer-events:auto; padding:10px 0 0; gap:4px; }
+      .gx__city{ font-size:clamp(28px, 9vw, 38px); margin:2px 0 10px; }
+      .gx__name{ font-size:16px; }
+      .gx__acts{ margin-top:16px; gap:8px 18px; }
+      .gx__foot{ position:static; min-width:0; opacity:1; transform:none; margin:18px 0 0; padding-top:12px; }
+      .gx__big{ font-size:44px; }
+
+      .gm__nav{ display:flex; align-items:center; justify-content:center; gap:18px; margin:16px 0 8px; }
+      .gm__count{ font-size:12px; font-weight:500; letter-spacing:.14em; color:var(--ink-faint); font-variant-numeric:tabular-nums; }
+      .gm__count b{ color:var(--ink); font-weight:600; }
+      .gm__arrow{ display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; padding:0; border-radius:50%;
+        border:1px solid rgba(var(--ink-rgb),.25); background:none; color:var(--ink); cursor:pointer; }
+      .gm__arrow svg{ width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
     }
   </style>
 
 
 
-  <link rel="stylesheet" href="styles.css?v=20261025d">
+  <link rel="stylesheet" href="styles.css?v=20261025e">
 
   <!-- seo:head -->
   <link rel="canonical" href="https://annickbouvattier.art/galeries" />
@@ -175,7 +192,7 @@
 
   <!-- expositions (pour « 4 expositions ici depuis 2005 »), puis la logique de la page -->
   <script src="expos-data.js?v=20261022n"></script>
-  <script src="./script.js?v=20261025f"></script>
+  <script src="./script.js?v=20261025i"></script>
 
 </body>
 </html>

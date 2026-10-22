@@ -48,8 +48,8 @@
   const VIEW = { x: 44, y: 12, w: 176, h: 42 };
   // téléphone : deux cartes zoomées, une par pays (la carte du monde y serait illisible)
   const ZOOMS = [
-    { name: "États-Unis", view: { x: 47, y: 26, w: 50, h: 20 } },
-    { name: "France", view: { x: 168, y: 16, w: 30, h: 15 } },
+    { name: "États-Unis", view: { x: 41, y: 21, w: 58, h: 29 } },
+    { name: "France", view: { x: 163, y: 14, w: 40, h: 20 } },
   ];
   const px = (lng) => lng + 180, py = (lat) => 72 - lat;
   // côté de l'étiquette pour éviter les chevauchements (villes proches)
@@ -74,6 +74,21 @@
       <image href="images/world-dots.svg" x="0" y="0" width="360" height="128"/>${arcs}${pins}</svg>`;
   }
 
+  // téléphone : une seule carte, qui zoome sur le pays de la galerie affichée (cadrage animé) ;
+  // les repères gardent la même taille à l'écran quel que soit le zoom (échelle mise à jour avec le cadrage)
+  const ZOOM = Object.fromEntries(ZOOMS.map(z => [z.name, z.view]));
+  function mobileMapSVG() {
+    const V = ZOOM[GALLERIES[0].country];
+    const pins = GALLERIES.map((g, i) => {
+      const up = LABEL[g.city] !== "below";
+      return `<g class="gx__pin gm__pin" data-i="${i}" transform="translate(${px(g.lng)} ${py(g.lat)})"><g class="gm__s">
+        <circle class="ring" r=".9"/><circle class="dot" r=".75"/>
+        <text y="${up ? -1.9 : 3.5}" text-anchor="middle">${escapeHtml(g.city)}</text></g></g>`;
+    }).join("");
+    return `<svg viewBox="${V.x} ${V.y} ${V.w} ${V.h}" preserveAspectRatio="xMidYMid slice">
+      <image href="images/world-dots.svg" x="0" y="0" width="360" height="128"/>${pins}</svg>`;
+  }
+
   function initGaleriesPage() {
     const box = document.getElementById("gx");
     if (!box) return;
@@ -81,9 +96,7 @@
     box.innerHTML = `
       <h2 class="gx__title">${t("Galeries")}<sup>${GALLERIES.length}</sup></h2>
       <div class="gx__map">${mapSVG()}</div>
-      <div class="gx__maps">${ZOOMS.map((z) => `
-        <figure class="gx__zoom"><figcaption>${escapeHtml(t(z.name))}<span>${GALLERIES.filter(g => g.country === z.name).length}</span></figcaption>${mapSVG(z.view, z.name)}</figure>`).join("")}
-      </div>
+      <figure class="gm" aria-hidden="true"><figcaption class="gm__cap"></figcaption>${mobileMapSVG()}</figure>
       <div class="gx__acc" role="list">${GALLERIES.map((g, i) => `
         <article class="gx__panel${i === 0 ? " is-open" : ""}" id="galerie-${i}" data-i="${i}" role="listitem" tabindex="0">
           <span class="gx__num">${String(i + 1).padStart(2, "0")}</span>
@@ -102,6 +115,11 @@
           </div>
           <div class="gx__foot" aria-hidden="true"><span class="gx__coords">${coords(g)}</span><span class="gx__big">${String(i + 1).padStart(2, "0")}</span></div>
         </article>`).join("")}
+      </div>
+      <div class="gm__nav" aria-hidden="true">
+        <button class="gm__arrow" type="button" data-d="-1" tabindex="-1"><svg viewBox="0 0 16 16"><path d="M10 3 5 8l5 5"/></svg></button>
+        <span class="gm__count"><b>01</b> / ${String(GALLERIES.length).padStart(2, "0")}</span>
+        <button class="gm__arrow" type="button" data-d="1" tabindex="-1"><svg viewBox="0 0 16 16"><path d="m6 3 5 5-5 5"/></svg></button>
       </div>`;
 
     // carte et fiches reliées : survoler l'une allume l'autre ; un clic sur un point mène à la fiche
@@ -122,6 +140,59 @@
       p.addEventListener("click", go);
       p.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } });
     });
+
+    // téléphone : les galeries défilent au doigt (cartes) ; celle du milieu s'allume sur la carte,
+    // qui se recadre sur son pays ; toucher un point amène sa carte ; flèches et compteur en dessous
+    const phone = matchMedia("(max-width: 760px)"), strip = box.querySelector(".gx__acc");
+    const gm = box.querySelector(".gm svg"), cap = box.querySelector(".gm__cap"), count = box.querySelector(".gm__count b");
+    const sGroups = [...box.querySelectorAll(".gm__s")];
+    let cur = -1, view = { ...ZOOM[GALLERIES[0].country] }, anim = 0;
+    const setView = (v) => {
+      gm.setAttribute("viewBox", `${v.x} ${v.y} ${v.w} ${v.h}`);
+      const k = v.w / VIEW.w * 2.6;
+      sGroups.forEach(g => g.setAttribute("transform", `scale(${k})`));
+    };
+    const zoomTo = (to) => {
+      cancelAnimationFrame(anim);
+      const from = { ...view }, t0 = performance.now(), D = matchMedia("(prefers-reduced-motion: reduce)").matches ? 1 : 750;
+      const step = (now) => {
+        const k = Math.min(1, (now - t0) / D), e = k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+        for (const key of ["x", "y", "w", "h"]) view[key] = from[key] + (to[key] - from[key]) * e;
+        setView(view);
+        if (k < 1) anim = requestAnimationFrame(step);
+      };
+      anim = requestAnimationFrame(step);
+    };
+    const activate = (i) => {
+      if (i === cur) return;
+      cur = i;
+      const g = GALLERIES[i];
+      open(i);
+      pins.forEach((p) => p.classList.toggle("is-hot", +p.dataset.i === i && p.classList.contains("gm__pin")));
+      cap.innerHTML = `${escapeHtml(t(g.country))}<span>${GALLERIES.filter(x => x.country === g.country).length}</span>`;
+      count.textContent = String(i + 1).padStart(2, "0");
+      zoomTo(ZOOM[g.country]);
+    };
+    const center = (i, smooth = true) => {
+      const c = cards[i];
+      strip.scrollTo({ left: c.offsetLeft - (strip.clientWidth - c.offsetWidth) / 2, behavior: smooth ? "smooth" : "auto" });
+    };
+    let ticking = false;
+    strip.addEventListener("scroll", () => {
+      if (!phone.matches || ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        ticking = false;
+        const mid = strip.scrollLeft + strip.clientWidth / 2;
+        let best = 0, bd = Infinity;
+        cards.forEach((c, k) => { const d = Math.abs(c.offsetLeft + c.offsetWidth / 2 - mid); if (d < bd){ bd = d; best = k; } });
+        activate(best);
+      });
+    }, { passive: true });
+    box.querySelectorAll(".gm__pin").forEach((p) => p.addEventListener("click", () => center(+p.dataset.i)));
+    box.querySelectorAll(".gm__arrow").forEach((b) => b.addEventListener("click", () => center(Math.max(0, Math.min(cards.length - 1, cur + +b.dataset.d)))));
+    if (phone.matches){ setView(view); activate(0); }
+    phone.addEventListener("change", () => { if (phone.matches){ cur = -1; setView(view); activate(0); center(0, false); } });
 
     // les volets tiennent en entier dans le premier écran : la carte prend la hauteur qui reste (titre au-dessus)
     const map = box.querySelector(".gx__map svg"), acc = box.querySelector(".gx__acc");
