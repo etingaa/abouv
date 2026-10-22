@@ -292,6 +292,24 @@
     .viewSwitch, .tlFoot, .tlNav, .tlHint, .expoMapWrap{ display:none !important; }
 
     .xsum{ margin:20px 0 96px; }
+    /* pays dessinés : silhouette fine, un point par ville */
+    .xmaps{ display:flex; flex-wrap:nowrap; align-items:flex-end; gap:clamp(20px, 3.4vw, 56px); overflow-x:auto; scrollbar-width:none; padding-bottom:4px; }
+    .xmap{ margin:0; display:flex; flex-direction:column; gap:12px; }
+    .xmap{ flex:none; }
+    .xmap__svg{ display:block; height:clamp(56px, 7vw, 104px); width:auto; overflow:visible; }
+    .xmap:first-child .xmap__svg{ height:clamp(150px, 19vw, 270px); }
+    .xmap__land{ fill:rgba(255,255,255,.05); stroke:rgba(255,255,255,.75); stroke-width:.6; stroke-linejoin:round; vector-effect:non-scaling-stroke; transition:fill .3s ease; }
+    .xmap:hover .xmap__land, .xmap.is-on .xmap__land{ fill:rgba(255,255,255,.11); }
+    .xdot{ cursor:pointer; outline:none; }
+    .xdot__halo{ fill:transparent; }
+    .xdot__pt{ fill:var(--accent); transition:r .2s ease, fill .2s ease; }
+    .xdot:hover .xdot__pt, .xdot:focus-visible .xdot__pt, .xdot.is-on .xdot__pt{ fill:#fff; }
+    .xmap figcaption{ display:flex; align-items:baseline; gap:10px; min-height:22px; }
+    .xmap__name{ padding:0; border:0; background:none; cursor:pointer; font:inherit; font-size:15px; color:var(--ink); border-bottom:1px solid transparent; }
+    .xmap__name:hover, .xmap.is-on .xmap__name{ border-bottom-color:var(--ink); }
+    .xmap__n{ font-size:13px; color:var(--ink-faint); }
+    .xmap__city{ font-size:13px; color:var(--accent); }
+
     .xhead{ display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:12px 40px; }
     .xhead__years{
       margin:0; font-size:clamp(64px, 11vw, 170px); font-weight:600; line-height:.85; letter-spacing:-.045em; color:var(--ink);
@@ -315,12 +333,16 @@
     .xpill:hover{ border-color:var(--ink); }
     .xpill[aria-pressed="true"]{ background:#f4f1ea; border-color:#f4f1ea; color:#0b1120; }
     .xpill[aria-pressed="true"] b{ background:#0b1120; color:#f4f1ea; }
+    .xpill--q{ border-color:var(--accent); }
 
     /* les villes défilent lentement sous l'en-tête */
     .xrun{ margin:56px calc(50% - 50vw) 0; overflow:hidden; border-top:1px solid rgba(var(--ink-rgb),.12); border-bottom:1px solid rgba(var(--ink-rgb),.12); padding:18px 0; }
     .xrun__track{ display:flex; width:max-content; animation:xrun 60s linear infinite; }
-    .xrun__track span{ font-size:clamp(20px, 2vw, 28px); color:rgba(var(--ink-rgb),.55); white-space:nowrap; }
-    .xrun__track span::after{ content:"✦"; margin:0 28px; font-size:.5em; vertical-align:middle; color:var(--accent); }
+    .xrun:hover .xrun__track{ animation-play-state:paused; }
+    .xrun__dup{ display:contents; }
+    .xrun__c{ padding:0; border:0; background:none; cursor:pointer; font:inherit; font-size:clamp(20px, 2vw, 28px); color:rgba(var(--ink-rgb),.55); white-space:nowrap; transition:color .2s ease; }
+    .xrun__c::after{ content:"✦"; display:inline-block; margin:0 28px; font-size:.5em; vertical-align:middle; color:var(--accent); }
+    .xrun__c:hover, .xrun__c.is-on{ color:var(--ink); }
     @keyframes xrun{ to{ transform:translateX(-50%); } }
     @media (prefers-reduced-motion: reduce){ .xrun__track{ animation:none; } }
 
@@ -374,6 +396,9 @@
       .xpill{ height:42px; padding:0 6px 0 16px; font-size:14px; }
       .xpill b{ min-width:28px; height:28px; }
       .xrun{ margin-top:36px; }
+      .xmaps{ gap:20px 28px; }
+      .xmap__svg{ height:44px; }
+      .xmap:first-child .xmap__svg{ height:120px; }
       .tlYear{ grid-template-columns:1fr !important; grid-template-areas:"axis" "top" "bottom" !important; }
       .tlAxis{ position:static !important; padding:20px 0 4px; }
       .tlCard{ grid-template-columns:1fr; padding:14px 0; }
@@ -470,6 +495,7 @@
   </div>
 
   <script src="expos-data.js?v=20261022n"></script>
+  <script src="expos-shapes.js?v=20261024m"></script>
   <script>
     const expos = window.EXPOS || [];
 
@@ -685,32 +711,78 @@
        ========================= */
 
     // en tête : « 40 expositions, 1992 — 2024 » et les trois types, cliquables (même filtre que l'onglet Type)
-    // en tête : la période en très grand, des pastilles pour filtrer par type, et les villes qui défilent
+    // silhouette d'un pays, avec un point par ville où elle a exposé (cliquable)
+    function countrySVG(country, byCity, zoom = 1){   // zoom : petites silhouettes -> points plus gros
+      const sh = (window.EXPO_SHAPES || {})[country];
+      if (!sh) return "";
+      const pos = window.EXPO_CITIES || {};
+      const [lo0, , , la1] = sh.box;
+      const dots = Object.keys(byCity).filter(c => pos[c]).map(c => {
+        const [la, lo] = pos[c];
+        const x = (lo - lo0) * sh.k * sh.s, y = (la1 - la) * sh.s;
+        const on = filters.q.toLowerCase() === c.toLowerCase();
+        return `<g class="xdot${on ? " is-on" : ""}" data-city="${escapeHtml(c)}" tabindex="0" role="button" aria-label="${escapeHtml(t(c))} : ${byCity[c]} ${t(byCity[c] > 1 ? "expositions" : "exposition")}">
+          <circle class="xdot__halo" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(5 * zoom).toFixed(1)}"/><circle class="xdot__pt" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${((1.3 + Math.sqrt(byCity[c]) * .55) * zoom).toFixed(1)}"/></g>`;
+      }).join("");
+      return `<svg class="xmap__svg" viewBox="-6 -6 ${sh.w + 12} ${sh.h + 12}" aria-hidden="false"><path class="xmap__land" d="${sh.d}"/>${dots}</svg>`;
+    }
+
+    // en tête : les pays dessinés (villes cliquables), des pastilles pour filtrer par type, et les villes qui défilent
     function renderSummary(n){
       const box = document.getElementById("xsum");
       const list = window.EXPOS || [];
-      const shown = cards.filter(c => matches(c.expo)).map(c => c.expo);
-      const base = shown.length ? shown : list;
-      const y0 = Math.min(...base.map(e => e.year)), y1 = Math.max(...base.map(e => e.year));
       const count = (ty) => list.filter(e => e.type === ty).length;
       const pill = (ty, label, k) => `<button class="xpill" type="button" data-type="${ty}" aria-pressed="${ty ? filters.type.has(ty) : filters.type.size === 0}">${label}<b>${k}</b></button>`;
-      const cities = [...new Set(base.flatMap(e => String(e.city).split(/,\s*/)))];
-      const run = cities.map(c => `<span>${escapeHtml(t(c))}</span>`).join("");
+      const byCountry = {};
+      list.forEach(e => { (byCountry[e.country] = byCountry[e.country] || {})[e.city] = (byCountry[e.country][e.city] || 0) + 1; });
+      const countries = Object.keys(byCountry).sort((a, b) => Object.values(byCountry[b]).reduce((x, y) => x + y) - Object.values(byCountry[a]).reduce((x, y) => x + y));
+      const cities = [...new Set(list.map(e => e.city))];
+      const run = cities.map(c => `<button type="button" class="xrun__c${filters.q.toLowerCase() === c.toLowerCase() ? " is-on" : ""}" data-city="${escapeHtml(c)}">${escapeHtml(t(c))}</button>`).join("");
       box.innerHTML = `
-        <div class="xhead">
-          <p class="xhead__years">${y0}<i>—</i>${y1}</p>
-          <p class="xhead__n"><b>${n}</b> ${t(n > 1 ? "expositions" : "exposition")}</p>
-        </div>
+        <div class="xmaps">${countries.map((c, ci) => {
+          const k = Object.values(byCountry[c]).reduce((x, y) => x + y);
+          return `<figure class="xmap${filters.country.has(c) ? " is-on" : ""}" data-country="${escapeHtml(c)}">
+            ${countrySVG(c, byCountry[c], ci === 0 ? 1 : 2.4)}
+            <figcaption><button type="button" class="xmap__name" data-country="${escapeHtml(c)}">${escapeHtml(t(c))}</button><span class="xmap__n">${k}</span>
+              <span class="xmap__city" aria-live="polite"></span></figcaption>
+          </figure>`;
+        }).join("")}</div>
         <div class="xpills" role="group" aria-label="${t("Type")}">
           ${pill("", t("Toutes"), list.length)}${pill("solo", t("Personnelles"), count("solo"))}${pill("group", t("Collectives"), count("group"))}${pill("salon", t("Salons"), count("salon"))}
+          ${filters.q ? `<button class="xpill xpill--q" type="button" data-clear="q">${escapeHtml(t(filters.q))}<b>×</b></button>` : ""}
         </div>
-        <div class="xrun" aria-hidden="true"><div class="xrun__track">${run}${run}</div></div>`;
-      box.querySelectorAll(".xpill").forEach(b => b.addEventListener("click", () => {
-        const ty = b.dataset.type;
-        filters.type.clear();
-        if (ty) filters.type.add(ty);
+        <div class="xrun"><div class="xrun__track">${run}<span class="xrun__dup" aria-hidden="true">${run}</span></div></div>`;
+
+      const goCity = (c) => {
+        filters.q = filters.q.toLowerCase() === c.toLowerCase() ? "" : c;
+        filters.country.clear();
+        els.q.value = filters.q;
+        apply(true);
+        if (filters.q) document.getElementById("tl").scrollIntoView({ behavior: "smooth", block: "start" });
+      };
+      box.querySelectorAll(".xpill[data-type]").forEach(b => b.addEventListener("click", () => {
+        filters.type.clear(); if (b.dataset.type) filters.type.add(b.dataset.type); apply(true);
+      }));
+      box.querySelectorAll(".xmap__name").forEach(b => b.addEventListener("click", () => {
+        const c = b.dataset.country;
+        if (filters.country.has(c)) filters.country.delete(c); else { filters.country.clear(); filters.country.add(c); }
+        filters.q = ""; els.q.value = "";
         apply(true);
       }));
+      box.querySelectorAll(".xdot").forEach(d => {
+        const cap = d.closest(".xmap").querySelector(".xmap__city");
+        const c = d.dataset.city;
+        const n = (window.EXPOS || []).filter(e => e.city === c).length;
+        const show = () => { cap.textContent = `${t(c)} · ${n}`; };
+        d.addEventListener("mouseenter", show); d.addEventListener("focus", show);
+        d.addEventListener("mouseleave", () => { cap.textContent = ""; }); d.addEventListener("blur", () => { cap.textContent = ""; });
+        d.addEventListener("click", () => goCity(c));
+        d.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " "){ e.preventDefault(); goCity(c); } });
+      });
+      box.querySelectorAll(".xrun__c").forEach(b => b.addEventListener("click", () => goCity(b.dataset.city)));
+      box.querySelectorAll(".xrun__dup button").forEach(b => b.tabIndex = -1);
+      const qc = box.querySelector("[data-clear=q]");
+      if (qc) qc.addEventListener("click", () => goCity(filters.q));
     }
 
     function apply(fromFilter){
