@@ -123,5 +123,15 @@
       p.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } });
     });
 
+    // les volets tiennent en entier dans le premier écran : la carte prend la hauteur qui reste (titre au-dessus)
+    const map = box.querySelector(".gx__map svg"), acc = box.querySelector(".gx__acc");
+    const fit = () => {
+      if (innerWidth <= 760) { map.style.maxHeight = ""; return; }
+      const gap = parseFloat(getComputedStyle(map.parentNode).marginBottom) || 0;
+      const room = innerHeight - (map.getBoundingClientRect().top + scrollY) - gap - acc.offsetHeight - 28;
+      map.style.maxHeight = Math.max(100, room) + "px";
+    };
+    addEventListener("resize", fit); fit();
+
   }
 })();
