@@ -1,6 +1,6 @@
 # annickbouvattier — site web
 
-Site statique (HTML/CSS/JS, sans framework ni étape de build) : `index` (accueil : galerie 3D), `accueil`
+Site statique (HTML/CSS/JS, sans framework ni étape de build) : `index` (accueil : galerie 3D), `classique`
 (classique : accueil sans 3D, repli automatique), `portfolio`, `galeries`, `expositions`, `apropos` (avec la presse ; `presse.html` redirige), `contact`, `404`. Style commun dans `styles.css`, police Archivo
 hébergée dans `fonts/`.
 
@@ -10,7 +10,7 @@ hébergée dans `fonts/`.
 |---|---|
 | **Portfolio** | Google Sheet publié en CSV (URL et lecture dans `sheet.js`, constante `SHEET_CSV_URL`). Colonnes lues : `Nom`, `Catégorie`, `Technique`, `Format`, `Disponible`, `Jpg`, `Disponible où ?`. |
 | **Galerie 3D** (`index.html`, `galerie.js`, `galerie.css`) | Même Sheet : seulement les œuvres **disponibles** (pas les sculptures), accrochées à leur taille réelle d'après la colonne `Format` (largeur × hauteur en cm). Une ligne sans format lisible est ignorée (message dans la console). |
-| **Livre de l'accueil classique** (`accueil.html`) | Même Sheet : toutes les œuvres, sauf celles avec « non » dans la colonne `Accueil`. Secours : `images/manifest.json`, utilisé seulement si le Sheet est injoignable. |
+| **Livre de l'accueil classique** (`classique.html`) | Même Sheet : toutes les œuvres, sauf celles avec « non » dans la colonne `Accueil`. Secours : `images/manifest.json`, utilisé seulement si le Sheet est injoignable. |
 | **Galeries** | tableau `galleries` dans `script.js` |
 | **Expositions** | tableau `expos` dans `expositions.html` |
 
@@ -27,7 +27,7 @@ Sans miniature, le site retombe sur l'image d'origine (plus lourde, mais elle s'
 ## Galerie 3D
 
 - Three.js est chargé depuis jsDelivr (version épinglée 0.170.0, voir l'`importmap` d'`index.html`).
-- Repli automatique vers `accueil.html` : pas de WebGL, « mouvement réduit » activé dans le système,
+- Repli automatique vers `classique.html` : pas de WebGL, « mouvement réduit » activé dans le système,
   ou galerie pas prête en 10 secondes. Ajouter `?debug` à l'adresse désactive le repli (pour tester).
 - Le décor (murs, sol, plafond, rails) est construit dans `buildRoom()` (`galerie.js`), séparé de l'accrochage :
   c'est la seule fonction à remplacer pour passer à un modèle `.glb` ou à un monde Gaussian splat.
