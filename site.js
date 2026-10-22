@@ -60,8 +60,7 @@
     shade.className = "shade";
     shade.setAttribute("aria-hidden", "true");
     document.body.prepend(shade);
-    const tb = document.querySelector(".toolbar");
-    const stuck = tb && tb.offsetParent ? tb : top;   // barre de filtres masquée -> le header seul
+    const stuck = document.querySelector(".toolbar") || top;
     function setShade(){
       document.documentElement.style.setProperty("--shade-h", Math.max(0, stuck.getBoundingClientRect().bottom) + "px");
     }
