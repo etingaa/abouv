@@ -1435,7 +1435,7 @@ html[data-theme="light"] .xdecade{ -webkit-text-stroke-color:rgba(22,30,56,.8) !
 html[data-theme="light"] .tlCard:hover .tlCard__title{ color:#161e38; }
 html[data-theme="light"] .tlCard::before{ background:linear-gradient(90deg, rgba(22,30,56,.05), rgba(22,30,56,0) 70%); }
 /* galeries : carte en points sombres, titre sur voile clair */
-html[data-theme="light"] .gx__map image{ filter:invert(1) brightness(.35); }
+html[data-theme="light"] .gx__map image, html[data-theme="light"] .gx__zoom image{ filter:invert(1) brightness(.35); }
 html[data-theme="light"] .gx__title{ text-shadow:0 2px 24px rgba(239,235,227,.9); }
 html[data-theme="light"] .gx__title::before{ background:rgba(239,235,227,.5); }
 html[data-theme="light"] .gx__pin text{ fill:rgba(22,30,56,.75); }

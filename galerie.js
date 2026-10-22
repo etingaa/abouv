@@ -52,7 +52,7 @@ const fallback = (reason) => window.__g3dFallback ? window.__g3dFallback(reason)
 
 const $ = (id) => document.getElementById(id);
 const els = {
-  stage: $("stage"), loading: $("loading"), bar: $("progressBar"), hint: $("hint"),
+  stage: $("stage"), ctrl: $("ctrl"), ctrlPlay: $("ctrlPlay"), ctrlSlow: $("ctrlSlow"), ctrlFast: $("ctrlFast"), ctrlSpeed: $("ctrlSpeed"), loading: $("loading"), bar: $("progressBar"), hint: $("hint"),
   tip: $("tip"), tipTitle: $("tipTitle"), tipMeta: $("tipMeta"), tipLink: $("tipLink"), srList: $("srList"),
 };
 
@@ -571,7 +571,7 @@ async function main(){
   /* ---------- promenade : un tour complet du banc en 15 s, le regard tourné vers les murs ----------
      Pas de saut d'une toile à l'autre : le regard tourne en continu avec la marche (vers le mur,
      un peu en avant), les toiles défilent naturellement. */
-  const WANDER = { lap: 20, idle: isMobile ? 20 : 9 };          // secondes par tour ; secondes sans action avant de repartir
+  const WANDER = { lap: 28, idle: isMobile ? 20 : 9 };          // secondes par tour ; secondes sans action avant de repartir
   const ellipse = { rx: 1.45, rz: 1.0 };          // tout près du banc (1,50 × 0,42 m), on en fait vraiment le tour
   const wander = { on: false, theta: Math.PI };
   const LOOP_SPEED = Math.PI * (3 * (ellipse.rx + ellipse.rz) - Math.sqrt((3 * ellipse.rx + ellipse.rz) * (ellipse.rx + 3 * ellipse.rz))) / WANDER.lap;   // m/s
@@ -579,7 +579,7 @@ async function main(){
   function wanderGaze(th){
     const p = onEllipse(th);
     const out = new THREE.Vector2(p.x / (ellipse.rx * ellipse.rx), p.z / (ellipse.rz * ellipse.rz)).normalize();  // normale : vers le mur
-    const walk = new THREE.Vector2(ellipse.rx * Math.sin(th), -ellipse.rz * Math.cos(th)).normalize();             // sens de la marche (θ décroît)
+    const walk = new THREE.Vector2(-ellipse.rx * Math.sin(th), ellipse.rz * Math.cos(th)).normalize();             // sens de la marche (θ croît : on tourne vers la droite)
     const dx = out.x * .8 + walk.x * .35, dz = out.y * .8 + walk.y * .35;
     return { yaw: Math.atan2(-dx, -dz), pitch: -.02 };
   }
@@ -589,23 +589,47 @@ async function main(){
     return best;
   }
   let lastInput = 0, move = null;
+
+  /* ---------- pause / vitesse (boutons en bas à gauche ; la vitesse est mémorisée) ---------- */
+  const SPEEDS = [.5, .75, 1, 1.5, 2];
+  const ctrl = { paused: false, i: 2, get tempo(){ return SPEEDS[this.i]; } };
+  try { const k = SPEEDS.indexOf(parseFloat(localStorage.getItem("abouv:g3d-speed"))); if (k >= 0) ctrl.i = k; } catch (_) {}
+  function ctrlUI(){
+    if (!els.ctrl) return;
+    els.ctrlPlay.setAttribute("aria-pressed", String(ctrl.paused));
+    els.ctrlPlay.setAttribute("aria-label", tr(ctrl.paused ? "Reprendre la visite" : "Mettre en pause"));
+    els.ctrlSpeed.textContent = (document.documentElement.lang === "fr" ? String(ctrl.tempo).replace(".", ",") : String(ctrl.tempo)) + "×";
+    els.ctrlSlow.disabled = ctrl.i === 0; els.ctrlFast.disabled = ctrl.i === SPEEDS.length - 1;
+  }
+  if (els.ctrl){
+    const speed = (d) => { ctrl.i = Math.max(0, Math.min(SPEEDS.length - 1, ctrl.i + d)); try { localStorage.setItem("abouv:g3d-speed", ctrl.tempo); } catch (_) {} ctrlUI(); };
+    els.ctrlPlay.addEventListener("click", () => {
+      ctrl.paused = !ctrl.paused; ctrlUI();
+      if (!ctrl.paused && !wander.on && !move){ lastInput = 0; startWander(); }   // reprise après un regard à la main
+    });
+    els.ctrlSlow.addEventListener("click", () => speed(-1));
+    els.ctrlFast.addEventListener("click", () => speed(1));
+    ctrlUI();
+    els.ctrl.hidden = false;
+  }
   function startWander(){
     hideTip();
     const th = nearestTheta(view.pos);
     const start = onEllipse(th);
     const gz = wanderGaze(th);
     travel({ pos: start, yaw: gz.yaw, pitch: gz.pitch }, () => { wander.on = true; wander.theta = th; },
-      Math.max(1.6, view.pos.distanceTo(start) / .45), LOOP_SPEED);
+      Math.max(1.6, view.pos.distanceTo(start) / .45), LOOP_SPEED * ctrl.tempo);
   }
 
   /* ---------- déplacements choisis ---------- */
   // endSpeed (m/s) : on arrive en marchant à cette vitesse au lieu de s'arrêter (enchaînement avec la promenade)
-  function travel(to, onDone, dur, endSpeed){
+  // turn : -1 = tourner la tête vers la droite (même sens que la promenade), même si c'est le plus long
+  function travel(to, onDone, dur, endSpeed, turn){
     const dist = view.pos.distanceTo(to.pos);
     const d = (dur ?? (1.2 + Math.min(1.6, dist * .35)));
     move = { m: endSpeed && dist > .05 ? Math.min(2.5, endSpeed * d / dist) : null,
       from: { pos: view.pos.clone(), yaw: view.yaw, pitch: view.pitch },
-      to, dyaw: angleDiff(view.yaw, to.yaw ?? view.yaw),
+      to, dyaw: (() => { let d = angleDiff(view.yaw, to.yaw ?? view.yaw); if (turn < 0 && d > .2) d -= Math.PI * 2; if (turn > 0 && d < -.2) d += Math.PI * 2; return d; })(),
       t0: performance.now(), dur: (dur ?? (1.2 + Math.min(1.6, dist * .35))) * 1000, onDone,
     };
   }
@@ -760,7 +784,7 @@ async function main(){
       // allure de marche : légère poussée à chaque pas
       const surge = 1;
       const before = onEllipse(wander.theta);
-      wander.theta -= dt * Math.PI * 2 / WANDER.lap * surge;
+      if (!ctrl.paused) wander.theta += dt * Math.PI * 2 / WANDER.lap * surge * ctrl.tempo;
       view.pos.copy(onEllipse(wander.theta));
       stride += before.distanceTo(view.pos) / STEP;
       // le regard suit la marche, avec les petits mouvements de tête de quelqu'un qui regarde autour de lui
@@ -768,7 +792,7 @@ async function main(){
       // regard stable, qui tourne avec la marche (pas de va-et-vient de la tête)
       view.yaw += angleDiff(view.yaw, gz.yaw) * Math.min(1, dt * 3);
       view.pitch += (gz.pitch - view.pitch) * Math.min(1, dt * 2);
-      walking = 1;
+      walking = ctrl.paused ? 0 : 1;
     } else if (!drag && lastInput && now - lastInput > WANDER.idle * 1000){
       lastInput = 0;
       startWander();          // plus personne ne touche à rien : on reprend la promenade
@@ -798,7 +822,8 @@ async function main(){
   await Promise.race([firstLoaded, new Promise(r => setTimeout(r, 2500))]);
   const th0 = Math.PI;                                   // côté porte de la boucle
   const gz0 = wanderGaze(th0);
-  travel({ pos: onEllipse(th0), yaw: gz0.yaw, pitch: gz0.pitch }, () => { wander.on = true; wander.theta = th0; }, 4.5, LOOP_SPEED);
+  // on entre, on se retourne vers la droite pour voir le nom de l'artiste, et on continue dans le même sens
+  travel({ pos: onEllipse(th0), yaw: gz0.yaw, pitch: gz0.pitch }, () => { wander.on = true; wander.theta = th0; }, 6, LOOP_SPEED * ctrl.tempo, -1);
   // (plus de bulle d'aide : le curseur suffit)
   ready.then(() => els.loading.classList.add("is-done"));
 }

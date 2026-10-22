@@ -41,24 +41,31 @@
   // carte en points (images/world-dots.svg : projection simple, x = lon + 180, y = 72 - lat),
   // recadrée sur l'Amérique du Nord et l'Europe
   const VIEW = { x: 44, y: 12, w: 176, h: 42 };
+  // téléphone : deux cartes zoomées, une par pays (la carte du monde y serait illisible)
+  const ZOOMS = [
+    { name: "États-Unis", view: { x: 47, y: 26, w: 50, h: 20 } },
+    { name: "France", view: { x: 168, y: 16, w: 30, h: 15 } },
+  ];
   const px = (lng) => lng + 180, py = (lat) => 72 - lat;
   // côté de l'étiquette pour éviter les chevauchements (villes proches)
   const LABEL = { "Paris": "above", "Lyon": "below", "Laguna Beach": "below", "Carmel-by-the-Sea": "above", "New Orleans": "below" };
 
-  function mapSVG() {
+  function mapSVG(V = VIEW, only) {
     const home = GALLERIES.find((g) => g.city === "Paris") || GALLERIES[0];
-    const arcs = GALLERIES.filter((g) => g !== home).map((g) => {
+    const arcs = only ? "" : GALLERIES.filter((g) => g !== home).map((g) => {
       const x1 = px(home.lng), y1 = py(home.lat), x2 = px(g.lng), y2 = py(g.lat);
       const mx = (x1 + x2) / 2, my = Math.min(y1, y2) - Math.abs(x2 - x1) * .18;
       return `<path class="gx__arc" d="M${x1},${y1} Q${mx},${my} ${x2},${y2}"/>`;
     }).join("");
+    const k = V.w / VIEW.w;              // taille des repères proportionnelle au cadrage
     const pins = GALLERIES.map((g, i) => {
+      if (only && g.country !== only) return "";
       const x = px(g.lng), y = py(g.lat), up = LABEL[g.city] !== "below";
       return `<g class="gx__pin" data-i="${i}" tabindex="0" role="button" aria-label="${escapeHtml(g.name)}, ${escapeHtml(g.city)}">
-        <circle class="ring" cx="${x}" cy="${y}" r=".9"/><circle class="dot" cx="${x}" cy="${y}" r=".75"/>
-        <text x="${x}" y="${up ? y - 1.8 : y + 3.4}" text-anchor="middle">${escapeHtml(g.city)}</text></g>`;
+        <circle class="ring" cx="${x}" cy="${y}" r="${.9 * (only ? k * 2.6 : 1)}"/><circle class="dot" cx="${x}" cy="${y}" r="${.75 * (only ? k * 2.6 : 1)}"/>
+        <text x="${x}" y="${up ? y - (only ? k * 5.4 : 1.8) : y + (only ? k * 9 : 3.4)}" text-anchor="middle"${only ? ` style="font-size:${(k * 5.6).toFixed(2)}px"` : ""}>${escapeHtml(g.city)}</text></g>`;
     }).join("");
-    return `<svg viewBox="${VIEW.x} ${VIEW.y} ${VIEW.w} ${VIEW.h}" role="img" aria-label="${t("Carte des galeries")}">
+    return `<svg viewBox="${V.x} ${V.y} ${V.w} ${V.h}" role="img" aria-label="${t("Carte des galeries")}">
       <image href="images/world-dots.svg" x="0" y="0" width="360" height="128"/>${arcs}${pins}</svg>`;
   }
 
@@ -69,6 +76,9 @@
     box.innerHTML = `
       <h2 class="gx__title">${t("Galeries")}<sup>${GALLERIES.length}</sup></h2>
       <div class="gx__map">${mapSVG()}</div>
+      <div class="gx__maps">${ZOOMS.map((z) => `
+        <figure class="gx__zoom"><figcaption>${escapeHtml(t(z.name))}<span>${GALLERIES.filter(g => g.country === z.name).length}</span></figcaption>${mapSVG(z.view, z.name)}</figure>`).join("")}
+      </div>
       <div class="gx__acc" role="list">${GALLERIES.map((g, i) => `
         <article class="gx__panel${i === 0 ? " is-open" : ""}" id="galerie-${i}" data-i="${i}" role="listitem" tabindex="0">
           <span class="gx__num">${String(i + 1).padStart(2, "0")}</span>
@@ -92,12 +102,14 @@
     // accordéon : une galerie ouverte à la fois (au survol, au clic, au clavier) ; son point s'allume sur la carte
     const pins = [...box.querySelectorAll(".gx__pin")], cards = [...box.querySelectorAll(".gx__panel")];
     const open = (i) => cards.forEach((c, k) => c.classList.toggle("is-open", k === i));
-    const hot = (i, on) => { pins[i].classList.toggle("is-hot", on); if (on) open(i); };
+    // une galerie peut avoir plusieurs points (carte du monde + carte zoomée du téléphone)
+    const hot = (i, on) => { pins.forEach((p) => { if (+p.dataset.i === i) p.classList.toggle("is-hot", on); }); if (on) open(i); };
     cards.forEach((c, i) => {
       c.addEventListener("mouseenter", () => hot(i, true)); c.addEventListener("mouseleave", () => hot(i, false));
       c.addEventListener("focus", () => hot(i, true)); c.addEventListener("click", () => open(i));
     });
-    pins.forEach((p, i) => {
+    pins.forEach((p) => {
+      const i = +p.dataset.i;
       p.addEventListener("mouseenter", () => hot(i, true)); p.addEventListener("mouseleave", () => hot(i, false));
       p.addEventListener("focus", () => hot(i, true)); p.addEventListener("blur", () => hot(i, false));
       const go = () => { open(i); cards[i].scrollIntoView({ behavior: "smooth", block: "center" }); };
