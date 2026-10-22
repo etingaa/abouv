@@ -21,13 +21,44 @@
      "prefetch":[{"where":{"href_matches":"*index.html"},"eagerness":"moderate"}]}
   </script>
   <title>Galeries — Annick Bouvattier</title>
+  <style>
+    /* même esprit que la page Expositions : grand titre, villes qui défilent, pays en grand contour, rangées */
+    .gx__title{ margin:36px 0 40px; font-size:clamp(48px, 8.4vw, 132px); font-weight:700; font-stretch:112%; text-transform:uppercase; letter-spacing:-.01em; line-height:.9; color:var(--ink); }
+    .gx__title sup{ font-size:.2em; font-weight:500; letter-spacing:.06em; vertical-align:top; margin-left:.25em; position:relative; top:.6em; color:var(--ink-faint); font-stretch:100%; }
+    .gx__run{ margin:0 calc(50% - 50vw) 88px; overflow:hidden; padding:22px 0; border-block:1px solid rgba(var(--ink-rgb),.12);
+      -webkit-mask-image:linear-gradient(to right, transparent, #000 8%, #000 92%, transparent); mask-image:linear-gradient(to right, transparent, #000 8%, #000 92%, transparent); }
+    .gx__track{ display:flex; width:max-content; animation:gxrun 50s linear infinite; will-change:transform; }
+    .gx__run:hover .gx__track{ animation-play-state:paused; }
+    .gx__seq{ display:flex; flex:none; }
+    .gx__c{ padding:0 .9em 0 0; border:0; background:none; cursor:pointer; white-space:nowrap; font:inherit; font-size:clamp(22px, 2.4vw, 34px); font-weight:500; text-transform:uppercase; letter-spacing:.06em; color:rgba(var(--ink-rgb),.4); transition:color .2s ease; }
+    .gx__c::after{ content:""; display:inline-block; width:.6em; height:1px; margin-left:.9em; vertical-align:middle; background:rgba(var(--ink-rgb),.3); }
+    .gx__c:hover{ color:var(--ink); }
+    @keyframes gxrun{ to{ transform:translateX(-50%); } }
+    @media (prefers-reduced-motion: reduce){ .gx__track{ animation:none; } }
+
+    .gx__country{ margin:72px 0 0; padding:0; font-size:clamp(56px, 9vw, 140px); font-weight:700; font-stretch:112%; text-transform:uppercase; letter-spacing:-.02em; line-height:.85;
+      color:rgba(255,255,255,.05); -webkit-text-stroke:1.5px #fff; }
+    .gx__country:first-of-type{ margin-top:0; }
+    .gx__row{ display:grid; grid-template-columns:minmax(200px, 1fr) 2fr auto; gap:12px 40px; align-items:baseline;
+      padding:30px 0 34px; border-top:1px solid rgba(var(--ink-rgb),.16); scroll-margin-top:calc(var(--shade-h, 90px) + 24px); transition:background-color .6s ease; }
+    .gx__row:last-child{ border-bottom:1px solid rgba(var(--ink-rgb),.16); }
+    .gx__row.is-flash{ background:rgba(255,255,255,.05); }
+    .gx__city{ margin:0; font-size:clamp(26px, 2.8vw, 40px); font-weight:700; font-stretch:112%; text-transform:uppercase; letter-spacing:0; line-height:1; color:var(--ink); }
+    .gx__name{ margin:0; font-size:clamp(18px, 1.6vw, 22px); font-weight:500; color:var(--ink); }
+    .gx__addr{ margin:6px 0 0; font-size:14px; color:var(--ink-soft); }
+    .gx__expos{ display:inline-block; margin-top:14px; font-size:13px; color:var(--ink-faint); border-bottom:1px solid rgba(var(--ink-rgb),.25); }
+    .gx__expos:hover{ color:var(--ink); border-bottom-color:var(--ink); }
+    .gx__acts{ display:flex; gap:22px; }
+    .gx__acts a{ font-size:12px; font-weight:500; letter-spacing:.08em; text-transform:uppercase; color:var(--ink); border-bottom:1px solid transparent; padding-bottom:2px; white-space:nowrap; transition:border-color .2s ease; }
+    .gx__acts a:hover{ border-bottom-color:var(--accent); }
+    @media (max-width:760px){
+      .gx__run{ margin-bottom:48px; }
+      .gx__row{ grid-template-columns:1fr; gap:10px; padding:22px 0 26px; }
+      .gx__acts{ margin-top:6px; }
+    }
+  </style>
 
 
-  <!-- Leaflet -->
-  <link rel="stylesheet"
-        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-        crossorigin="" />
 
   <link rel="stylesheet" href="styles.css?v=20261024g">
 
@@ -51,31 +82,8 @@
       </header>
 
       <h1 class="sr-only">Galeries</h1>
-      <!-- Filtres : même barre que le portfolio et les expositions -->
-      <section class="toolbar" aria-label="Filtres">
-        <div class="toolbar__row">
-          <div class="tabs" id="groups" aria-label="Filtrer par">
-            <div class="group" data-group="country"><button class="tab tab--group" type="button" data-group="country" aria-expanded="false" aria-controls="subtabs"><span class="tab__name">Pays</span><span class="tab__value" translate="no"></span><svg class="tab__caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg></button><button class="group__clear" type="button" aria-label="Retirer ce filtre" title="Retirer ce filtre" hidden><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 2l6 6M8 2l-6 6"/></svg></button></div>
-            <div class="group" data-group="city"><button class="tab tab--group" type="button" data-group="city" aria-expanded="false" aria-controls="subtabs"><span class="tab__name">Ville</span><span class="tab__value" translate="no"></span><svg class="tab__caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg></button><button class="group__clear" type="button" aria-label="Retirer ce filtre" title="Retirer ce filtre" hidden><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 2l6 6M8 2l-6 6"/></svg></button></div>
-          </div>
-          <label class="search">
-            <svg class="search__icon" viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="m13 13 4 4"/></svg>
-            <input id="q" type="search" placeholder="Rechercher" aria-label="Rechercher une galerie" />
-            <span class="sr-only" id="count" aria-live="polite"></span>
-          </label>
-        </div>
-        <div class="subtabs" id="subtabs" translate="no" hidden></div>
-      </section>
-
-      <!-- Carte + liste, reliées : survoler l'une met l'autre en évidence -->
-      <div class="galCard">
-        <section class="galMap" aria-label="Carte des galeries">
-          <div id="map" class="siteMap"></div>
-        </section>
-        <aside class="galSide" aria-label="Liste des galeries">
-          <div class="galList" id="list" translate="no"></div>
-        </aside>
-      </div>
+      <!-- Galeries : titre, villes qui défilent (cliquables), puis une rangée par galerie, groupées par pays (script.js) -->
+      <div class="gx" id="gx" translate="no"></div>
 
     <footer class="bottom">
         <div class="bottom__left">
@@ -89,14 +97,10 @@
   </div>
 
 
-  <!-- Leaflet JS AVANT ton script -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-          crossorigin=""></script>
 
   <!-- expositions (pour « 4 expositions ici depuis 2005 »), puis la logique de la page -->
   <script src="expos-data.js?v=20261022n"></script>
-  <script src="./script.js?v=20261022n"></script>
+  <script src="./script.js?v=20261024p"></script>
 
 </body>
 </html>
