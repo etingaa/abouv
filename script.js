@@ -40,7 +40,7 @@
     const text = n > 1
       ? `${n} ${t("expositions")} ${t("ici depuis")} ${list[0].year}`
       : `1 ${t("exposition")} ${t("ici en")} ${list[0].year}`;
-    return `<a class="gx__expos" href="expositions?q=${encodeURIComponent(g.expos.title)}">${escapeHtml(text)} →</a>`;
+    return `<a class="gx__expos" href="expositions?q=${encodeURIComponent(g.expos.title)}">${escapeHtml(text)}</a>`;
   }
 
   // carte en points (images/world-dots.svg : projection simple, x = lon + 180, y = 72 - lat),
@@ -108,8 +108,8 @@
             <p class="gx__addr">${escapeHtml(g.address)}</p>
             ${exposLine(g)}
             <div class="gx__acts">
-              ${g.website ? `<a href="${escapeHtml(g.website)}" target="_blank" rel="noopener noreferrer">${t("Site")} ↗</a>` : ""}
-              <a href="https://www.google.com/maps/dir/?api=1&destination=${g.lat},${g.lng}" target="_blank" rel="noopener noreferrer">${t("Itinéraire")} ↗</a>
+              ${g.website ? `<a href="${escapeHtml(g.website)}" target="_blank" rel="noopener noreferrer">${t("Site")}</a>` : ""}
+              <a href="https://www.google.com/maps/dir/?api=1&destination=${g.lat},${g.lng}" target="_blank" rel="noopener noreferrer">${t("Itinéraire")}</a>
               ${g.phone ? `<a href="tel:${g.phone.replace(/[^\d+]/g, "")}">${t("Appeler")}</a>` : ""}
             </div>
           </div>
