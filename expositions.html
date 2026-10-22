@@ -13,7 +13,7 @@
   <meta property="og:description" content="Expositions personnelles, collectives et salons d'Annick Bouvattier depuis 1992." />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <script src="i18n.js?v=20261024k"></script>
-  <script src="site.js?v=20261023g"></script>
+  <script src="site.js?v=20261024n"></script>
   <link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="styles.css?v=20261024g" />
   <!-- pages préchargées au survol d'un lien : changement de page quasi instantané (la galerie 3D est seulement préchargée) -->
@@ -292,7 +292,8 @@
     .viewSwitch, .tlFoot, .tlNav, .tlHint, .expoMapWrap{ display:none !important; }
 
     .xsum{ margin:20px 0 96px; }
-    /* pays dessinés : silhouette fine, un point par ville */
+    .expositions .toolbar{ display:none !important; }   /* plus de barre de filtres : pastilles et villes suffisent */
+    /* (pays dessinés : retirés) */
     .xmaps{ display:flex; flex-wrap:nowrap; align-items:flex-end; gap:clamp(20px, 3.4vw, 56px); overflow-x:auto; scrollbar-width:none; padding-bottom:4px; }
     .xmap{ margin:0; display:flex; flex-direction:column; gap:12px; }
     .xmap{ flex:none; }
@@ -495,7 +496,6 @@
   </div>
 
   <script src="expos-data.js?v=20261022n"></script>
-  <script src="expos-shapes.js?v=20261024m"></script>
   <script>
     const expos = window.EXPOS || [];
 
@@ -739,14 +739,6 @@
       const cities = [...new Set(list.map(e => e.city))];
       const run = cities.map(c => `<button type="button" class="xrun__c${filters.q.toLowerCase() === c.toLowerCase() ? " is-on" : ""}" data-city="${escapeHtml(c)}">${escapeHtml(t(c))}</button>`).join("");
       box.innerHTML = `
-        <div class="xmaps">${countries.map((c, ci) => {
-          const k = Object.values(byCountry[c]).reduce((x, y) => x + y);
-          return `<figure class="xmap${filters.country.has(c) ? " is-on" : ""}" data-country="${escapeHtml(c)}">
-            ${countrySVG(c, byCountry[c], ci === 0 ? 1 : 2.4)}
-            <figcaption><button type="button" class="xmap__name" data-country="${escapeHtml(c)}">${escapeHtml(t(c))}</button><span class="xmap__n">${k}</span>
-              <span class="xmap__city" aria-live="polite"></span></figcaption>
-          </figure>`;
-        }).join("")}</div>
         <div class="xpills" role="group" aria-label="${t("Type")}">
           ${pill("", t("Toutes"), list.length)}${pill("solo", t("Personnelles"), count("solo"))}${pill("group", t("Collectives"), count("group"))}${pill("salon", t("Salons"), count("salon"))}
           ${filters.q ? `<button class="xpill xpill--q" type="button" data-clear="q">${escapeHtml(t(filters.q))}<b>×</b></button>` : ""}
