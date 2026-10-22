@@ -141,3 +141,32 @@ html[data-theme="light"] .g3d-ctrl button:hover{ background:rgba(22,30,56,.08); 
 html[data-theme="light"] .g3d-ctrl__sep{ background:rgba(22,30,56,.2); }
 html[data-theme="light"] .g3d-ctrl__play[aria-pressed="true"]{ color:#c84034; }
 @media (max-width:760px){ .g3d-ctrl{ left:50%; transform:translateX(-50%); bottom:calc(18px + env(safe-area-inset-bottom)); } }
+
+/* présentation de l'artiste : un petit bouton « L'artiste » au-dessus des commandes, qui déplie un court texte */
+.g3d-about{ position:fixed; z-index:3; left:max(20px, calc(50vw - 700px + 48px)); bottom:60px; max-width:min(440px, calc(100vw - 40px)); pointer-events:auto; color:#efe9df; }
+.g3d-about summary{
+  display:inline-flex; align-items:center; gap:8px; height:32px; padding:0 14px; border-radius:999px; cursor:pointer; list-style:none;
+  border:1px solid rgba(239,233,223,.22); background:rgba(8,12,24,.35); -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
+  font-size:11px; font-weight:500; letter-spacing:.14em; text-transform:uppercase;
+}
+.g3d-about summary::-webkit-details-marker{ display:none; }
+.g3d-about summary::after{ content:"+"; font-size:14px; letter-spacing:0; transition:transform .3s ease; }
+.g3d-about[open] summary::after{ transform:rotate(45deg); }
+.g3d-about__panel{
+  position:absolute; left:0; bottom:calc(100% + 10px); width:min(440px, calc(100vw - 40px)); padding:22px 24px; border-radius:14px;
+  border:1px solid rgba(239,233,223,.16); background:rgba(8,12,24,.82); -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px);
+  animation:g3dAbout .35s ease;
+}
+@keyframes g3dAbout{ from{ opacity:0; transform:translateY(6px); } to{ opacity:1; transform:none; } }
+.g3d-about__panel h2{ margin:0 0 12px; font-size:15px; font-weight:700; font-stretch:112%; letter-spacing:.02em; text-transform:uppercase; }
+.g3d-about__panel p{ margin:0; font-size:13.5px; line-height:1.65; color:rgba(239,233,223,.82); }
+.g3d-about__links{ display:flex; gap:20px; margin-top:16px !important; }
+.g3d-about__links a{ font-size:11px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:#efe9df; border-bottom:1px solid rgba(239,233,223,.35); padding-bottom:2px; }
+.g3d-about__links a:hover{ border-bottom-color:#ec7668; }
+html[data-theme="light"] .g3d-about{ color:#161e38; }
+html[data-theme="light"] .g3d-about summary{ border-color:rgba(22,30,56,.2); background:rgba(239,235,227,.55); }
+html[data-theme="light"] .g3d-about__panel{ border-color:rgba(22,30,56,.14); background:rgba(239,235,227,.9); }
+html[data-theme="light"] .g3d-about__panel p{ color:rgba(22,30,56,.8); }
+html[data-theme="light"] .g3d-about__links a{ color:#161e38; border-bottom-color:rgba(22,30,56,.3); }
+@media (max-width:760px){ .g3d-about{ left:16px; bottom:calc(66px + env(safe-area-inset-bottom)); } .g3d-about__panel{ width:calc(100vw - 32px); max-height:60vh; overflow:auto; } }
+@media (prefers-reduced-motion: reduce){ .g3d-about__panel{ animation:none; } }

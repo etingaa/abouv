@@ -67,7 +67,7 @@
   function setupCompactHeader(top, nav){
     // chaque lien : icône + mot (le mot reste lu par les lecteurs d'écran en mode icône)
     nav.querySelectorAll(".nav__link").forEach(a => {
-      const icon = ICONS[(a.getAttribute("href") || "").split(/[?#]/)[0]];
+      const icon = ICONS[(a.getAttribute("href") || "").split(/[?#]/)[0].split("/").pop()];   // aussi depuis oeuvres/
       if (!icon) return;
       const label = a.textContent.trim();
       a.innerHTML = '<svg class="nav__icon" viewBox="0 0 24 24" aria-hidden="true">' + icon + '</svg>' +
@@ -133,7 +133,7 @@
     nav.id = nav.id || "mainNav";
 
     // À propos se décline en trois parties : sous-menu au survol (L'artiste, Presse, Q&A)
-    const about = nav.querySelector('.nav__link[href="apropos.html"]');
+    const about = nav.querySelector('.nav__link[href$="apropos.html"]');
     if (about){
       const item = document.createElement("span");
       item.className = "nav__item";
@@ -143,7 +143,7 @@
       sub.className = "nav__sub";
       [["artiste", "L’artiste"], ["presse", "Presse"], ["questions", "Q&A"]].forEach(([id, label]) => {
         const a = document.createElement("a");
-        a.href = "apropos.html#" + id;
+        a.href = about.getAttribute("href") + "#" + id;
         a.textContent = tr(label);
         sub.appendChild(a);
       });

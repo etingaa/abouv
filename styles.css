@@ -1448,3 +1448,46 @@ html[data-theme="light"] .gx__panel:hover .gx__vcity{ -webkit-text-stroke-color:
 /* à propos : photo en noir et blanc garde son contraste ; couverture presse avec une ombre plus douce */
 html[data-theme="light"] .prx__cover img{ box-shadow:0 24px 60px rgba(22,30,56,.22); }
 html[data-theme="light"] .pub__cover span{ background:rgba(239,235,227,.85); }
+
+/* portfolio : chaque vignette est un lien vers la page de l'œuvre (oeuvres/<slug>.html) */
+body.portfolio a.piece{ display:block; color:inherit; text-decoration:none; }
+
+/* =========================
+   PAGE D'UNE ŒUVRE (oeuvres/<slug>.html, générée par scripts/build-seo.mjs)
+   ========================= */
+.ov{ margin:clamp(8px, 2vh, 24px) 0 clamp(64px, 9vw, 120px); }
+.ov__back{ display:inline-flex; gap:2px; margin-bottom:clamp(20px, 3vh, 36px); font-size:12px; font-weight:500; letter-spacing:.12em; text-transform:uppercase; color:var(--ink); border-bottom:1px solid transparent; padding-bottom:2px; transition:border-color .2s ease; }
+.ov__back:hover{ border-bottom-color:var(--accent); }
+.ov__grid{ display:grid; grid-template-columns:minmax(0, 7fr) minmax(0, 5fr); gap:clamp(32px, 5vw, 80px); align-items:start; }
+.ov__media{ margin:0; position:sticky; top:calc(var(--shade-h, 90px) + 24px); }
+.ov__media img{ display:block; width:auto; max-width:100%; height:auto; max-height:min(82vh, 900px); margin:0 auto; box-shadow:0 30px 80px rgba(0,0,0,.35); }
+.ov__kicker{ margin:0 0 10px; font-size:11px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint); }
+.ov__title{ margin:0 0 28px; font-size:clamp(36px, 4.6vw, 72px); font-weight:700; font-stretch:112%; text-transform:uppercase; line-height:.92; letter-spacing:-.01em; color:var(--ink); }
+.ov__facts{ margin:0 0 28px; border-top:1px solid rgba(var(--ink-rgb),.16); }
+.ov__facts > div{ display:flex; justify-content:space-between; gap:20px; padding:12px 0; border-bottom:1px solid rgba(var(--ink-rgb),.16); }
+.ov__facts dt{ font-size:11px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint); }
+.ov__facts dd{ margin:0; font-size:15px; color:var(--ink); text-align:right; }
+.ov__status--disponible::before{ content:""; display:inline-block; width:6px; height:6px; margin-right:8px; border-radius:50%; background:var(--accent); vertical-align:middle; }
+.ov__desc{ margin:0 0 28px; font-size:16px; line-height:1.7; color:var(--ink-soft); }
+.ov__cta{ display:inline-flex; align-items:center; height:52px; padding:0 28px; background:var(--ink); color:var(--bg); font-size:12px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; transition:background-color .2s ease; }
+.ov__cta:hover{ background:#fff; }
+html[data-theme="light"] .ov__cta{ background:#161e38; color:#efebe3; }
+html[data-theme="light"] .ov__cta:hover{ background:#223a7a; }
+.ov__nav{ display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:44px; padding-top:20px; border-top:1px solid rgba(var(--ink-rgb),.16); }
+.ov__step{ display:flex; flex-direction:column; gap:6px; min-width:0; }
+.ov__step--next{ text-align:right; align-items:flex-end; }
+.ov__stepK{ font-size:11px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint); }
+.ov__stepT{ font-size:14px; font-weight:700; font-stretch:112%; text-transform:uppercase; color:var(--ink); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:100%; }
+.ov__step:hover .ov__stepT{ color:var(--accent); }
+@media (max-width:900px){
+  .ov__grid{ grid-template-columns:minmax(0, 1fr); }
+  .ov__media{ position:static; }
+  .ov__media img{ max-height:70vh; }
+}
+
+/* listes en HTML pour Google (galeries, expositions) : remplacées par le script de la page au chargement */
+.gx__static, .xstatic{ list-style:none; margin:0; padding:0; }
+.gx__static li, .xstatic li{ padding:14px 0; border-bottom:1px solid rgba(var(--ink-rgb),.14); color:var(--ink-soft); }
+.gx__static h3{ margin:0 0 4px; font-size:22px; font-weight:700; font-stretch:112%; text-transform:uppercase; color:var(--ink); }
+.gx__static p{ margin:0; }
+.xstatic__y{ font-weight:700; color:var(--ink); }

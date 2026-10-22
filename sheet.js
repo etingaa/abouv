@@ -122,6 +122,22 @@
     return w > 0 && h > 0 ? { w, h } : null;
   }
 
+  // adresse d'une œuvre : oeuvres/<slug>.html (même règle que scripts/build-seo.mjs)
+  function slugify(title){
+    return String(title || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .replace(/œ/gi, "oe").replace(/æ/gi, "ae").replace(/&/g, " et ")
+      .toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "oeuvre";
+  }
+  // titres en double : -2, -3… dans l'ordre du Sheet
+  function withSlugs(list){
+    const seen = new Map();
+    return list.map(a => {
+      const base = slugify(a.title), n = (seen.get(base) || 0) + 1;
+      seen.set(base, n);
+      return { ...a, slug: n > 1 ? `${base}-${n}` : base };
+    });
+  }
+
   const imagePath = (file) => encodeURI(`images/${file}`);
   const thumbPath = (file) => encodeURI(`images/thumbs/${file}`); // voir scripts/make-thumbs.py
   const thumbSmallPath = (file) => encodeURI(`images/thumbs/s/${file}`); // 640 px de large, pour la grille
@@ -132,7 +148,7 @@
   // cm     : dimensions réelles { w, h } en centimètres (null si la colonne Format est illisible)
   async function artworks(){
     const { rows, col } = await load();
-    return rows
+    return withSlugs(rows
       .map(r => {
         const file = cleanFile(cleanNA(r[col("jpg")]));
         const format = cleanNA(r[col("format")]);
@@ -151,8 +167,8 @@
           thumbSmall: file ? thumbSmallPath(file) : "",
         };
       })
-      .filter(a => a.title && a.file);
+      .filter(a => a.title && a.file));
   }
 
-  window.abouvSheet = { load, artworks, imagePath, thumbPath, parseCm };
+  window.abouvSheet = { load, artworks, imagePath, thumbPath, parseCm, slugify };
 })();

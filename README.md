@@ -57,3 +57,17 @@ Une seule copie de chaque page : les pages sont écrites en français et `i18n.j
 - `mentions-legales.html` : éditeur, hébergeur (GitHub Pages), données personnelles. À mettre à jour si l'hébergement, l'adresse ou les services tiers (Google Sheets, Formspree, Leaflet/OSM) changent.
 - Le workflow `.github/workflows/notion.yml` est désactivé (voir le commentaire en tête du fichier).
 - Le curseur personnalisé est désactivé dans `styles.css` (voir le commentaire).
+
+## Référencement (SEO) : pages des œuvres, sitemap
+
+Après avoir ajouté ou modifié une œuvre dans le Google Sheet (ou une galerie dans `script.js`, une exposition dans `expos-data.js`) :
+
+```sh
+python3 scripts/make-thumbs.py   # miniatures (si de nouvelles images ont été ajoutées dans images/)
+node scripts/build-seo.mjs       # pages oeuvres/<slug>.html, sitemap.xml, robots.txt, balises de partage
+```
+
+Le script relit le Sheet (copie dans `data/sheet.csv`) et réécrit tout ce qui se trouve entre les commentaires
+`<!-- seo:… -->` des pages. L'adresse publique du site (`SITE_URL`) et l'image de partage par défaut
+(`DEFAULT_OG_IMAGE`) se règlent en haut de `scripts/build-seo.mjs`. Les liens du site restent relatifs :
+il fonctionne aussi bien sous `/abouv/` qu'à la racine du domaine.

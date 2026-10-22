@@ -1,6 +1,8 @@
 // artwork-modal.js — fiche d'une œuvre en plein écran (image, titre, technique, format, statut,
 // « Demander des informations »), avec précédent / suivant. Utilisée par le portfolio et l'accueil.
-// abouvModal.open(liste, index) : liste d'œuvres au format de abouvSheet.artworks().
+// abouvModal.open(liste, index, { onShow(œuvre), onClose() }) : liste d'œuvres au format de abouvSheet.artworks() ;
+// onShow est appelé à chaque œuvre affichée (ouverture, précédent / suivant), onClose à la fermeture
+// (le portfolio s'en sert pour l'adresse oeuvres/<slug>.html et le bouton retour).
 // (Styles : styles.css, « Modal ».)
 
 (() => {
@@ -28,6 +30,7 @@
   let els = null;
   let list = [];
   let index = -1;
+  let hooks = {};
 
   function build(){
     const dialog = document.createElement("dialog");
@@ -65,7 +68,7 @@
       if(el === dialog || el.classList.contains("modal") || el.classList.contains("modal__media")) close();
     });
     // "close" couvre aussi la touche Échap gérée nativement par <dialog>
-    dialog.addEventListener("close", () => { document.body.style.overflow = ""; });
+    dialog.addEventListener("close", () => { document.body.style.overflow = ""; const h = hooks; hooks = {}; if(h.onClose) h.onClose(); });
     document.addEventListener("keydown", (e) => {
       if(!dialog.open) return;
       if(e.key === "ArrowLeft") show(index - 1);
@@ -105,12 +108,14 @@
     const multi = n > 1;
     els.prev.hidden = !multi;
     els.next.hidden = !multi;
+    if(hooks.onShow) hooks.onShow(a);
   }
 
   // opts.pointer : ouverte à la souris / au doigt -> pas de contour de focus sur le bouton ×
   function open(items, i, opts = {}){
     if(!els) build();
     list = items;
+    hooks = { onShow: opts.onShow, onClose: opts.onClose };
     show(i);
     document.body.style.overflow = "hidden"; // pas de scroll de la page derrière
     els.dialog.showModal();
