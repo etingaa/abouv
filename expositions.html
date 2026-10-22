@@ -12,7 +12,7 @@
   <meta property="og:title" content="Expositions — Annick Bouvattier" />
   <meta property="og:description" content="Expositions personnelles, collectives et salons d'Annick Bouvattier depuis 1992." />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-  <script src="i18n.js?v=20261024i"></script>
+  <script src="i18n.js?v=20261024j"></script>
   <script src="site.js?v=20261023g"></script>
   <link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="styles.css?v=20261024g" />
@@ -291,17 +291,19 @@
        ========================= */
     .viewSwitch, .tlFoot, .tlNav, .tlHint, .expoMapWrap{ display:none !important; }
 
-    .xsum{ display:flex; flex-wrap:wrap; align-items:flex-end; gap:20px 64px; margin:28px 0 72px; }
-    .xsum__big{ margin:0; font-size:clamp(56px, 9vw, 132px); font-weight:400; line-height:.9; letter-spacing:-.04em; color:var(--ink); }
-    .xsum__big span{ display:block; margin-top:14px; font-size:15px; letter-spacing:.02em; color:var(--ink-faint); }
-    .xsum__types{ display:flex; gap:36px; margin:0 0 6px; padding:0; list-style:none; }
-    .xsum__types button{
-      padding:0; border:0; background:none; cursor:pointer; text-align:left; font:inherit; color:var(--ink-faint);
-      transition:color .2s ease;
+    .xsum{ margin:28px 0 104px; }
+    .xsum__lead{
+      margin:0; max-width:30ch;
+      font-size:clamp(30px, 4.2vw, 62px); font-weight:400; line-height:1.12; letter-spacing:-.02em; color:var(--ink-soft);
     }
-    .xsum__types b{ display:block; font-size:34px; font-weight:400; color:var(--ink); line-height:1; margin-bottom:6px; font-variant-numeric:tabular-nums; }
-    .xsum__types button:hover, .xsum__types button[aria-pressed="true"]{ color:var(--ink); }
-    .xsum__types button[aria-pressed="true"] b{ text-decoration:underline 2px var(--accent); text-underline-offset:8px; }
+    .xsum__lead b{ font-weight:400; color:var(--ink); }
+    .xsum__lead button{
+      padding:0; border:0; background:none; cursor:pointer; font:inherit; letter-spacing:inherit; color:var(--ink);
+      text-decoration:underline 2px rgba(var(--ink-rgb),.25); text-underline-offset:.16em;
+      transition:text-decoration-color .2s ease, color .2s ease;
+    }
+    .xsum__lead button:hover{ text-decoration-color:var(--ink); }
+    .xsum__lead button[aria-pressed="true"]{ text-decoration-color:var(--accent); }
 
     .tlTrack{ display:flex !important; flex-direction:column-reverse !important; width:auto !important; padding:0 !important; }   /* la plus récente en haut */
     .expositions .toolbar__row .search{ margin-left:auto !important; }
@@ -338,47 +340,17 @@
     .tlCard.is-dim{ opacity:.18; filter:none !important; }
     .tlYear.is-empty{ display:none !important; }
 
-    .xsum__big--s{ font-size:clamp(40px, 5vw, 72px); }
-
-    /* frise des années */
-    .xstrip{
-      flex-basis:100%; display:grid; grid-auto-flow:column; grid-auto-columns:1fr; align-items:end; gap:4px;
-      height:120px; margin-top:24px; padding-top:8px; border-bottom:1px solid rgba(var(--ink-rgb),.16);
-    }
-    .xstrip__y{
-      position:relative; height:100%; padding:0; border:0; background:none; cursor:pointer;
-      display:flex; flex-direction:column; justify-content:flex-end;
-    }
-    .xstrip__y:disabled{ cursor:default; }
-    .xstrip__bar{ display:flex; flex-direction:column-reverse; height:100%; width:36%; margin:0 auto; justify-content:flex-start; gap:2px; }
-    .xstrip__bar i{ display:block; width:100%; border-radius:2px 2px 0 0; background:rgba(var(--ink-rgb),.55); transition:background-color .2s ease, opacity .3s ease; }
-    .xstrip__bar i[data-type="solo"]{ background:var(--accent); }
-    .xstrip__bar i[data-type="salon"]{ background:rgba(var(--ink-rgb),.28); }
-    .xstrip__y.is-none::after{ content:""; position:absolute; left:50%; bottom:0; width:2px; height:2px; margin-left:-1px; background:rgba(var(--ink-rgb),.25); border-radius:50%; }
-    .xstrip__y em{ position:absolute; left:50%; top:100%; margin-top:8px; transform:translateX(-50%); font-style:normal; font-size:11px; color:var(--ink-faint); font-variant-numeric:tabular-nums; }
-    .xstrip__y:not(:disabled):hover .xstrip__bar i, .xstrip__y.is-here .xstrip__bar i{ filter:brightness(1.35); }
-    .xstrip__y.is-here::before{ content:""; position:absolute; left:-1px; right:-1px; bottom:-6px; height:2px; background:var(--ink); }
-    .xsum{ margin-bottom:96px; }
-    .xstrip__key{ flex-basis:100%; display:flex; gap:22px; margin:18px 0 0; font-size:12px; color:var(--ink-faint); }
-    .xstrip__key span{ display:inline-flex; align-items:center; gap:7px; }
-    .xstrip__key span::before{ content:""; width:8px; height:8px; border-radius:2px; background:rgba(var(--ink-rgb),.55); }
-    .xstrip__key span[data-type="solo"]::before{ background:var(--accent); }
-    .xstrip__key span[data-type="salon"]::before{ background:rgba(var(--ink-rgb),.28); }
 
     /* intercalaire de décennie : grand chiffre en filigrane */
     .xdecade{
       padding:40px 0 4px; font-size:clamp(80px, 12vw, 180px); font-weight:400; line-height:.8; letter-spacing:-.05em;
-      color:transparent; -webkit-text-stroke:1px rgba(var(--ink-rgb),.22);
+      font-weight:600; color:rgba(var(--ink-rgb),.09);
       user-select:none;
     }
     .xdecade::after{ content:"s"; font-size:.4em; letter-spacing:0; }
 
     @media (max-width:760px){
-      .xstrip{ height:80px; gap:2px; }
-      .xstrip__y em{ font-size:9px; }
-      .xsum{ gap:24px; margin:12px 0 40px; }
-      .xsum__types{ gap:24px; }
-      .xsum__types b{ font-size:26px; }
+      .xsum{ margin:12px 0 48px; }
       .tlYear{ grid-template-columns:1fr !important; grid-template-areas:"axis" "top" "bottom" !important; }
       .tlAxis{ position:static !important; padding:20px 0 4px; }
       .tlCard{ grid-template-columns:1fr; padding:14px 0; }
@@ -609,14 +581,6 @@
         m.textContent = `${d}0`;
         yearEls[y].after(m);    // la piste est inversée (column-reverse) : « after » = au-dessus
       });
-      // l'année visible s'allume dans la frise
-      const io = new IntersectionObserver((ents) => {
-        ents.forEach(en => {
-          const y = en.target.dataset.year;
-          document.querySelectorAll(`.xstrip__y[data-year="${y}"]`).forEach(b => b.classList.toggle("is-here", en.isIntersecting));
-        });
-      }, { rootMargin: "-40% 0px -55% 0px" });
-      Object.entries(yearEls).forEach(([y, el]) => { el.dataset.year = y; io.observe(el); });
     }
 
     function buildTimeline(){
@@ -698,42 +662,26 @@
        ========================= */
 
     // en tête : « 40 expositions, 1992 — 2024 » et les trois types, cliquables (même filtre que l'onglet Type)
-    // frise : une barre par année (1992 → aujourd'hui), empilée par type ; un clic mène à l'année
-    function stripHTML(shown){
-      const list = window.EXPOS || [];
-      const y0 = Math.min(...list.map(e => e.year)), y1 = Math.max(...list.map(e => e.year));
-      const max = Math.max(...Array.from({ length: y1 - y0 + 1 }, (_, k) => list.filter(e => e.year === y0 + k).length));
-      let html = "";
-      for (let y = y0; y <= y1; y++){
-        const ex = shown.filter(e => e.year === y);
-        const all = list.filter(e => e.year === y).length;
-        const seg = ["solo", "group", "salon"].map(ty => {
-          const k = ex.filter(e => e.type === ty).length;
-          return k ? `<i data-type="${ty}" style="height:${k / max * 100}%"></i>` : "";
-        }).join("");
-        html += `<button class="xstrip__y${all ? "" : " is-none"}" type="button" data-year="${y}" ${all ? "" : "disabled"}
-          aria-label="${y} : ${ex.length} ${t(ex.length > 1 ? "expositions" : "exposition")}"><span class="xstrip__bar">${seg}</span>${y % 5 === 0 || y === y1 ? `<em>${y}</em>` : ""}</button>`;
-      }
-      return `<div class="xstrip" aria-label="${t("Expositions par année")}">${html}</div>
-        <p class="xstrip__key"><span data-type="solo">${t("Personnelle")}</span><span data-type="group">${t("Collective")}</span><span data-type="salon">${t("Salon / Art fair")}</span></p>`;
-    }
-
+    // en tête : une phrase, comme dans un catalogue ; les trois types sont des liens qui filtrent la liste
     function renderSummary(n){
       const box = document.getElementById("xsum");
       const list = window.EXPOS || [];
       const shown = cards.filter(c => matches(c.expo)).map(c => c.expo);
-      const years = (shown.length ? shown : list).map(e => e.year);
-      const span = `${Math.min(...years)} — ${Math.max(...years)}`;
+      const base = shown.length ? shown : list;
+      const since = Math.min(...base.map(e => e.year));
+      // « en France, aux États-Unis… » (en anglais : « in France, the United States… »)
+      const PREP = { "États-Unis": "aux", "Pays-Bas": "aux", "Japon": "au", "Canada": "au", "Luxembourg": "au", "Portugal": "au", "Royaume-Uni": "au" };
+      const fr = !(window.I18N && I18N.lang === "en");
+      const countries = [...new Set(base.map(e => e.country))].map(c => fr ? `${PREP[c] || "en"} ${c}` : (c === "États-Unis" ? "the " : "") + t(c));
       const count = (ty) => list.filter(e => e.type === ty).length;
-      const types = [["solo", t("Personnelles")], ["group", t("Collectives")], ["salon", t("Salons")]];
-      const nCountries = new Set((shown.length ? shown : list).map(e => e.country)).size;
-      box.innerHTML = `<p class="xsum__big">${n}<span>${t(n > 1 ? "expositions" : "exposition")}, ${span}</span></p>
-        <p class="xsum__big xsum__big--s">${nCountries}<span>${t(nCountries > 1 ? "pays" : "pays")}</span></p>
-        <ul class="xsum__types">${types.map(([ty, label]) =>
-          `<li><button type="button" data-type="${ty}" aria-pressed="${filters.type.has(ty)}"><b>${count(ty)}</b>${label}</button></li>`).join("")}</ul>`;
-      box.insertAdjacentHTML("beforeend", stripHTML(shown));
-      box.querySelectorAll(".xstrip__y").forEach(b => b.addEventListener("click", () => scrollToYear(+b.dataset.year)));
-      box.querySelectorAll(".xsum__types button").forEach(b => b.addEventListener("click", () => {
+      const pick = (ty, label) => `<button type="button" data-type="${ty}" aria-pressed="${filters.type.has(ty)}">${count(ty)} ${label}</button>`;
+      const where = countries.length > 1 ? countries.slice(0, -1).join(", ") + " " + t("et") + " " + countries.slice(-1) : countries[0] || "";
+      box.innerHTML = `<p class="xsum__lead"><b>${n}</b> ${t(n > 1 ? "expositions" : "exposition")} ${t("depuis")} ${since},
+        ${fr ? "" : "in "}${escapeHtml(where)} —
+        ${pick("solo", t(count("solo") > 1 ? "personnelles" : "personnelle"))},
+        ${pick("group", t(count("group") > 1 ? "collectives" : "collective"))}
+        ${t("et")} ${pick("salon", t(count("salon") > 1 ? "salons" : "salon"))}.</p>`;
+      box.querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
         const ty = b.dataset.type;
         if (filters.type.has(ty)) filters.type.delete(ty); else { filters.type.clear(); filters.type.add(ty); }
         apply(true);
