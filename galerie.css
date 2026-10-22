@@ -141,3 +141,6 @@ html[data-theme="light"] .g3d-ctrl button:hover{ background:rgba(22,30,56,.08); 
 html[data-theme="light"] .g3d-ctrl__sep{ background:rgba(22,30,56,.2); }
 html[data-theme="light"] .g3d-ctrl__play[aria-pressed="true"]{ color:#c84034; }
 @media (max-width:760px){ .g3d-ctrl{ left:50%; transform:translateX(-50%); bottom:calc(18px + env(safe-area-inset-bottom)); } }
+.gallery3d .bottom .bottom__link--credit{ font-size:12px; color:rgba(239,233,223,.55) !important; }
+.gallery3d .bottom .bottom__link--credit:hover{ color:#fff !important; }
+html[data-theme="light"] .gallery3d .bottom .bottom__link--credit{ color:rgba(22,30,56,.55) !important; }
