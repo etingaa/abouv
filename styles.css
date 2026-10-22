@@ -1492,6 +1492,3 @@ html[data-theme="light"] .ov__cta:hover{ background:#223a7a; }
 .gx__static p{ margin:0; }
 .xstatic__y{ font-weight:700; color:var(--ink); }
 
-/* pied de page : signature de conception, à droite de « mentions légales », plus discrète */
-.bottom__link--credit{ font-size:12px; color:var(--ink-faint); opacity:.75; }
-.bottom__link--credit:hover{ color:var(--ink); opacity:1; }

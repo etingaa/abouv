@@ -139,7 +139,6 @@
     "œuvre": "artwork",
     "œuvres": "artworks",
     "Passer": "Skip",
-    "Site par Etienne Gars": "Site by Etienne Gars",
     "Voir tout le portfolio": "See the whole portfolio",
     "Disponible": "Available",
     "Vendue": "Sold",
