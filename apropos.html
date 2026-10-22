@@ -12,7 +12,7 @@
   <meta property="og:title" content="À propos — Annick Bouvattier" />
   <meta property="og:description" content="Biographie d'Annick Bouvattier, artiste peintre : de la mode et du cinéma à la peinture à l'huile au couteau." />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-  <script src="i18n.js?v=20261024q"></script>
+  <script src="i18n.js?v=20261024t"></script>
   <script src="site.js?v=20261024n"></script>
   <link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="styles.css?v=20261024g" />
@@ -79,6 +79,31 @@
     }
     @media (prefers-reduced-motion: reduce){ .faq__a{ animation:none; } .faq summary::after{ transition:none; } }
 
+
+    /* À propos : portrait accroché à gauche, récit en cinq chapitres (lieu en très grand, contour blanc) */
+    .ab{ display:grid; grid-template-columns:minmax(0, 5fr) minmax(0, 7fr); gap:clamp(32px, 6vw, 96px); margin:24px 0 112px; }
+    .ab__photo{ position:sticky; top:calc(var(--shade-h, 90px) + 24px); align-self:start; margin:0; }
+    .ab__photo img{ display:block; width:100%; height:min(78vh, 760px); object-fit:cover; filter:grayscale(1) contrast(1.06); border-radius:2px; }
+    .ab__photo figcaption{ margin-top:12px; font-size:11px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint); }
+    .ab__lead{ margin:0 0 72px; font-size:clamp(30px, 3.4vw, 52px); font-weight:500; line-height:1.08; letter-spacing:-.02em; color:var(--ink); }
+    .ch{ position:relative; padding:40px 0 48px; border-top:1px solid rgba(var(--ink-rgb),.16); }
+    .ch:last-child{ border-bottom:1px solid rgba(var(--ink-rgb),.16); }
+    .ch__n{ position:absolute; top:44px; right:0; font-size:12px; font-weight:500; letter-spacing:.12em; color:var(--ink-faint); font-variant-numeric:tabular-nums; }
+    .ch__h{
+      margin:0 0 22px; font-family:var(--font); font-size:clamp(52px, 7.4vw, 120px); font-weight:700; font-stretch:112%; text-transform:uppercase;
+      letter-spacing:-.02em; line-height:.88; color:rgba(255,255,255,.05); -webkit-text-stroke:1.5px #fff;
+      transition:color .5s ease;
+    }
+    .ch:hover .ch__h{ color:rgba(255,255,255,.9); }
+    .ch__p{ margin:0; max-width:56ch; font-size:16px; line-height:1.75; color:var(--ink-soft); }
+    .ch__p strong{ color:var(--ink); font-weight:600; }
+    @media (max-width:900px){
+      .ab{ grid-template-columns:1fr; gap:32px; margin-bottom:64px; }
+      .ab__photo{ position:static; }
+      .ab__photo img{ height:auto; max-height:70vh; }
+      .ab__lead{ margin-bottom:40px; }
+      .ch__h{ font-size:clamp(44px, 13vw, 72px); }
+    }
   </style>
 </head>
 
@@ -101,56 +126,68 @@
     <h1 class="sr-only">À propos</h1>
     <div class="sectionHead"><h2 class="sectionTitle">Biographie</h2></div>
 
-    <p class="ix-lead">Annick Bouvattier peint des femmes, dans des jeux d’ombres et de lumière.</p>
-
-    <section class="ix-row" aria-label="Parcours">
-      <h2 class="ix-label">Parcours</h2>
-      <div>
-        <ul class="ix-list" data-lang="fr">
-          <li><span class="ix-list__k">Nevers</span><span class="ix-list__v">Naissance<small>Son père, pédiatre et amateur d’art, lui transmet le goût de la peinture.</small></span></li>
-          <li><span class="ix-list__k">Paris</span><span class="ix-list__v">École Bercot – Marie Rucki<small>Deux ans de formation de styliste ; créations présentées à Paris et à la Villa Médicis.</small></span></li>
-          <li><span class="ix-list__k">Rome</span><span class="ix-list__v">Costumière styliste à Cinecittà<small>Cinéma et publicité ; le goût des couleurs chaudes, sensuelles, profondes.</small></span></li>
-          <li><span class="ix-list__k">Années 1990</span><span class="ix-list__v">Se consacre à la peinture à l’huile<small>Deux années de recherche en autodidacte.</small></span></li>
-          <li><span class="ix-list__k">Pierre Ramel</span><span class="ix-list__v">Quatre ans d’apprentissage<small>La peinture à l’huile au couteau, lissée, sans épaisseur, en transparence.</small></span></li>
-        </ul>
-        <ul class="ix-list" data-lang="en">
-          <li><span class="ix-list__k">Nevers</span><span class="ix-list__v">Born<small>Her father, a pediatrician and art lover, passes on a love of painting.</small></span></li>
-          <li><span class="ix-list__k">Paris</span><span class="ix-list__v">Bercot – Marie Rucki school<small>Two years training as a fashion designer; work shown in Paris and at the Villa Medici.</small></span></li>
-          <li><span class="ix-list__k">Rome</span><span class="ix-list__v">Costume designer at Cinecittà<small>Film and advertising; a taste for warm, sensual, deep colours.</small></span></li>
-          <li><span class="ix-list__k">1990s</span><span class="ix-list__v">Devotes herself to oil painting<small>Two years of self-taught exploration.</small></span></li>
-          <li><span class="ix-list__k">Pierre Ramel</span><span class="ix-list__v">Four years as his pupil<small>Palette-knife oil painting, smooth, without impasto, in transparent layers.</small></span></li>
-        </ul>
+    <!-- ouverture : grand portrait à gauche (reste en place), le récit en chapitres à droite -->
+    <section class="ab">
+      <figure class="ab__photo">
+        <img src="images/annickbouvattier.jpg" alt="Annick Bouvattier dans son atelier" />
+        <figcaption>Annick Bouvattier</figcaption>
+      </figure>
+      <div class="ab__story">
+        <p class="ab__lead">Annick Bouvattier peint des femmes, dans des jeux d’ombres et de lumière.</p>
+      <div class="ch__list" data-lang="fr">
+        <article class="ch">
+          <span class="ch__n">01</span>
+          <h3 class="ch__h">Nevers</h3>
+          <p class="ch__p"><strong>Annick Bouvattier</strong> est née à Nevers. Son père, pédiatre et amateur d’art, lui transmet dès sa prime enfance le <strong>goût de l’art et de la peinture</strong>.</p>
+        </article>
+        <article class="ch">
+          <span class="ch__n">02</span>
+          <h3 class="ch__h">Paris</h3>
+          <p class="ch__p">Baccalauréat scientifique en poche, elle délaisse la tradition familiale des études de médecine pour s’inscrire à l’école de mode <strong>“Bercot – Marie Rucki”</strong> où, pendant deux ans, elle reçoit une <strong>formation de styliste</strong>. Ses créations, présentées à Paris et à la Villa Médicis à Rome, connaissent un succès d’estime auprès des professionnels et font l’objet de <strong>parutions dans la presse spécialisée</strong>.</p>
+        </article>
+        <article class="ch">
+          <span class="ch__n">03</span>
+          <h3 class="ch__h">Rome</h3>
+          <p class="ch__p">Cependant, <strong>plus attirée par la mode spectacle</strong> que par celle des boutiques, elle s’oriente très vite vers le cinéma et la publicité. <strong>Costumière styliste</strong>, elle travaille souvent dans les studios de Cinecittà à <strong>Rome</strong>. De ses séjours italiens, elle gardera le goût des couleurs chaudes, sensuelles, profondes : ocres ensoleillés, rouges sourds, bleus intenses, verts profonds.</p>
+        </article>
+        <article class="ch">
+          <span class="ch__n">04</span>
+          <h3 class="ch__h">Le couteau</h3>
+          <p class="ch__p">Au milieu des années 1990, sur les conseils de son mari et grâce à son soutien, elle décide de se consacrer exclusivement à <strong>la peinture à l’huile</strong>. Après deux années de recherche <strong>autodidacte</strong>, elle devient pendant 4 ans l’élève de <strong>Pierre Ramel</strong>, disciple et massier de Édouard Mac-Avoy et vice-président du Salon d’Automne. Il lui enseignera la technique de la peinture à l’huile au couteau qu’elle travaille lissée, sans épaisseur de matière, tout en transparence.</p>
+        </article>
+        <article class="ch">
+          <span class="ch__n">05</span>
+          <h3 class="ch__h">La lumière</h3>
+          <p class="ch__p">Annick Bouvattier peint essentiellement <strong>des femmes</strong>, dans des jeux <strong>d’ombres et de lumière</strong>. Elles vivent leur féminité sans fausse pudeur, indifférentes aux regards extérieurs.</p>
+        </article>
       </div>
-    </section>
-
-    <section class="ix-row" aria-label="Biographie">
-      <div class="ix-sticky">
-        <h2 class="ix-label">Biographie</h2>
-        <img class="ix-label__img" src="images/annickbouvattier.jpg" alt="Annick Bouvattier dans son atelier" />
+      <div class="ch__list" data-lang="en">
+        <article class="ch">
+          <span class="ch__n">01</span>
+          <h3 class="ch__h">Nevers</h3>
+          <p class="ch__p"><strong>Annick Bouvattier</strong> was born in Nevers, France. Her father, a pediatrician and art lover, passed on to her from early childhood a <strong>love of art and painting</strong>.</p>
+        </article>
+        <article class="ch">
+          <span class="ch__n">02</span>
+          <h3 class="ch__h">Paris</h3>
+          <p class="ch__p">With a science baccalaureate in hand, she broke with the family tradition of studying medicine and enrolled at the <strong>“Bercot – Marie Rucki”</strong> fashion school, where she spent two years <strong>training as a fashion designer</strong>. Her creations, shown in Paris and at the Villa Medici in Rome, were well received by professionals and <strong>featured in the specialist press</strong>.</p>
+        </article>
+        <article class="ch">
+          <span class="ch__n">03</span>
+          <h3 class="ch__h">Rome</h3>
+          <p class="ch__p">Yet, <strong>more drawn to fashion for the stage and screen</strong> than to boutique fashion, she soon turned to film and advertising. As a <strong>costume designer</strong>, she often worked at the Cinecittà studios in <strong>Rome</strong>. From her years in Italy she kept a taste for warm, sensual, deep colors: sunlit ochres, muted reds, intense blues, deep greens.</p>
+        </article>
+        <article class="ch">
+          <span class="ch__n">04</span>
+          <h3 class="ch__h">The knife</h3>
+          <p class="ch__p">In the mid-1990s, on her husband’s advice and with his support, she decided to devote herself entirely to <strong>oil painting</strong>. After two years of <strong>self-taught</strong> exploration, she spent four years as a pupil of <strong>Pierre Ramel</strong>, disciple and <em>massier</em> (head student) of Édouard Mac-Avoy and vice-president of the Salon d’Automne. He taught her the technique of palette-knife oil painting, which she works smooth, without impasto, in transparent layers.</p>
+        </article>
+        <article class="ch">
+          <span class="ch__n">05</span>
+          <h3 class="ch__h">The light</h3>
+          <p class="ch__p">Annick Bouvattier mainly paints <strong>women</strong>, in plays of <strong>light and shadow</strong>. They live their femininity without false modesty, indifferent to the gaze of others.</p>
+        </article>
       </div>
-      <div class="ix-text">
-        <div data-lang="fr">
-          <p><strong>Annick Bouvattier</strong> est née à Nevers. Son père, pédiatre et amateur d’art, lui transmet dès sa prime enfance le <strong>goût de l’art et de la peinture</strong>.</p>
-
-          <p>Baccalauréat scientifique en poche, elle délaisse la tradition familiale des études de médecine pour s’inscrire à l’école de mode <strong>“Bercot – Marie Rucki”</strong> où, pendant deux ans, elle reçoit une <strong>formation de styliste</strong>. Ses créations, présentées à Paris et à la Villa Médicis à Rome, connaissent un succès d’estime auprès des professionnels et font l’objet de <strong>parutions dans la presse spécialisée</strong>.</p>
-
-          <p>Cependant, <strong>plus attirée par la mode spectacle</strong> que par celle des boutiques, elle s’oriente très vite vers le cinéma et la publicité. <strong>Costumière styliste</strong>, elle travaille souvent dans les studios de Cinecittà à <strong>Rome</strong>. De ses séjours italiens, elle gardera le goût des couleurs chaudes, sensuelles, profondes : ocres ensoleillés, rouges sourds, bleus intenses, verts profonds.</p>
-
-          <p>Au milieu des années 1990, sur les conseils de son mari et grâce à son soutien, elle décide de se consacrer exclusivement à <strong>la peinture à l’huile</strong>. Après deux années de recherche <strong>autodidacte</strong>, elle devient pendant 4 ans l’élève de <strong>Pierre Ramel</strong>, disciple et massier de Édouard Mac-Avoy et vice-président du Salon d’Automne. Il lui enseignera la technique de la peinture à l’huile au couteau qu’elle travaille lissée, sans épaisseur de matière, tout en transparence.</p>
-
-          <p>Annick Bouvattier peint essentiellement <strong>des femmes</strong>, dans des jeux <strong>d’ombres et de lumière</strong>. Elles vivent leur féminité sans fausse pudeur, indifférentes aux regards extérieurs.</p>
-        </div>
-        <div data-lang="en">
-          <p><strong>Annick Bouvattier</strong> was born in Nevers, France. Her father, a pediatrician and art lover, passed on to her from early childhood a <strong>love of art and painting</strong>.</p>
-
-          <p>With a science baccalaureate in hand, she broke with the family tradition of studying medicine and enrolled at the <strong>“Bercot – Marie Rucki”</strong> fashion school, where she spent two years <strong>training as a fashion designer</strong>. Her creations, shown in Paris and at the Villa Medici in Rome, were well received by professionals and <strong>featured in the specialist press</strong>.</p>
-
-          <p>Yet, <strong>more drawn to fashion for the stage and screen</strong> than to boutique fashion, she soon turned to film and advertising. As a <strong>costume designer</strong>, she often worked at the Cinecittà studios in <strong>Rome</strong>. From her years in Italy she kept a taste for warm, sensual, deep colors: sunlit ochres, muted reds, intense blues, deep greens.</p>
-
-          <p>In the mid-1990s, on her husband’s advice and with his support, she decided to devote herself entirely to <strong>oil painting</strong>. After two years of <strong>self-taught</strong> exploration, she spent four years as a pupil of <strong>Pierre Ramel</strong>, disciple and <em>massier</em> (head student) of Édouard Mac-Avoy and vice-president of the Salon d’Automne. He taught her the technique of palette-knife oil painting, which she works smooth, without impasto, in transparent layers.</p>
-
-          <p>Annick Bouvattier mainly paints <strong>women</strong>, in plays of <strong>light and shadow</strong>. They live their femininity without false modesty, indifferent to the gaze of others.</p>
-        </div>
       </div>
     </section>
 
