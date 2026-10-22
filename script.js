@@ -29,10 +29,10 @@
     if (!g.expos) return [];
     return all.filter((e) => e.title.includes(g.expos.title) && e.city.includes(g.expos.city)).sort((a, b) => a.year - b.year);
   }
-  // « 36,56° N · 121,92° O » (en anglais : W)
+  // « 36,56° N · 121,92° O » (en anglais : 36.56° N · 121.92° W)
   function coords(g) {
     const en = document.documentElement.lang === "en", f = (v) => Math.abs(v).toFixed(2).replace(".", en ? "." : ",");
-    return `${f(g.lat)}° ${g.lat >= 0 ? "N" : "S"} · ${f(g.lng)}° ${g.lng >= 0 ? "E" : (en ? "W" : "O")}`;
+    return `${f(g.lat)}° ${g.lat >= 0 ? "N" : "S"} · ${f(g.lng)}° ${g.lng >= 0 ? "E" : (en ? "W" : "O")}`;   // O : ouest / oeste / ovest
   }
   function exposLine(g) {
     const list = exposOf(g), n = list.length;

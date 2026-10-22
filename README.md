@@ -80,3 +80,11 @@ Les liens du site n'ont pas d'extension : `portfolio`, `oeuvres/enigma`, `./` po
 `.html` ou `/index`, `site.js` la réécrit dans la barre d'adresse. `accueil.html` renvoie vers l'accueil.
 
 Aperçu local (comme GitHub Pages) :  `node scripts/serve.mjs`  puis http://localhost:8000/
+
+## Langues
+
+Français (langue des pages), anglais, espagnol et italien. Les textes courts sont traduits par dictionnaire :
+anglais dans `i18n.js` (EN), espagnol et italien dans `i18n-langs.js` (ES, IT) — même clé : le texte français exact.
+Les textes longs (biographie, questions fréquentes, mentions légales, présentation de l'accueil) sont écrits dans
+les pages en blocs `data-lang="fr|en|es|it"`. Les descriptions des pages d'œuvres sont générées dans les 4 langues
+par `scripts/build-seo.mjs`. La langue suit le navigateur du visiteur, puis son choix (menu FR ▾).

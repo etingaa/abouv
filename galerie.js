@@ -48,7 +48,7 @@ function humanFov(){
 }
 const isMobile = matchMedia("(max-width: 760px), (pointer: coarse)").matches;
 const tr = (s) => (window.t ? window.t(s) : s);
-const fallback = (reason) => window.__g3dFallback ? window.__g3dFallback(reason) : location.replace("classique");
+const fallback = (reason) => window.__g3dFallback ? window.__g3dFallback(reason) : location.replace("classique" + location.search);
 
 const $ = (id) => document.getElementById(id);
 const els = {
@@ -598,7 +598,7 @@ async function main(){
     if (!els.ctrl) return;
     els.ctrlPlay.setAttribute("aria-pressed", String(ctrl.paused));
     els.ctrlPlay.setAttribute("aria-label", tr(ctrl.paused ? "Reprendre la visite" : "Mettre en pause"));
-    els.ctrlSpeed.textContent = (document.documentElement.lang === "fr" ? String(ctrl.tempo).replace(".", ",") : String(ctrl.tempo)) + "×";
+    els.ctrlSpeed.textContent = (document.documentElement.lang !== "en" ? String(ctrl.tempo).replace(".", ",") : String(ctrl.tempo)) + "×";
     els.ctrlSlow.disabled = ctrl.i === 0; els.ctrlFast.disabled = ctrl.i === SPEEDS.length - 1;
   }
   if (els.ctrl){

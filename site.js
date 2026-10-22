@@ -168,8 +168,8 @@
     document.querySelectorAll(".bottom__left a").forEach(a => foot.appendChild(a.cloneNode(true)));
     const langs = document.createElement("div");
     langs.className = "menuFoot__lang";
-    const cur = document.documentElement.lang === "en" ? "en" : "fr";
-    [["fr", "fra"], ["en", "eng"]].forEach(([l, label]) => {
+    const cur = document.documentElement.lang || "fr";
+    [["fr", "fra"], ["en", "eng"], ["es", "esp"], ["it", "ita"]].forEach(([l, label]) => {
       const a = document.createElement("a");
       a.href = "?lang=" + l;
       a.textContent = label;

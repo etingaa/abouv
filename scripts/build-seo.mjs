@@ -127,6 +127,13 @@ async function loadEN(){
   catch (_) { return {}; }
 }
 
+/* ====== traductions espagnoles et italiennes (i18n-langs.js) ====== */
+async function loadLangs(){
+  const win = {};
+  try { new Function("window", await rd("i18n-langs.js"))(win); } catch (_) {}
+  return win.I18N_LANGS || { es: {}, it: {} };
+}
+
 /* ====== gabarit commun (repris de portfolio.html) ====== */
 async function loadTemplate(){
   const pf = await rd("portfolio.html");
@@ -135,7 +142,7 @@ async function loadTemplate(){
   // liens relatifs du header et du footer, vus depuis le dossier oeuvres/
   const up = (html) => html.replace(/href="\.\/"/g, 'href="../"').replace(/href="(?!https?:|mailto:|tel:|#|\.\.\/)([^"]+)"/g, 'href="../$1"');
   return {
-    v: { styles: v("styles.css"), i18n: v("i18n.js"), site: v("site.js") },
+    v: { styles: v("styles.css"), i18n: v("i18n.js"), langs: v("i18n-langs.js"), site: v("site.js") },
     header: up(block(/<header class="top">[\s\S]*?<\/header>/)),
     footer: up(block(/<footer class="bottom">[\s\S]*?<\/footer>/)),
     social: [...block(/<div class="bottom__left">[\s\S]*?<\/div>/).matchAll(/href="(https?:[^"]+)"/g)].map(m => m[1]),
@@ -146,7 +153,7 @@ async function loadTemplate(){
 const dims = (a) => a.cm ? `${a.cm.w} × ${a.cm.h} cm` : (a.size || "").replace(/\s*x\s*/i, " × ");
 const tr = (EN, s) => (EN[s] ?? s);
 
-function describe(a, EN){
+function describe(a, EN, L = { es: {}, it: {} }){
   const d = dims(a);
   const fr = [
     `« ${a.title} » est une œuvre d’${ARTIST}${a.year ? `, réalisée en ${a.year}` : ""}` +
@@ -161,7 +168,21 @@ function describe(a, EN){
     a.category ? `It belongs to the “${tr(EN, a.category)}” collection.` : "",
     a.status === "disponible" ? "This work is available." : "This work has been sold.",
   ].filter(Boolean).join(" ");
-  return { fr, en };
+  const techL = (d2) => a.technique ? (d2[a.technique] ?? tr(EN, a.technique)).toLowerCase() : "";
+  const catL = (d2) => d2[a.category] ?? a.category;
+  const es = [
+    `«${a.title}» es una obra de ${ARTIST}${a.year ? `, realizada en ${a.year}` : ""}` +
+      (a.technique || d ? ` (${[techL(L.es), d].filter(Boolean).join(", ")})` : "") + ".",
+    a.category ? `Forma parte de la colección «${catL(L.es)}».` : "",
+    a.status === "disponible" ? "Esta obra está disponible." : "Esta obra ha sido vendida.",
+  ].filter(Boolean).join(" ");
+  const it = [
+    `«${a.title}» è un'opera di ${ARTIST}${a.year ? `, realizzata nel ${a.year}` : ""}` +
+      (a.technique || d ? ` (${[techL(L.it), d].filter(Boolean).join(", ")})` : "") + ".",
+    a.category ? `Fa parte della collezione «${catL(L.it)}».` : "",
+    a.status === "disponible" ? "Quest'opera è disponibile." : "Quest'opera è stata venduta.",
+  ].filter(Boolean).join(" ");
+  return { fr, en, es, it };
 }
 // meta description : les phrases entières qui tiennent en ~160 caractères (sinon la première, coupée proprement)
 function clip(s, n = 160){
@@ -171,11 +192,11 @@ function clip(s, n = 160){
   return out.trim() || s.slice(0, n - 1).replace(/\s+\S*$/, "") + "…";
 }
 
-function workPage(a, i, list, tpl, EN, sizes){
+function workPage(a, i, list, tpl, EN, sizes, L){
   const prev = list[(i - 1 + list.length) % list.length], next = list[(i + 1) % list.length];
   const d = dims(a), url = abs(`oeuvres/${a.slug}`), img = abs(`images/${a.file}`);
   const title = `${a.title} — ${[a.technique, d].filter(Boolean).join(" ")} | ${ARTIST}`;
-  const { fr, en } = describe(a, EN);
+  const { fr, en, es, it } = describe(a, EN, L);
   const alt = `${a.title}${a.technique ? `, ${a.technique.toLowerCase()}` : ""}, par ${ARTIST}`;
   const wh = sizes[a.file] ? ` width="${sizes[a.file][0]}" height="${sizes[a.file][1]}"` : "";
   const thumb = `../images/thumbs/${a.file}`;
@@ -218,6 +239,7 @@ function workPage(a, i, list, tpl, EN, sizes){
   <meta name="twitter:description" content="${esc(clip(fr))}" />
   <meta name="twitter:image" content="${img}" />
   <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+  <script src="../i18n-langs.js?v=${tpl.v.langs}"></script>
   <script src="../i18n.js?v=${tpl.v.i18n}"></script>
   <script src="../site.js?v=${tpl.v.site}"></script>
   <link rel="preload" href="../fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
@@ -250,6 +272,8 @@ ${jsonld(ld)}
             </dl>
             <p class="ov__desc" data-lang="fr">${esc(fr)}</p>
             <p class="ov__desc" data-lang="en">${esc(en)}</p>
+            <p class="ov__desc" data-lang="es">${esc(es)}</p>
+            <p class="ov__desc" data-lang="it">${esc(it)}</p>
             ${cta}
             <nav class="ov__nav" aria-label="Autres œuvres">
               ${navLink(prev, "prev", "Œuvre précédente", "←")}
@@ -343,14 +367,14 @@ async function exposBlock(){
 
 /* ====== programme ====== */
 async function main(){
-  const [list, EN, tpl] = await Promise.all([loadArtworks(), loadEN(), loadTemplate()]);
+  const [list, EN, tpl, L] = await Promise.all([loadArtworks(), loadEN(), loadTemplate(), loadLangs()]);
   let sizes = {}; try { sizes = JSON.parse(await rd("images/thumbs/sizes.json")); } catch (_) {}
 
   // 1. pages des œuvres (les anciennes pages d'œuvres disparues sont supprimées)
   await mkdir(OUT_DIR, { recursive: true });
   const keep = new Set(list.map(a => a.slug + ".html"));
   for (const f of await readdir(OUT_DIR)) if (f.endsWith(".html") && !keep.has(f)) await unlink(path.join(OUT_DIR, f));
-  await Promise.all(list.map((a, i) => writeFile(path.join(OUT_DIR, a.slug + ".html"), workPage(a, i, list, tpl, EN, sizes))));
+  await Promise.all(list.map((a, i) => writeFile(path.join(OUT_DIR, a.slug + ".html"), workPage(a, i, list, tpl, EN, sizes, L))));
 
   // 2. pages principales : balises SEO, listes en HTML
   for (const page of PAGES){

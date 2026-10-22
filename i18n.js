@@ -1,4 +1,4 @@
-// i18n.js — version anglaise du site, sans dupliquer les pages.
+// i18n.js — versions anglaise, espagnole et italienne du site, sans dupliquer les pages.
 //
 // Principe : les pages restent écrites en français. En anglais, ce script remplace chaque texte
 // français par sa traduction trouvée dans le dictionnaire EN ci-dessous (texte, alt, placeholder,
@@ -6,11 +6,13 @@
 //
 // Ajouter / modifier un texte :
 //   1. l'écrire en français dans la page, comme d'habitude ;
-//   2. ajouter ici la ligne  "texte français exact": "English text",
+//   2. ajouter la ligne  "texte français exact": "traduction",  dans EN (anglais), puis dans ES (espagnol)
+//      et IT (italien) — fichier i18n-langs.js. Un texte absent de ES ou IT s'affiche en anglais.
 //   Un texte sans traduction reste en français (et est signalé dans la console du navigateur).
 //
 // Textes longs (biographie, mentions légales) : écrits dans la page en 2 blocs côte à côte,
-//   <div data-lang="fr">…</div>  et  <div data-lang="en">…</div>  — seul le bon bloc est affiché.
+//   <div data-lang="fr">…</div>, <div data-lang="en">…</div>, <div data-lang="es">…</div>, <div data-lang="it">…</div>
+//   — seul le bloc de la langue active est affiché (à défaut, le bloc anglais).
 //
 // Dans les scripts des pages : t("texte français") renvoie la traduction de la langue active.
 // Un même mot français qui se traduit de 2 façons prend un contexte : t("statut|Disponible").
@@ -329,7 +331,10 @@
      ========================= */
 
   const STORE_KEY = "abouv:lang";
-  const LANGS = ["fr", "en"];
+  const LANGS = ["fr", "en", "es", "it"];
+  // dictionnaires : EN ci-dessus ; ES et IT dans i18n-langs.js (chargé juste avant ce fichier)
+  const DICTS = { en: EN, es: (window.I18N_LANGS || {}).es || {}, it: (window.I18N_LANGS || {}).it || {} };
+  const LOCALES = { fr: "fr_FR", en: "en_US", es: "es_ES", it: "it_IT" };
 
   function readStored(){
     try { return localStorage.getItem(STORE_KEY); } catch (_) { return null; }
@@ -352,22 +357,23 @@
     if (LANGS.includes(saved)) return saved;
     // 3. moteurs de recherche : toujours la version française (celle qui est référencée)
     if (/bot|crawl|spider|slurp|facebookexternalhit/i.test(navigator.userAgent)) return "fr";
-    // 4. langue du navigateur : français si le visiteur lit le français, sinon anglais
+    // 4. langue du navigateur : la première des langues du visiteur que le site propose, sinon l'anglais
     const prefs = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || "fr"];
-    return prefs.some(l => /^fr\b/i.test(l)) ? "fr" : "en";
+    for (const p of prefs){ const l = String(p).slice(0, 2).toLowerCase(); if (LANGS.includes(l)) return l; }
+    return "en";
   }
 
   const lang = detect();
   const root = document.documentElement;
   root.lang = lang;
 
-  // Blocs bilingues + page masquée le temps de la traduction (anglais uniquement, quelques ms)
+  // Blocs par langue (seul celui de la langue active est affiché) + page masquée le temps de la traduction
   const css = document.createElement("style");
   css.textContent =
-    'html:not([lang="en"]) [data-lang="en"], html[lang="en"] [data-lang="fr"]{display:none !important}' +
+    `[data-lang]:not([data-lang="${lang}"]){display:none !important}` +
     "html.i18n-wait body{visibility:hidden}";
   document.head.appendChild(css);
-  if (lang === "en") {
+  if (lang !== "fr") {
     root.classList.add("i18n-wait");
     setTimeout(() => root.classList.remove("i18n-wait"), 1500); // filet de sécurité
   }
@@ -379,12 +385,20 @@
   const missing = new Set();
 
   // t("texte français", { n: 3 }) -> texte dans la langue active
+  const has = (d, k) => Object.prototype.hasOwnProperty.call(d, k);
+  const DICT = DICTS[lang] || {};
+  // texte de la langue active ; à défaut l'anglais ; à défaut le français
+  function lookup(key){
+    if (lang === "fr") return undefined;
+    if (has(DICT, key)) return DICT[key];
+    if (lang !== "en" && has(EN, key)) { missing.add(key); return EN[key]; }
+    return undefined;
+  }
+
   function t(fr, vars){
-    let out;
-    if (lang === "en" && Object.prototype.hasOwnProperty.call(EN, fr)) {
-      out = EN[fr];
-    } else {
-      if (lang === "en" && /[a-zà-ÿ]/i.test(fr)) missing.add(fr);
+    let out = lookup(fr);
+    if (out === undefined) {
+      if (lang !== "fr" && /[a-zà-ÿ]/i.test(fr)) missing.add(fr);
       out = fr.includes("|") ? fr.slice(fr.indexOf("|") + 1) : fr; // "statut|Disponible" -> "Disponible"
     }
     if (vars) out = out.replace(/\{(\w+)\}/g, (m, k) => (k in vars ? vars[k] : m));
@@ -395,9 +409,10 @@
   function swap(str){
     const key = str.replace(/\s+/g, " ").trim();
     if (!key) return str;
-    if (Object.prototype.hasOwnProperty.call(EN, key)) {
+    const tr = lookup(key);
+    if (tr !== undefined) {
       const lead = str.match(/^\s*/)[0], tail = str.match(/\s*$/)[0];
-      return lead + EN[key] + tail;
+      return lead + tr + tail;
     }
     if (/[a-zà-ÿ]{2}/i.test(key)) missing.add(key);
     return str;
@@ -422,7 +437,7 @@
     document.querySelectorAll('meta[name="description"], meta[property="og:title"], meta[property="og:description"]')
       .forEach(m => m.setAttribute("content", swap(m.getAttribute("content") || "")));
     const og = document.querySelector('meta[property="og:locale"]');
-    if (og) og.setAttribute("content", "en_US");
+    if (og) og.setAttribute("content", LOCALES[lang] || "en_US");
     translateTree(document.body);
   }
 
@@ -431,8 +446,8 @@
      juste à droite du lien « mentions légales », à la même taille
      ========================= */
 
-  const NAMES = { fr: "Français", en: "English" };
-  const SHORT = { fr: "fra", en: "eng" };
+  const NAMES = { fr: "Français", en: "English", es: "Español", it: "Italiano" };
+  const SHORT = { fr: "fra", en: "eng", es: "esp", it: "ita" };
 
   function switchTo(l){
     if (l === lang) return;
@@ -503,10 +518,10 @@
   }
 
   document.addEventListener("DOMContentLoaded", () => {
-    if (lang === "en") translatePage();
+    if (lang !== "fr") translatePage();
     addSwitch();
     root.classList.remove("i18n-wait");
-    if (missing.size) console.info("[i18n] textes sans traduction anglaise :", [...missing]);
+    if (missing.size) console.info(`[i18n] textes sans traduction (${lang}) :`, [...missing]);
   });
 
   window.I18N = { lang, t, missing };
