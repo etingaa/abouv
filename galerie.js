@@ -345,6 +345,9 @@ function buildRoom(scene, plan, renderer){
   }
   const jamb = new THREE.BoxGeometry(.16, D.h, .02);
   for (const z of [-D.w / 2, D.w / 2]){ const j = new THREE.Mesh(jamb, trimMat); j.position.set(xW, D.h / 2, z); room.add(j); }
+  // traverse du haut de l'encadrement (même bleu que les montants)
+  const head = new THREE.Mesh(new THREE.BoxGeometry(.16, .02, D.w + .02), trimMat);
+  head.position.set(xW, D.h + .01, 0); room.add(head);
 
   // vestibule : deux murs latéraux + mur du fond, même bleu, le nom de l'artiste face à l'entrée
   const xV = xW - V;
