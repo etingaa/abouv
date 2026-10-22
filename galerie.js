@@ -40,6 +40,12 @@ const CFG = {
 };
 const isLight = () => document.documentElement.dataset.theme === "light";
 
+// champ de vision humain : ~ 70° de large, la zone que l'œil regarde vraiment (pas le grand-angle d'un appareil
+// photo qui déforme les bords) ; la même largeur quel que soit le format de l'écran
+function humanFov(){
+  const hfov = 70 * Math.PI / 180, aspect = innerWidth / innerHeight;
+  return Math.min(68, Math.max(38, 2 * Math.atan(Math.tan(hfov / 2) / aspect) * 180 / Math.PI));
+}
 const isMobile = matchMedia("(max-width: 760px), (pointer: coarse)").matches;
 const tr = (s) => (window.t ? window.t(s) : s);
 const fallback = (reason) => window.__g3dFallback ? window.__g3dFallback(reason) : location.replace("accueil.html");
@@ -478,7 +484,7 @@ async function main(){
 
   const scene = new THREE.Scene();
   scene.background = new THREE.Color((isLight() ? CFG.light : CFG.dark).bg);
-  const camera = new THREE.PerspectiveCamera(isMobile ? 62 : 55, innerWidth / innerHeight, .05, 100);
+  const camera = new THREE.PerspectiveCamera(humanFov(), innerWidth / innerHeight, .05, 100);
   camera.rotation.order = "YXZ";
 
   // --- décor, ambiance chaude très douce (la vraie lumière vient des projecteurs)
@@ -560,9 +566,10 @@ async function main(){
   /* ---------- promenade : un tour complet du banc en 15 s, le regard tourné vers les murs ----------
      Pas de saut d'une toile à l'autre : le regard tourne en continu avec la marche (vers le mur,
      un peu en avant), les toiles défilent naturellement. */
-  const WANDER = { lap: 24, idle: isMobile ? 20 : 9 };          // secondes par tour ; secondes sans action avant de repartir
+  const WANDER = { lap: 20, idle: isMobile ? 20 : 9 };          // secondes par tour ; secondes sans action avant de repartir
   const ellipse = { rx: 1.45, rz: 1.0 };          // tout près du banc (1,50 × 0,42 m), on en fait vraiment le tour
   const wander = { on: false, theta: Math.PI };
+  const LOOP_SPEED = Math.PI * (3 * (ellipse.rx + ellipse.rz) - Math.sqrt((3 * ellipse.rx + ellipse.rz) * (ellipse.rx + 3 * ellipse.rz))) / WANDER.lap;   // m/s
   const onEllipse = (th) => new THREE.Vector3(ellipse.rx * Math.cos(th), CFG.eye, ellipse.rz * Math.sin(th));
   function wanderGaze(th){
     const p = onEllipse(th);
@@ -583,13 +590,15 @@ async function main(){
     const start = onEllipse(th);
     const gz = wanderGaze(th);
     travel({ pos: start, yaw: gz.yaw, pitch: gz.pitch }, () => { wander.on = true; wander.theta = th; },
-      Math.max(1.6, view.pos.distanceTo(start) / .45));
+      Math.max(1.6, view.pos.distanceTo(start) / .45), LOOP_SPEED);
   }
 
   /* ---------- déplacements choisis ---------- */
-  function travel(to, onDone, dur){
+  // endSpeed (m/s) : on arrive en marchant à cette vitesse au lieu de s'arrêter (enchaînement avec la promenade)
+  function travel(to, onDone, dur, endSpeed){
     const dist = view.pos.distanceTo(to.pos);
-    move = {
+    const d = (dur ?? (1.2 + Math.min(1.6, dist * .35)));
+    move = { m: endSpeed && dist > .05 ? Math.min(2.5, endSpeed * d / dist) : null,
       from: { pos: view.pos.clone(), yaw: view.yaw, pitch: view.pitch },
       to, dyaw: angleDiff(view.yaw, to.yaw ?? view.yaw),
       t0: performance.now(), dur: (dur ?? (1.2 + Math.min(1.6, dist * .35))) * 1000, onDone,
@@ -712,6 +721,7 @@ async function main(){
   }
 
   addEventListener("resize", () => {
+    camera.fov = humanFov();
     camera.aspect = innerWidth / innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(innerWidth, innerHeight);
@@ -732,7 +742,9 @@ async function main(){
     if (view.frozen){
       // (tests) caméra placée à la main
     } else if (move){
-      const k = Math.min(1, (now - move.t0) / move.dur), e = ease(k);
+      const k = Math.min(1, (now - move.t0) / move.dur);
+      // départ en douceur ; arrivée soit arrêtée (ease), soit lancée à la vitesse de la promenade (Hermite)
+      const e = move.m == null ? ease(k) : (move.m - 2) * k * k * k + (3 - move.m) * k * k;
       view.pos.lerpVectors(move.from.pos, move.to.pos, e);
       view.yaw = move.from.yaw + move.dyaw * e;
       view.pitch = THREE.MathUtils.lerp(move.from.pitch, move.to.pitch ?? move.from.pitch, e);
@@ -741,16 +753,16 @@ async function main(){
       if (k >= 1){ const cb = move.onDone; move = null; if (cb) cb(); }
     } else if (wander.on){
       // allure de marche : légère poussée à chaque pas
-      const surge = 1 + .1 * Math.cos(stride * Math.PI * 2);
+      const surge = 1;
       const before = onEllipse(wander.theta);
       wander.theta -= dt * Math.PI * 2 / WANDER.lap * surge;
       view.pos.copy(onEllipse(wander.theta));
       stride += before.distanceTo(view.pos) / STEP;
       // le regard suit la marche, avec les petits mouvements de tête de quelqu'un qui regarde autour de lui
       const gz = wanderGaze(wander.theta), t = now / 1000;
-      const look = .1 * Math.sin(t * .29) + .045 * Math.sin(t * .71 + 1.3);
-      view.yaw += angleDiff(view.yaw, gz.yaw + look) * Math.min(1, dt * 2.2);
-      view.pitch += (gz.pitch + .025 * Math.sin(t * .23) - view.pitch) * Math.min(1, dt * 1.5);
+      // regard stable, qui tourne avec la marche (pas de va-et-vient de la tête)
+      view.yaw += angleDiff(view.yaw, gz.yaw) * Math.min(1, dt * 3);
+      view.pitch += (gz.pitch - view.pitch) * Math.min(1, dt * 2);
       walking = 1;
     } else if (!drag && lastInput && now - lastInput > WANDER.idle * 1000){
       lastInput = 0;
@@ -762,11 +774,9 @@ async function main(){
     gait += (walking - gait) * Math.min(1, dt * 2.5);
     const ph = stride * Math.PI * 2;
     camera.position.copy(view.pos);
-    camera.position.y += (Math.cos(ph) * .016 - .008) * gait;
-    const sway = Math.sin(ph / 2) * .014 * gait;
-    camera.position.x += Math.cos(view.yaw) * sway;
-    camera.position.z -= Math.sin(view.yaw) * sway;
-    camera.rotation.set(view.pitch + Math.cos(ph) * .003 * gait, view.yaw + Math.sin(ph / 2) * .004 * gait, Math.sin(ph / 2) * .005 * gait);
+    // le regard d'un humain est stabilisé : pas de caméra qui tangue, à peine un souffle de pas
+    camera.position.y += (Math.cos(ph) * .004 - .002) * gait;
+    camera.rotation.set(view.pitch, view.yaw, 0);
 
     if ((hdCheck += dt) > 1){ hdCheck = 0; if (hdFiles.size) loadNearHD(view.pos); }
     lights = Math.min(1, lights + dt * .8);
@@ -783,7 +793,7 @@ async function main(){
   await Promise.race([firstLoaded, new Promise(r => setTimeout(r, 2500))]);
   const th0 = Math.PI;                                   // côté porte de la boucle
   const gz0 = wanderGaze(th0);
-  travel({ pos: onEllipse(th0), yaw: gz0.yaw, pitch: gz0.pitch }, () => { wander.on = true; wander.theta = th0; }, 4.5);
+  travel({ pos: onEllipse(th0), yaw: gz0.yaw, pitch: gz0.pitch }, () => { wander.on = true; wander.theta = th0; }, 4.5, LOOP_SPEED);
   // (plus de bulle d'aide : le curseur suffit)
   ready.then(() => els.loading.classList.add("is-done"));
 }

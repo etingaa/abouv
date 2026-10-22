@@ -38,8 +38,10 @@
       b.setAttribute("aria-label", tr(light ? "Version sombre" : "Version claire"));
       b.title = b.getAttribute("aria-label");
     };
-    // un disque à moitié plein, qui tourne d'un demi-tour à chaque bascule
-    b.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.25"/><path d="M12 3.75a8.25 8.25 0 0 1 0 16.5z"/></svg>';
+    // soleil (en sombre : passer en clair) / lune (en clair : passer en sombre) ; l'un tourne et s'efface, l'autre arrive
+    b.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true">' +
+      '<g class="themeBtn__sun"><circle cx="12" cy="12" r="4.6"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.55 1.55M17.15 17.15l1.55 1.55M5.3 18.7l1.55-1.55M17.15 6.85l1.55-1.55"/></g>' +
+      '<path class="themeBtn__moon" d="M20 14.6A8.2 8.2 0 0 1 9.4 4a8.2 8.2 0 1 0 10.6 10.6z"/></svg>';
     b.addEventListener("click", () => {
       root.classList.add("theme-anim");
       setTheme(root.dataset.theme === "light" ? "dark" : "light", true); label();
