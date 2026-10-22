@@ -65,11 +65,9 @@
   function initGaleriesPage() {
     const box = document.getElementById("gx");
     if (!box) return;
-    const countries = [...new Set(GALLERIES.map((g) => g.country))];
 
     box.innerHTML = `
       <h2 class="gx__title">${t("Galeries")}<sup>${GALLERIES.length}</sup></h2>
-      <p class="gx__lead">${t("Où voir les toiles en vrai")} — ${countries.map((c) => escapeHtml(t(c))).join(", ")}.</p>
       <div class="gx__map">${mapSVG()}</div>
       <div class="gx__acc" role="list">${GALLERIES.map((g, i) => `
         <article class="gx__panel${i === 0 ? " is-open" : ""}" id="galerie-${i}" data-i="${i}" role="listitem" tabindex="0">

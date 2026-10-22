@@ -23,13 +23,12 @@
   <title>Galeries — Annick Bouvattier</title>
   <style>
     /* Galeries : une carte en points (pas de Leaflet) avec les galeries, puis les galeries en fiches */
-    .gx__title{ margin:36px 0 8px; font-size:clamp(48px, 8.4vw, 132px); font-weight:700; font-stretch:112%; text-transform:uppercase; letter-spacing:-.01em; line-height:.9; color:var(--ink); }
+    .gx__title{ margin:28px 0 0; font-size:clamp(44px, 7vw, 112px); font-weight:700; font-stretch:112%; text-transform:uppercase; letter-spacing:-.01em; line-height:.9; color:var(--ink); }
     .gx__title sup{ font-size:.2em; font-weight:500; letter-spacing:.06em; vertical-align:top; margin-left:.25em; position:relative; top:.6em; color:var(--ink-faint); font-stretch:100%; }
-    .gx__lead{ margin:0 0 40px; font-size:15px; color:var(--ink-soft); }
 
     /* carte en points */
-    .gx__map{ position:relative; margin:0 calc(50% - 50vw) 72px; padding:0 max(20px, calc(50vw - 700px + 48px)); }
-    .gx__map svg{ display:block; width:100%; height:auto; overflow:hidden;
+    .gx__map{ position:relative; margin:-8px calc(50% - 50vw) 32px; padding:0 max(20px, calc(50vw - 700px + 48px)); }
+    .gx__map svg{ display:block; width:100%; height:auto; max-height:40vh; overflow:hidden;
       -webkit-mask-image:radial-gradient(ellipse 75% 85% at 50% 50%, #000 55%, transparent 100%); mask-image:radial-gradient(ellipse 75% 85% at 50% 50%, #000 55%, transparent 100%); }
     .gx__pin{ cursor:pointer; outline:none; }
     .gx__pin circle.dot{ fill:var(--accent); transition:r .3s ease; }
@@ -43,7 +42,7 @@
     @media (prefers-reduced-motion: reduce){ .gx__pin.is-hot circle.ring{ animation:none; } }
 
     /* accordéon : cinq volets ; replié = numéro + ville à la verticale, ouvert = la galerie en grand */
-    .gx__acc{ display:flex; height:min(560px, 72vh); border-top:1px solid rgba(var(--ink-rgb),.16); border-bottom:1px solid rgba(var(--ink-rgb),.16); }
+    .gx__acc{ display:flex; height:min(480px, 60vh); border-top:1px solid rgba(var(--ink-rgb),.16); border-bottom:1px solid rgba(var(--ink-rgb),.16); }
     .gx__panel{
       position:relative; flex:1 1 0; min-width:0; overflow:hidden; cursor:pointer; outline:none;
       border-left:1px solid rgba(var(--ink-rgb),.16);
@@ -62,7 +61,7 @@
     .gx__panel:hover .gx__vcity{ -webkit-text-stroke-color:#fff; }
     .gx__panel.is-open .gx__vcity{ opacity:0; }
     .gx__body{
-      position:absolute; left:0; right:0; bottom:0; padding:32px clamp(24px, 3vw, 48px) 32px;
+      position:absolute; left:0; right:0; top:52px; padding:0 clamp(24px, 3vw, 48px);
       display:flex; flex-direction:column; gap:6px; min-width:420px;
       opacity:0; transform:translateY(16px); transition:opacity .4s ease, transform .6s cubic-bezier(.2,.7,.2,1);
       pointer-events:none;
@@ -133,7 +132,7 @@
 
   <!-- expositions (pour « 4 expositions ici depuis 2005 »), puis la logique de la page -->
   <script src="expos-data.js?v=20261022n"></script>
-  <script src="./script.js?v=20261024s"></script>
+  <script src="./script.js?v=20261024u"></script>
 
 </body>
 </html>
