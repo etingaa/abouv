@@ -35,8 +35,8 @@ const CFG = {
   wall: 0x2c406a,       // bleu nuit
   trim: 0x1a2742,
   // version claire (bouton du header) : murs ivoire, plinthes grège, fond papier, lumière plus généreuse
-  light: { wall: 0xf4f1eb, trim: 0x1c2647, bg: 0xefebe3, sign: "rgba(22,30,56,.9)", exposure: 1.3, hemi: 1.8, bounce: 14 },
-  dark:  { wall: 0x2c406a, trim: 0x1a2742, bg: 0x0c1220, sign: "rgba(236,232,225,.92)", exposure: 1.0, hemi: .5, bounce: 6 },
+  light: { wall: 0xf4f1eb, trim: 0x1c2647, bg: 0xefebe3, sign: "rgba(22,30,56,.9)", exposure: 1.3, hemi: 1.8, bounce: 14, ground: 0xd9cfbf, ceil: .62 },
+  dark:  { wall: 0x2c406a, trim: 0x1a2742, bg: 0x0c1220, sign: "rgba(236,232,225,.92)", exposure: 1.0, hemi: .5, bounce: 6, ground: 0x3a2a1c, ceil: 0 },
 };
 const isLight = () => document.documentElement.dataset.theme === "light";
 
@@ -386,7 +386,7 @@ function buildRoom(scene, plan, renderer){
   room.add(bench);
 
   scene.add(room);
-  return { room, floor, bench, railY, off, wallMat, trimMat, signMat, signs };
+  return { room, floor, bench, railY, off, wallMat, trimMat, ceilMat, signMat, signs };
 }
 
 /* =========================
@@ -503,7 +503,9 @@ async function main(){
     deco.signMat.map = deco.signs[isLight() ? "light" : "dark"]; deco.signMat.needsUpdate = true;
     scene.background.setHex(p.bg);
     renderer.toneMappingExposure = p.exposure;
-    hemi.intensity = p.hemi; bounce.intensity = p.bounce;
+    hemi.intensity = p.hemi; bounce.intensity = p.bounce; hemi.groundColor.setHex(p.ground);
+    // plafond : en version claire il reste clair (sinon il tombe dans l'ombre et le menu se lit mal)
+    deco.ceilMat.emissive.setHex(0xefebe3); deco.ceilMat.emissiveIntensity = p.ceil;
   };
   applyTheme();
   document.addEventListener("themechange", applyTheme);
