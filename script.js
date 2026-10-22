@@ -72,7 +72,7 @@
       <div class="gx__acc" role="list">${GALLERIES.map((g, i) => `
         <article class="gx__panel${i === 0 ? " is-open" : ""}" id="galerie-${i}" data-i="${i}" role="listitem" tabindex="0">
           <span class="gx__num">${String(i + 1).padStart(2, "0")}</span>
-          <p class="gx__vcity" aria-hidden="true">${escapeHtml(g.city)}</p>
+          <p class="gx__vcity" aria-hidden="true" style="--n:${g.city.length}">${escapeHtml(g.city)}</p>
           <div class="gx__body">
             <p class="gx__country">${escapeHtml(t(g.country))}</p>
             <p class="gx__city">${escapeHtml(g.city)}</p>
