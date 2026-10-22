@@ -12,7 +12,7 @@
   <meta property="og:title" content="Presse — Annick Bouvattier" />
   <meta property="og:description" content="Parutions presse : Annick Bouvattier dans le magazine « Artistes », mai/juin 2019." />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-  <script src="i18n.js?v=20261024t"></script>
+  <script src="i18n.js?v=20261024u"></script>
   <script src="site.js?v=20261024n"></script>
   <link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
   <!-- pages préchargées au survol d'un lien : changement de page quasi instantané (la galerie 3D est seulement préchargée) -->
@@ -21,7 +21,7 @@
      "prefetch":[{"where":{"href_matches":"*index.html"},"eagerness":"moderate"}]}
   </script>
   <title>Presse — Annick Bouvattier</title>
-  <link rel="stylesheet" href="styles.css?v=20261024g" />
+  <link rel="stylesheet" href="styles.css?v=20261024i" />
   <style>
     /* ===== Parution : couverture + texte, en carte ===== */
     .pub{
@@ -170,6 +170,21 @@
     }
     .ix-cover{ display:block; padding:0; border:0; background:none; cursor:zoom-in; }
     .ix-cover img{ filter:none; }
+    /* Presse : grande couverture + le nom du magazine en très grand contour blanc */
+    .prx__pub{ display:grid; grid-template-columns:minmax(0, 5fr) minmax(0, 7fr); gap:clamp(32px, 6vw, 96px); align-items:center; padding:48px 0 72px; border-top:1px solid rgba(var(--ink-rgb),.16); }
+    .prx__cover{ display:block; padding:0; border:0; background:none; cursor:zoom-in; }
+    .prx__cover img{ display:block; width:100%; box-shadow:0 30px 80px rgba(0,0,0,.45); transition:transform .6s cubic-bezier(.2,.7,.2,1); }
+    .prx__cover:hover img{ transform:translateY(-6px) rotate(-1deg); }
+    .prx__k{ display:flex; gap:18px; margin:0 0 8px; font-size:12px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint); }
+    .prx__mag{ margin:0 0 28px; font-size:clamp(48px, 7vw, 104px); font-weight:700; font-stretch:112%; text-transform:uppercase; line-height:.88; letter-spacing:-.01em;
+      color:rgba(255,255,255,.04); -webkit-text-stroke:1.5px rgba(255,255,255,.85); transition:color .4s ease; }
+    .prx__pub:hover .prx__mag{ color:rgba(255,255,255,.92); }
+    .prx__q{ margin:0 0 10px; font-size:clamp(24px, 2.6vw, 38px); font-weight:500; line-height:1.12; letter-spacing:-.015em; color:var(--ink); }
+    .prx__d{ margin:0; font-size:15px; color:var(--ink-soft); }
+    .prx__acts{ display:flex; gap:26px; margin-top:32px; }
+    .prx__acts a, .prx__acts button{ padding:0 0 2px; border:0; border-bottom:1px solid transparent; background:none; font:inherit; font-size:12px; font-weight:500; letter-spacing:.08em; text-transform:uppercase; color:var(--ink); cursor:pointer; transition:border-color .2s ease; }
+    .prx__acts a:hover, .prx__acts button:hover{ border-bottom-color:var(--accent); }
+    @media (max-width:760px){ .prx__pub{ grid-template-columns:1fr; gap:32px; padding-top:32px; } .prx__cover{ max-width:320px; } }
   </style>
 </head>
 <body class="presse salle salle--presse">
@@ -192,41 +207,32 @@
     </header>
 
     <h1 class="sr-only">Presse</h1>
-    <div class="sectionHead"><h2 class="sectionTitle">Parutions</h2><div class="sectionMeta" id="pubCount"></div></div>
 
-    <p class="ix-lead">Annick Bouvattier dans la presse.</p>
+    <h2 class="bigTitle">Presse<sup id="pubCount"></sup></h2>
 
-    <section class="ix-row" aria-label="Parutions">
-      <div class="ix-sticky">
-        <h2 class="ix-label">Parutions</h2>
-        <button class="ix-cover" type="button" data-pdf="images/ArtistesAnnickBouvattier.pdf" data-title='Magazine "Artistes" — Mai/Juin 2019' aria-label="Lire le PDF">
-          <img class="ix-label__img" src="images/ArtistesCover.jpg" alt="Couverture du magazine « Artistes », mai/juin 2019">
+    <!-- une parution = un <article class="pub"> (couverture + texte) -->
+    <section class="prx" aria-label="Parutions">
+      <article class="pub prx__pub">
+        <button class="prx__cover" type="button" data-pdf="images/ArtistesAnnickBouvattier.pdf" data-title='Magazine "Artistes" — Mai/Juin 2019' aria-label="Lire le PDF">
+          <img src="images/ArtistesCover.jpg" alt="Couverture du magazine « Artistes », mai/juin 2019">
         </button>
-      </div>
-      <!-- une parution = une ligne (pour en ajouter une : dupliquer le <li class="pub">) -->
-      <ul class="ix-list">
-        <li class="pub">
-          <span class="ix-list__k">Mai 2019</span>
-          <span class="ix-list__v">Artistes<small>Dossier « Savoir-faire » : réussir à sublimer la féminité.</small></span>
-          <span class="ix-list__a">
-            <button class="ix-link" type="button" data-pdf="images/ArtistesAnnickBouvattier.pdf" data-title='Magazine "Artistes" — Mai/Juin 2019'>Lire</button>
-            <a class="ix-link" href="images/ArtistesAnnickBouvattier.pdf" download>Télécharger</a>
-          </span>
-        </li>
-      </ul>
+        <div class="prx__txt">
+          <p class="prx__k"><span>01</span>Mai / Juin 2019</p>
+          <h3 class="prx__mag">Artistes</h3>
+          <p class="prx__q">« Réussir à sublimer la féminité »</p>
+          <p class="prx__d">Dossier « Savoir-faire » consacré à la peinture d’Annick Bouvattier.</p>
+          <div class="prx__acts">
+            <button type="button" data-pdf="images/ArtistesAnnickBouvattier.pdf" data-title='Magazine "Artistes" — Mai/Juin 2019'>Lire ↗</button>
+            <a href="images/ArtistesAnnickBouvattier.pdf" download>Télécharger ↓</a>
+          </div>
+        </div>
+      </article>
     </section>
 
-    <section class="ix-row" aria-label="Contact presse">
-      <h2 class="ix-label">Contact presse</h2>
-      <ul class="ix-list">
-        <li>
-          <span class="ix-list__k">Interview</span>
-          <span class="ix-list__v">Entretien, visuels en haute définition, exposition</span>
-          <span class="ix-list__a"><a class="ix-link" href="contact.html?sujet=presse">Écrire</a></span>
-        </li>
-      </ul>
-    </section>
-
+    <a class="bigLink" href="contact.html?sujet=presse">
+      <span class="bigLink__k">Contact presse — entretien, visuels en haute définition, exposition</span>
+      <span class="bigLink__w">Écrire<i aria-hidden="true">→</i></span>
+    </a>
 
     <footer class="bottom">
         <div class="bottom__left">
@@ -269,7 +275,7 @@
 // nombre de parutions
 document.addEventListener("DOMContentLoaded", () => {
   const n = document.querySelectorAll(".pub").length;
-  document.getElementById("pubCount").textContent = `${n} ${t(n > 1 ? "parutions" : "parution")}`;
+  document.getElementById("pubCount").textContent = n;
 });
 </script>
 <script>

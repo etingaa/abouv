@@ -1252,3 +1252,33 @@ body.salle .shade{ background:#070c19; -webkit-backdrop-filter:none; backdrop-fi
 .formCard .ix-form .sendBtn > span{ background:rgba(255,255,255,.1); }
 .formCard .ix-form .tick{ border-radius:6px; border-color:rgba(255,255,255,.35); }
 @media (max-width:760px){ .formCard{ border-radius:28px; margin:0 -8px 48px; } }
+
+/* ===== Grands titres de page (Presse, Contact) : même voix que le menu, en très grand ===== */
+.bigTitle{ margin:40px 0 48px; font-size:clamp(44px, 7vw, 112px); font-weight:700; font-stretch:112%; text-transform:uppercase; letter-spacing:-.01em; line-height:.9; color:var(--ink); }
+.bigTitle sup{ font-size:.2em; font-weight:500; letter-spacing:.06em; vertical-align:top; margin-left:.25em; position:relative; top:.6em; color:var(--ink-faint); font-stretch:100%; }
+/* grand lien en contour blanc qui se remplit au survol */
+.bigLink{ display:block; padding:40px 0 48px; margin-bottom:96px; border-top:1px solid rgba(var(--ink-rgb),.16); border-bottom:1px solid rgba(var(--ink-rgb),.16); }
+.bigLink__k{ display:block; margin-bottom:14px; font-size:12px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint); }
+.bigLink__w{ display:flex; align-items:center; gap:.3em; font-size:clamp(52px, 9vw, 150px); font-weight:700; font-stretch:112%; text-transform:uppercase; line-height:.9; letter-spacing:-.01em;
+  color:rgba(255,255,255,.04); -webkit-text-stroke:1.5px rgba(255,255,255,.85); transition:color .4s ease; }
+.bigLink__w i{ font-style:normal; font-stretch:100%; -webkit-text-stroke:0; color:var(--accent); font-size:.6em; transition:transform .4s cubic-bezier(.2,.7,.2,1); }
+.bigLink:hover .bigLink__w{ color:rgba(255,255,255,.92); }
+.bigLink:hover .bigLink__w i{ transform:translateX(.25em); }
+
+/* ===== Contact : formulaire à gauche, à droite l'e-mail et les liens en grand contour blanc ===== */
+.contactPage .cx{ display:grid; grid-template-columns:minmax(0, 7fr) minmax(0, 5fr); gap:clamp(32px, 5vw, 80px); align-items:start; margin-bottom:96px; }
+.cx .formCard{ margin:0; max-width:none; }
+.cx__side{ position:sticky; top:calc(var(--shade-h, 90px) + 24px); padding-top:8px; }
+.cx__k{ margin:0 0 12px; font-size:12px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint); }
+.cx__k--gap{ margin-top:56px; }
+.cx__mail{ font-size:clamp(22px, 2.2vw, 32px); font-weight:500; letter-spacing:-.01em; color:var(--ink); border-bottom:1px solid rgba(var(--ink-rgb),.3); transition:border-color .2s ease; }
+.cx__mail:hover{ border-bottom-color:var(--accent); }
+.cx__links{ list-style:none; margin:0; padding:0; border-top:1px solid rgba(var(--ink-rgb),.16); }
+.cx__links li{ border-bottom:1px solid rgba(var(--ink-rgb),.16); }
+.cx__links a{ display:flex; align-items:center; justify-content:space-between; padding:16px 0 12px;
+  font-size:clamp(30px, 3.4vw, 52px); font-weight:700; font-stretch:112%; text-transform:uppercase; line-height:1; letter-spacing:-.01em;
+  color:rgba(255,255,255,.04); -webkit-text-stroke:1.2px rgba(255,255,255,.85); transition:color .35s ease; }
+.cx__links a i{ font-style:normal; font-stretch:100%; font-size:.5em; -webkit-text-stroke:0; color:var(--ink-faint); transition:color .3s ease, transform .35s cubic-bezier(.2,.7,.2,1); }
+.cx__links a:hover{ color:rgba(255,255,255,.92); }
+.cx__links a:hover i{ color:var(--accent); transform:translate(3px, -3px); }
+@media (max-width:900px){ .contactPage .cx{ grid-template-columns:1fr; } .cx__side{ position:static; } }
