@@ -1282,3 +1282,4 @@ body.salle .shade{ background:#070c19; -webkit-backdrop-filter:none; backdrop-fi
 .cx__links a:hover{ color:rgba(255,255,255,.92); }
 .cx__links a:hover i{ color:var(--accent); transform:translate(3px, -3px); }
 @media (max-width:900px){ .contactPage .cx{ grid-template-columns:1fr; } .cx__side{ position:static; } }
+.bigTitle--sub{ margin-top:0; scroll-margin-top:calc(var(--shade-h, 90px) + 24px); }

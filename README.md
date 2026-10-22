@@ -1,7 +1,7 @@
 # annickbouvattier — site web
 
 Site statique (HTML/CSS/JS, sans framework ni étape de build) : `index` (accueil : galerie 3D), `accueil`
-(accueil classique, repli de la galerie), `portfolio`, `galeries`, `expositions`, `apropos`, `presse`, `contact`, `404`. Style commun dans `styles.css`, police Archivo
+(accueil classique, repli de la galerie), `portfolio`, `galeries`, `expositions`, `apropos` (avec la presse ; `presse.html` redirige), `contact`, `404`. Style commun dans `styles.css`, police Archivo
 hébergée dans `fonts/`.
 
 ## D'où viennent les données
