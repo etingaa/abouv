@@ -405,6 +405,50 @@
       .tlCard{ grid-template-columns:1fr; padding:14px 0; }
       .tlCard__type{ justify-self:start; }
     }
+    /* ===== finition « éditoriale » ===== */
+    .xsum{ margin:8px 0 88px !important; }
+    .xtitle{
+      margin:36px 0 40px; font-family:var(--font);
+      font-size:clamp(56px, 10.5vw, 168px); font-weight:300; font-stretch:125%; line-height:.88; letter-spacing:-.035em;
+      color:var(--ink);
+    }
+    .xtitle sup{ font-size:.2em; font-weight:400; letter-spacing:0; vertical-align:top; margin-left:.25em; position:relative; top:.6em; color:var(--ink-faint); font-stretch:100%; }
+
+    .xpills{ gap:4px 36px !important; margin:0 !important; }
+    .xpill{
+      height:auto !important; padding:6px 0 !important; gap:6px !important; border:0 !important; border-radius:0 !important;
+      background:none !important; color:var(--ink-faint) !important; font-size:15px !important; font-weight:400 !important;
+      position:relative; letter-spacing:.01em;
+    }
+    .xpill b{ min-width:0 !important; height:auto !important; padding:0 !important; background:none !important; color:inherit !important; font-size:11px !important; align-self:flex-start; }
+    .xpill::after{ content:""; position:absolute; left:0; right:0; bottom:0; height:1px; background:currentColor; transform:scaleX(0); transform-origin:left; transition:transform .45s cubic-bezier(.2,.7,.2,1); }
+    .xpill:hover{ color:var(--ink) !important; }
+    .xpill:hover::after, .xpill[aria-pressed="true"]::after{ transform:scaleX(1); }
+    .xpill[aria-pressed="true"]{ color:var(--ink) !important; }
+
+    .xrun{ margin-top:56px !important; padding:22px 0 !important; }
+    .xrun__track{ animation-duration:110s !important; }
+    .xrun__c{ font-size:clamp(28px, 3.2vw, 46px) !important; font-weight:200 !important; font-stretch:125%; letter-spacing:-.02em; color:rgba(var(--ink-rgb),.38) !important; }
+    .xrun__c::after{ content:"" !important; display:inline-block; width:.9em; height:1px; margin:0 .55em !important; vertical-align:middle; background:rgba(var(--ink-rgb),.25) !important; }
+    .xrun__c:hover, .xrun__c.is-on{ color:var(--ink) !important; }
+
+    .xdecade{ font-weight:200 !important; font-stretch:125%; letter-spacing:-.06em !important; -webkit-text-stroke:1px rgba(255,255,255,.85) !important; color:rgba(255,255,255,.05) !important; }
+
+    .tlYearLabel{ font-weight:200 !important; font-stretch:125%; letter-spacing:-.03em !important; }
+    .tlCard__title{ font-weight:300 !important; font-stretch:112%; letter-spacing:-.01em; }
+    .tlCard{ position:relative; }
+    .tlCard::before{
+      content:""; position:absolute; inset:0 -14px; z-index:-1;
+      background:linear-gradient(90deg, rgba(255,255,255,.055), rgba(255,255,255,0) 70%);
+      opacity:0; transition:opacity .35s ease;
+    }
+    .tlCard:hover::before{ opacity:1; }
+    .tlCard:hover{ padding-left:14px !important; }
+
+    /* apparition au défilement */
+    .rv{ opacity:0; transform:translateY(14px); transition:opacity .8s ease, transform .8s cubic-bezier(.2,.7,.2,1), padding-left .3s ease; }
+    .rv.is-in{ opacity:1; transform:none; }
+    .tlCard.rv.is-in.is-dim{ opacity:.18; }
   </style>
 </head>
 
@@ -615,6 +659,15 @@
     const yearEls = {}; // année -> colonne
     const decadeMark = {}; // décennie -> première année (la plus ancienne) qui a des expositions
 
+    // apparition douce des rangées au défilement
+    function revealRows(){
+      if (matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window)) return;
+      const io = new IntersectionObserver((ents) => ents.forEach(en => {
+        if (en.isIntersecting){ en.target.classList.add("is-in"); io.unobserve(en.target); }
+      }), { rootMargin: "0px 0px -8% 0px" });
+      document.querySelectorAll(".tlCard, .xdecade, .tlAxis").forEach((el) => { el.classList.add("rv"); io.observe(el); });
+    }
+
     function decorateTimeline(){
       // intercalaire « années 2010 » en tête (en haut) de chaque décennie : la plus récente année de la décennie
       const byDecade = {};
@@ -739,6 +792,7 @@
       const cities = [...new Set(list.map(e => e.city))];
       const run = cities.map(c => `<button type="button" class="xrun__c${filters.q.toLowerCase() === c.toLowerCase() ? " is-on" : ""}" data-city="${escapeHtml(c)}">${escapeHtml(t(c))}</button>`).join("");
       box.innerHTML = `
+        <h2 class="xtitle">${t("Expositions")}<sup>${n}</sup></h2>
         <div class="xpills" role="group" aria-label="${t("Type")}">
           ${pill("", t("Toutes"), list.length)}${pill("solo", t("Personnelles"), count("solo"))}${pill("group", t("Collectives"), count("group"))}${pill("salon", t("Salons"), count("salon"))}
           ${filters.q ? `<button class="xpill xpill--q" type="button" data-clear="q">${escapeHtml(t(filters.q))}<b>×</b></button>` : ""}
@@ -909,6 +963,7 @@
     }
     buildTimeline();
     decorateTimeline();
+    revealRows();
     const qParam = new URLSearchParams(location.search).get("q");
     if(qParam){ els.q.value = filters.q = qParam; }
     apply(false);
