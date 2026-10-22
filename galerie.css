@@ -170,3 +170,5 @@ html[data-theme="light"] .g3d-about__panel p{ color:rgba(22,30,56,.8); }
 html[data-theme="light"] .g3d-about__links a{ color:#161e38; border-bottom-color:rgba(22,30,56,.3); }
 @media (max-width:760px){ .g3d-about{ left:16px; bottom:calc(66px + env(safe-area-inset-bottom)); } .g3d-about__panel{ width:calc(100vw - 32px); max-height:60vh; overflow:auto; } }
 @media (prefers-reduced-motion: reduce){ .g3d-about__panel{ animation:none; } }
+.g3d-about__panel p a{ color:inherit; border-bottom:1px solid currentColor; }
+.g3d-about__panel p a:hover{ border-bottom-color:#ec7668; }

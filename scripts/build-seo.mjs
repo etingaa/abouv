@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // build-seo.mjs — référencement (SEO) du site, sans dépendance : node scripts/build-seo.mjs
 //
+// Pas de meta keywords (ignorées par les moteurs).
 // À relancer après avoir ajouté ou modifié une œuvre dans le Google Sheet (ou une galerie / exposition).
 // Ce que le script fait :
 //   1. relit le Google Sheet des œuvres (copie à jour dans data/sheet.csv ; si Google ne répond pas, la copie existante sert)
@@ -161,7 +162,13 @@ function describe(a, EN){
   ].filter(Boolean).join(" ");
   return { fr, en };
 }
-const clip = (s, n = 158) => s.length <= n ? s : s.slice(0, n - 1).replace(/\s+\S*$/, "") + "…";
+// meta description : les phrases entières qui tiennent en ~160 caractères (sinon la première, coupée proprement)
+function clip(s, n = 160){
+  if (s.length <= n) return s;
+  let out = "";
+  for (const ph of s.match(/[^.!?]+[.!?]+(\s|$)/g) || [s]){ if ((out + ph).trim().length > n) break; out += ph; }
+  return out.trim() || s.slice(0, n - 1).replace(/\s+\S*$/, "") + "…";
+}
 
 function workPage(a, i, list, tpl, EN, sizes){
   const prev = list[(i - 1 + list.length) % list.length], next = list[(i + 1) % list.length];
@@ -206,6 +213,9 @@ function workPage(a, i, list, tpl, EN, sizes){
   <meta property="og:image" content="${img}" />
   <meta property="og:image:alt" content="${esc(alt)}" />
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="${esc(`${a.title} — ${ARTIST}`)}" />
+  <meta name="twitter:description" content="${esc(clip(fr))}" />
+  <meta name="twitter:image" content="${img}" />
   <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
   <script src="../i18n.js?v=${tpl.v.i18n}"></script>
   <script src="../site.js?v=${tpl.v.site}"></script>
@@ -279,6 +289,7 @@ function headBlock(html, page, tpl, list){
     `<meta name="twitter:card" content="summary_large_image" />`,
     `<meta name="twitter:title" content="${title}" />`,
     `<meta name="twitter:description" content="${desc}" />`,
+    `<meta name="twitter:image" content="${abs(DEFAULT_OG_IMAGE)}" />`,
   ];
   if (page.file === "index.html"){
     const person = {
