@@ -71,29 +71,38 @@
       <h2 class="gx__title">${t("Galeries")}<sup>${GALLERIES.length}</sup></h2>
       <p class="gx__lead">${t("Où voir les toiles en vrai")} — ${countries.map((c) => escapeHtml(t(c))).join(", ")}.</p>
       <div class="gx__map">${mapSVG()}</div>
-      <div class="gx__grid">${GALLERIES.map((g, i) => `
-        <article class="gx__card" id="galerie-${i}" data-i="${i}">
-          <p class="gx__country">${escapeHtml(t(g.country))}</p>
-          <p class="gx__city">${escapeHtml(g.city)}</p>
-          <p class="gx__name">${escapeHtml(g.name)}</p>
-          <p class="gx__addr">${escapeHtml(g.address)}</p>
-          ${exposLine(g)}
-          <div class="gx__acts">
-            ${g.website ? `<a href="${escapeHtml(g.website)}" target="_blank" rel="noopener noreferrer">${t("Site")} ↗</a>` : ""}
-            <a href="https://www.google.com/maps/dir/?api=1&destination=${g.lat},${g.lng}" target="_blank" rel="noopener noreferrer">${t("Itinéraire")} ↗</a>
-            ${g.phone ? `<a href="tel:${g.phone.replace(/[^\d+]/g, "")}">${t("Appeler")}</a>` : ""}
+      <div class="gx__acc" role="list">${GALLERIES.map((g, i) => `
+        <article class="gx__panel${i === 0 ? " is-open" : ""}" id="galerie-${i}" data-i="${i}" role="listitem" tabindex="0">
+          <span class="gx__num">${String(i + 1).padStart(2, "0")}</span>
+          <p class="gx__vcity" aria-hidden="true">${escapeHtml(g.city)}</p>
+          <div class="gx__body">
+            <p class="gx__country">${escapeHtml(t(g.country))}</p>
+            <p class="gx__city">${escapeHtml(g.city)}</p>
+            <p class="gx__name">${escapeHtml(g.name)}</p>
+            <p class="gx__addr">${escapeHtml(g.address)}</p>
+            ${exposLine(g)}
+            <div class="gx__acts">
+              ${g.website ? `<a href="${escapeHtml(g.website)}" target="_blank" rel="noopener noreferrer">${t("Site")} ↗</a>` : ""}
+              <a href="https://www.google.com/maps/dir/?api=1&destination=${g.lat},${g.lng}" target="_blank" rel="noopener noreferrer">${t("Itinéraire")} ↗</a>
+              ${g.phone ? `<a href="tel:${g.phone.replace(/[^\d+]/g, "")}">${t("Appeler")}</a>` : ""}
+            </div>
           </div>
         </article>`).join("")}
       </div>`;
 
     // carte et fiches reliées : survoler l'une allume l'autre ; un clic sur un point mène à la fiche
-    const pins = [...box.querySelectorAll(".gx__pin")], cards = [...box.querySelectorAll(".gx__card")];
-    const hot = (i, on) => { pins[i].classList.toggle("is-hot", on); cards[i].classList.toggle("is-hot", on); };
-    cards.forEach((c, i) => { c.addEventListener("mouseenter", () => hot(i, true)); c.addEventListener("mouseleave", () => hot(i, false)); });
+    // accordéon : une galerie ouverte à la fois (au survol, au clic, au clavier) ; son point s'allume sur la carte
+    const pins = [...box.querySelectorAll(".gx__pin")], cards = [...box.querySelectorAll(".gx__panel")];
+    const open = (i) => cards.forEach((c, k) => c.classList.toggle("is-open", k === i));
+    const hot = (i, on) => { pins[i].classList.toggle("is-hot", on); if (on) open(i); };
+    cards.forEach((c, i) => {
+      c.addEventListener("mouseenter", () => hot(i, true)); c.addEventListener("mouseleave", () => hot(i, false));
+      c.addEventListener("focus", () => hot(i, true)); c.addEventListener("click", () => open(i));
+    });
     pins.forEach((p, i) => {
       p.addEventListener("mouseenter", () => hot(i, true)); p.addEventListener("mouseleave", () => hot(i, false));
       p.addEventListener("focus", () => hot(i, true)); p.addEventListener("blur", () => hot(i, false));
-      const go = () => { cards[i].scrollIntoView({ behavior: "smooth", block: "center" }); hot(i, true); setTimeout(() => hot(i, false), 1600); };
+      const go = () => { open(i); cards[i].scrollIntoView({ behavior: "smooth", block: "center" }); };
       p.addEventListener("click", go);
       p.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } });
     });
