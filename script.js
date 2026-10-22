@@ -104,5 +104,19 @@
       p.addEventListener("click", go);
       p.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } });
     });
+
+    // invitation à descendre : flèche en bas de l'écran tant que les galeries ne sont pas entièrement visibles
+    const acc = box.querySelector(".gx__acc");
+    const cue = document.createElement("button");
+    cue.type = "button"; cue.className = "gx__cue";
+    cue.innerHTML = `<span>${t("Les galeries")}</span><i aria-hidden="true"></i>`;
+    cue.addEventListener("click", () => acc.scrollIntoView({ behavior: "smooth", block: "end" }));
+    document.body.appendChild(cue);
+    const update = () => {
+      const r = acc.getBoundingClientRect();
+      cue.classList.toggle("is-on", r.bottom > innerHeight + 8 && scrollY < 60 && innerWidth > 760);
+    };
+    addEventListener("scroll", update, { passive: true }); addEventListener("resize", update);
+    update();
   }
 })();
