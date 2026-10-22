@@ -139,7 +139,6 @@
     "œuvre": "artwork",
     "œuvres": "artworks",
     "Passer": "Skip",
-    "Les galeries": "The galleries",
     "Écrire directement": "Write directly",
     "Mai / Juin 2019": "May / June 2019",
     "Dossier « Savoir-faire » consacré à la peinture d’Annick Bouvattier.": "“Savoir-faire” feature on Annick Bouvattier’s painting.",

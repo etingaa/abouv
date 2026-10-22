@@ -23,12 +23,14 @@
   <title>Galeries — Annick Bouvattier</title>
   <style>
     /* Galeries : une carte en points (pas de Leaflet) avec les galeries, puis les galeries en fiches */
-    .gx__title{ margin:40px 0 24px; font-size:clamp(44px, 7vw, 112px); font-weight:700; font-stretch:112%; text-transform:uppercase; letter-spacing:-.01em; line-height:.9; color:var(--ink); }
+    .gx{ position:relative; }
+    /* le titre est posé sur la carte (en haut à gauche) : la carte garde de la hauteur sur les petits écrans */
+    .gx__title{ position:absolute; z-index:2; top:clamp(12px, 3vh, 32px); left:0; margin:0; pointer-events:none; text-shadow:0 2px 24px rgba(8,12,24,.8); font-size:clamp(44px, min(7vw, 12vh), 112px); font-weight:700; font-stretch:112%; text-transform:uppercase; letter-spacing:-.01em; line-height:.9; color:var(--ink); }
     .gx__title sup{ font-size:.2em; font-weight:500; letter-spacing:.06em; vertical-align:top; margin-left:.25em; position:relative; top:.6em; color:var(--ink-faint); font-stretch:100%; }
 
     /* carte en points */
-    .gx__map{ position:relative; margin:0 calc(50% - 50vw) 56px; padding:0 max(20px, calc(50vw - 700px + 48px)); }
-    .gx__map svg{ display:block; width:100%; height:auto; max-height:46vh; overflow:hidden;
+    .gx__map{ position:relative; margin:0 calc(50% - 50vw) clamp(16px, 3vh, 40px); padding-top:clamp(12px, 3vh, 32px); padding:0 max(20px, calc(50vw - 700px + 48px)); }
+    .gx__map svg{ display:block; width:100%; height:auto; overflow:hidden;
       -webkit-mask-image:radial-gradient(ellipse 75% 85% at 50% 50%, #000 55%, transparent 100%); mask-image:radial-gradient(ellipse 75% 85% at 50% 50%, #000 55%, transparent 100%); }
     .gx__pin{ cursor:pointer; outline:none; }
     .gx__pin circle.dot{ fill:var(--accent); transition:r .3s ease; }
@@ -42,7 +44,7 @@
     @media (prefers-reduced-motion: reduce){ .gx__pin.is-hot circle.ring{ animation:none; } }
 
     /* accordéon : cinq volets ; replié = numéro + ville à la verticale, ouvert = la galerie en grand */
-    .gx__acc{ display:flex; height:min(480px, 60vh); border-top:1px solid rgba(var(--ink-rgb),.16); border-bottom:1px solid rgba(var(--ink-rgb),.16); }
+    .gx__acc{ display:flex; height:clamp(250px, 44vh, 480px); border-top:1px solid rgba(var(--ink-rgb),.16); border-bottom:1px solid rgba(var(--ink-rgb),.16); }
     .gx__panel{
       position:relative; flex:1 1 0; min-width:0; overflow:hidden; cursor:pointer; outline:none; container-type:size;
       border-left:1px solid rgba(var(--ink-rgb),.16);
@@ -62,14 +64,14 @@
     .gx__panel:hover .gx__vcity{ -webkit-text-stroke-color:#fff; }
     .gx__panel.is-open .gx__vcity{ opacity:0; }
     .gx__body{
-      position:absolute; left:0; right:0; top:52px; padding:0 clamp(24px, 3vw, 48px);
+      position:absolute; left:0; right:0; top:clamp(40px, 11cqh, 56px); padding:0 clamp(24px, 3vw, 48px);
       display:flex; flex-direction:column; gap:6px; min-width:420px;
       opacity:0; transform:translateY(16px); transition:opacity .4s ease, transform .6s cubic-bezier(.2,.7,.2,1);
       pointer-events:none;
     }
     .gx__panel.is-open .gx__body{ opacity:1; transform:none; transition-delay:.35s; pointer-events:auto; }
     .gx__country{ margin:0; font-size:11px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint); }
-    .gx__city{ margin:4px 0 14px; font-size:clamp(44px, 5.4vw, 88px); font-weight:700; font-stretch:112%; text-transform:uppercase; line-height:.9; letter-spacing:-.01em; color:var(--ink); }
+    .gx__city{ margin:4px 0 14px; font-size:clamp(30px, min(5.4vw, 13cqh), 88px); font-weight:700; font-stretch:112%; text-transform:uppercase; line-height:.9; letter-spacing:-.01em; color:var(--ink); }
     .gx__name{ margin:0; font-size:18px; font-weight:500; color:var(--ink); }
     .gx__addr{ margin:0; font-size:14px; color:var(--ink-soft); }
     .gx__expos{ align-self:flex-start; margin-top:8px; font-size:13px; color:var(--ink-faint); border-bottom:1px solid rgba(var(--ink-rgb),.25); }
@@ -81,7 +83,8 @@
 
     /* téléphone : les volets s'empilent, tout est visible */
     @media (max-width:760px){
-      .gx__map{ margin-bottom:40px; }
+      .gx__title{ position:static; margin:28px 0 16px; }
+      .gx__map{ margin-bottom:40px; padding-top:0; }
       .gx__acc{ flex-direction:column; height:auto; border:0; }
       .gx__panel, .gx__panel:last-child{ container-type:normal; flex:none; border:0; border-top:1px solid rgba(var(--ink-rgb),.16); background:none !important; cursor:default; }
       .gx__vcity{ display:none; }
@@ -89,21 +92,6 @@
       .gx__body{ position:static; min-width:0; opacity:1; transform:none; pointer-events:auto; padding:12px 0 28px; }
       .gx__city{ font-size:40px; }
     }
-    /* invitation à descendre (disparaît dès qu'on fait défiler) */
-    .gx__cue{ position:fixed; left:50%; bottom:22px; z-index:20; display:flex; flex-direction:column; align-items:center; gap:10px; padding:6px 10px; isolation:isolate;
-      border:0; background:none; cursor:pointer; color:var(--ink); font:inherit; font-size:11px; font-weight:500; letter-spacing:.16em; text-transform:uppercase;
-      opacity:0; pointer-events:none; transform:translate(-50%, 8px); transition:opacity .4s ease, transform .4s ease; }
-    .gx__cue.is-on{ opacity:1; pointer-events:auto; transform:translate(-50%, 0); }
-    .gx__cue i{ position:relative; width:1px; height:44px; background:rgba(var(--ink-rgb),.25); overflow:hidden; }
-    .gx__cue i::after{ content:""; position:absolute; left:0; top:-40%; width:1px; height:40%; background:var(--accent); animation:gxCue 1.8s cubic-bezier(.6,0,.3,1) infinite; }
-    .gx__cue i::before{ content:""; position:absolute; left:50%; bottom:1px; width:7px; height:7px; border-right:1px solid var(--ink); border-bottom:1px solid var(--ink); transform:translateX(-50%) rotate(45deg); }
-    .gx__cue i{ overflow:visible; }
-    .gx__cue:hover span{ color:#fff; }
-    /* fondu en bas de l'écran : on comprend qu'il y a une suite */
-    .gx__cue::before{ content:""; position:absolute; z-index:-1; left:50%; bottom:-22px; width:100vw; height:150px; transform:translateX(-50%); pointer-events:none;
-      background:linear-gradient(to bottom, rgba(8,12,24,0), rgba(8,12,24,.92) 70%); }
-    @keyframes gxCue{ from{ top:-40%; } to{ top:100%; } }
-    @media (prefers-reduced-motion: reduce){ .gx__cue i::after{ animation:none; top:30%; } }
   </style>
 
 
@@ -147,7 +135,7 @@
 
   <!-- expositions (pour « 4 expositions ici depuis 2005 »), puis la logique de la page -->
   <script src="expos-data.js?v=20261022n"></script>
-  <script src="./script.js?v=20261024w"></script>
+  <script src="./script.js?v=20261024y"></script>
 
 </body>
 </html>
