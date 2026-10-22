@@ -239,9 +239,9 @@
     }
     .expoPop__go:hover{ color:var(--accent-hi); }
 
-    /* Téléphone : la ligne du temps devient verticale (ligne à gauche, expositions à droite)
-       et se parcourt en faisant défiler la page. */
-    @media (max-width:600px){
+    /* Ligne du temps verticale (partout) : la ligne à gauche, les expositions à droite ;
+       elle se parcourt en faisant défiler la page. */
+    @media all{
       .tl{ overflow:visible; cursor:auto; -webkit-mask-image:none; mask-image:none; }
       .tlTrack{ flex-direction:column-reverse; width:auto; padding:4px 0 0; }
       .tlTrack::before{
@@ -269,6 +269,16 @@
       .tlNav, .tlHint{ display:none; }
       .tlKey__where{ display:none; }
       .tlFoot{ margin:0 0 18px; order:-1; }
+    }
+    /* grand écran : colonne des années plus large, expositions d'une année côte à côte */
+    @media (min-width:601px){
+      .tlTrack::before{ left:7px; }
+      .tlYear{ grid-template-columns:150px 1fr; column-gap:24px; padding-bottom:34px; }
+      .tlAxis{ gap:16px; }
+      .tlDot{ width:15px; height:15px; }
+      .tlYearLabel{ font-size:22px; font-weight:500; letter-spacing:0; color:var(--ink); }
+      .tlLane{ display:grid !important; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:10px; }
+      .tlCard__title{ font-size:15px; }
     }
     @media (max-width:600px){
       .viewSwitch{ order:2; margin-left:0; }
@@ -558,7 +568,7 @@
     }
 
     // défilement doux vers une année (centrée)
-    const phone = matchMedia("(max-width:600px)");
+    const phone = matchMedia("all");   // ligne verticale partout : on fait défiler la page
     function scrollToYear(y, smooth = true){
       const col = yearEls[y];
       if(!col) return;
