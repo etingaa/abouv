@@ -104,3 +104,20 @@ body.gallery3d{ background:#060b18; overflow:hidden; overscroll-behavior:none; }
     z-index:60; padding:14px 16px 16px;
   }
 }
+
+/* bouton clair / sombre : même couleur que le menu posé sur la salle */
+.gallery3d .top:not(.is-open) .themeBtn{ color:#efe9df; filter:drop-shadow(0 1px 8px rgba(0,0,0,.5)); }
+
+/* version claire : salle aux murs ivoire, menu à l'encre bleu nuit */
+html[data-theme="light"] body.gallery3d{ background:#efebe3; }
+html[data-theme="light"] .g3d-stage::after{ background:linear-gradient(to bottom, rgba(239,235,227,.7), rgba(239,235,227,0)); }
+html[data-theme="light"] .gallery3d .top:not(.is-open) .brand,
+html[data-theme="light"] .gallery3d .top:not(.is-open) .nav__link,
+html[data-theme="light"] .gallery3d .top:not(.is-open) .langMenu__btn,
+html[data-theme="light"] .gallery3d .top:not(.is-open) .menuBtn,
+html[data-theme="light"] .gallery3d .top:not(.is-open) .themeBtn{ color:#161e38 !important; text-shadow:0 1px 12px rgba(239,235,227,.7); filter:none; }
+html[data-theme="light"] .gallery3d .top:not(.is-open) .nav__link:hover{ text-decoration-color:#161e38; }
+html[data-theme="light"] .gallery3d .bottom .bottom__link--legal, html[data-theme="light"] .gallery3d .bottom .langMenu__btn{ color:rgba(22,30,56,.7) !important; text-shadow:none; }
+html[data-theme="light"] .g3d-hint{ background:rgba(239,235,227,.85); color:#161e38; }
+html[data-theme="light"] .g3d-loading{ background:rgba(22,30,56,.15); }
+html[data-theme="light"] .g3d-progress__bar{ background:rgba(22,30,56,.8); }

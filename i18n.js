@@ -139,6 +139,8 @@
     "œuvre": "artwork",
     "œuvres": "artworks",
     "Passer": "Skip",
+    "Version claire": "Light version",
+    "Version sombre": "Dark version",
     "Filtrer par": "Filter by",
     "Annick Bouvattier dans son atelier": "Annick Bouvattier in her studio",
     "L’artiste": "The artist",

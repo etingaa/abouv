@@ -34,7 +34,11 @@ const CFG = {
   hdList: "images/hd/list.json",
   wall: 0x2c406a,       // bleu nuit
   trim: 0x1a2742,
+  // version claire (bouton du header) : murs ivoire, plinthes grège, fond papier, lumière plus généreuse
+  light: { wall: 0xf4f1eb, trim: 0x1c2647, bg: 0xefebe3, sign: "rgba(22,30,56,.9)", exposure: 1.3, hemi: 1.8, bounce: 14 },
+  dark:  { wall: 0x2c406a, trim: 0x1a2742, bg: 0x0c1220, sign: "rgba(236,232,225,.92)", exposure: 1.0, hemi: .5, bounce: 6 },
 };
+const isLight = () => document.documentElement.dataset.theme === "light";
 
 const isMobile = matchMedia("(max-width: 760px), (pointer: coarse)").matches;
 const tr = (s) => (window.t ? window.t(s) : s);
@@ -266,8 +270,9 @@ function buildRoom(scene, plan, renderer){
   const room = new THREE.Group();
   room.name = "room";
 
-  const wallMat = new THREE.MeshStandardMaterial({ color: CFG.wall, roughness: .92 });
-  const trimMat = new THREE.MeshStandardMaterial({ color: CFG.trim, roughness: .6 });
+  const pal = isLight() ? CFG.light : CFG.dark;
+  const wallMat = new THREE.MeshStandardMaterial({ color: pal.wall, roughness: .92 });
+  const trimMat = new THREE.MeshStandardMaterial({ color: pal.trim, roughness: .6 });
   const ceilMat = new THREE.MeshStandardMaterial({ color: 0xece8e1, roughness: 1 });
   const blackMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: .45, metalness: .5 });
 
@@ -340,15 +345,17 @@ function buildRoom(scene, plan, renderer){
   panel(V, H, xW - V / 2, -S / 2, new THREE.Vector3(0, 0, 1));
   panel(V, H, xW - V / 2, S / 2, new THREE.Vector3(0, 0, -1));
   panel(S, H, xV, 0, new THREE.Vector3(1, 0, 0));
-  const sign = canvasTexture(1024, (g, s) => {
-    g.fillStyle = "rgba(236,232,225,.92)";
+  const signTex = (color) => canvasTexture(1024, (g, s) => {
+    g.fillStyle = color;
     g.textAlign = "center"; g.textBaseline = "middle";
     g.font = `700 ${Math.round(s * .085)}px Archivo, Helvetica, Arial, sans-serif`;
     g.fillText("ANNICK BOUVATTIER", s / 2, s * .46);
     g.font = `500 ${Math.round(s * .03)}px Archivo, Helvetica, Arial, sans-serif`;
     g.fillText(tr("Artiste-peintre").toUpperCase().split("").join(" "), s / 2, s * .56);   // lettres espacées
   });
-  const signMesh = new THREE.Mesh(new THREE.PlaneGeometry(2.4, 2.4), new THREE.MeshStandardMaterial({ map: sign, transparent: true, roughness: .9 }));
+  const signs = { dark: signTex(CFG.dark.sign), light: signTex(CFG.light.sign) };
+  const signMat = new THREE.MeshStandardMaterial({ map: signs[isLight() ? "light" : "dark"], transparent: true, roughness: .9 });
+  const signMesh = new THREE.Mesh(new THREE.PlaneGeometry(2.4, 2.4), signMat);
   signMesh.position.set(xV + .01, 2.0, 0);
   signMesh.rotation.y = Math.PI / 2;
   room.add(signMesh);
@@ -373,7 +380,7 @@ function buildRoom(scene, plan, renderer){
   room.add(bench);
 
   scene.add(room);
-  return { room, floor, bench, railY, off };
+  return { room, floor, bench, railY, off, wallMat, trimMat, signMat, signs };
 }
 
 /* =========================
@@ -470,16 +477,30 @@ async function main(){
   els.stage.appendChild(renderer.domElement);
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x0c1220);
+  scene.background = new THREE.Color((isLight() ? CFG.light : CFG.dark).bg);
   const camera = new THREE.PerspectiveCamera(isMobile ? 62 : 55, innerWidth / innerHeight, .05, 100);
   camera.rotation.order = "YXZ";
 
   // --- décor, ambiance chaude très douce (la vraie lumière vient des projecteurs)
   const deco = buildRoom(scene, plan, renderer);
-  scene.add(new THREE.HemisphereLight(0xffe6c7, 0x3a2a1c, .5));
+  const hemi = new THREE.HemisphereLight(0xffe6c7, 0x3a2a1c, .5);
+  scene.add(hemi);
   const bounce = new THREE.PointLight(0xffdcb0, 6, 0, 2);
   bounce.position.set(0, 1.9, 0);
   scene.add(bounce);
+
+  // version claire / sombre : suit le bouton du header, sans recharger la salle
+  const applyTheme = () => {
+    const p = isLight() ? CFG.light : CFG.dark;
+    deco.wallMat.color.setHex(p.wall);
+    deco.trimMat.color.setHex(p.trim);
+    deco.signMat.map = deco.signs[isLight() ? "light" : "dark"]; deco.signMat.needsUpdate = true;
+    scene.background.setHex(p.bg);
+    renderer.toneMappingExposure = p.exposure;
+    hemi.intensity = p.hemi; bounce.intensity = p.bounce;
+  };
+  applyTheme();
+  document.addEventListener("themechange", applyTheme);
   const vestLight = new THREE.SpotLight(0xffe2bd, 12, 0, .6, .8, 2);
   vestLight.position.set(-plan.L / 2 - CFG.vestibule + 1.4, CFG.ceiling - .1, 0);
   vestLight.target.position.set(-plan.L / 2 - CFG.vestibule, 2, 0);

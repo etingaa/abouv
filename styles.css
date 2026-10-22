@@ -1366,3 +1366,82 @@ body.portfolio .badge, body.portfolio .badge.disponible, body.portfolio .badge.v
 body.portfolio .badge.disponible::before{ display:inline-block; content:""; width:6px; height:6px; border-radius:50%; background:var(--accent); }
 body.portfolio .badge.disponible{ color:var(--ink); }
 @media (max-width:600px){ body.portfolio .cap{ padding-top:8px; } body.portfolio .capTitle{ font-size:11px; } }
+
+/* =========================
+   BOUTON CLAIR / SOMBRE (ajouté par site.js), entre le menu et FR/EN
+   ========================= */
+.top{ grid-template-columns:1fr auto auto auto; }
+.top > .brand{ order:0; } .top > .menuBtn, .top > .top__nav{ order:1; } .top > .themeBtn{ order:2; } .top > .langMenu{ order:3; }
+.themeBtn{ display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; padding:0; margin:0 -4px 0 4px; border:0; background:none; color:var(--ink); cursor:pointer; }
+.themeBtn svg{ width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:1.5; transition:transform .6s cubic-bezier(.6,0,.2,1); }
+.themeBtn svg path{ fill:currentColor; stroke:none; }
+.themeBtn[aria-pressed="true"] svg{ transform:rotate(180deg); }
+.themeBtn:hover svg{ color:var(--accent); }
+@media (max-width: 1000px) and (min-width: 761px){ .top{ grid-template-columns:1fr auto auto; } }
+@media (max-width: 760px){
+  .top{ grid-template-columns:1fr auto auto; }
+  .top{ column-gap:14px; }
+  .top > .themeBtn{ order:1; margin:0; } .top > .menuBtn{ order:2; }
+}
+/* le passage d'une version à l'autre en fondu */
+html.theme-anim body, html.theme-anim body *{ transition:background-color .5s ease, color .5s ease, border-color .5s ease, fill .5s ease, stroke .5s ease !important; }
+
+/* =========================
+   VERSION CLAIRE : papier ivoire (pas un blanc pur), encre bleu nuit, rouge pour les détails
+   ========================= */
+html[data-theme="light"]{ background:#efebe3; color-scheme:light; }
+html[data-theme="light"] body.salle{
+  --bg:#efebe3; --bg-deep:#e5dfd3;
+  --ink-rgb:22,30,56;
+  --ink-soft:rgba(22,30,56,.78); --ink-faint:rgba(22,30,56,.55);
+  --accent-rgb:200,64,52; --accent-hi:#a22e24;
+  --red-rgb:200,64,52;
+  --blue-rgb:34,64,150; --blue-hi:#1a3580;
+  --ink:rgb(var(--ink-rgb)); --accent:rgb(var(--accent-rgb)); --red:rgb(var(--red-rgb)); --blue:rgb(var(--blue-rgb));
+  --border:rgba(var(--ink-rgb),.16); --fill:rgba(var(--ink-rgb),.05); --fill-hover:rgba(var(--ink-rgb),.1);
+  --line:rgba(var(--ink-rgb),.2); --line-strong:rgba(var(--ink-rgb),.45);
+  background:#efebe3; color:var(--ink); color-scheme:light;
+}
+/* fond : papier légèrement nuancé (une pointe de bleu et de chaud dans les coins) */
+html[data-theme="light"] body.salle::before{
+  background:
+    radial-gradient(60% 55% at 12% 8%, #e3e7f0 0%, rgba(227,231,240,0) 70%),
+    radial-gradient(55% 60% at 92% 22%, #f4ece0 0%, rgba(244,236,224,0) 70%),
+    radial-gradient(70% 55% at 70% 100%, #e6e8ef 0%, rgba(230,232,239,0) 70%),
+    radial-gradient(50% 45% at 18% 85%, #f1e6da 0%, rgba(241,230,218,0) 70%),
+    #efebe3;
+}
+html[data-theme="light"] body.salle::after{ background:none; }
+html[data-theme="light"] body.salle .shade{ background:#efebe3; }
+html[data-theme="light"] body.salle dialog.artDialog::backdrop{ background:rgba(239,235,227,.96); }
+html[data-theme="light"] body.salle .modal__closeBtn, html[data-theme="light"] body.salle .modal__navBtn{ background:rgba(22,30,56,.06); border-color:rgba(22,30,56,.2); }
+html[data-theme="light"] body.salle .modal__closeBtn:hover, html[data-theme="light"] body.salle .modal__navBtn:hover{ background:rgba(22,30,56,.12); }
+/* sous-menu À propos */
+html[data-theme="light"] .nav__sub a{ color:rgba(22,30,56,.7); text-shadow:0 1px 10px rgba(239,235,227,.95), 0 0 2px rgba(239,235,227,.8); }
+html[data-theme="light"] .nav__sub a:hover{ color:#161e38; }
+/* grands mots en contour */
+html[data-theme="light"] .bigLink__w, html[data-theme="light"] .cx__links a{ color:rgba(22,30,56,.03); -webkit-text-stroke-color:rgba(22,30,56,.85); }
+html[data-theme="light"] .bigLink:hover .bigLink__w, html[data-theme="light"] .cx__links a:hover{ color:#161e38; }
+/* contact : bouton Envoyer en encre */
+html[data-theme="light"] .contactPage .ix-form .sendBtn > span{ background:#161e38; color:#efebe3; }
+html[data-theme="light"] .contactPage .ix-form .sendBtn:hover > span{ background:#223a7a; }
+/* PDF presse */
+html[data-theme="light"] .pdfModal{ background:rgba(239,235,227,.9); }
+/* expositions */
+html[data-theme="light"] .xdecade{ -webkit-text-stroke-color:rgba(22,30,56,.8) !important; color:rgba(22,30,56,.04) !important; }
+html[data-theme="light"] .tlCard:hover .tlCard__title{ color:#161e38; }
+html[data-theme="light"] .tlCard::before{ background:linear-gradient(90deg, rgba(22,30,56,.05), rgba(22,30,56,0) 70%); }
+/* galeries : carte en points sombres, titre sur voile clair */
+html[data-theme="light"] .gx__map image{ filter:invert(1) brightness(.35); }
+html[data-theme="light"] .gx__title{ text-shadow:0 2px 24px rgba(239,235,227,.9); }
+html[data-theme="light"] .gx__title::before{ background:rgba(239,235,227,.5); }
+html[data-theme="light"] .gx__pin text{ fill:rgba(22,30,56,.75); }
+html[data-theme="light"] .gx__pin.is-hot text{ fill:#161e38; }
+html[data-theme="light"] .gx__pin.is-hot circle.dot, html[data-theme="light"] .gx__pin:focus-visible circle.dot{ fill:#223a7a; }
+html[data-theme="light"] .gx__arc{ stroke:rgba(22,30,56,.3); }
+html[data-theme="light"] .gx__panel.is-open{ background:linear-gradient(180deg, rgba(22,30,56,.045), rgba(22,30,56,0)); }
+html[data-theme="light"] .gx__vcity{ -webkit-text-stroke-color:rgba(22,30,56,.7); }
+html[data-theme="light"] .gx__panel:hover .gx__vcity{ -webkit-text-stroke-color:#161e38; }
+/* à propos : photo en noir et blanc garde son contraste ; couverture presse avec une ombre plus douce */
+html[data-theme="light"] .prx__cover img{ box-shadow:0 24px 60px rgba(22,30,56,.22); }
+html[data-theme="light"] .pub__cover span{ background:rgba(239,235,227,.85); }

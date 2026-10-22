@@ -10,6 +10,45 @@
 (() => {
   "use strict";
 
+  // Version claire / sombre : choix mémorisé, appliqué tout de suite (avant l'affichage) pour éviter un flash.
+  // Sombre par défaut ; le bouton du header (entre le menu et FR/EN) bascule et prévient la galerie 3D (« themechange »).
+  const THEME_KEY = "abouv:theme";
+  const root = document.documentElement;
+  const readTheme = () => { try { return localStorage.getItem(THEME_KEY); } catch (_) { return null; } };
+  function setTheme(theme, save){
+    root.dataset.theme = theme;
+    root.style.background = theme === "light" ? "#efebe3" : "";
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute("content", theme === "light" ? "#EFEBE3" : "#0B1120");
+    if (save) { try { localStorage.setItem(THEME_KEY, theme); } catch (_) {} }
+    document.dispatchEvent(new CustomEvent("themechange", { detail: { light: theme === "light" } }));
+  }
+  setTheme(readTheme() === "light" ? "light" : "dark", false);
+  // autre onglet ou page revenue du cache : on suit le choix mémorisé
+  window.addEventListener("storage", (e) => { if (e.key === THEME_KEY) setTheme(e.newValue === "light" ? "light" : "dark", false); });
+  window.addEventListener("pageshow", () => { const t = readTheme() === "light" ? "light" : "dark"; if (t !== root.dataset.theme) setTheme(t, false); });
+
+  function themeButton(){
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "themeBtn";
+    const label = () => {
+      const light = root.dataset.theme === "light";
+      b.setAttribute("aria-pressed", String(light));
+      b.setAttribute("aria-label", tr(light ? "Version sombre" : "Version claire"));
+      b.title = b.getAttribute("aria-label");
+    };
+    // un disque à moitié plein, qui tourne d'un demi-tour à chaque bascule
+    b.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.25"/><path d="M12 3.75a8.25 8.25 0 0 1 0 16.5z"/></svg>';
+    b.addEventListener("click", () => {
+      root.classList.add("theme-anim");
+      setTheme(root.dataset.theme === "light" ? "dark" : "light", true); label();
+      setTimeout(() => root.classList.remove("theme-anim"), 650);
+    });
+    label();
+    return b;
+  }
+
   const tr = (s) => (window.t ? window.t(s) : s);
 
   // Icônes du header compact (trait 1,6 px, dessinées sur 24 × 24), par page
@@ -138,6 +177,7 @@
       '<span class="menuBtn__icon" aria-hidden="true"><i></i><i></i></span>';
     const label = btn.querySelector(".menuBtn__label");
     nav.before(btn);
+    top.appendChild(themeButton());
 
     function setOpen(open){
       top.classList.toggle("is-open", open);
