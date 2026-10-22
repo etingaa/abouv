@@ -14,7 +14,8 @@
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <script src="i18n.js?v=20261024y"></script>
   <script src="site.js?v=20261024s"></script>
-  <script src="sheet.js?v=20261022n"></script>
+  <link rel="preconnect" href="https://docs.google.com" crossorigin />
+  <script src="sheet.js?v=20261024a"></script>
   <script src="artwork-modal.js?v=20261024a"></script>
   <link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
   <!-- pages préchargées au survol d'un lien : changement de page quasi instantané (la galerie 3D est seulement préchargée) -->
@@ -327,7 +328,7 @@
 
         item.innerHTML = `
           <div class="imgWrap">
-            <img src="${a.thumb}" alt="${escapeHtml(a.title)}"${dimAttrs} loading="lazy" decoding="async">
+            <img src="${a.thumbSmall}" srcset="${a.thumbSmall} 640w, ${a.thumb} 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="${escapeHtml(a.title)}"${dimAttrs} loading="lazy" decoding="async">
           </div>
           <div class="cap">
             <p class="capTitle">${escapeHtml(a.title)}</p>
@@ -342,7 +343,7 @@
         const img = item.querySelector("img");
         let triedOriginal = false;
         img.addEventListener("error", () => {
-          if(!triedOriginal){ triedOriginal = true; img.src = a.image; return; }
+          if(!triedOriginal){ triedOriginal = true; img.removeAttribute("srcset"); img.src = a.image; return; }
           console.warn("Image introuvable, œuvre masquée :", a.title, a.image);
           a.broken = true;
           scheduleRender();
@@ -409,6 +410,12 @@
     /* =========================
        INIT
        ========================= */
+
+    // le Sheet relu en arrière-plan a changé : on redessine (sauf si une œuvre est ouverte)
+    document.addEventListener("abouv:sheet-updated", async () => {
+      if(abouvModal.isOpen()) return;
+      try{ artworks = await loadArtworksFromSheet(); render(); }catch(_){}
+    });
 
     document.addEventListener("DOMContentLoaded", async () => {
       // ?q=<titre> (liens de la galerie 3D) : recherche pré-remplie

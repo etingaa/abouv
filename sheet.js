@@ -1,12 +1,16 @@
 // sheet.js — lecture du Google Sheet des œuvres (publié en CSV), partagée par l'accueil et le portfolio.
 // Colonnes : Nom | Année | Catégorie | Technique | Format | Disponible | Jpg | Disponible où ? | Accueil
-// Si Google est injoignable, on reprend la dernière version reçue (localStorage).
+// Rapide : on affiche tout de suite la dernière version connue (localStorage), ou au tout premier passage
+// la copie livrée avec le site (data/sheet.csv) ; le Sheet est relu en arrière-plan et, s'il a changé,
+// la copie est mise à jour et l'événement « abouv:sheet-updated » est envoyé (le portfolio se redessine).
+// Pour rafraîchir la copie livrée :  curl -sL "<SHEET_CSV_URL>" -o data/sheet.csv
 
 (() => {
   "use strict";
 
   const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSmK-RAKlpq_VMnhd78eWdWeMTnCkU3_-411IzeTyzO9j0zbJdkkhzfxlRDZpqzKixpoUgTtAAI_Auw/pub?output=csv";
   const CACHE_KEY = "abouv:sheet-csv";
+  const SNAPSHOT_URL = "data/sheet.csv";
 
   // minuscules, sans accents : "Disponible où ?" -> "disponible ou ?"
   function normalizeHeader(h){
@@ -62,20 +66,35 @@
     return rows;
   }
 
-  async function fetchCSV(){
-    try{
-      const res = await fetch(SHEET_CSV_URL, { cache: "no-store" });
-      if(!res.ok) throw new Error("Impossible de charger la Google Sheet");
-      const csv = await res.text();
-      try{ localStorage.setItem(CACHE_KEY, csv); }catch(_){}
-      return csv;
-    }catch(err){
-      // Google injoignable / Sheet dépubliée : on affiche la dernière version connue
-      let cached = null;
-      try{ cached = localStorage.getItem(CACHE_KEY); }catch(_){}
-      if(cached){ console.warn("Sheet injoignable, utilisation de la copie locale.", err); return cached; }
-      throw err;
+  // relecture du Sheet (une seule fois par page)
+  let refreshing = null;
+  function refresh(shown){
+    if(!refreshing){
+      refreshing = fetch(SHEET_CSV_URL, { cache: "no-store" })
+        .then(res => { if(!res.ok) throw new Error("Impossible de charger la Google Sheet"); return res.text(); })
+        .then(csv => {
+          if(!csv.trim()) throw new Error("Sheet vide");
+          try{ localStorage.setItem(CACHE_KEY, csv); }catch(_){}
+          if(shown != null && csv !== shown) document.dispatchEvent(new CustomEvent("abouv:sheet-updated"));
+          return csv;
+        });
     }
+    return refreshing;
+  }
+
+  async function fetchCSV(){
+    // 1. dernière version connue : immédiate
+    let cached = null;
+    try{ cached = localStorage.getItem(CACHE_KEY); }catch(_){}
+    if(cached){ refresh(cached).catch(err => console.warn("Sheet injoignable, copie locale conservée.", err)); return cached; }
+    // 2. premier passage : la copie livrée avec le site
+    try{
+      const res = await fetch(SNAPSHOT_URL);
+      const snap = res.ok ? await res.text() : "";
+      if(snap.trim()){ refresh(snap).catch(err => console.warn("Sheet injoignable, copie du site conservée.", err)); return snap; }
+    }catch(_){}
+    // 3. sinon on attend le Sheet
+    return refresh(null);
   }
 
   // -> { rows: [[…], …] sans l'en-tête, col("Nom") -> index de la colonne }
@@ -105,6 +124,7 @@
 
   const imagePath = (file) => encodeURI(`images/${file}`);
   const thumbPath = (file) => encodeURI(`images/thumbs/${file}`); // voir scripts/make-thumbs.py
+  const thumbSmallPath = (file) => encodeURI(`images/thumbs/s/${file}`); // 640 px de large, pour la grille
 
   // Une œuvre par ligne ayant un Nom et un Jpg.
   // status : « VENDUE » -> "vendue", toute autre valeur -> "disponible"
@@ -128,6 +148,7 @@
           file,
           image: file ? imagePath(file) : "",
           thumb: file ? thumbPath(file) : "",
+          thumbSmall: file ? thumbSmallPath(file) : "",
         };
       })
       .filter(a => a.title && a.file);
