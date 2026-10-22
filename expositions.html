@@ -12,7 +12,7 @@
   <meta property="og:title" content="Expositions — Annick Bouvattier" />
   <meta property="og:description" content="Expositions personnelles, collectives et salons d'Annick Bouvattier depuis 1992." />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-  <script src="i18n.js?v=20261024j"></script>
+  <script src="i18n.js?v=20261024k"></script>
   <script src="site.js?v=20261023g"></script>
   <link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="styles.css?v=20261024g" />
@@ -291,19 +291,38 @@
        ========================= */
     .viewSwitch, .tlFoot, .tlNav, .tlHint, .expoMapWrap{ display:none !important; }
 
-    .xsum{ margin:28px 0 104px; }
-    .xsum__lead{
-      margin:0; max-width:30ch;
-      font-size:clamp(30px, 4.2vw, 62px); font-weight:400; line-height:1.12; letter-spacing:-.02em; color:var(--ink-soft);
+    .xsum{ margin:20px 0 96px; }
+    .xhead{ display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:12px 40px; }
+    .xhead__years{
+      margin:0; font-size:clamp(64px, 11vw, 170px); font-weight:600; line-height:.85; letter-spacing:-.045em; color:var(--ink);
+      display:flex; align-items:center; gap:.12em;
     }
-    .xsum__lead b{ font-weight:400; color:var(--ink); }
-    .xsum__lead button{
-      padding:0; border:0; background:none; cursor:pointer; font:inherit; letter-spacing:inherit; color:var(--ink);
-      text-decoration:underline 2px rgba(var(--ink-rgb),.25); text-underline-offset:.16em;
-      transition:text-decoration-color .2s ease, color .2s ease;
+    .xhead__years i{ font-style:normal; font-weight:300; color:rgba(var(--ink-rgb),.35); }
+    .xhead__n{ margin:0 0 .4em; font-size:16px; color:var(--ink-faint); }
+    .xhead__n b{ font-weight:500; color:var(--ink); font-size:22px; margin-right:4px; }
+
+    .xpills{ display:flex; flex-wrap:wrap; gap:10px; margin:40px 0 0; }
+    .xpill{
+      display:inline-flex; align-items:center; gap:12px; height:48px; padding:0 8px 0 22px;
+      border:1.5px solid rgba(var(--ink-rgb),.28); border-radius:999px; background:none; cursor:pointer;
+      font:inherit; font-size:15px; font-weight:500; color:var(--ink);
+      transition:background-color .2s ease, border-color .2s ease, color .2s ease;
     }
-    .xsum__lead button:hover{ text-decoration-color:var(--ink); }
-    .xsum__lead button[aria-pressed="true"]{ text-decoration-color:var(--accent); }
+    .xpill b{
+      min-width:32px; height:32px; padding:0 8px; border-radius:999px; display:inline-flex; align-items:center; justify-content:center;
+      background:rgba(var(--ink-rgb),.1); font-weight:500; font-size:13px; font-variant-numeric:tabular-nums;
+    }
+    .xpill:hover{ border-color:var(--ink); }
+    .xpill[aria-pressed="true"]{ background:#f4f1ea; border-color:#f4f1ea; color:#0b1120; }
+    .xpill[aria-pressed="true"] b{ background:#0b1120; color:#f4f1ea; }
+
+    /* les villes défilent lentement sous l'en-tête */
+    .xrun{ margin:56px calc(50% - 50vw) 0; overflow:hidden; border-top:1px solid rgba(var(--ink-rgb),.12); border-bottom:1px solid rgba(var(--ink-rgb),.12); padding:18px 0; }
+    .xrun__track{ display:flex; width:max-content; animation:xrun 60s linear infinite; }
+    .xrun__track span{ font-size:clamp(20px, 2vw, 28px); color:rgba(var(--ink-rgb),.55); white-space:nowrap; }
+    .xrun__track span::after{ content:"✦"; margin:0 28px; font-size:.5em; vertical-align:middle; color:var(--accent); }
+    @keyframes xrun{ to{ transform:translateX(-50%); } }
+    @media (prefers-reduced-motion: reduce){ .xrun__track{ animation:none; } }
 
     .tlTrack{ display:flex !important; flex-direction:column-reverse !important; width:auto !important; padding:0 !important; }   /* la plus récente en haut */
     .expositions .toolbar__row .search{ margin-left:auto !important; }
@@ -344,13 +363,17 @@
     /* intercalaire de décennie : grand chiffre en filigrane */
     .xdecade{
       padding:40px 0 4px; font-size:clamp(80px, 12vw, 180px); font-weight:400; line-height:.8; letter-spacing:-.05em;
-      font-weight:600; color:rgba(var(--ink-rgb),.09);
+      font-weight:600; color:transparent; -webkit-text-stroke:1.5px #fff;
       user-select:none;
     }
     .xdecade::after{ content:"s"; font-size:.4em; letter-spacing:0; }
 
     @media (max-width:760px){
       .xsum{ margin:12px 0 48px; }
+      .xpills{ margin-top:28px; }
+      .xpill{ height:42px; padding:0 6px 0 16px; font-size:14px; }
+      .xpill b{ min-width:28px; height:28px; }
+      .xrun{ margin-top:36px; }
       .tlYear{ grid-template-columns:1fr !important; grid-template-areas:"axis" "top" "bottom" !important; }
       .tlAxis{ position:static !important; padding:20px 0 4px; }
       .tlCard{ grid-template-columns:1fr; padding:14px 0; }
@@ -662,28 +685,30 @@
        ========================= */
 
     // en tête : « 40 expositions, 1992 — 2024 » et les trois types, cliquables (même filtre que l'onglet Type)
-    // en tête : une phrase, comme dans un catalogue ; les trois types sont des liens qui filtrent la liste
+    // en tête : la période en très grand, des pastilles pour filtrer par type, et les villes qui défilent
     function renderSummary(n){
       const box = document.getElementById("xsum");
       const list = window.EXPOS || [];
       const shown = cards.filter(c => matches(c.expo)).map(c => c.expo);
       const base = shown.length ? shown : list;
-      const since = Math.min(...base.map(e => e.year));
-      // « en France, aux États-Unis… » (en anglais : « in France, the United States… »)
-      const PREP = { "États-Unis": "aux", "Pays-Bas": "aux", "Japon": "au", "Canada": "au", "Luxembourg": "au", "Portugal": "au", "Royaume-Uni": "au" };
-      const fr = !(window.I18N && I18N.lang === "en");
-      const countries = [...new Set(base.map(e => e.country))].map(c => fr ? `${PREP[c] || "en"} ${c}` : (c === "États-Unis" ? "the " : "") + t(c));
+      const y0 = Math.min(...base.map(e => e.year)), y1 = Math.max(...base.map(e => e.year));
       const count = (ty) => list.filter(e => e.type === ty).length;
-      const pick = (ty, label) => `<button type="button" data-type="${ty}" aria-pressed="${filters.type.has(ty)}">${count(ty)} ${label}</button>`;
-      const where = countries.length > 1 ? countries.slice(0, -1).join(", ") + " " + t("et") + " " + countries.slice(-1) : countries[0] || "";
-      box.innerHTML = `<p class="xsum__lead"><b>${n}</b> ${t(n > 1 ? "expositions" : "exposition")} ${t("depuis")} ${since},
-        ${fr ? "" : "in "}${escapeHtml(where)} —
-        ${pick("solo", t(count("solo") > 1 ? "personnelles" : "personnelle"))},
-        ${pick("group", t(count("group") > 1 ? "collectives" : "collective"))}
-        ${t("et")} ${pick("salon", t(count("salon") > 1 ? "salons" : "salon"))}.</p>`;
-      box.querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
+      const pill = (ty, label, k) => `<button class="xpill" type="button" data-type="${ty}" aria-pressed="${ty ? filters.type.has(ty) : filters.type.size === 0}">${label}<b>${k}</b></button>`;
+      const cities = [...new Set(base.flatMap(e => String(e.city).split(/,\s*/)))];
+      const run = cities.map(c => `<span>${escapeHtml(t(c))}</span>`).join("");
+      box.innerHTML = `
+        <div class="xhead">
+          <p class="xhead__years">${y0}<i>—</i>${y1}</p>
+          <p class="xhead__n"><b>${n}</b> ${t(n > 1 ? "expositions" : "exposition")}</p>
+        </div>
+        <div class="xpills" role="group" aria-label="${t("Type")}">
+          ${pill("", t("Toutes"), list.length)}${pill("solo", t("Personnelles"), count("solo"))}${pill("group", t("Collectives"), count("group"))}${pill("salon", t("Salons"), count("salon"))}
+        </div>
+        <div class="xrun" aria-hidden="true"><div class="xrun__track">${run}${run}</div></div>`;
+      box.querySelectorAll(".xpill").forEach(b => b.addEventListener("click", () => {
         const ty = b.dataset.type;
-        if (filters.type.has(ty)) filters.type.delete(ty); else { filters.type.clear(); filters.type.add(ty); }
+        filters.type.clear();
+        if (ty) filters.type.add(ty);
         apply(true);
       }));
     }
