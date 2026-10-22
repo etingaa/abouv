@@ -1,5 +1,5 @@
-// script.js — page Galeries uniquement : titre, villes qui défilent (un clic mène à la galerie),
-// puis une rangée par galerie, groupées par pays. Chargé par galeries.html après expos-data.js.
+// script.js — page Galeries uniquement : une carte en points (sans Leaflet) avec les galeries,
+// reliée à des fiches (survol de l'une = l'autre s'allume). Chargé par galeries.html après expos-data.js.
 // Chaque galerie indique ses expositions (expos-data.js) avec un lien vers la page Expositions filtrée.
 
 (() => {
@@ -38,44 +38,64 @@
     return `<a class="gx__expos" href="expositions.html?q=${encodeURIComponent(g.expos.title)}">${escapeHtml(text)} →</a>`;
   }
 
+  // carte en points (images/world-dots.svg : projection simple, x = lon + 180, y = 72 - lat),
+  // recadrée sur l'Amérique du Nord et l'Europe
+  const VIEW = { x: 44, y: 12, w: 176, h: 42 };
+  const px = (lng) => lng + 180, py = (lat) => 72 - lat;
+  // côté de l'étiquette pour éviter les chevauchements (villes proches)
+  const LABEL = { "Paris": "above", "Lyon": "below", "Laguna Beach": "below", "Carmel-by-the-Sea": "above", "New Orleans": "below" };
+
+  function mapSVG() {
+    const home = GALLERIES.find((g) => g.city === "Paris") || GALLERIES[0];
+    const arcs = GALLERIES.filter((g) => g !== home).map((g) => {
+      const x1 = px(home.lng), y1 = py(home.lat), x2 = px(g.lng), y2 = py(g.lat);
+      const mx = (x1 + x2) / 2, my = Math.min(y1, y2) - Math.abs(x2 - x1) * .18;
+      return `<path class="gx__arc" d="M${x1},${y1} Q${mx},${my} ${x2},${y2}"/>`;
+    }).join("");
+    const pins = GALLERIES.map((g, i) => {
+      const x = px(g.lng), y = py(g.lat), up = LABEL[g.city] !== "below";
+      return `<g class="gx__pin" data-i="${i}" tabindex="0" role="button" aria-label="${escapeHtml(g.name)}, ${escapeHtml(g.city)}">
+        <circle class="ring" cx="${x}" cy="${y}" r=".9"/><circle class="dot" cx="${x}" cy="${y}" r=".75"/>
+        <text x="${x}" y="${up ? y - 1.8 : y + 3.4}" text-anchor="middle">${escapeHtml(g.city)}</text></g>`;
+    }).join("");
+    return `<svg viewBox="${VIEW.x} ${VIEW.y} ${VIEW.w} ${VIEW.h}" role="img" aria-label="${t("Carte des galeries")}">
+      <image href="images/world-dots.svg" x="0" y="0" width="360" height="128"/>${arcs}${pins}</svg>`;
+  }
+
   function initGaleriesPage() {
     const box = document.getElementById("gx");
     if (!box) return;
-    const id = (g, i) => "galerie-" + i;
-
-    // pays : ordre d'apparition dans la liste
     const countries = [...new Set(GALLERIES.map((g) => g.country))];
-    const seq = (hidden) => `<div class="gx__seq"${hidden ? ' aria-hidden="true"' : ""}>${
-      GALLERIES.map((g, i) => `<button type="button" class="gx__c" data-target="${id(g, i)}"${hidden ? ' tabindex="-1"' : ""}>${escapeHtml(g.city)}</button>`).join("")}</div>`;
 
     box.innerHTML = `
       <h2 class="gx__title">${t("Galeries")}<sup>${GALLERIES.length}</sup></h2>
-      <div class="gx__run"><div class="gx__track">${seq(false)}${seq(true)}${seq(true)}${seq(true)}</div></div>
-      ${countries.map((c) => `
-        <h3 class="gx__country">${escapeHtml(t(c))}</h3>
-        <div class="gx__list">${GALLERIES.map((g, i) => g.country !== c ? "" : `
-          <article class="gx__row" id="${id(g, i)}">
-            <p class="gx__city">${escapeHtml(g.city)}</p>
-            <div>
-              <p class="gx__name">${escapeHtml(g.name)}</p>
-              <p class="gx__addr">${escapeHtml(g.address)}</p>
-              ${exposLine(g)}
-            </div>
-            <div class="gx__acts">
-              ${g.website ? `<a href="${escapeHtml(g.website)}" target="_blank" rel="noopener noreferrer">${t("Site")} ↗</a>` : ""}
-              <a href="https://www.google.com/maps/dir/?api=1&destination=${g.lat},${g.lng}" target="_blank" rel="noopener noreferrer">${t("Itinéraire")} ↗</a>
-              ${g.phone ? `<a href="tel:${g.phone.replace(/[^\d+]/g, "")}">${t("Appeler")}</a>` : ""}
-            </div>
-          </article>`).join("")}
-        </div>`).join("")}`;
+      <p class="gx__lead">${t("Où voir les toiles en vrai")} — ${countries.map((c) => escapeHtml(t(c))).join(", ")}.</p>
+      <div class="gx__map">${mapSVG()}</div>
+      <div class="gx__grid">${GALLERIES.map((g, i) => `
+        <article class="gx__card" id="galerie-${i}" data-i="${i}">
+          <p class="gx__country">${escapeHtml(t(g.country))}</p>
+          <p class="gx__city">${escapeHtml(g.city)}</p>
+          <p class="gx__name">${escapeHtml(g.name)}</p>
+          <p class="gx__addr">${escapeHtml(g.address)}</p>
+          ${exposLine(g)}
+          <div class="gx__acts">
+            ${g.website ? `<a href="${escapeHtml(g.website)}" target="_blank" rel="noopener noreferrer">${t("Site")} ↗</a>` : ""}
+            <a href="https://www.google.com/maps/dir/?api=1&destination=${g.lat},${g.lng}" target="_blank" rel="noopener noreferrer">${t("Itinéraire")} ↗</a>
+            ${g.phone ? `<a href="tel:${g.phone.replace(/[^\d+]/g, "")}">${t("Appeler")}</a>` : ""}
+          </div>
+        </article>`).join("")}
+      </div>`;
 
-    // un clic sur une ville : on descend jusqu'à sa galerie, qui s'éclaire un instant
-    box.querySelectorAll(".gx__c").forEach((b) => b.addEventListener("click", () => {
-      const row = document.getElementById(b.dataset.target);
-      if (!row) return;
-      row.scrollIntoView({ behavior: "smooth", block: "start" });
-      row.classList.add("is-flash");
-      setTimeout(() => row.classList.remove("is-flash"), 1400);
-    }));
+    // carte et fiches reliées : survoler l'une allume l'autre ; un clic sur un point mène à la fiche
+    const pins = [...box.querySelectorAll(".gx__pin")], cards = [...box.querySelectorAll(".gx__card")];
+    const hot = (i, on) => { pins[i].classList.toggle("is-hot", on); cards[i].classList.toggle("is-hot", on); };
+    cards.forEach((c, i) => { c.addEventListener("mouseenter", () => hot(i, true)); c.addEventListener("mouseleave", () => hot(i, false)); });
+    pins.forEach((p, i) => {
+      p.addEventListener("mouseenter", () => hot(i, true)); p.addEventListener("mouseleave", () => hot(i, false));
+      p.addEventListener("focus", () => hot(i, true)); p.addEventListener("blur", () => hot(i, false));
+      const go = () => { cards[i].scrollIntoView({ behavior: "smooth", block: "center" }); hot(i, true); setTimeout(() => hot(i, false), 1600); };
+      p.addEventListener("click", go);
+      p.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } });
+    });
   }
 })();

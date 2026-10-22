@@ -12,7 +12,7 @@
   <meta property="og:title" content="Galeries — Annick Bouvattier" />
   <meta property="og:description" content="Les galeries qui présentent le travail d'Annick Bouvattier, en France et aux États-Unis." />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-  <script src="i18n.js?v=20261024o"></script>
+  <script src="i18n.js?v=20261024q"></script>
   <script src="site.js?v=20261024n"></script>
   <link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
   <!-- pages préchargées au survol d'un lien : changement de page quasi instantané (la galerie 3D est seulement préchargée) -->
@@ -22,40 +22,45 @@
   </script>
   <title>Galeries — Annick Bouvattier</title>
   <style>
-    /* même esprit que la page Expositions : grand titre, villes qui défilent, pays en grand contour, rangées */
-    .gx__title{ margin:36px 0 40px; font-size:clamp(48px, 8.4vw, 132px); font-weight:700; font-stretch:112%; text-transform:uppercase; letter-spacing:-.01em; line-height:.9; color:var(--ink); }
+    /* Galeries : une carte en points (pas de Leaflet) avec les galeries, puis les galeries en fiches */
+    .gx__title{ margin:36px 0 8px; font-size:clamp(48px, 8.4vw, 132px); font-weight:700; font-stretch:112%; text-transform:uppercase; letter-spacing:-.01em; line-height:.9; color:var(--ink); }
     .gx__title sup{ font-size:.2em; font-weight:500; letter-spacing:.06em; vertical-align:top; margin-left:.25em; position:relative; top:.6em; color:var(--ink-faint); font-stretch:100%; }
-    .gx__run{ margin:0 calc(50% - 50vw) 88px; overflow:hidden; padding:22px 0; border-block:1px solid rgba(var(--ink-rgb),.12);
-      -webkit-mask-image:linear-gradient(to right, transparent, #000 8%, #000 92%, transparent); mask-image:linear-gradient(to right, transparent, #000 8%, #000 92%, transparent); }
-    .gx__track{ display:flex; width:max-content; animation:gxrun 50s linear infinite; will-change:transform; }
-    .gx__run:hover .gx__track{ animation-play-state:paused; }
-    .gx__seq{ display:flex; flex:none; }
-    .gx__c{ padding:0 .9em 0 0; border:0; background:none; cursor:pointer; white-space:nowrap; font:inherit; font-size:clamp(22px, 2.4vw, 34px); font-weight:500; text-transform:uppercase; letter-spacing:.06em; color:rgba(var(--ink-rgb),.4); transition:color .2s ease; }
-    .gx__c::after{ content:""; display:inline-block; width:.6em; height:1px; margin-left:.9em; vertical-align:middle; background:rgba(var(--ink-rgb),.3); }
-    .gx__c:hover{ color:var(--ink); }
-    @keyframes gxrun{ to{ transform:translateX(-50%); } }
-    @media (prefers-reduced-motion: reduce){ .gx__track{ animation:none; } }
+    .gx__lead{ margin:0 0 40px; font-size:15px; color:var(--ink-soft); }
 
-    .gx__country{ margin:72px 0 0; padding:0; font-size:clamp(56px, 9vw, 140px); font-weight:700; font-stretch:112%; text-transform:uppercase; letter-spacing:-.02em; line-height:.85;
-      color:rgba(255,255,255,.05); -webkit-text-stroke:1.5px #fff; }
-    .gx__country:first-of-type{ margin-top:0; }
-    .gx__row{ display:grid; grid-template-columns:minmax(200px, 1fr) 2fr auto; gap:12px 40px; align-items:baseline;
-      padding:30px 0 34px; border-top:1px solid rgba(var(--ink-rgb),.16); scroll-margin-top:calc(var(--shade-h, 90px) + 24px); transition:background-color .6s ease; }
-    .gx__row:last-child{ border-bottom:1px solid rgba(var(--ink-rgb),.16); }
-    .gx__row.is-flash{ background:rgba(255,255,255,.05); }
-    .gx__city{ margin:0; font-size:clamp(26px, 2.8vw, 40px); font-weight:700; font-stretch:112%; text-transform:uppercase; letter-spacing:0; line-height:1; color:var(--ink); }
-    .gx__name{ margin:0; font-size:clamp(18px, 1.6vw, 22px); font-weight:500; color:var(--ink); }
-    .gx__addr{ margin:6px 0 0; font-size:14px; color:var(--ink-soft); }
-    .gx__expos{ display:inline-block; margin-top:14px; font-size:13px; color:var(--ink-faint); border-bottom:1px solid rgba(var(--ink-rgb),.25); }
-    .gx__expos:hover{ color:var(--ink); border-bottom-color:var(--ink); }
-    .gx__acts{ display:flex; gap:22px; }
-    .gx__acts a{ font-size:12px; font-weight:500; letter-spacing:.08em; text-transform:uppercase; color:var(--ink); border-bottom:1px solid transparent; padding-bottom:2px; white-space:nowrap; transition:border-color .2s ease; }
-    .gx__acts a:hover{ border-bottom-color:var(--accent); }
-    @media (max-width:760px){
-      .gx__run{ margin-bottom:48px; }
-      .gx__row{ grid-template-columns:1fr; gap:10px; padding:22px 0 26px; }
-      .gx__acts{ margin-top:6px; }
+    /* carte en points */
+    .gx__map{ position:relative; margin:0 calc(50% - 50vw) 72px; padding:0 max(20px, calc(50vw - 700px + 48px)); }
+    .gx__map svg{ display:block; width:100%; height:auto; overflow:hidden;
+      -webkit-mask-image:radial-gradient(ellipse 75% 85% at 50% 50%, #000 55%, transparent 100%); mask-image:radial-gradient(ellipse 75% 85% at 50% 50%, #000 55%, transparent 100%); }
+    .gx__pin{ cursor:pointer; outline:none; }
+    .gx__pin circle.dot{ fill:var(--accent); transition:r .3s ease; }
+    .gx__pin circle.ring{ fill:none; stroke:var(--accent); stroke-width:.25; opacity:0; transform-box:fill-box; transform-origin:center; }
+    .gx__pin.is-hot circle.ring{ animation:gxPing 1.4s ease-out infinite; }
+    .gx__pin.is-hot circle.dot, .gx__pin:focus-visible circle.dot{ fill:#fff; }
+    @keyframes gxPing{ from{ opacity:.9; transform:scale(1); } to{ opacity:0; transform:scale(4); } }
+    .gx__pin text{ font-family:var(--font); font-size:2.1px; font-weight:500; letter-spacing:.12px; text-transform:uppercase; fill:rgba(236,231,222,.75); transition:fill .2s ease; }
+    .gx__pin.is-hot text{ fill:#fff; }
+    .gx__arc{ fill:none; stroke:rgba(255,255,255,.2); stroke-width:.18; stroke-dasharray:.6 .6; }
+    @media (prefers-reduced-motion: reduce){ .gx__pin.is-hot circle.ring{ animation:none; } }
+
+    /* fiches */
+    .gx__grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(230px, 1fr)); gap:14px; }
+    .gx__card{
+      display:flex; flex-direction:column; gap:6px; padding:24px 22px 22px; min-height:280px;
+      border:1px solid rgba(var(--ink-rgb),.12); border-radius:24px; background:rgba(255,255,255,.025);
+      scroll-margin-top:calc(var(--shade-h, 90px) + 24px);
+      transition:border-color .3s ease, background-color .3s ease, transform .3s ease;
     }
+    .gx__card.is-hot{ border-color:rgba(var(--ink-rgb),.4); background:rgba(255,255,255,.05); transform:translateY(-3px); }
+    .gx__country{ margin:0; font-size:11px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint); }
+    .gx__city{ margin:6px 0 10px; font-size:clamp(22px, 1.9vw, 28px); font-weight:700; font-stretch:112%; text-transform:uppercase; line-height:1; color:var(--ink); }
+    .gx__name{ margin:0; font-size:16px; font-weight:500; color:var(--ink); }
+    .gx__addr{ margin:0; font-size:14px; color:var(--ink-soft); }
+    .gx__expos{ align-self:flex-start; margin-top:8px; font-size:13px; color:var(--ink-faint); border-bottom:1px solid rgba(var(--ink-rgb),.25); }
+    .gx__expos:hover{ color:var(--ink); border-bottom-color:var(--ink); }
+    .gx__acts{ display:flex; flex-wrap:wrap; gap:8px 16px; margin-top:auto; padding-top:20px; }
+    .gx__acts a{ font-size:12px; font-weight:500; letter-spacing:.08em; text-transform:uppercase; color:var(--ink); border-bottom:1px solid transparent; padding-bottom:2px; transition:border-color .2s ease; }
+    .gx__acts a:hover{ border-bottom-color:var(--accent); }
+    @media (max-width:760px){ .gx__map{ margin-bottom:40px; } .gx__card{ min-height:0; padding:22px; } }
   </style>
 
 
@@ -100,7 +105,7 @@
 
   <!-- expositions (pour « 4 expositions ici depuis 2005 »), puis la logique de la page -->
   <script src="expos-data.js?v=20261022n"></script>
-  <script src="./script.js?v=20261024p"></script>
+  <script src="./script.js?v=20261024r"></script>
 
 </body>
 </html>

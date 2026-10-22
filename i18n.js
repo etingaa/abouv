@@ -139,6 +139,7 @@
     "œuvre": "artwork",
     "œuvres": "artworks",
     "Passer": "Skip",
+    "Où voir les toiles en vrai": "Where to see the paintings in person",
     "Retirer ce filtre": "Remove this filter",
     "depuis": "since",
     "en": "in",
