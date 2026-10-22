@@ -5,7 +5,7 @@
 // À relancer après avoir ajouté ou modifié une œuvre dans le Google Sheet (ou une galerie / exposition).
 // Ce que le script fait :
 //   1. relit le Google Sheet des œuvres (copie à jour dans data/sheet.csv ; si Google ne répond pas, la copie existante sert)
-//   2. génère une page par œuvre : oeuvres/<slug>.html (titre, image, technique, dimensions, disponibilité,
+//   2. génère une page par œuvre : oeuvres/<slug>.html (adresse publique : oeuvres/<slug>) (titre, image, technique, dimensions, disponibilité,
 //      description, « Demander des informations », précédente / suivante, balises de partage, JSON-LD VisualArtwork)
 //   3. écrit sitemap.xml et robots.txt
 //   4. réécrit, entre des commentaires marqueurs, dans les pages existantes :
@@ -27,15 +27,16 @@ const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSmK-RAKl
 const ARTIST = "Annick Bouvattier";
 
 // pages principales : fichier -> adresse publique (l'accueil est la racine)
+// (adresses sans « .html » : GitHub Pages sert portfolio.html à l'adresse /portfolio)
 const PAGES = [
   { file: "index.html", url: "" },
-  { file: "portfolio.html", url: "portfolio.html" },
-  { file: "galeries.html", url: "galeries.html" },
-  { file: "expositions.html", url: "expositions.html" },
-  { file: "apropos.html", url: "apropos.html" },
-  { file: "contact.html", url: "contact.html" },
-  { file: "mentions-legales.html", url: "mentions-legales.html" },
-  { file: "accueil.html", url: "", noSitemap: true },   // version sans 3D de l'accueil : même page pour Google
+  { file: "portfolio.html", url: "portfolio" },
+  { file: "galeries.html", url: "galeries" },
+  { file: "expositions.html", url: "expositions" },
+  { file: "apropos.html", url: "apropos" },
+  { file: "contact.html", url: "contact" },
+  { file: "mentions-legales.html", url: "mentions-legales" },
+  { file: "classique.html", url: "", noSitemap: true },   // accueil sans 3D (repli) : même page pour Google
 ];
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -132,7 +133,7 @@ async function loadTemplate(){
   const v = (name) => (pf.match(new RegExp(name.replace(".", "\\.") + "\\?v=([0-9a-z]+)")) || [])[1] || "1";
   const block = (re) => (pf.match(re) || [""])[0];
   // liens relatifs du header et du footer, vus depuis le dossier oeuvres/
-  const up = (html) => html.replace(/href="(?!https?:|mailto:|tel:|#|\.\.\/)([^"]+)"/g, 'href="../$1"');
+  const up = (html) => html.replace(/href="\.\/"/g, 'href="../"').replace(/href="(?!https?:|mailto:|tel:|#|\.\.\/)([^"]+)"/g, 'href="../$1"');
   return {
     v: { styles: v("styles.css"), i18n: v("i18n.js"), site: v("site.js") },
     header: up(block(/<header class="top">[\s\S]*?<\/header>/)),
@@ -172,7 +173,7 @@ function clip(s, n = 160){
 
 function workPage(a, i, list, tpl, EN, sizes){
   const prev = list[(i - 1 + list.length) % list.length], next = list[(i + 1) % list.length];
-  const d = dims(a), url = abs(`oeuvres/${a.slug}.html`), img = abs(`images/${a.file}`);
+  const d = dims(a), url = abs(`oeuvres/${a.slug}`), img = abs(`images/${a.file}`);
   const title = `${a.title} — ${[a.technique, d].filter(Boolean).join(" ")} | ${ARTIST}`;
   const { fr, en } = describe(a, EN);
   const alt = `${a.title}${a.technique ? `, ${a.technique.toLowerCase()}` : ""}, par ${ARTIST}`;
@@ -190,9 +191,9 @@ function workPage(a, i, list, tpl, EN, sizes){
   };
   const fact = (k, v, raw) => v ? `<div><dt>${k}</dt><dd${raw ? "" : ""}>${esc(v)}</dd></div>` : "";
   const cta = a.status === "disponible"
-    ? `<a class="ov__cta" href="../contact.html?oeuvre=${encodeURIComponent(a.title)}">Demander des informations</a>` : "";
+    ? `<a class="ov__cta" href="../contact?oeuvre=${encodeURIComponent(a.title)}">Demander des informations</a>` : "";
   const navLink = (w, rel, label, arrow) =>
-    `<a class="ov__step ov__step--${rel}" rel="${rel}" href="${w.slug}.html"><span class="ov__stepK">${arrow === "←" ? "← " : ""}<span>${label}</span>${arrow === "→" ? " →" : ""}</span><span class="ov__stepT" translate="no">${esc(w.title)}</span></a>`;
+    `<a class="ov__step ov__step--${rel}" rel="${rel}" href="${w.slug}"><span class="ov__stepK">${arrow === "←" ? "← " : ""}<span>${label}</span>${arrow === "→" ? " →" : ""}</span><span class="ov__stepT" translate="no">${esc(w.title)}</span></a>`;
 
   return `<!doctype html>
 <html lang="fr">
@@ -232,7 +233,7 @@ ${jsonld(ld)}
       ${tpl.header}
 
       <main class="ov">
-        <a class="ov__back" href="../portfolio.html"><span aria-hidden="true">← </span><span>Voir tout le portfolio</span></a>
+        <a class="ov__back" href="../portfolio"><span aria-hidden="true">← </span><span>Voir tout le portfolio</span></a>
         <article class="ov__grid">
           <figure class="ov__media">
             <img src="../images/${encodeURI(a.file)}" srcset="${encodeURI(thumb)} 1100w, ../images/${encodeURI(a.file)} 2000w" sizes="(max-width:900px) 100vw, 58vw" alt="${esc(alt)}"${wh} decoding="async" />
@@ -311,7 +312,7 @@ function worksBlock(list, EN, sizes){
     const m = tech(a) && size(a) ? `${tech(a)}<span class="capTech"> · </span>${size(a)}` : tech(a) || size(a);
     const f = encodeURI(a.file);
     return `
-        <a class="piece" href="oeuvres/${a.slug}.html"><div class="imgWrap"><img src="images/thumbs/s/${f}" srcset="images/thumbs/s/${f} 640w, images/thumbs/${f} 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="${esc(a.title)}"${wh} loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">${esc(a.title)}</p>${m ? `<p class="capMeta">${m}</p>` : ""}<span class="badge ${a.status}">${a.status === "vendue" ? "Vendue" : "Disponible"}</span></div></a>`;
+        <a class="piece" href="oeuvres/${a.slug}"><div class="imgWrap"><img src="images/thumbs/s/${f}" srcset="images/thumbs/s/${f} 640w, images/thumbs/${f} 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="${esc(a.title)}"${wh} loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">${esc(a.title)}</p>${m ? `<p class="capMeta">${m}</p>` : ""}<span class="badge ${a.status}">${a.status === "vendue" ? "Vendue" : "Disponible"}</span></div></a>`;
   }).join("") + "\n      ";
 }
 
@@ -366,7 +367,7 @@ async function main(){
   const today = new Date().toISOString().slice(0, 10);
   const urls = [
     ...PAGES.filter(p => !p.noSitemap).map(p => ({ loc: SITE_URL + "/" + p.url, pri: p.url === "" ? "1.0" : "0.8" })),
-    ...list.map(a => ({ loc: abs(`oeuvres/${a.slug}.html`), pri: a.status === "disponible" ? "0.7" : "0.5" })),
+    ...list.map(a => ({ loc: abs(`oeuvres/${a.slug}`), pri: a.status === "disponible" ? "0.7" : "0.5" })),
   ];
   await writeFile(path.join(ROOT, "sitemap.xml"),
     `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +

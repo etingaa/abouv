@@ -48,7 +48,7 @@ function humanFov(){
 }
 const isMobile = matchMedia("(max-width: 760px), (pointer: coarse)").matches;
 const tr = (s) => (window.t ? window.t(s) : s);
-const fallback = (reason) => window.__g3dFallback ? window.__g3dFallback(reason) : location.replace("accueil.html");
+const fallback = (reason) => window.__g3dFallback ? window.__g3dFallback(reason) : location.replace("classique");
 
 const $ = (id) => document.getElementById(id);
 const els = {
@@ -553,7 +553,7 @@ async function main(){
 
 
   els.srList.innerHTML = pieces.map(p =>
-    `<li><a href="portfolio.html?oeuvre=${encodeURIComponent(p.work.file)}">${escapeHtml(p.work.title)}</a> — ${escapeHtml(metaText(p.work))}</li>`).join("");
+    `<li><a href="portfolio?oeuvre=${encodeURIComponent(p.work.file)}">${escapeHtml(p.work.title)}</a> — ${escapeHtml(metaText(p.work))}</li>`).join("");
 
   /* ---------- caméra : position + regard (lacet / tangage) ---------- */
   const view = { pos: new THREE.Vector3(), yaw: 0, pitch: 0 };
@@ -641,7 +641,7 @@ async function main(){
     travel({ pos, yaw: view.yaw, pitch: view.pitch }, null);
   }
   // toile -> sa fiche dans le portfolio
-  const portfolioUrl = (a) => "portfolio.html?oeuvre=" + encodeURIComponent(a.file);
+  const portfolioUrl = (a) => "portfolio?oeuvre=" + encodeURIComponent(a.file);
 
   /* ---------- étiquette au survol d'une toile ---------- */
   let tipFor = -1;

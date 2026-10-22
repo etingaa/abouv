@@ -14,8 +14,8 @@
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <!-- pages préchargées au survol d'un lien : changement de page quasi instantané (la galerie 3D est seulement préchargée) -->
   <script type="speculationrules">
-    {"prerender":[{"where":{"and":[{"href_matches":"*.html"},{"not":{"href_matches":"*index.html"}},{"not":{"href_matches":"*oeuvres/*"}}]},"eagerness":"moderate"}],
-     "prefetch":[{"where":{"href_matches":"*index.html"},"eagerness":"moderate"}]}
+    {"prerender":[{"where":{"and":[{"selector_matches":".nav__link, .bottom__link--legal"},{"not":{"selector_matches":"[href='./'], [href='../']"}}]},"eagerness":"moderate"}],
+     "prefetch":[{"where":{"selector_matches":"[href='./'], [href='../']"},"eagerness":"moderate"}]}
   </script>
   <title>Annick Bouvattier — Artiste peintre</title>
 
@@ -26,8 +26,8 @@
       var debug = /[?&]debug\b/.test(location.search);
       function fallback(reason) {
         if (window.__g3dReady) return;
-        console.warn("Galerie 3D : repli vers accueil.html (" + reason + ")");
-        if (!debug) location.replace("accueil.html");
+        console.warn("Galerie 3D : repli vers classique (" + reason + ")");
+        if (!debug) location.replace("classique");
       }
       window.__g3dFallback = fallback;
       if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return fallback("mouvement réduit");
@@ -40,7 +40,7 @@
   </script>
 
   <script src="i18n.js?v=20261025c"></script>
-  <script src="site.js?v=20261025b"></script>
+  <script src="site.js?v=20261025d"></script>
   <link rel="preconnect" href="https://docs.google.com" crossorigin />
   <script src="sheet.js?v=20261025b"></script>
   <link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
@@ -91,14 +91,14 @@
   <div class="page">
     <div class="container">
       <header class="top">
-        <a class="brand" href="index.html">ANNICK&nbsp;BOUVATTIER</a>
+        <a class="brand" href="./">ANNICK&nbsp;BOUVATTIER</a>
         <nav class="top__nav" aria-label="Navigation principale">
-          <a class="nav__link is-active" aria-current="page" href="index.html">Accueil</a>
-          <a class="nav__link" href="portfolio.html">Portfolio</a>
-          <a class="nav__link" href="galeries.html">Galeries</a>
-          <a class="nav__link" href="expositions.html">Expositions</a>
-          <a class="nav__link" href="apropos.html">À propos</a>
-          <a class="nav__link" href="contact.html">Contact</a>
+          <a class="nav__link is-active" aria-current="page" href="./">Accueil</a>
+          <a class="nav__link" href="portfolio">Portfolio</a>
+          <a class="nav__link" href="galeries">Galeries</a>
+          <a class="nav__link" href="expositions">Expositions</a>
+          <a class="nav__link" href="apropos">À propos</a>
+          <a class="nav__link" href="contact">Contact</a>
         </nav>
       </header>
 
@@ -123,8 +123,8 @@
         <!-- présentation de l'artiste (lue par les lecteurs d'écran et les moteurs ; pas affichée) -->
         <section class="sr-only" aria-labelledby="aboutTitle">
             <h2 id="aboutTitle">Annick Bouvattier, artiste peintre</h2>
-            <p data-lang="fr">Née à Nevers, Annick Bouvattier a d’abord été styliste, formée à l’école Bercot – Marie Rucki, puis costumière pour le cinéma et la publicité, notamment dans les studios de Cinecittà. Depuis le milieu des années 1990, elle se consacre à la peinture à l’huile. Élève de Pierre Ramel, elle peint au couteau une peinture lissée, sans épaisseur de matière, tout en transparence. Elle peint essentiellement des femmes, dans des jeux d’ombres et de lumière (son parcours est raconté sur la page <a href="apropos.html">À propos</a>). Ses toiles ont été exposées en France et à l’étranger ; elles sont présentées par des galeries à Paris, Lyon, Laguna Beach, Carmel-by-the-Sea et New Orleans, et certaines sont disponibles à la vente dans le <a href="portfolio.html">portfolio</a>.</p>
-            <p data-lang="en">Born in Nevers, Annick Bouvattier first worked as a fashion designer, trained at the Bercot – Marie Rucki school, then as a costume designer for film and advertising, notably at the Cinecittà studios. Since the mid-1990s she has devoted herself to oil painting. A pupil of Pierre Ramel, she paints with a palette knife, in smooth, transparent layers, without impasto. She mainly paints women, in plays of light and shadow (her story is told on the <a href="apropos.html">About</a> page). Her paintings have been exhibited in France and abroad; they are shown by galleries in Paris, Lyon, Laguna Beach, Carmel-by-the-Sea and New Orleans, and some are available for purchase in the <a href="portfolio.html">portfolio</a>.</p>
+            <p data-lang="fr">Née à Nevers, Annick Bouvattier a d’abord été styliste, formée à l’école Bercot – Marie Rucki, puis costumière pour le cinéma et la publicité, notamment dans les studios de Cinecittà. Depuis le milieu des années 1990, elle se consacre à la peinture à l’huile. Élève de Pierre Ramel, elle peint au couteau une peinture lissée, sans épaisseur de matière, tout en transparence. Elle peint essentiellement des femmes, dans des jeux d’ombres et de lumière (son parcours est raconté sur la page <a href="apropos">À propos</a>). Ses toiles ont été exposées en France et à l’étranger ; elles sont présentées par des galeries à Paris, Lyon, Laguna Beach, Carmel-by-the-Sea et New Orleans, et certaines sont disponibles à la vente dans le <a href="portfolio">portfolio</a>.</p>
+            <p data-lang="en">Born in Nevers, Annick Bouvattier first worked as a fashion designer, trained at the Bercot – Marie Rucki school, then as a costume designer for film and advertising, notably at the Cinecittà studios. Since the mid-1990s she has devoted herself to oil painting. A pupil of Pierre Ramel, she paints with a palette knife, in smooth, transparent layers, without impasto. She mainly paints women, in plays of light and shadow (her story is told on the <a href="apropos">About</a> page). Her paintings have been exhibited in France and abroad; they are shown by galleries in Paris, Lyon, Laguna Beach, Carmel-by-the-Sea and New Orleans, and some are available for purchase in the <a href="portfolio">portfolio</a>.</p>
           </section>
         <p class="g3d-hint" id="hint" hidden>Faites glisser pour regarder autour de vous · cliquez sur le parquet pour vous déplacer · survolez une toile</p>
 
@@ -132,13 +132,13 @@
         <div class="g3d-tip" id="tip" hidden>
           <p class="g3d-tip__title" id="tipTitle"></p>
           <p class="g3d-tip__meta" id="tipMeta"></p>
-          <a class="g3d-tip__link" id="tipLink" href="portfolio.html">Voir dans le portfolio <span aria-hidden="true">→</span></a>
+          <a class="g3d-tip__link" id="tipLink" href="portfolio">Voir dans le portfolio <span aria-hidden="true">→</span></a>
         </div>
 
         <!-- Liste des œuvres pour les lecteurs d'écran et les moteurs de recherche (remplie par galerie.js) -->
         <section class="sr-only" aria-label="Œuvres de la galerie">
           <ul id="srList"></ul>
-          <noscript><a href="portfolio.html">Voir les œuvres</a></noscript>
+          <noscript><a href="portfolio">Voir les œuvres</a></noscript>
         </section>
       </main>
 
@@ -147,7 +147,7 @@
           <a class="bottom__link" href="https://www.instagram.com/annick.bouvattier/" target="_blank" rel="noopener noreferrer">instagram</a>
           <a class="bottom__link" href="https://www.facebook.com/annick.bouvattier/" target="_blank" rel="noopener noreferrer">facebook</a>
         </div>
-        <a class="bottom__link bottom__link--legal" href="mentions-legales.html">mentions légales</a>
+        <a class="bottom__link bottom__link--legal" href="mentions-legales">mentions légales</a>
       </footer>
     </div>
   </div>

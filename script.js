@@ -35,7 +35,7 @@
     const text = n > 1
       ? `${n} ${t("expositions")} ${t("ici depuis")} ${list[0].year}`
       : `1 ${t("exposition")} ${t("ici en")} ${list[0].year}`;
-    return `<a class="gx__expos" href="expositions.html?q=${encodeURIComponent(g.expos.title)}">${escapeHtml(text)} →</a>`;
+    return `<a class="gx__expos" href="expositions?q=${encodeURIComponent(g.expos.title)}">${escapeHtml(text)} →</a>`;
   }
 
   // carte en points (images/world-dots.svg : projection simple, x = lon + 180, y = 72 - lat),

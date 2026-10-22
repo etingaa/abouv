@@ -1,7 +1,7 @@
 # annickbouvattier — site web
 
 Site statique (HTML/CSS/JS, sans framework ni étape de build) : `index` (accueil : galerie 3D), `accueil`
-(accueil classique, repli de la galerie), `portfolio`, `galeries`, `expositions`, `apropos` (avec la presse ; `presse.html` redirige), `contact`, `404`. Style commun dans `styles.css`, police Archivo
+(classique : accueil sans 3D, repli automatique), `portfolio`, `galeries`, `expositions`, `apropos` (avec la presse ; `presse.html` redirige), `contact`, `404`. Style commun dans `styles.css`, police Archivo
 hébergée dans `fonts/`.
 
 ## D'où viennent les données
@@ -71,3 +71,12 @@ Le script relit le Sheet (copie dans `data/sheet.csv`) et réécrit tout ce qui 
 `<!-- seo:… -->` des pages. L'adresse publique du site (`SITE_URL`) et l'image de partage par défaut
 (`DEFAULT_OG_IMAGE`) se règlent en haut de `scripts/build-seo.mjs`. Les liens du site restent relatifs :
 il fonctionne aussi bien sous `/abouv/` qu'à la racine du domaine.
+
+## Adresses propres (sans « .html »)
+
+Les liens du site n'ont pas d'extension : `portfolio`, `oeuvres/enigma`, `./` pour l'accueil. GitHub Pages sert
+`portfolio.html` à l'adresse `/portfolio` ; sur un hébergement Apache (Hostinger), c'est le fichier `.htaccess` qui le fait
+(et qui redirige `/index`, `/accueil`, `/x.html` vers les adresses propres). Si on arrive quand même sur une adresse en
+`.html` ou `/index`, `site.js` la réécrit dans la barre d'adresse. `accueil.html` renvoie vers l'accueil.
+
+Aperçu local (comme GitHub Pages) :  `node scripts/serve.mjs`  puis http://localhost:8000/

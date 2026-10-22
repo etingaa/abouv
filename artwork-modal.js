@@ -47,7 +47,7 @@
         <div class="modal__info">
           <h2 class="modal__h" id="modalTitle"></h2>
           <p class="modal__meta"></p>
-          <a class="modal__cta" href="contact.html" hidden>${t("Demander des informations")}</a>
+          <a class="modal__cta" href="contact" hidden>${t("Demander des informations")}</a>
         </div>
       </div>`;
     document.body.appendChild(dialog);
@@ -103,7 +103,7 @@
 
     // œuvre disponible -> lien vers le formulaire, message pré-rempli
     els.cta.hidden = a.status !== "disponible";
-    els.cta.href = "contact.html?oeuvre=" + encodeURIComponent(a.title || "");
+    els.cta.href = "contact?oeuvre=" + encodeURIComponent(a.title || "");
 
     const multi = n > 1;
     els.prev.hidden = !multi;

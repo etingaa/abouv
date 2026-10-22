@@ -10,6 +10,15 @@
 (() => {
   "use strict";
 
+  // Adresses propres : …/portfolio.html -> …/portfolio, …/index.html ou …/index -> …/ (le site de base).
+  // Le serveur (GitHub Pages) sert les deux ; on réécrit juste l'adresse affichée, sans recharger
+  // (même dossier : les chemins relatifs de la page restent justes).
+  {
+    const p = location.pathname;
+    const clean = p.replace(/\/index(\.html)?$/, "/").replace(/\.html$/, "");
+    if (clean !== p) history.replaceState(history.state, "", clean + location.search + location.hash);
+  }
+
   // Version claire / sombre : choix mémorisé, appliqué tout de suite (avant l'affichage) pour éviter un flash.
   // Sombre par défaut ; le bouton du header (entre le menu et FR/EN) bascule et prévient la galerie 3D (« themechange »).
   const THEME_KEY = "abouv:theme";
@@ -55,19 +64,21 @@
 
   // Icônes du header compact (trait 1,6 px, dessinées sur 24 × 24), par page
   const ICONS = {
-    "index.html":        '<path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9v11h13V9"/>',
-    "portfolio.html":    '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="m3 16 5-5 4 4 3-3 6 6"/><circle cx="15.5" cy="8.5" r="1.5"/>',
-    "galeries.html":     '<path d="M12 21s-7-6.2-7-12a7 7 0 0 1 14 0c0 5.8-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/>',
-    "expositions.html":  '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
-    "apropos.html":      '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/>',
-    "presse.html":       '<path d="M4 5h13v14a2 2 0 0 0 2 2H6a2 2 0 0 1-2-2z"/><path d="M17 9h3v10a2 2 0 0 1-2 2"/><path d="M8 9h5M8 13h5M8 17h3"/>',
-    "contact.html":      '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
+    "index":        '<path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9v11h13V9"/>',
+    "portfolio":    '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="m3 16 5-5 4 4 3-3 6 6"/><circle cx="15.5" cy="8.5" r="1.5"/>',
+    "galeries":     '<path d="M12 21s-7-6.2-7-12a7 7 0 0 1 14 0c0 5.8-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/>',
+    "expositions":  '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+    "apropos":      '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/>',
+    "presse":       '<path d="M4 5h13v14a2 2 0 0 0 2 2H6a2 2 0 0 1-2-2z"/><path d="M17 9h3v10a2 2 0 0 1-2 2"/><path d="M8 9h5M8 13h5M8 17h3"/>',
+    "contact":      '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
   };
 
   function setupCompactHeader(top, nav){
     // chaque lien : icône + mot (le mot reste lu par les lecteurs d'écran en mode icône)
     nav.querySelectorAll(".nav__link").forEach(a => {
-      const icon = ICONS[(a.getAttribute("href") || "").split(/[?#]/)[0].split("/").pop()];   // aussi depuis oeuvres/
+      // « ./ » ou « ../ » = l'accueil ; « portfolio », « ../portfolio »… = la page (aussi depuis oeuvres/)
+      const page = (a.getAttribute("href") || "").split(/[?#]/)[0].split("/").filter(x => x && x !== "." && x !== "..").pop();
+      const icon = ICONS[(page || "index").replace(/\.html$/, "")];
       if (!icon) return;
       const label = a.textContent.trim();
       a.innerHTML = '<svg class="nav__icon" viewBox="0 0 24 24" aria-hidden="true">' + icon + '</svg>' +
@@ -133,7 +144,7 @@
     nav.id = nav.id || "mainNav";
 
     // À propos se décline en trois parties : sous-menu au survol (L'artiste, Presse, Q&A)
-    const about = nav.querySelector('.nav__link[href$="apropos.html"]');
+    const about = nav.querySelector('.nav__link[href$="apropos"]');
     if (about){
       const item = document.createElement("span");
       item.className = "nav__item";
