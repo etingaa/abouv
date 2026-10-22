@@ -71,7 +71,7 @@
         <text x="${x}" y="${up ? y - (only ? k * 5.4 : 1.8) : y + (only ? k * 9 : 3.4)}" text-anchor="middle"${only ? ` style="font-size:${(k * 5.6).toFixed(2)}px"` : ""}>${escapeHtml(g.city)}</text></g>`;
     }).join("");
     return `<svg viewBox="${V.x} ${V.y} ${V.w} ${V.h}" role="img" aria-label="${t("Carte des galeries")}">
-      <image href="images/world-dots.svg" x="0" y="0" width="360" height="128"/>${arcs}${pins}</svg>`;
+      <image class="dots dots--d" href="images/world-dots.svg" x="0" y="0" width="360" height="128"/><image class="dots dots--l" href="images/world-dots-light.svg" x="0" y="0" width="360" height="128"/>${arcs}${pins}</svg>`;
   }
 
   // téléphone : une seule carte, qui zoome sur le pays de la galerie affichée (cadrage animé) ;
@@ -85,8 +85,8 @@
         <circle class="ring" r=".9"/><circle class="dot" r=".75"/>
         <text y="${up ? -1.9 : 3.5}" text-anchor="middle">${escapeHtml(g.city)}</text></g></g>`;
     }).join("");
-    return `<svg viewBox="${V.x} ${V.y} ${V.w} ${V.h}" preserveAspectRatio="xMidYMid slice">
-      <image href="images/world-dots.svg" x="0" y="0" width="360" height="128"/>${pins}</svg>`;
+    return `<svg viewBox="${V.x} ${V.y} ${V.w} ${V.h}" preserveAspectRatio="xMidYMin meet">
+      <image class="dots dots--d" href="images/world-dots.svg" x="0" y="0" width="360" height="128"/><image class="dots dots--l" href="images/world-dots-light.svg" x="0" y="0" width="360" height="128"/>${pins}</svg>`;
   }
 
   function initGaleriesPage() {
@@ -96,7 +96,13 @@
     box.innerHTML = `
       <h2 class="gx__title">${t("Galeries")}<sup>${GALLERIES.length}</sup></h2>
       <div class="gx__map">${mapSVG()}</div>
-      <figure class="gm" aria-hidden="true"><figcaption class="gm__cap"></figcaption>${mobileMapSVG()}</figure>
+      <figure class="gm" aria-hidden="true"><figcaption class="gm__cap"></figcaption>${mobileMapSVG()}
+        <div class="gm__nav">
+          <button class="gm__arrow" type="button" data-d="-1" tabindex="-1"><svg viewBox="0 0 16 16"><path d="M10 3 5 8l5 5"/></svg></button>
+          <span class="gm__count"><b>01</b> / ${String(GALLERIES.length).padStart(2, "0")}</span>
+          <button class="gm__arrow" type="button" data-d="1" tabindex="-1"><svg viewBox="0 0 16 16"><path d="m6 3 5 5-5 5"/></svg></button>
+        </div>
+      </figure>
       <div class="gx__acc" role="list">${GALLERIES.map((g, i) => `
         <article class="gx__panel${i === 0 ? " is-open" : ""}" id="galerie-${i}" data-i="${i}" role="listitem" tabindex="0">
           <span class="gx__num">${String(i + 1).padStart(2, "0")}</span>
@@ -115,11 +121,6 @@
           </div>
           <div class="gx__foot" aria-hidden="true"><span class="gx__coords">${coords(g)}</span><span class="gx__big">${String(i + 1).padStart(2, "0")}</span></div>
         </article>`).join("")}
-      </div>
-      <div class="gm__nav" aria-hidden="true">
-        <button class="gm__arrow" type="button" data-d="-1" tabindex="-1"><svg viewBox="0 0 16 16"><path d="M10 3 5 8l5 5"/></svg></button>
-        <span class="gm__count"><b>01</b> / ${String(GALLERIES.length).padStart(2, "0")}</span>
-        <button class="gm__arrow" type="button" data-d="1" tabindex="-1"><svg viewBox="0 0 16 16"><path d="m6 3 5 5-5 5"/></svg></button>
       </div>`;
 
     // carte et fiches reliées : survoler l'une allume l'autre ; un clic sur un point mène à la fiche
@@ -191,8 +192,17 @@
     }, { passive: true });
     box.querySelectorAll(".gm__pin").forEach((p) => p.addEventListener("click", () => center(+p.dataset.i)));
     box.querySelectorAll(".gm__arrow").forEach((b) => b.addEventListener("click", () => center(Math.max(0, Math.min(cards.length - 1, cur + +b.dataset.d)))));
-    if (phone.matches){ setView(view); activate(0); }
-    phone.addEventListener("change", () => { if (phone.matches){ cur = -1; setView(view); activate(0); center(0, false); } });
+    // la carte remplit l'écran sous le titre ; la rangée de cartes vient se poser sur son bas
+    const layout = () => {
+      const fig = box.querySelector(".gm");
+      if (!phone.matches){ fig.style.height = ""; strip.style.marginTop = ""; return; }
+      const top = fig.getBoundingClientRect().top + scrollY;
+      fig.style.height = Math.max(360, innerHeight - top - 12) + "px";
+      strip.style.marginTop = -(strip.offsetHeight + 16) + "px";
+    };
+    addEventListener("resize", layout);
+    if (phone.matches){ setView(view); activate(0); layout(); }
+    phone.addEventListener("change", () => { layout(); if (phone.matches){ cur = -1; setView(view); activate(0); center(0, false); } });
 
     // les volets tiennent en entier dans le premier écran : la carte prend la hauteur qui reste (titre au-dessus)
     const map = box.querySelector(".gx__map svg"), acc = box.querySelector(".gx__acc");
