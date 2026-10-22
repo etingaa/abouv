@@ -12,10 +12,10 @@
   <meta property="og:title" content="À propos — Annick Bouvattier" />
   <meta property="og:description" content="Biographie d'Annick Bouvattier, artiste peintre : de la mode et du cinéma à la peinture à l'huile au couteau." />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-  <script src="i18n.js?v=20261024v"></script>
-  <script src="site.js?v=20261024n"></script>
+  <script src="i18n.js?v=20261024w"></script>
+  <script src="site.js?v=20261024o"></script>
   <link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="styles.css?v=20261024j" />
+  <link rel="stylesheet" href="styles.css?v=20261024m" />
   <!-- pages préchargées au survol d'un lien : changement de page quasi instantané (la galerie 3D est seulement préchargée) -->
   <script type="speculationrules">
     {"prerender":[{"where":{"and":[{"href_matches":"*.html"},{"not":{"href_matches":"*index.html"}}]},"eagerness":"moderate"}],
@@ -80,29 +80,30 @@
     @media (prefers-reduced-motion: reduce){ .faq__a{ animation:none; } .faq summary::after{ transition:none; } }
 
 
-    /* À propos : portrait accroché à gauche, récit en cinq chapitres (lieu en très grand, contour blanc) */
-    .ab{ display:grid; grid-template-columns:minmax(0, 5fr) minmax(0, 7fr); gap:clamp(32px, 6vw, 96px); margin:24px 0 112px; }
-    .ab__photo{ position:sticky; top:calc(var(--shade-h, 90px) + 24px); align-self:start; margin:0; }
-    .ab__photo img{ display:block; width:100%; height:min(78vh, 760px); object-fit:cover; filter:grayscale(1) contrast(1.06); border-radius:2px; }
-    .ab__photo figcaption{ margin-top:12px; font-size:11px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint); }
-    .ab__lead{ margin:0 0 72px; font-size:clamp(30px, 3.4vw, 52px); font-weight:500; line-height:1.08; letter-spacing:-.02em; color:var(--ink); }
-    .ch{ position:relative; padding:40px 0 48px; border-top:1px solid rgba(var(--ink-rgb),.16); }
-    .ch:last-child{ border-bottom:1px solid rgba(var(--ink-rgb),.16); }
-    .ch__n{ position:absolute; top:44px; right:0; font-size:12px; font-weight:500; letter-spacing:.12em; color:var(--ink-faint); font-variant-numeric:tabular-nums; }
-    .ch__h{
-      margin:0 0 22px; font-family:var(--font); font-size:clamp(52px, 7.4vw, 120px); font-weight:700; font-stretch:112%; text-transform:uppercase;
-      letter-spacing:-.02em; line-height:.88; color:rgba(255,255,255,.05); -webkit-text-stroke:1.5px #fff;
-      transition:color .5s ease;
-    }
-    .ch:hover .ch__h{ color:rgba(255,255,255,.9); }
-    .ch__p{ margin:0; max-width:56ch; font-size:16px; line-height:1.75; color:var(--ink-soft); }
-    .ch__p strong{ color:var(--ink); font-weight:600; }
+    /* À propos : trois parties (L'artiste, Presse, Q&A), chacune avec son grand titre ; même grille 5/7 partout */
+    .abx, .abs{ margin-bottom:clamp(72px, 10vw, 140px); }
+    .abx .bigTitle{ margin-top:clamp(16px, 4vh, 40px); }
+    .abx__grid{ display:grid; grid-template-columns:minmax(0, 5fr) minmax(0, 7fr); gap:clamp(32px, 6vw, 96px); }
+    .abx__photo{ position:sticky; top:calc(var(--shade-h, 90px) + 24px); align-self:start; margin:0; }
+    .abx__photo img{ display:block; width:100%; height:min(76vh, 720px); object-fit:cover; filter:grayscale(1) contrast(1.06); }
+    .abx__photo figcaption{ margin-top:12px; font-size:11px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint); }
+    /* la biographie d'un seul tenant, en grand : le texte en retrait, les mots clés en blanc */
+    .abx__text p{ margin:0 0 1.1em; font-size:clamp(20px, 1.85vw, 28px); font-weight:400; line-height:1.42; letter-spacing:-.012em; color:rgba(var(--ink-rgb),.5); }
+    .abx__text p:first-child::first-line{ color:var(--ink); }
+    .abx__text strong{ font-weight:500; color:var(--ink); }
+    .abx__text em{ font-style:italic; }
+    /* Q&A aligné sur la colonne de texte */
+    #questions > div{ display:grid; grid-template-columns:minmax(0, 5fr) minmax(0, 7fr); gap:clamp(32px, 6vw, 96px); }
+    #questions > div > *{ grid-column:2; }
+    .abs__contact{ display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:12px 32px; margin:0; padding:22px 0; border-top:1px solid rgba(var(--ink-rgb),.16); border-bottom:1px solid rgba(var(--ink-rgb),.16);
+      font-size:12px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint); }
+    .abs__contact a{ color:var(--ink); border-bottom:1px solid transparent; padding-bottom:2px; transition:border-color .2s ease; }
+    .abs__contact a:hover{ border-bottom-color:var(--accent); }
     @media (max-width:900px){
-      .ab{ grid-template-columns:minmax(0, 1fr); gap:32px; margin-bottom:64px; }
-      .ab__photo{ position:static; }
-      .ab__photo img{ height:auto; max-height:70vh; }
-      .ab__lead{ margin-bottom:40px; }
-      .ch__h{ font-size:clamp(34px, 10.5vw, 72px); padding-right:28px; overflow-wrap:anywhere; }
+      .abx__grid, #questions > div{ grid-template-columns:minmax(0, 1fr); gap:32px; }
+      #questions > div > *{ grid-column:1; }
+      .abx__photo{ position:static; }
+      .abx__photo img{ height:auto; max-height:70vh; }
     }
 
     /* ===== Presse (réunie dans À propos) ===== */
@@ -254,14 +255,13 @@
     .ix-cover{ display:block; padding:0; border:0; background:none; cursor:zoom-in; }
     .ix-cover img{ filter:none; }
     /* Presse : grande couverture + le nom du magazine en très grand contour blanc */
-    .prx__pub{ display:grid; grid-template-columns:minmax(0, 5fr) minmax(0, 7fr); gap:clamp(32px, 6vw, 96px); align-items:center; padding:48px 0 72px; border-top:1px solid rgba(var(--ink-rgb),.16); }
+    .prx__pub{ display:grid; grid-template-columns:minmax(0, 5fr) minmax(0, 7fr); gap:clamp(32px, 6vw, 96px); align-items:center; padding:0 0 56px; }
     .prx__cover{ display:block; padding:0; border:0; background:none; cursor:zoom-in; }
     .prx__cover img{ display:block; width:100%; box-shadow:0 30px 80px rgba(0,0,0,.45); transition:transform .6s cubic-bezier(.2,.7,.2,1); }
     .prx__cover:hover img{ transform:translateY(-6px) rotate(-1deg); }
     .prx__k{ display:flex; gap:18px; margin:0 0 8px; font-size:12px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint); }
-    .prx__mag{ margin:0 0 28px; font-size:clamp(48px, 7vw, 104px); font-weight:700; font-stretch:112%; text-transform:uppercase; line-height:.88; letter-spacing:-.01em;
-      color:rgba(255,255,255,.04); -webkit-text-stroke:1.5px rgba(255,255,255,.85); transition:color .4s ease; }
-    .prx__pub:hover .prx__mag{ color:rgba(255,255,255,.92); }
+    .prx__mag{ margin:0 0 24px; font-size:clamp(44px, 5.4vw, 88px); font-weight:700; font-stretch:112%; text-transform:uppercase; line-height:.88; letter-spacing:-.01em;
+      color:var(--ink); }
     .prx__q{ margin:0 0 10px; font-size:clamp(24px, 2.6vw, 38px); font-weight:500; line-height:1.12; letter-spacing:-.015em; color:var(--ink); }
     .prx__d{ margin:0; font-size:15px; color:var(--ink-soft); }
     .prx__acts{ display:flex; gap:26px; margin-top:32px; }
@@ -287,74 +287,30 @@
     </header>
 
     <h1 class="sr-only">À propos</h1>
-    <div class="sectionHead"><h2 class="sectionTitle">Biographie</h2></div>
-
-    <!-- ouverture : grand portrait à gauche (reste en place), le récit en chapitres à droite -->
-    <section class="ab">
-      <figure class="ab__photo">
-        <img src="images/annickbouvattier.jpg" alt="Annick Bouvattier dans son atelier" />
-        <figcaption>Annick Bouvattier</figcaption>
-      </figure>
-      <div class="ab__story">
-        <p class="ab__lead">Annick Bouvattier peint des femmes, dans des jeux d’ombres et de lumière.</p>
-      <div class="ch__list" data-lang="fr">
-        <article class="ch">
-          <span class="ch__n">01</span>
-          <h3 class="ch__h">Nevers</h3>
-          <p class="ch__p"><strong>Annick Bouvattier</strong> est née à Nevers. Son père, pédiatre et amateur d’art, lui transmet dès sa prime enfance le <strong>goût de l’art et de la peinture</strong>.</p>
-        </article>
-        <article class="ch">
-          <span class="ch__n">02</span>
-          <h3 class="ch__h">Paris</h3>
-          <p class="ch__p">Baccalauréat scientifique en poche, elle délaisse la tradition familiale des études de médecine pour s’inscrire à l’école de mode <strong>“Bercot – Marie Rucki”</strong> où, pendant deux ans, elle reçoit une <strong>formation de styliste</strong>. Ses créations, présentées à Paris et à la Villa Médicis à Rome, connaissent un succès d’estime auprès des professionnels et font l’objet de <strong>parutions dans la presse spécialisée</strong>.</p>
-        </article>
-        <article class="ch">
-          <span class="ch__n">03</span>
-          <h3 class="ch__h">Rome</h3>
-          <p class="ch__p">Cependant, <strong>plus attirée par la mode spectacle</strong> que par celle des boutiques, elle s’oriente très vite vers le cinéma et la publicité. <strong>Costumière styliste</strong>, elle travaille souvent dans les studios de Cinecittà à <strong>Rome</strong>. De ses séjours italiens, elle gardera le goût des couleurs chaudes, sensuelles, profondes : ocres ensoleillés, rouges sourds, bleus intenses, verts profonds.</p>
-        </article>
-        <article class="ch">
-          <span class="ch__n">04</span>
-          <h3 class="ch__h">Le couteau</h3>
-          <p class="ch__p">Au milieu des années 1990, sur les conseils de son mari et grâce à son soutien, elle décide de se consacrer exclusivement à <strong>la peinture à l’huile</strong>. Après deux années de recherche <strong>autodidacte</strong>, elle devient pendant 4 ans l’élève de <strong>Pierre Ramel</strong>, disciple et massier de Édouard Mac-Avoy et vice-président du Salon d’Automne. Il lui enseignera la technique de la peinture à l’huile au couteau qu’elle travaille lissée, sans épaisseur de matière, tout en transparence.</p>
-        </article>
-        <article class="ch">
-          <span class="ch__n">05</span>
-          <h3 class="ch__h">La lumière</h3>
-          <p class="ch__p">Annick Bouvattier peint essentiellement <strong>des femmes</strong>, dans des jeux <strong>d’ombres et de lumière</strong>. Elles vivent leur féminité sans fausse pudeur, indifférentes aux regards extérieurs.</p>
-        </article>
-      </div>
-      <div class="ch__list" data-lang="en">
-        <article class="ch">
-          <span class="ch__n">01</span>
-          <h3 class="ch__h">Nevers</h3>
-          <p class="ch__p"><strong>Annick Bouvattier</strong> was born in Nevers, France. Her father, a pediatrician and art lover, passed on to her from early childhood a <strong>love of art and painting</strong>.</p>
-        </article>
-        <article class="ch">
-          <span class="ch__n">02</span>
-          <h3 class="ch__h">Paris</h3>
-          <p class="ch__p">With a science baccalaureate in hand, she broke with the family tradition of studying medicine and enrolled at the <strong>“Bercot – Marie Rucki”</strong> fashion school, where she spent two years <strong>training as a fashion designer</strong>. Her creations, shown in Paris and at the Villa Medici in Rome, were well received by professionals and <strong>featured in the specialist press</strong>.</p>
-        </article>
-        <article class="ch">
-          <span class="ch__n">03</span>
-          <h3 class="ch__h">Rome</h3>
-          <p class="ch__p">Yet, <strong>more drawn to fashion for the stage and screen</strong> than to boutique fashion, she soon turned to film and advertising. As a <strong>costume designer</strong>, she often worked at the Cinecittà studios in <strong>Rome</strong>. From her years in Italy she kept a taste for warm, sensual, deep colors: sunlit ochres, muted reds, intense blues, deep greens.</p>
-        </article>
-        <article class="ch">
-          <span class="ch__n">04</span>
-          <h3 class="ch__h">The knife</h3>
-          <p class="ch__p">In the mid-1990s, on her husband’s advice and with his support, she decided to devote herself entirely to <strong>oil painting</strong>. After two years of <strong>self-taught</strong> exploration, she spent four years as a pupil of <strong>Pierre Ramel</strong>, disciple and <em>massier</em> (head student) of Édouard Mac-Avoy and vice-president of the Salon d’Automne. He taught her the technique of palette-knife oil painting, which she works smooth, without impasto, in transparent layers.</p>
-        </article>
-        <article class="ch">
-          <span class="ch__n">05</span>
-          <h3 class="ch__h">The light</h3>
-          <p class="ch__p">Annick Bouvattier mainly paints <strong>women</strong>, in plays of <strong>light and shadow</strong>. They live their femininity without false modesty, indifferent to the gaze of others.</p>
-        </article>
-      </div>
+    <!-- L'artiste : le portrait, et la biographie d'un seul tenant, en grand ; les mots clés ressortent en blanc -->
+    <section class="abx" id="artiste" aria-labelledby="t-artiste">
+      <h2 class="bigTitle bigTitle--sub" id="t-artiste">L’artiste</h2>
+      <div class="abx__grid">
+        <figure class="abx__photo"><img src="images/annickbouvattier.jpg" alt="Annick Bouvattier dans son atelier" /><figcaption>Annick Bouvattier · Atelier</figcaption></figure>
+        <div class="abx__text" data-lang="fr">
+          <p><strong>Annick Bouvattier</strong> est née à Nevers. Son père, pédiatre et amateur d’art, lui transmet dès sa prime enfance le <strong>goût de l’art et de la peinture</strong>.</p>
+          <p>Baccalauréat scientifique en poche, elle délaisse la tradition familiale des études de médecine pour s’inscrire à l’école de mode <strong>“Bercot – Marie Rucki”</strong> où, pendant deux ans, elle reçoit une <strong>formation de styliste</strong>. Ses créations, présentées à Paris et à la Villa Médicis à Rome, connaissent un succès d’estime auprès des professionnels et font l’objet de <strong>parutions dans la presse spécialisée</strong>.</p>
+          <p>Cependant, <strong>plus attirée par la mode spectacle</strong> que par celle des boutiques, elle s’oriente très vite vers le cinéma et la publicité. <strong>Costumière styliste</strong>, elle travaille souvent dans les studios de Cinecittà à <strong>Rome</strong>. De ses séjours italiens, elle gardera le goût des couleurs chaudes, sensuelles, profondes : ocres ensoleillés, rouges sourds, bleus intenses, verts profonds.</p>
+          <p>Au milieu des années 1990, sur les conseils de son mari et grâce à son soutien, elle décide de se consacrer exclusivement à <strong>la peinture à l’huile</strong>. Après deux années de recherche <strong>autodidacte</strong>, elle devient pendant 4 ans l’élève de <strong>Pierre Ramel</strong>, disciple et massier de Édouard Mac-Avoy et vice-président du Salon d’Automne. Il lui enseignera la technique de la peinture à l’huile au couteau qu’elle travaille lissée, sans épaisseur de matière, tout en transparence.</p>
+          <p>Annick Bouvattier peint essentiellement <strong>des femmes</strong>, dans des jeux <strong>d’ombres et de lumière</strong>. Elles vivent leur féminité sans fausse pudeur, indifférentes aux regards extérieurs.</p>
+        </div>
+        <div class="abx__text" data-lang="en">
+          <p><strong>Annick Bouvattier</strong> was born in Nevers, France. Her father, a pediatrician and art lover, passed on to her from early childhood a <strong>love of art and painting</strong>.</p>
+          <p>With a science baccalaureate in hand, she broke with the family tradition of studying medicine and enrolled at the <strong>“Bercot – Marie Rucki”</strong> fashion school, where she spent two years <strong>training as a fashion designer</strong>. Her creations, shown in Paris and at the Villa Medici in Rome, were well received by professionals and <strong>featured in the specialist press</strong>.</p>
+          <p>Yet, <strong>more drawn to fashion for the stage and screen</strong> than to boutique fashion, she soon turned to film and advertising. As a <strong>costume designer</strong>, she often worked at the Cinecittà studios in <strong>Rome</strong>. From her years in Italy she kept a taste for warm, sensual, deep colors: sunlit ochres, muted reds, intense blues, deep greens.</p>
+          <p>In the mid-1990s, on her husband’s advice and with his support, she decided to devote herself entirely to <strong>oil painting</strong>. After two years of <strong>self-taught</strong> exploration, she spent four years as a pupil of <strong>Pierre Ramel</strong>, disciple and <em>massier</em> (head student) of Édouard Mac-Avoy and vice-president of the Salon d’Automne. He taught her the technique of palette-knife oil painting, which she works smooth, without impasto, in transparent layers.</p>
+          <p>Annick Bouvattier mainly paints <strong>women</strong>, in plays of <strong>light and shadow</strong>. They live their femininity without false modesty, indifferent to the gaze of others.</p>
+        </div>
       </div>
     </section>
 
-    <h2 class="bigTitle bigTitle--sub" id="presse">Presse<sup>1</sup></h2>
+    <section class="abs" id="presse" aria-labelledby="t-presse">
+    <h2 class="bigTitle bigTitle--sub" id="t-presse">Presse<sup>1</sup></h2>
     <!-- une parution = un <article class="pub"> (couverture + texte) -->
     <section class="prx" aria-label="Parutions">
       <article class="pub prx__pub">
@@ -374,13 +330,11 @@
       </article>
     </section>
 
-    <a class="bigLink" href="contact.html?sujet=presse">
-      <span class="bigLink__k">Contact presse — entretien, visuels en haute définition, exposition</span>
-      <span class="bigLink__w">Écrire<i aria-hidden="true">→</i></span>
-    </a>
+    <p class="abs__contact"><span>Contact presse — entretien, visuels en haute définition, exposition</span><a href="contact.html?sujet=presse">Écrire →</a></p>
+    </section>
 
-    <section class="ix-row" aria-label="Questions fréquentes">
-      <h2 class="ix-label">Questions</h2>
+    <section class="abs" id="questions" aria-labelledby="t-qa">
+      <h2 class="bigTitle bigTitle--sub" id="t-qa">Q&amp;A</h2>
       <div>
     <section class="faq" id="faq" aria-label="Questions fréquentes">
       <!-- Questions / réponses : version française et version anglaise (i18n.js affiche la bonne) -->

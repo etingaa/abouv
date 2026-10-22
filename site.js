@@ -91,6 +91,24 @@
 
     nav.id = nav.id || "mainNav";
 
+    // À propos se décline en trois parties : sous-menu au survol (L'artiste, Presse, Q&A)
+    const about = nav.querySelector('.nav__link[href="apropos.html"]');
+    if (about){
+      const item = document.createElement("span");
+      item.className = "nav__item";
+      about.replaceWith(item);
+      item.appendChild(about);
+      const sub = document.createElement("span");
+      sub.className = "nav__sub";
+      [["artiste", "L’artiste"], ["presse", "Presse"], ["questions", "Q&A"]].forEach(([id, label]) => {
+        const a = document.createElement("a");
+        a.href = "apropos.html#" + id;
+        a.textContent = tr(label);
+        sub.appendChild(a);
+      });
+      item.appendChild(sub);
+    }
+
     // menu téléphone : ordre d'apparition des liens, puis réseaux + langue en bas
     nav.querySelectorAll(".nav__link").forEach((a, i) => a.style.setProperty("--i", i));
     const foot = document.createElement("div");

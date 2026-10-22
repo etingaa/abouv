@@ -12,8 +12,8 @@
   <meta property="og:title" content="Galeries — Annick Bouvattier" />
   <meta property="og:description" content="Les galeries qui présentent le travail d'Annick Bouvattier, en France et aux États-Unis." />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-  <script src="i18n.js?v=20261024v"></script>
-  <script src="site.js?v=20261024n"></script>
+  <script src="i18n.js?v=20261024w"></script>
+  <script src="site.js?v=20261024o"></script>
   <link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
   <!-- pages préchargées au survol d'un lien : changement de page quasi instantané (la galerie 3D est seulement préchargée) -->
   <script type="speculationrules">
@@ -26,6 +26,10 @@
     .gx{ position:relative; }
     /* le titre est posé sur la carte (en haut à gauche) : la carte garde de la hauteur sur les petits écrans */
     .gx__title{ position:absolute; z-index:2; top:clamp(12px, 3vh, 32px); left:0; margin:0; pointer-events:none; text-shadow:0 2px 24px rgba(8,12,24,.8); font-size:clamp(44px, min(7vw, 12vh), 112px); font-weight:700; font-stretch:112%; text-transform:uppercase; letter-spacing:-.01em; line-height:.9; color:var(--ink); }
+    /* flou sous le titre : la carte passe dessous, estompée */
+    .gx__title::before{ content:""; position:absolute; z-index:-1; inset:-28px -56px -24px -40px; pointer-events:none;
+      background:rgba(8,12,24,.45); -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
+      -webkit-mask-image:radial-gradient(closest-side, #000 55%, transparent); mask-image:radial-gradient(closest-side, #000 55%, transparent); }
     .gx__title sup{ font-size:.2em; font-weight:500; letter-spacing:.06em; vertical-align:top; margin-left:.25em; position:relative; top:.6em; color:var(--ink-faint); font-stretch:100%; }
 
     /* carte en points */
@@ -83,7 +87,7 @@
 
     /* téléphone : les volets s'empilent, tout est visible */
     @media (max-width:760px){
-      .gx__title{ position:static; margin:28px 0 16px; }
+      .gx__title{ position:static; margin:28px 0 16px; } .gx__title::before{ display:none; }
       .gx__map{ margin-bottom:40px; padding-top:0; }
       .gx__acc{ flex-direction:column; height:auto; border:0; }
       .gx__panel, .gx__panel:last-child{ container-type:normal; flex:none; border:0; border-top:1px solid rgba(var(--ink-rgb),.16); background:none !important; cursor:default; }
@@ -96,7 +100,7 @@
 
 
 
-  <link rel="stylesheet" href="styles.css?v=20261024j">
+  <link rel="stylesheet" href="styles.css?v=20261024m">
 
 </head>
 

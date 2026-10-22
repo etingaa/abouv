@@ -1283,3 +1283,79 @@ body.salle .shade{ background:#070c19; -webkit-backdrop-filter:none; backdrop-fi
 .cx__links a:hover i{ color:var(--accent); transform:translate(3px, -3px); }
 @media (max-width:900px){ .contactPage .cx{ grid-template-columns:1fr; } .cx__side{ position:static; } }
 .bigTitle--sub{ margin-top:0; scroll-margin-top:calc(var(--shade-h, 90px) + 24px); }
+
+/* ===== Sous-menu À propos (L'artiste, Presse, Q&A), au survol ===== */
+.nav__item{ position:relative; display:inline-flex; }
+.nav__sub{
+  position:absolute; top:100%; left:50%; z-index:30; display:flex; flex-direction:column; gap:12px;
+  min-width:max-content; margin-top:14px; padding:18px 22px;
+  background:rgba(8,12,24,.94); border:1px solid rgba(var(--ink-rgb),.12);
+  -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
+  opacity:0; pointer-events:none; transform:translate(-50%, -6px); transition:opacity .25s ease, transform .25s ease;
+}
+.nav__sub::before{ content:""; position:absolute; left:0; right:0; top:-16px; height:16px; } /* pont pour garder le survol */
+.nav__item:hover .nav__sub, .nav__item:focus-within .nav__sub{ opacity:1; pointer-events:auto; transform:translate(-50%, 0); }
+.nav__sub a{ font-size:12px; font-weight:500; letter-spacing:.1em; text-transform:uppercase; color:rgba(var(--ink-rgb),.62); border-bottom:1px solid transparent; padding-bottom:2px; align-self:flex-start; transition:color .2s ease, border-color .2s ease; }
+.nav__sub a:hover{ color:var(--ink); border-bottom-color:var(--accent); }
+.top.is-compact .nav__item:hover .nav__link::after{ opacity:0 !important; } /* pas d'infobulle par-dessus le sous-menu */
+@media (max-width:760px){ .nav__item{ display:contents; } .nav__sub{ display:none; } }
+
+/* ===== Contact : formulaire dans la voix du site (plus de panneau ni de pastilles) =====
+   petites capitales pour les intitulés, champs soulignés d'un trait, texte saisi en grand,
+   sujets comme les onglets du menu (soulignés en corail), « Envoyer → » en capitales */
+.contactPage .formCard{ padding:0; border:0; border-radius:0; background:none; box-shadow:none; }
+.contactPage .formCard__title{ max-width:24ch; margin:0 0 48px; font-size:clamp(24px, 2.4vw, 34px); font-weight:500; line-height:1.15; letter-spacing:-.015em; color:var(--ink); }
+.contactPage .ix-form{ gap:34px 40px !important; }
+.contactPage .ix-form .field{ gap:4px; }
+.contactPage .ix-form .field__label{ font-size:11px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint); }
+.contactPage .ix-form .field__label em{ text-transform:none; letter-spacing:0; font-size:12px; color:rgba(var(--ink-rgb),.35); }
+.contactPage .ix-form .req{ color:var(--accent); }
+.contactPage .formCard .ix-form input, .contactPage .formCard .ix-form textarea{
+  height:auto !important; padding:8px 0 12px !important; border:0 !important; border-bottom:1px solid rgba(var(--ink-rgb),.22) !important; border-radius:0 !important;
+  background:transparent !important; box-shadow:none !important; font-size:clamp(18px, 1.5vw, 22px) !important; color:var(--ink);
+  transition:border-color .2s ease;
+}
+.contactPage .formCard .ix-form textarea{ min-height:120px; resize:vertical; }
+.contactPage .formCard .ix-form input:hover, .contactPage .formCard .ix-form textarea:hover{ border-bottom-color:rgba(var(--ink-rgb),.45) !important; background:transparent !important; }
+.contactPage .formCard .ix-form input:focus, .contactPage .formCard .ix-form textarea:focus{ border-bottom-color:var(--ink) !important; background:transparent !important; outline:none; }
+.contactPage .ix-form input::placeholder, .contactPage .ix-form textarea::placeholder{ color:rgba(var(--ink-rgb),.25); }
+/* sujets */
+.contactPage .ix-form .topics{ display:flex; flex-wrap:wrap; gap:12px 32px; margin-top:12px; }
+.contactPage .ix-form .topics .tab{ gap:0; padding:0 0 4px; font-size:13px; font-weight:500; letter-spacing:.1em; text-transform:uppercase; color:rgba(var(--ink-rgb),.5);
+  border-bottom:1.5px solid transparent !important; border-radius:0; transition:color .2s ease, border-color .2s ease; }
+.contactPage .ix-form .topics .tab:hover{ color:var(--ink); }
+.contactPage .ix-form .topics .tab[aria-checked="true"]{ color:var(--ink); border-bottom-color:var(--accent) !important; }
+.contactPage .ix-form .tick{ display:none; }
+/* pied : Envoyer → */
+.contactPage .ix-form .form__foot{ align-items:center; gap:18px 28px; margin-top:8px; }
+.contactPage .ix-form .sendBtn{ gap:14px; }
+.contactPage .ix-form .sendBtn > span, .contactPage .formCard .ix-form .sendBtn > span{
+  height:54px; padding:0 30px; border-radius:0; background:var(--ink); color:#0b1120;
+  font-size:12px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; transition:background-color .2s ease;
+}
+.contactPage .ix-form .sendBtn__arrow{ width:auto; height:auto; border-radius:0; background:none; color:var(--accent); }
+.contactPage .ix-form .sendBtn__arrow svg{ width:22px; height:22px; stroke-width:1.4; }
+.contactPage .ix-form .sendBtn:hover > span{ background:#fff; }
+.contactPage .ix-form .sendBtn:hover .sendBtn__arrow{ transform:translateX(6px); }
+.contactPage .form__alt{ font-size:11px; letter-spacing:.14em; text-transform:uppercase; }
+.contactPage .altBtn{ height:auto; padding:0 0 2px; border:0; border-bottom:1px solid rgba(var(--ink-rgb),.35); border-radius:0; font-size:11px; letter-spacing:.14em; text-transform:uppercase; }
+.contactPage .altBtn:hover{ background:none; border-bottom-color:var(--accent); }
+.contactPage .ix-form .formNote{ font-size:12px; color:var(--ink-faint); }
+@media (max-width:760px){ .contactPage .formCard{ margin:0 0 48px; } .contactPage .ix-form{ gap:28px 20px !important; } }
+
+/* ===== Portfolio dans la voix du site : grand titre, filtres en petites capitales, légendes alignées à gauche ===== */
+body.portfolio .pfTitle{ margin:clamp(16px, 4vh, 40px) 0 clamp(16px, 3vh, 32px); }
+body.portfolio .tab--group, body.portfolio .tab--group .tab__name, body.portfolio .tab--group .tab__value{ font-size:12px; font-weight:500; letter-spacing:.1em; text-transform:uppercase; }
+body.portfolio .tab--group .tab__name{ color:var(--ink); }
+body.portfolio .tab--group .tab__value{ color:var(--ink-faint); }
+body.portfolio .subtabs .tab{ font-size:12px; letter-spacing:.08em; text-transform:uppercase; }
+body.portfolio .cap{ padding:12px 0 0; text-align:left; }
+body.portfolio .capTitle{ font-size:13px; font-weight:700; font-stretch:112%; letter-spacing:.02em; }
+body.portfolio .capMeta{ margin-top:4px; font-size:12px; letter-spacing:0; }
+body.portfolio .badge, body.portfolio .badge.disponible, body.portfolio .badge.vendue{
+  display:inline-flex; align-items:center; gap:7px; margin-top:6px; padding:0; border:0; background:none; opacity:1;
+  font-size:10.5px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint);
+}
+body.portfolio .badge.disponible::before{ display:inline-block; content:""; width:6px; height:6px; border-radius:50%; background:var(--accent); }
+body.portfolio .badge.disponible{ color:var(--ink); }
+@media (max-width:600px){ body.portfolio .cap{ padding-top:8px; } body.portfolio .capTitle{ font-size:11px; } }
