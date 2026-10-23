@@ -1494,8 +1494,8 @@ html[data-theme="light"] .ov__cta:hover{ background:#223a7a; }
 .xstatic__y{ font-weight:700; color:var(--ink); }
 
 
-/* portfolio : choix de l'unité des dimensions (cm / in), à gauche de la recherche */
-.unitSwitch{ display:inline-flex; align-items:center; gap:2px; margin-left:auto; margin-right:6px; }
+/* portfolio : choix de l'unité des dimensions (cm / in), tout à droite, après la recherche */
+.unitSwitch{ display:inline-flex; align-items:center; gap:2px; margin-left:-6px; }
 .unitSwitch button{ height:28px; padding:0 8px; border:0; background:none; cursor:pointer; font:inherit; font-size:12px; font-weight:500; letter-spacing:.1em; text-transform:uppercase;
   color:var(--ink-faint); border-bottom:1.5px solid transparent; transition:color .2s ease, border-color .2s ease; }
 .unitSwitch button:hover{ color:var(--ink); }
