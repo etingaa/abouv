@@ -52,7 +52,7 @@ const fallback = (reason) => window.__g3dFallback ? window.__g3dFallback(reason)
 
 const $ = (id) => document.getElementById(id);
 const els = {
-  stage: $("stage"), ctrl: $("ctrl"), ctrlPlay: $("ctrlPlay"), ctrlSlow: $("ctrlSlow"), ctrlFast: $("ctrlFast"), ctrlSpeed: $("ctrlSpeed"), loading: $("loading"), bar: $("progressBar"), hint: $("hint"),
+  stage: $("stage"), ctrl: $("ctrl"), ctrlPlay: $("ctrlPlay"), ctrlSlow: $("ctrlSlow"), ctrlFast: $("ctrlFast"), ctrlSpeed: $("ctrlSpeed"), ctrlPath: $("ctrlPath"), loading: $("loading"), bar: $("progressBar"), hint: $("hint"),
   tip: $("tip"), tipTitle: $("tipTitle"), tipMeta: $("tipMeta"), tipLink: $("tipLink"), srList: $("srList"),
 };
 
@@ -591,8 +591,21 @@ async function main(){
   let lastInput = 0, move = null;
 
   /* ---------- pause / vitesse (boutons en bas à gauche ; la vitesse est mémorisée) ---------- */
-  const SPEEDS = [.5, .75, 1, 1.5, 2];
-  const ctrl = { paused: false, i: 2, get tempo(){ return SPEEDS[this.i]; } };
+  const SPEEDS = [.25, .5, .75, 1, 1.5, 2, 3, 4];
+  const ctrl = { paused: false, i: 3, get tempo(){ return SPEEDS[this.i]; } };
+
+  /* ---------- avancer / reculer le long du chemin (curseur ; au doigt, glisser à gauche / à droite) ----------
+     on reste sur le chemin autour du banc : seule la position sur le tour change, le regard suit */
+  const TAU = Math.PI * 2;
+  const scrub = { active: false, target: null };
+  const pathFrac = () => (((wander.theta - Math.PI) % TAU) + TAU) % TAU / TAU;
+  function joinPath(){      // pendant l'arrivée (ou après un regard à la main) : on se pose sur le chemin
+    if (wander.on) return;
+    move = null; hideTip();
+    wander.theta = nearestTheta(view.pos); wander.on = true; lastInput = 0;
+  }
+  function scrubTo(theta){ joinPath(); scrub.target = theta; }
+  function scrubBy(dTheta){ joinPath(); scrub.target = (scrub.target ?? wander.theta) + dTheta; }
   try { const k = SPEEDS.indexOf(parseFloat(localStorage.getItem("abouv:g3d-speed"))); if (k >= 0) ctrl.i = k; } catch (_) {}
   function ctrlUI(){
     if (!els.ctrl) return;
@@ -607,6 +620,17 @@ async function main(){
       ctrl.paused = !ctrl.paused; ctrlUI();
       if (!ctrl.paused && !wander.on && !move){ lastInput = 0; startWander(); }   // reprise après un regard à la main
     });
+    if (els.ctrlPath){
+      const fromSlider = () => {
+        joinPath();
+        const want = Math.PI + els.ctrlPath.value / 1000 * TAU, cur = scrub.target ?? wander.theta;
+        scrubTo(cur + angleDiff(cur % TAU, want % TAU));        // le plus court, sans faire un tour de trop
+      };
+      els.ctrlPath.addEventListener("pointerdown", () => { scrub.active = true; });
+      els.ctrlPath.addEventListener("input", () => { scrub.active = true; fromSlider(); });
+      const end = () => { scrub.active = false; };
+      els.ctrlPath.addEventListener("pointerup", end); els.ctrlPath.addEventListener("change", end); els.ctrlPath.addEventListener("blur", end);
+    }
     els.ctrlSlow.addEventListener("click", () => speed(-1));
     els.ctrlFast.addEventListener("click", () => speed(1));
     ctrlUI();
@@ -684,8 +708,17 @@ async function main(){
   // et affiche sa petite fiche, toucher ailleurs la relance
   if (passive){
     let tap = null;
-    els.stage.addEventListener("pointerdown", (e) => { tap = { x: e.clientX, y: e.clientY }; });
+    els.stage.addEventListener("pointerdown", (e) => { tap = { x: e.clientX, y: e.clientY, lx: e.clientX, swipe: false }; });
+    // glisser à gauche = avancer sur le chemin, à droite = reculer
+    els.stage.addEventListener("pointermove", (e) => {
+      if (!tap) return;
+      const dx = e.clientX - tap.x, dy = e.clientY - tap.y;
+      if (!tap.swipe && Math.abs(dx) > 12 && Math.abs(dx) > Math.abs(dy)) { tap.swipe = true; scrub.active = true; hideTip(); }
+      if (tap.swipe) { scrubBy(-(e.clientX - tap.lx) / innerWidth * TAU * .35); tap.lx = e.clientX; }
+    });
+    els.stage.addEventListener("pointercancel", () => { tap = null; scrub.active = false; });
     els.stage.addEventListener("pointerup", (e) => {
+      if (tap && tap.swipe){ tap = null; scrub.active = false; return; }
       if (!tap || Math.hypot(e.clientX - tap.x, e.clientY - tap.y) > 14){ tap = null; return; }
       tap = null;
       const h = hit(e.clientX, e.clientY);
@@ -784,7 +817,12 @@ async function main(){
       // allure de marche : légère poussée à chaque pas
       const surge = 1;
       const before = onEllipse(wander.theta);
-      if (!ctrl.paused) wander.theta += dt * Math.PI * 2 / WANDER.lap * surge * ctrl.tempo;
+      if (scrub.target != null){
+        // déplacement demandé au curseur / au doigt : on y glisse en douceur, puis la promenade reprend
+        wander.theta += (scrub.target - wander.theta) * Math.min(1, dt * 7);
+        if (!scrub.active && Math.abs(scrub.target - wander.theta) < .002) scrub.target = null;
+      } else if (!ctrl.paused && !scrub.active) wander.theta += dt * Math.PI * 2 / WANDER.lap * surge * ctrl.tempo;
+      if (els.ctrlPath && !scrub.active) els.ctrlPath.value = Math.round(pathFrac() * 1000);
       view.pos.copy(onEllipse(wander.theta));
       stride += before.distanceTo(view.pos) / STEP;
       // le regard suit la marche, avec les petits mouvements de tête de quelqu'un qui regarde autour de lui
@@ -792,7 +830,7 @@ async function main(){
       // regard stable, qui tourne avec la marche (pas de va-et-vient de la tête)
       view.yaw += angleDiff(view.yaw, gz.yaw) * Math.min(1, dt * 3);
       view.pitch += (gz.pitch - view.pitch) * Math.min(1, dt * 2);
-      walking = ctrl.paused ? 0 : 1;
+      walking = Math.min(1, before.distanceTo(view.pos) / (dt * .5 + 1e-6));
     } else if (!drag && lastInput && now - lastInput > WANDER.idle * 1000){
       lastInput = 0;
       startWander();          // plus personne ne touche à rien : on reprend la promenade

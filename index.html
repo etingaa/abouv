@@ -41,15 +41,15 @@
     })();
   </script>
 
-  <script src="i18n-langs.js?v=20261028a"></script>
-  <script src="i18n.js?v=20261028a"></script>
+  <script src="i18n-langs.js?v=20261028b"></script>
+  <script src="i18n.js?v=20261028b"></script>
   <script src="site.js?v=20261026a"></script>
   <link rel="preconnect" href="https://docs.google.com" crossorigin />
   <script src="sheet.js?v=20261027a"></script>
   <link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preload" href="fonts/cormorant-garamond-latin.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="styles.css?v=20261028b" />
-  <link rel="stylesheet" href="galerie.css?v=20261025e" />
+  <link rel="stylesheet" href="galerie.css?v=20261028a" />
 
   <!-- Three.js, version épinglée -->
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
@@ -62,7 +62,7 @@
       }
     }
   </script>
-  <script type="module" src="galerie.js?v=20261026b"></script>
+  <script type="module" src="galerie.js?v=20261028a"></script>
   <!-- seo:head -->
   <link rel="canonical" href="https://annickbouvattier.art/" />
   <meta property="og:url" content="https://annickbouvattier.art/" />
@@ -118,6 +118,7 @@
           <button class="g3d-ctrl__play" id="ctrlPlay" type="button" aria-pressed="false" aria-label="Mettre en pause">
             <svg viewBox="0 0 16 16" aria-hidden="true"><path class="i-pause" d="M5 3.5v9M11 3.5v9"/><path class="i-play" d="M5.5 3.2v9.6L13 8z"/></svg>
           </button>
+          <input class="g3d-ctrl__path" id="ctrlPath" type="range" min="0" max="1000" step="1" value="0" aria-label="Avancer ou reculer dans la visite">
           <span class="g3d-ctrl__sep" aria-hidden="true"></span>
           <button class="g3d-ctrl__step" id="ctrlSlow" type="button" aria-label="Ralentir"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 8h8"/></svg></button>
           <span class="g3d-ctrl__speed" id="ctrlSpeed" aria-live="polite">1×</span>
