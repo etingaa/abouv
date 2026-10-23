@@ -16,9 +16,10 @@
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <script src="i18n-langs.js?v=20261027h"></script>
   <script src="i18n.js?v=20261027i"></script>
+  <script src="sheet.js?v=20261027a"></script>
   <script src="site.js?v=20261026a"></script>
   <link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="styles.css?v=20261027t" />
+  <link rel="stylesheet" href="styles.css?v=20261027v" />
   <!-- pages préchargées au survol d'un lien : changement de page quasi instantané (la galerie 3D est seulement préchargée) -->
   <script type="speculationrules">
     {"prerender":[{"where":{"and":[{"selector_matches":".nav__link, .bottom__link--legal"},{"not":{"selector_matches":"[href='./'], [href='../']"}}]},"eagerness":"moderate"}],
@@ -115,6 +116,11 @@
 
 
     <div class="contact cx">
+      <!-- une toile disponible, tirée au hasard à chaque visite (comme sur la page de remerciement) -->
+      <figure class="cxArt">
+        <a class="cxArt__frame" id="cxLink" href="oeuvres/face"><img id="cxImg" src="images/thumbs/Face.jpg" alt="Face, huile sur toile, par Annick Bouvattier" decoding="async"></a>
+        <figcaption class="cxArt__cap" id="cxCap" translate="no">Face · <a href="oeuvres/face">Voir l'œuvre</a></figcaption>
+      </figure>
       <section class="formCard ms" aria-labelledby="formCardTitle">
         <h2 class="sr-only" id="formCardTitle">Formulaire de contact</h2>
         <!-- le formulaire se lit comme une phrase : on complète les blancs -->
@@ -243,6 +249,19 @@
         btn.disabled = false;
       }
     });
+
+    // toile du moment : une œuvre disponible au hasard (dont l'image existe)
+    if (window.abouvSheet) Promise.all([abouvSheet.artworks(), fetch("images/thumbs/sizes.json").then(r => r.json()).catch(() => null)]).then(([list, sizes]) => {
+      const av = list.filter(a => a.status === "disponible" && a.file && (!sizes || sizes[a.file]));
+      if (!av.length) return;
+      const a = av[Math.floor(Math.random() * av.length)];
+      const img = document.getElementById("cxImg");
+      img.src = a.thumb; img.alt = `${a.title}, ${t(a.technique || "")}, Annick Bouvattier`;
+      document.getElementById("cxLink").href = `oeuvres/${a.slug}`;
+      const cap = document.getElementById("cxCap"); cap.innerHTML = "";
+      cap.append(document.createTextNode(a.title + " · "));
+      const l = document.createElement("a"); l.href = `oeuvres/${a.slug}`; l.textContent = t("Voir l'œuvre"); cap.append(l);
+    }).catch(() => {});
   })();
   </script>
 <script>window.I18N && I18N.apply();</script><i id="i18n-end" hidden></i>
