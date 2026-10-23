@@ -107,7 +107,7 @@
       .gm svg{ display:block; width:100%; height:100%; }
       .gm .gm__pin{ cursor:pointer; }
       .gm .gm__pin text{ font-size:2.1px; }
-      .gm .gm__pin:not(.is-hot) circle.dot{ fill:rgba(var(--accent-rgb),.55); }
+      .gm .gm__pin--us:not(.is-hot) circle.dot{ fill:rgba(var(--c-us),.6); } .gm .gm__pin--fr:not(.is-hot) circle.dot{ fill:rgba(var(--c-fr),.6); }
       .gm .gm__pin:not(.is-hot) text{ fill:rgba(var(--ink-rgb),.5); }
       .gm__cap{ position:absolute; z-index:1; left:20px; top:14px; display:flex; align-items:baseline; gap:8px; font-size:11px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint); }
       .gm__cap span{ color:var(--ink); }
@@ -139,6 +139,30 @@
       .gx__foot{ position:static; min-width:0; opacity:1; transform:none; margin:12px 0 0; padding-top:10px; }
       .gx__big{ display:none; }
     }
+
+    /* petites touches de couleur : une couleur par pays (États-Unis bleu, France corail) */
+    .gx{ --c-us:126,162,240; --c-fr:236,118,104; }
+    html[data-theme="light"] .gx{ --c-us:34,82,180; --c-fr:200,64,52; }
+    .gx--us{ --c:var(--c-us); } .gx--fr{ --c:var(--c-fr); }
+    .xflag{ display:inline-block; width:15px; height:10px; margin-right:7px; border-radius:2px; vertical-align:-1px; box-shadow:0 0 0 .5px rgba(var(--ink-rgb),.35); }
+    /* carte : points et arcs aux couleurs du pays */
+    .gx__pin--us circle.dot{ fill:rgb(var(--c-us)); } .gx__pin--fr circle.dot{ fill:rgb(var(--c-fr)); }
+    .gx__pin--us circle.ring{ stroke:rgb(var(--c-us)); } .gx__pin--fr circle.ring{ stroke:rgb(var(--c-fr)); }
+    .gx__arc--us{ stroke:rgba(var(--c-us),.45); }
+    /* fiches : pays en pastille teintée, filet de couleur en haut du volet, contour coloré au survol */
+    .gx__country{ display:inline-flex; align-items:center; align-self:flex-start; padding:4px 10px 4px 8px; border-radius:999px; color:rgb(var(--c)) !important; background:rgba(var(--c),.13); }
+    .gx__panel::before{ content:""; position:absolute; left:18px; right:18px; top:0; height:3px; border-radius:0 0 3px 3px; background:rgb(var(--c)); opacity:.35; transition:opacity .3s ease; }
+    .gx__panel:hover::before, .gx__panel.is-open::before{ opacity:1; }
+    .gx__panel:hover, .gx__panel.is-open{ border-color:rgba(var(--c),.75) !important; box-shadow:inset 0 0 0 1.5px rgba(var(--c),.75) !important; }
+    .gx__panel:hover .gx__vcity{ -webkit-text-stroke-color:rgb(var(--c)); }
+    .gx__num{ color:rgb(var(--c)) !important; }
+    .gx__coords{ color:rgba(var(--c),.9) !important; }
+    .gx__big{ -webkit-text-stroke-color:rgba(var(--c),.55) !important; }
+    .gx__acts a:hover{ border-bottom-color:rgb(var(--c)) !important; }
+    .gm .gm__pin:not(.is-hot) circle.dot{ opacity:.6; }
+    .gm .gm__cap .xflag{ width:15px; height:10px; flex:none; }
+    .gm__cap{ align-items:center; }
+    @media (max-width:760px){ .gx__panel::before{ left:16px; right:16px; } .gx__num{ display:none; } }
   </style>
 
 
@@ -199,7 +223,7 @@
 
   <!-- expositions (pour « 4 expositions ici depuis 2005 »), puis la logique de la page -->
   <script src="expos-data.js?v=20261022n"></script>
-  <script src="./script.js?v=20261026a"></script>
+  <script src="./script.js?v=20261027a"></script>
 
 </body>
 </html>

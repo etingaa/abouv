@@ -18,6 +18,14 @@
   ];
 
 
+  // une couleur par pays (petites touches : carte, fiches) + drapeaux dessinés (comme sur la page Expositions)
+  const KEY = { "États-Unis": "us", "France": "fr" };
+  const FLAGS = {
+    "France": '<rect width="3" height="2" fill="#ED2939"/><rect width="2" height="2" fill="#fff"/><rect width="1" height="2" fill="#002395"/>',
+    "États-Unis": '<rect width="3" height="2" fill="#B22234"/>' + [1, 3, 5].map(i => `<rect y="${i * 2 / 7}" width="3" height="${2 / 7}" fill="#fff"/>`).join("") + '<rect width="1.3" height="1.08" fill="#3C3B6E"/>',
+  };
+  const flag = (c) => FLAGS[c] ? `<svg class="xflag" viewBox="0 0 3 2" aria-hidden="true">${FLAGS[c]}</svg>` : "";
+
   function escapeHtml(s) {
     return String(s ?? "")
       .replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")
@@ -60,13 +68,13 @@
     const arcs = only ? "" : GALLERIES.filter((g) => g !== home).map((g) => {
       const x1 = px(home.lng), y1 = py(home.lat), x2 = px(g.lng), y2 = py(g.lat);
       const mx = (x1 + x2) / 2, my = Math.min(y1, y2) - Math.abs(x2 - x1) * .18;
-      return `<path class="gx__arc" d="M${x1},${y1} Q${mx},${my} ${x2},${y2}"/>`;
+      return `<path class="gx__arc gx__arc--${KEY[g.country] || "x"}" d="M${x1},${y1} Q${mx},${my} ${x2},${y2}"/>`;
     }).join("");
     const k = V.w / VIEW.w;              // taille des repères proportionnelle au cadrage
     const pins = GALLERIES.map((g, i) => {
       if (only && g.country !== only) return "";
       const x = px(g.lng), y = py(g.lat), up = LABEL[g.city] !== "below";
-      return `<g class="gx__pin" data-i="${i}" tabindex="0" role="button" aria-label="${escapeHtml(g.name)}, ${escapeHtml(g.city)}">
+      return `<g class="gx__pin gx__pin--${KEY[g.country] || "x"}" data-i="${i}" tabindex="0" role="button" aria-label="${escapeHtml(g.name)}, ${escapeHtml(g.city)}">
         <circle class="ring" cx="${x}" cy="${y}" r="${.9 * (only ? k * 2.6 : 1)}"/><circle class="dot" cx="${x}" cy="${y}" r="${.75 * (only ? k * 2.6 : 1)}"/>
         <text x="${x}" y="${up ? y - (only ? k * 5.4 : 1.8) : y + (only ? k * 9 : 3.4)}" text-anchor="middle"${only ? ` style="font-size:${(k * 5.6).toFixed(2)}px"` : ""}>${escapeHtml(g.city)}</text></g>`;
     }).join("");
@@ -81,7 +89,7 @@
     const V = ZOOM[GALLERIES[0].country];
     const pins = GALLERIES.map((g, i) => {
       const up = LABEL[g.city] !== "below";
-      return `<g class="gx__pin gm__pin" data-i="${i}" transform="translate(${px(g.lng)} ${py(g.lat)})"><g class="gm__s">
+      return `<g class="gx__pin gm__pin gx__pin--${KEY[g.country] || "x"}" data-i="${i}" transform="translate(${px(g.lng)} ${py(g.lat)})"><g class="gm__s">
         <circle class="ring" r=".9"/><circle class="dot" r=".75"/>
         <text y="${up ? -1.9 : 3.5}" text-anchor="middle">${escapeHtml(g.city)}</text></g></g>`;
     }).join("");
@@ -104,11 +112,11 @@
         </div>
       </figure>
       <div class="gx__acc" role="list">${GALLERIES.map((g, i) => `
-        <article class="gx__panel${i === 0 ? " is-open" : ""}" id="galerie-${i}" data-i="${i}" role="listitem" tabindex="0">
+        <article class="gx__panel gx--${KEY[g.country] || "x"}${i === 0 ? " is-open" : ""}" id="galerie-${i}" data-i="${i}" role="listitem" tabindex="0">
           <span class="gx__num">${String(i + 1).padStart(2, "0")}</span>
           <p class="gx__vcity" aria-hidden="true" style="--n:${g.city.length}">${escapeHtml(g.city)}</p>
           <div class="gx__body">
-            <p class="gx__country">${escapeHtml(t(g.country))}</p>
+            <p class="gx__country">${flag(g.country)}${escapeHtml(t(g.country))}</p>
             <p class="gx__city">${escapeHtml(g.city)}</p>
             <p class="gx__name">${escapeHtml(g.name)}</p>
             <p class="gx__addr">${escapeHtml(g.address)}</p>
@@ -170,7 +178,7 @@
       const g = GALLERIES[i];
       open(i);
       pins.forEach((p) => p.classList.toggle("is-hot", +p.dataset.i === i && p.classList.contains("gm__pin")));
-      cap.innerHTML = `${escapeHtml(t(g.country))}<span>${GALLERIES.filter(x => x.country === g.country).length}</span>`;
+      cap.innerHTML = `${flag(g.country)}${escapeHtml(t(g.country))}<span>${GALLERIES.filter(x => x.country === g.country).length}</span>`;
       count.textContent = String(i + 1).padStart(2, "0");
       zoomTo(ZOOM[g.country]);
     };
