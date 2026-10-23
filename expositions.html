@@ -16,13 +16,13 @@
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <script src="i18n-langs.js?v=20261028c"></script>
   <script src="i18n.js?v=20261028c"></script>
-  <script src="site.js?v=20261026a"></script>
+  <script src="site.js?v=20261029a"></script>
   <link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="styles.css?v=20261028b" />
+  <link rel="stylesheet" href="styles.css?v=20261029a" />
   <!-- pages préchargées au survol d'un lien : changement de page quasi instantané (la galerie 3D est seulement préchargée) -->
   <script type="speculationrules">
-    {"prerender":[{"where":{"and":[{"selector_matches":".nav__link, .bottom__link--legal"},{"not":{"selector_matches":"[href='./'], [href='../']"}}]},"eagerness":"moderate"}],
-     "prefetch":[{"where":{"selector_matches":"[href='./'], [href='../']"},"eagerness":"moderate"}]}
+    {"prerender":[{"where":{"and":[{"selector_matches":".nav__link, .bottom__link--legal"},{"not":{"selector_matches":"[href='./'], [href='../']"}}]},"eagerness":"conservative"}],
+     "prefetch":[{"where":{"selector_matches":".nav__link, .bottom__link--legal"},"eagerness":"moderate"}]}
   </script>
   <title>Expositions — Annick Bouvattier</title>
 
@@ -498,12 +498,11 @@
     .xall__col{ --p:0; flex:0 0 min(1040px, 80vw); scroll-snap-align:center; padding:30px 34px 24px; border:1px solid rgba(var(--ink-rgb),.2); border-radius:24px;
       background:rgba(var(--ink-rgb),.025); cursor:pointer; transform-origin:center; align-self:flex-start;
       transform:rotateY(calc(var(--p) * -12deg)) scale(calc(1 - min(1, abs(var(--p))) * .08)); opacity:calc(1 - min(1, abs(var(--p))) * .55);
-      transition:transform .15s linear, opacity .15s linear, border-color .3s ease; will-change:transform; }
+      transition:border-color .3s ease; will-change:transform; }
     .xall__col h3{ margin:0 0 16px; font-size:clamp(56px, 6vw, 96px); font-weight:700; font-stretch:112%; line-height:.9; letter-spacing:-.02em;
-      color:transparent; -webkit-text-stroke:1.2px rgba(var(--ink-rgb),.85); transform:translateX(calc(var(--p) * 70px)); transition:transform .15s linear, color .4s ease; }
+      color:transparent; -webkit-text-stroke:1.2px rgba(var(--ink-rgb),.85); transform:translateX(calc(var(--p) * 70px)); transition:color .4s ease; }
     .xall__col h3 small{ font-size:.4em; }
     .xall__col:hover h3{ color:rgba(var(--ink-rgb),.08); }
-    .xall__col li{ transform:translateX(calc(var(--p) * 22px)); transition:transform .15s linear; }
     @supports not (transform:scale(abs(-1))){ .xall__col{ transform:rotateY(calc(var(--p) * -12deg)); } }
     .xall__col:hover{ border-color:rgba(var(--ink-rgb),.4); }
     @media (prefers-reduced-motion: reduce){ .xall__col, .xall__col h3, .xall__col li{ transform:none !important; opacity:1 !important; } }

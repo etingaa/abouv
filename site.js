@@ -114,8 +114,11 @@
     document.body.prepend(shade);
     const tb = document.querySelector(".toolbar");
     const stuck = tb && tb.offsetParent ? tb : top;   // barre de filtres masquée -> le header seul
+    // (seulement si la valeur change : sinon toute la page est recalculée à chaque image du défilement)
+    let lastShade = "";
     function setShade(){
-      document.documentElement.style.setProperty("--shade-h", Math.max(0, stuck.getBoundingClientRect().bottom) + "px");
+      const v = Math.round(Math.max(0, stuck.getBoundingClientRect().bottom)) + "px";
+      if (v !== lastShade){ lastShade = v; document.documentElement.style.setProperty("--shade-h", v); }
     }
     if (window.ResizeObserver) new ResizeObserver(setShade).observe(stuck); // sous-filtres dépliés
 
@@ -126,7 +129,7 @@
       requestAnimationFrame(() => {
         queued = false;
         const y = window.scrollY;
-        document.documentElement.classList.toggle("is-scrolled", y > 4);
+        if (document.documentElement.classList.contains("is-scrolled") !== (y > 4)) document.documentElement.classList.toggle("is-scrolled", y > 4);
         if (!compact && y > 120) setCompact(true);
         else if (compact && y < 40) setCompact(false);
         setShade();

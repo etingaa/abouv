@@ -478,7 +478,10 @@ async function main(){
 
   // --- moteur
   const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isMobile ? 1.75 : 2));
+  // résolution : plafonnée (1,5 sur ordinateur, 1,25 sur téléphone), puis ajustée selon la fluidité mesurée
+  const DPR_MAX = Math.min(window.devicePixelRatio || 1, isMobile ? 1.25 : 1.5);
+  let dpr = DPR_MAX;
+  renderer.setPixelRatio(dpr);
   renderer.setSize(innerWidth, innerHeight);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -798,8 +801,16 @@ async function main(){
   let stride = 0;      // nombre de pas faits (la phase de la marche)
   let gait = 0;        // amplitude de la marche (0 à l'arrêt, 1 en marche)
   let hdCheck = 0;
+  let perfT = 0, perfN = 0;
   renderer.setAnimationLoop(() => {
-    const dt = Math.min(.05, clock.getDelta());
+    const raw = clock.getDelta(), dt = Math.min(.05, raw);
+    // toutes les 2 s : si l'image met plus de 22 ms (< 45 i/s), on baisse la résolution ; si c'est très fluide, on remonte
+    perfT += raw; perfN++;
+    if (perfT > 2){
+      const ms = perfT / perfN * 1000; perfT = 0; perfN = 0;
+      const next = ms > 22 ? Math.max(.75, dpr - .25) : (ms < 12 ? Math.min(DPR_MAX, dpr + .25) : dpr);
+      if (next !== dpr){ dpr = next; renderer.setPixelRatio(dpr); renderer.setSize(innerWidth, innerHeight); }
+    }
     const now = performance.now();
     let walking = 0;
 

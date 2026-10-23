@@ -996,13 +996,14 @@ body.salle::before{
   content:""; position:fixed; inset:-120px; z-index:-2; pointer-events:none;
   /* essai : bleu nuit en plusieurs nuances (au lieu de la photo floutée de la salle) */
   background:
-    radial-gradient(60% 55% at 12% 8%, #152a52 0%, rgba(21,42,82,0) 70%),
-    radial-gradient(55% 60% at 92% 22%, #0f1e44 0%, rgba(15,30,68,0) 70%),
-    radial-gradient(70% 55% at 70% 100%, #122244 0%, rgba(18,34,68,0) 70%),
-    radial-gradient(50% 45% at 18% 85%, #0a283a 0%, rgba(10,40,58,0) 70%),
-    radial-gradient(40% 35% at 50% 45%, #191636 0%, rgba(25,22,54,0) 70%),
+    radial-gradient(60% 55% at 12% 8%, #152a52 0%, rgba(21,42,82,0) 78%),
+    radial-gradient(55% 60% at 92% 22%, #0f1e44 0%, rgba(15,30,68,0) 78%),
+    radial-gradient(70% 55% at 70% 100%, #122244 0%, rgba(18,34,68,0) 78%),
+    radial-gradient(50% 45% at 18% 85%, #0a283a 0%, rgba(10,40,58,0) 78%),
+    radial-gradient(40% 35% at 50% 45%, #191636 0%, rgba(25,22,54,0) 78%),
     #060b18;
-  filter:blur(30px);
+  /* (plus de filtre de flou : très coûteux sur un calque plein écran ; les dégradés sont déjà doux) */
+  transform:translateZ(0);
 }
 body.salle::after{
   content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
