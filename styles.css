@@ -1517,5 +1517,48 @@ html[data-theme="light"] body.salle{ --green-rgb:38,122,74; --green:rgb(var(--gr
 body.portfolio .badge.disponible{ color:var(--green) !important; }
 body.portfolio .badge.disponible::before{ background:var(--green) !important; }
 .statusText.disponible{ color:var(--green) !important; }
-.ov__status--disponible{ color:var(--green); }
+.ov__facts dd.ov__status--disponible{ color:var(--green); }
 .ov__status--disponible::before{ background:var(--green) !important; }
+
+/* =========================
+   PETITES TOUCHES DE COULEUR (comme Expositions et Galeries) : corail, bleu, sable, vert
+   ========================= */
+body.salle{ --t-coral:236,118,104; --t-blue:126,162,240; --t-sand:222,184,112; --t-green:118,196,146; }
+html[data-theme="light"] body.salle{ --t-coral:200,64,52; --t-blue:34,82,180; --t-sand:160,110,24; --t-green:38,122,74; }
+.tc-coral{ --tc:var(--t-coral); } .tc-blue{ --tc:var(--t-blue); } .tc-sand{ --tc:var(--t-sand); } .tc-green{ --tc:var(--t-green); }
+
+/* sous-menu À propos : un point de couleur par partie */
+.nav__sub a:nth-child(1){ --tc:var(--t-coral, 236,118,104); } .nav__sub a:nth-child(2){ --tc:var(--t-blue, 126,162,240); } .nav__sub a:nth-child(3){ --tc:var(--t-sand, 222,184,112); }
+.nav__sub a::before{ background:rgb(var(--tc)) !important; }
+.nav__sub a:hover{ border-bottom-color:rgb(var(--tc)) !important; }
+
+/* grands titres de partie (À propos) : numéro et filet de couleur */
+.bigTitle--tc::before{ content:attr(data-n); display:block; margin-bottom:.55em; font-size:.13em; font-weight:600; font-stretch:100%; letter-spacing:.16em; color:rgb(var(--tc)); }
+.bigTitle--tc + *{ position:relative; }
+.tbar{ display:block; width:64px; height:4px; margin:-28px 0 36px; border-radius:2px; background:rgb(var(--tc)); }
+
+/* Contact : chaque sujet a sa couleur ; e-mail et réseaux en couleur au survol */
+.contactPage .ix-form .topics .tab[data-topic="Acquisition"]{ --tc:var(--t-coral); }
+.contactPage .ix-form .topics .tab[data-topic="Commande"]{ --tc:var(--t-blue); }
+.contactPage .ix-form .topics .tab[data-topic="Presse"]{ --tc:var(--t-sand); }
+.contactPage .ix-form .topics .tab[data-topic="Autre"]{ --tc:var(--t-green); }
+.contactPage .ix-form .topics .tab::before{ content:""; display:inline-block; width:7px; height:7px; margin-right:8px; border-radius:50%; background:rgba(var(--tc),.5); transition:background-color .2s ease; }
+.contactPage .ix-form .topics .tab:hover::before, .contactPage .ix-form .topics .tab[aria-checked="true"]::before{ background:rgb(var(--tc)); }
+.contactPage .ix-form .topics .tab[aria-checked="true"]{ color:rgb(var(--tc)) !important; border-bottom-color:rgb(var(--tc)) !important; }
+.contactPage .formCard .ix-form input:focus, .contactPage .formCard .ix-form textarea:focus{ border-bottom-color:rgb(var(--t-blue)) !important; }
+.cx__links li:nth-child(1){ --tc:var(--t-coral); } .cx__links li:nth-child(2){ --tc:var(--t-blue); } .cx__links li:nth-child(3){ --tc:var(--t-sand); } .cx__links li:nth-child(4){ --tc:var(--t-green); }
+.cx__links a:hover{ color:rgba(var(--tc),.95) !important; -webkit-text-stroke-color:rgb(var(--tc)); }
+.cx__links a:hover i{ color:rgb(var(--tc)) !important; }
+.cx__mail:hover{ border-bottom-color:rgb(var(--t-blue)); }
+
+/* Portfolio : la valeur d'un filtre choisi en couleur */
+body.portfolio .group.has-filter .tab__value{ color:rgb(var(--t-coral)) !important; }
+body.portfolio .subtabs .tab[aria-pressed="true"] > span:first-child{ text-decoration-color:rgb(var(--t-coral)); }
+
+/* pages d'œuvres : collection en pastille, statut coloré, précédente / suivante au survol */
+.ov__kicker{ display:inline-flex; padding:4px 10px; border-radius:999px; color:rgb(var(--t-sand)); background:rgba(var(--t-sand),.13); }
+.ov__status--vendue{ color:var(--ink-faint); }
+.ov__back:hover{ border-bottom-color:rgb(var(--t-blue)); }
+.ov__step--prev:hover .ov__stepT{ color:rgb(var(--t-blue)); }
+.ov__step--next:hover .ov__stepT{ color:rgb(var(--t-coral)); }
+.ov__facts > div:hover dt{ color:var(--ink); }
