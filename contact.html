@@ -14,11 +14,12 @@
   <meta property="og:title" content="Contact — Annick Bouvattier" />
   <meta property="og:description" content="Contacter Annick Bouvattier : renseignement sur une œuvre, une exposition ou une commande." />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-  <script src="i18n-langs.js?v=20261027d"></script>
-  <script src="i18n.js?v=20261027e"></script>
+  <script src="i18n-langs.js?v=20261027e"></script>
+  <script src="i18n.js?v=20261027f"></script>
   <script src="site.js?v=20261026a"></script>
   <link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="styles.css?v=20261027h" />
+  <link rel="preload" href="fonts/cormorant-garamond-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="styles.css?v=20261027l" />
   <!-- pages préchargées au survol d'un lien : changement de page quasi instantané (la galerie 3D est seulement préchargée) -->
   <script type="speculationrules">
     {"prerender":[{"where":{"and":[{"selector_matches":".nav__link, .bottom__link--legal"},{"not":{"selector_matches":"[href='./'], [href='../']"}}]},"eagerness":"moderate"}],
@@ -117,38 +118,48 @@
     <div class="contact cx">
       <section class="formCard ms" aria-labelledby="formCardTitle">
         <h2 class="sr-only" id="formCardTitle">Formulaire de contact</h2>
-        <!-- le formulaire se lit comme une lettre : on complète les blancs -->
-        <form class="ms__form" id="contactForm" action="https://formspree.io/f/xdalokdl" method="POST">
-          <p class="ms__line">
-            <span>Bonjour, je m’appelle</span>
-            <input class="ms__in" type="text" name="Prénom" autocomplete="given-name" placeholder="prénom" aria-label="Prénom" required size="9">
-            <input class="ms__in" type="text" name="Nom" autocomplete="family-name" placeholder="nom" aria-label="Nom" required size="9"><span>,</span>
+        <!-- le formulaire est une lettre adressée à l'artiste : le texte imprimé en serif, ce que le visiteur écrit en capitales -->
+        <form class="ms__letter" id="contactForm" action="https://formspree.io/f/xdalokdl" method="POST">
+          <header class="ms__head">
+            <span>À l’attention d’Annick Bouvattier</span>
+            <span class="ms__date" id="msDate"></span>
+          </header>
+
+          <p class="ms__p">Bonjour,</p>
+          <p class="ms__p">
+            Je m’appelle
+            <input class="ms__in" type="text" name="Prénom" autocomplete="given-name" placeholder="Prénom" aria-label="Prénom" required size="8">
+            <input class="ms__in" type="text" name="Nom" autocomplete="family-name" placeholder="Nom" aria-label="Nom" required size="8">
+            et vous pouvez me répondre à l’adresse
+            <input class="ms__in ms__in--mail" type="email" name="email" autocomplete="email" placeholder="E-mail" aria-label="Email" required size="18">.
           </p>
-          <p class="ms__line">
-            <span>vous pouvez me répondre à</span>
-            <input class="ms__in ms__in--mail" type="email" name="email" autocomplete="email" placeholder="votre e-mail" aria-label="Email" required size="16"><span>.</span>
-          </p>
-          <div class="ms__line ms__line--topics">
-            <span id="topicLabel">Je vous écris pour</span>
+          <div class="ms__p ms__topicLine">
+            <span id="topicLabel">Je vous écris au sujet</span>
             <span class="topics" role="radiogroup" aria-labelledby="topicLabel">
-              <button class="ms__topic tc-coral" type="button" role="radio" data-topic="Acquisition">une acquisition</button>
-              <button class="ms__topic tc-blue" type="button" role="radio" data-topic="Commande">une commande</button>
-              <button class="ms__topic tc-sand" type="button" role="radio" data-topic="Presse">la presse</button>
-              <button class="ms__topic tc-green" type="button" role="radio" data-topic="Autre">autre chose</button>
+              <button class="ms__topic tc-coral" type="button" role="radio" data-topic="Acquisition">d’une acquisition</button><i>,</i>
+              <button class="ms__topic tc-blue" type="button" role="radio" data-topic="Commande">d’une commande</button><i>,</i>
+              <button class="ms__topic tc-sand" type="button" role="radio" data-topic="Presse">de la presse</button><i class="ms__or">ou</i>
+              <button class="ms__topic tc-green" type="button" role="radio" data-topic="Autre">d’autre chose</button><i>.</i>
             </span>
             <input type="hidden" name="Sujet" id="topicField" value="">
           </div>
+
           <label class="ms__msg">
             <span class="sr-only">Message</span>
-            <textarea name="message" id="message" placeholder="Votre message…" required></textarea>
+            <textarea name="message" id="message" rows="5" placeholder="Votre message…" required></textarea>
           </label>
-          <details class="ms__more">
-            <summary>Ajouter une organisation ou un pays <em>(facultatif)</em></summary>
-            <div class="ms__moreRow">
-              <input class="ms__in ms__in--sm" type="text" name="Organisation" autocomplete="organization" placeholder="votre organisation" aria-label="Organisation">
-              <input class="ms__in ms__in--sm" type="text" name="Pays" autocomplete="country-name" placeholder="votre pays" aria-label="Pays">
-            </div>
-          </details>
+
+          <p class="ms__p ms__ps">
+            <span>P.-S. — j’écris de la part de</span>
+            <input class="ms__in ms__in--sm" type="text" name="Organisation" autocomplete="organization" placeholder="Organisation" aria-label="Organisation" size="14">
+            <span>, depuis</span>
+            <input class="ms__in ms__in--sm" type="text" name="Pays" autocomplete="country-name" placeholder="Pays" aria-label="Pays" size="8"><span class="ms__opt">(facultatif)</span>
+          </p>
+
+          <div class="ms__sign">
+            <span>Bien à vous,</span>
+            <span class="ms__signName" id="msSign" aria-hidden="true"></span>
+          </div>
 
           <!-- anti-spam : champ invisible, rempli uniquement par les robots (ignoré par Formspree) -->
           <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true"
@@ -158,8 +169,8 @@
           <input type="hidden" name="Langue" id="langField" value="fr">
 
           <div class="ms__foot">
-            <button class="ms__send" type="submit" id="submitBtn"><span>Envoyer</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>
             <p class="ms__note">Les informations saisies servent uniquement à répondre à votre demande. <a href="mentions-legales">En savoir plus</a></p>
+            <button class="ms__send" type="submit" id="submitBtn"><span>Envoyer la lettre</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>
           </div>
           <p id="formStatus" class="formStatus" role="status" aria-live="polite" hidden></p>
         </form>
@@ -195,6 +206,12 @@
       topics.forEach(b => b.setAttribute("aria-pressed", String(b.dataset.topic === v)));
     }
     topics.forEach(b => b.addEventListener("click", () => setTopic(topicField.value === b.dataset.topic ? "" : b.dataset.topic)));
+    // la lettre : date du jour en en-tête, signature qui reprend le prénom et le nom
+    const loc = ({ en: "en-GB", es: "es-ES", it: "it-IT" })[I18N.lang] || "fr-FR";
+    document.getElementById("msDate").textContent = new Date().toLocaleDateString(loc, { day: "numeric", month: "long", year: "numeric" });
+    const sign = document.getElementById("msSign"), fn = form.querySelector('[name="Prénom"]'), ln = form.querySelector('[name="Nom"]');
+    const signIt = () => { sign.textContent = [fn.value, ln.value].filter(Boolean).join(" ").trim(); };
+    fn.addEventListener("input", signIt); ln.addEventListener("input", signIt);
     setTopic("");
 
     // Arrivée avec un sujet pré-choisi : page Presse (?sujet=presse), galerie 3D (« Acquérir cette œuvre »)

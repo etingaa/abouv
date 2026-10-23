@@ -1579,54 +1579,67 @@ body.portfolio .subtabs .tab[aria-pressed="true"] > span:first-child{ text-decor
 
 
 /* =========================
-   CONTACT : le formulaire se lit comme une lettre — on complète les blancs (grand texte, champs soulignés),
-   le sujet en mots colorés, le message dans un cadre, organisation / pays repliés, envoi en capsule
+   CONTACT : une lettre adressée à l'artiste. Le texte « imprimé » en Cormorant (serif), ce que le visiteur
+   écrit en Archivo capitales sur des pointillés ; sujet en mots soulignés de couleur ; message sur papier réglé ;
+   signature qui se remplit avec le nom ; envoi en capsule corail
    ========================= */
-.contactPage .cx{ max-width:980px; }
+@font-face{ font-family:"Cormorant Garamond"; font-style:normal; font-weight:300 600; font-display:swap;
+  src:url("fonts/cormorant-garamond-latin.woff2") format("woff2"); }
+.contactPage .cx{ max-width:920px; }
 .ms{ padding:0 !important; border:0 !important; background:none !important; box-shadow:none !important; }
-.ms__form{ display:block; }
-.ms__line{ margin:0 0 .35em; font-size:clamp(24px, 3vw, 40px); font-weight:400; line-height:1.5; letter-spacing:-.015em; color:var(--ink-soft); }
-.ms__line > span{ color:var(--ink-soft); }
-.ms__in{ font:inherit; color:var(--ink); background:none !important; border:0 !important; border-bottom:1.5px solid rgba(var(--ink-rgb),.3) !important; border-radius:0 !important;
-  padding:0 .15em !important; margin:0 0 0 .2em; height:auto !important; min-width:4ch; max-width:100%; field-sizing:content; outline:none; transition:border-color .2s ease; }
-.ms__in::placeholder{ color:rgba(var(--ink-rgb),.3); font-style:italic; padding-right:.15em; }
-.ms__in:hover{ border-bottom-color:rgba(var(--ink-rgb),.55) !important; }
-.ms__in:focus{ border-bottom-color:rgb(var(--t-blue)) !important; }
-.ms__in:not(:placeholder-shown):valid{ border-bottom-color:rgba(var(--t-green),.8) !important; }
-.ms__line--topics{ display:flex; flex-wrap:wrap; align-items:baseline; gap:.2em .5em; margin-top:.2em; }
-.ms__line--topics .topics{ display:inline-flex; flex-wrap:wrap; gap:.25em .45em; }
-.ms__topic{ font:inherit; font-size:.82em; line-height:1.3; padding:.05em .55em .12em; border:1.5px solid rgba(var(--tc),.45); border-radius:999px; background:none; cursor:pointer;
-  color:var(--ink-faint); transition:color .2s ease, background-color .2s ease, border-color .2s ease; }
-.ms__topic:hover{ color:var(--ink); border-color:rgb(var(--tc)); }
-.ms__topic[aria-checked="true"]{ color:var(--ink); background:rgba(var(--tc),.18); border-color:rgb(var(--tc)); }
-.ms__msg{ display:block; margin-top:34px; }
-.ms__msg textarea{ display:block; width:100%; min-height:190px; padding:20px 22px !important; resize:vertical; font:inherit; font-size:18px !important; line-height:1.6; color:var(--ink);
-  background:rgba(var(--ink-rgb),.03) !important; border:1px solid rgba(var(--ink-rgb),.2) !important; border-radius:18px !important; outline:none; transition:border-color .2s ease, background-color .2s ease; }
-.ms__msg textarea::placeholder{ color:rgba(var(--ink-rgb),.35); font-style:italic; }
-.ms__msg textarea:focus{ border-color:rgb(var(--t-blue)) !important; background:rgba(var(--ink-rgb),.05) !important; }
-.ms__more{ margin-top:16px; }
-.ms__more summary{ display:inline-flex; gap:6px; cursor:pointer; list-style:none; font-size:13px; color:var(--ink-faint); border-bottom:1px dashed rgba(var(--ink-rgb),.3); }
-.ms__more summary::-webkit-details-marker{ display:none; }
-.ms__more summary::before{ content:"+"; color:rgb(var(--t-blue)); }
-.ms__more[open] summary::before{ content:"−"; }
-.ms__more summary em{ font-style:normal; opacity:.7; }
-.ms__moreRow{ display:flex; flex-wrap:wrap; gap:8px 28px; margin-top:12px; font-size:18px; }
-.ms__in--sm{ margin:0; min-width:14ch; }
-.ms__foot{ display:flex; flex-wrap:wrap; align-items:center; gap:14px 24px; margin-top:34px; }
-.ms__send{ display:inline-flex; align-items:center; gap:14px; height:56px; padding:0 26px 0 30px; border:0; border-radius:999px; cursor:pointer;
-  background:var(--ink); color:var(--bg); font:inherit; font-size:12px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; transition:transform .2s ease, background-color .2s ease; }
-.ms__send svg{ width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; transition:transform .3s ease; }
-.ms__send:hover{ transform:translateY(-1px); }
+.ms__letter{ position:relative; display:block; padding:clamp(28px, 5vw, 64px) clamp(22px, 5vw, 72px) clamp(26px, 4vw, 48px);
+  border:1px solid rgba(var(--ink-rgb),.14); border-radius:6px; background:rgba(var(--ink-rgb),.035);
+  box-shadow:0 1px 0 rgba(var(--ink-rgb),.06) inset, 0 40px 80px -40px rgba(0,0,0,.45); }
+.ms__letter::before{ content:""; position:absolute; left:0; right:0; top:0; height:3px; border-radius:6px 6px 0 0;
+  background:linear-gradient(90deg, rgb(var(--t-coral)) 0 25%, rgb(var(--t-blue)) 25% 50%, rgb(var(--t-sand)) 50% 75%, rgb(var(--t-green)) 75%); opacity:.85; }
+.ms__head{ display:flex; flex-wrap:wrap; justify-content:space-between; gap:6px 20px; margin-bottom:clamp(28px, 4vw, 44px); padding-bottom:16px;
+  border-bottom:1px solid rgba(var(--ink-rgb),.12); font-size:11px; font-weight:500; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-faint); }
+.ms__p{ margin:0 0 .5em; font-family:"Cormorant Garamond", Garamond, serif; font-size:clamp(22px, 2.3vw, 30px); font-weight:400; line-height:1.75; color:var(--ink); }
+.ms__in{ font-family:var(--font); font-size:.55em; font-weight:500; letter-spacing:.12em; text-transform:uppercase; color:var(--ink);
+  background:none !important; border:0 !important; border-bottom:1.5px dotted rgba(var(--ink-rgb),.45) !important; border-radius:0 !important;
+  height:auto !important; padding:.15em .25em .25em !important; margin:0 .1em; vertical-align:.25em; min-width:6ch; max-width:100%; field-sizing:content; outline:none;
+  transition:border-color .2s ease, color .2s ease; }
+.ms__in::placeholder{ color:rgba(var(--ink-rgb),.35); }
+.ms__in:hover{ border-bottom-color:rgba(var(--ink-rgb),.7) !important; }
+.ms__in:focus{ border-bottom:1.5px solid rgb(var(--t-coral)) !important; }
+.ms__in:not(:placeholder-shown){ border-bottom-style:solid !important; border-bottom-color:rgba(var(--ink-rgb),.25) !important; }
+.ms__topicLine .topics{ display:inline; }
+.ms__topicLine i{ font-style:normal; margin-right:.3em; }
+.ms__topicLine i:not(:last-child){ margin-left:0; }
+.ms__topic{ font:inherit; padding:0 .08em; margin:0; border:0; background:none; cursor:pointer; color:var(--ink-soft);
+  text-decoration:underline; text-decoration-thickness:1px; text-decoration-color:rgba(var(--tc),.55); text-underline-offset:.22em;
+  transition:color .2s ease, text-decoration-color .2s ease, background-color .2s ease; border-radius:.15em; }
+.ms__topic:hover{ color:var(--ink); text-decoration-color:rgb(var(--tc)); }
+.ms__topic[aria-checked="true"]{ color:var(--ink); text-decoration-thickness:3px; text-decoration-color:rgb(var(--tc)); background:rgba(var(--tc),.12); }
+.ms__msg{ display:block; margin:clamp(18px, 3vw, 28px) 0 clamp(14px, 2vw, 22px); }
+.ms__msg textarea{ display:block; width:100%; min-height:calc(2.1em * 5); padding:0 !important; resize:vertical; outline:none;
+  font-family:"Cormorant Garamond", Garamond, serif !important; font-size:clamp(20px, 2vw, 26px) !important; line-height:2.1em !important; color:var(--ink);
+  border:0 !important; border-radius:0 !important; background-color:transparent !important; background-attachment:local !important;
+  background-image:repeating-linear-gradient(to bottom, transparent 0, transparent calc(2.1em - 1px), rgba(var(--ink-rgb),.16) calc(2.1em - 1px), rgba(var(--ink-rgb),.16) 2.1em) !important; }
+.ms__msg textarea::placeholder{ color:rgba(var(--ink-rgb),.35); }
+.ms__msg textarea:focus{ background-image:repeating-linear-gradient(to bottom, transparent 0, transparent calc(2.1em - 1px), rgba(var(--t-coral),.35) calc(2.1em - 1px), rgba(var(--t-coral),.35) 2.1em) !important; }
+.ms__ps{ font-size:clamp(18px, 1.7vw, 22px); color:var(--ink-soft); }
+.ms__opt{ margin-left:.4em; font-family:var(--font); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-faint); }
+.ms__sign{ display:flex; flex-direction:column; align-items:flex-end; gap:4px; margin-top:clamp(16px, 3vw, 28px); font-family:"Cormorant Garamond", Garamond, serif; font-size:clamp(20px, 2vw, 26px); color:var(--ink-soft); }
+.ms__signName{ min-height:1.3em; font-size:1.5em; font-weight:500; color:var(--ink); letter-spacing:.01em; }
+.ms__foot{ display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:16px 28px; margin-top:clamp(22px, 3vw, 34px); padding-top:22px; border-top:1px solid rgba(var(--ink-rgb),.12); }
+.ms__send{ display:inline-flex; align-items:center; gap:14px; height:54px; padding:0 24px 0 28px; border:0; border-radius:999px; cursor:pointer;
+  background:rgb(var(--t-coral)); color:#fff; font:inherit; font-size:12px; font-weight:600; letter-spacing:.16em; text-transform:uppercase;
+  box-shadow:0 12px 30px -10px rgba(var(--t-coral),.7); transition:transform .2s ease, box-shadow .2s ease; }
+.ms__send svg{ width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; transition:transform .3s ease; }
+.ms__send:hover{ transform:translateY(-2px); box-shadow:0 16px 36px -10px rgba(var(--t-coral),.85); }
 .ms__send:hover svg{ transform:translateX(4px); }
 .ms__send:disabled{ opacity:.5; cursor:progress; }
-.ms__note{ margin:0; font-size:12px; color:var(--ink-faint); max-width:46ch; }
+.ms__note{ margin:0; max-width:44ch; font-size:12px; color:var(--ink-faint); }
 .ms__note a{ color:var(--ink-soft); border-bottom:1px solid rgba(var(--ink-rgb),.3); }
-.ms__alt{ margin:56px 0 0; padding-top:18px; border-top:1px solid rgba(var(--ink-rgb),.1); font-size:13px; color:var(--ink-faint); }
+.ms__alt{ margin:28px 0 0; font-size:13px; color:var(--ink-faint); }
 .ms__alt a{ color:var(--ink-soft); transition:color .2s ease; }
 .ms__alt a:hover{ color:var(--ink); }
 .ms__alt i{ font-style:normal; margin:0 6px; opacity:.5; }
 @media (max-width:760px){
-  .ms__line{ font-size:23px; line-height:1.55; }
-  .ms__msg textarea{ min-height:160px; font-size:16px !important; padding:16px !important; }
+  .ms__letter{ padding:26px 18px 22px; }
+  .ms__p{ font-size:21px; line-height:1.8; }
+  .ms__in{ font-size:11px; }
   .ms__send{ width:100%; justify-content:center; }
 }
+.ms__topicLine i.ms__or{ margin:0 .3em; }
