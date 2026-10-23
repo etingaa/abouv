@@ -1596,7 +1596,6 @@ body.portfolio .subtabs .tab[aria-pressed="true"] > span:first-child{ text-decor
 .ms__kickN{ font-weight:600; color:rgb(var(--tc)); transition:color .3s ease; }
 /* formulaire classique : intitulés en petites capitales, champs soulignés, sur deux colonnes ; le tout centré */
 .contactPage .cx{ max-width:760px; margin:0 auto; }
-.contactPage .bigTitle{ text-align:center; }
 .ms__kick{ justify-content:center; }
 .ms__grid{ display:grid; grid-template-columns:1fr 1fr; gap:22px 28px; }
 .ms__f{ display:flex; flex-direction:column; gap:8px; min-width:0; }
@@ -1652,3 +1651,21 @@ body.portfolio .subtabs .tab[aria-pressed="true"] > span:first-child{ text-decor
 .ms__send{ border-radius:0 !important; height:52px !important; padding:0 28px !important; }
 .ms__send svg{ stroke:rgb(var(--t-coral)) !important; }
 .ms__alt{ margin-top:48px !important; }
+
+/* Contact : titre aligné comme les autres pages, formulaire centré ; libellés flottants (dans le champ, ils montent
+   en petites capitales quand on écrit), grands champs soulignés */
+.contactPage .cx{ max-width:720px; margin:0 auto; }
+.ms__f{ position:relative; gap:0; }
+.ms__f > .ms__l{ order:-1; }
+.ms__f input, .ms__f textarea{ font-size:20px !important; padding:26px 0 10px !important; }
+.ms__f textarea{ min-height:150px; padding-top:30px !important; }
+.ms__f input ~ .ms__l, .ms__f textarea ~ .ms__l{ position:absolute; left:0; top:28px; order:0; pointer-events:none;
+  font-size:18px; letter-spacing:0; text-transform:none; color:var(--ink-faint); transition:top .2s ease, font-size .2s ease, letter-spacing .2s ease, color .2s ease; transform-origin:left; }
+.ms__f input:focus ~ .ms__l, .ms__f input:not(:placeholder-shown) ~ .ms__l,
+.ms__f textarea:focus ~ .ms__l, .ms__f textarea:not(:placeholder-shown) ~ .ms__l{ top:0; font-size:11px; letter-spacing:.14em; text-transform:uppercase; }
+.ms__f input:focus ~ .ms__l, .ms__f textarea:focus ~ .ms__l{ color:rgb(var(--t-coral)); }
+.ms__f input:focus, .ms__f textarea:focus{ border-bottom-color:rgb(var(--t-coral)) !important; }
+.ms__f .ms__l em{ font-size:.85em; }
+.ms__f--full:has(.topics){ flex-direction:row; flex-wrap:wrap; align-items:baseline; gap:10px 26px; }
+.ms__f--full:has(.topics) .ms__l{ position:static; margin-right:4px; }
+.ms__foot{ justify-content:space-between !important; flex-direction:row !important; }

@@ -18,7 +18,7 @@
   <script src="i18n.js?v=20261027g"></script>
   <script src="site.js?v=20261026a"></script>
   <link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="styles.css?v=20261027s" />
+  <link rel="stylesheet" href="styles.css?v=20261027t" />
   <!-- pages préchargées au survol d'un lien : changement de page quasi instantané (la galerie 3D est seulement préchargée) -->
   <script type="speculationrules">
     {"prerender":[{"where":{"and":[{"selector_matches":".nav__link, .bottom__link--legal"},{"not":{"selector_matches":"[href='./'], [href='../']"}}]},"eagerness":"moderate"}],
@@ -120,11 +120,11 @@
         <!-- le formulaire se lit comme une phrase : on complète les blancs -->
         <form class="ms__letter" id="contactForm" action="https://formspree.io/f/xdalokdl" method="POST">
           <div class="ms__grid">
-            <label class="ms__f"><span class="ms__l">Prénom <b aria-hidden="true">*</b></span><input type="text" name="Prénom" autocomplete="given-name" required></label>
-            <label class="ms__f"><span class="ms__l">Nom <b aria-hidden="true">*</b></span><input type="text" name="Nom" autocomplete="family-name" required></label>
-            <label class="ms__f ms__f--full"><span class="ms__l">Email <b aria-hidden="true">*</b></span><input type="email" name="email" autocomplete="email" required></label>
-            <label class="ms__f"><span class="ms__l">Organisation <em>(facultatif)</em></span><input type="text" name="Organisation" autocomplete="organization"></label>
-            <label class="ms__f"><span class="ms__l">Pays <em>(facultatif)</em></span><input type="text" name="Pays" autocomplete="country-name"></label>
+            <label class="ms__f"><input type="text" name="Prénom" autocomplete="given-name" placeholder=" " required><span class="ms__l">Prénom <b aria-hidden="true">*</b></span></label>
+            <label class="ms__f"><input type="text" name="Nom" autocomplete="family-name" placeholder=" " required><span class="ms__l">Nom <b aria-hidden="true">*</b></span></label>
+            <label class="ms__f ms__f--full"><input type="email" name="email" autocomplete="email" placeholder=" " required><span class="ms__l">Email <b aria-hidden="true">*</b></span></label>
+            <label class="ms__f"><input type="text" name="Organisation" autocomplete="organization" placeholder=" "><span class="ms__l">Organisation <em>(facultatif)</em></span></label>
+            <label class="ms__f"><input type="text" name="Pays" autocomplete="country-name" placeholder=" "><span class="ms__l">Pays <em>(facultatif)</em></span></label>
             <div class="ms__f ms__f--full">
               <span class="ms__l" id="topicLabel">Sujet</span>
               <span class="topics" role="radiogroup" aria-labelledby="topicLabel">
@@ -135,7 +135,7 @@
               </span>
               <input type="hidden" name="Sujet" id="topicField" value="">
             </div>
-            <label class="ms__f ms__f--full"><span class="ms__l">Message <b aria-hidden="true">*</b></span><textarea name="message" id="message" rows="6" required></textarea></label>
+            <label class="ms__f ms__f--full"><textarea name="message" id="message" rows="6" placeholder=" " required></textarea><span class="ms__l">Message <b aria-hidden="true">*</b></span></label>
           </div>
 
           <!-- anti-spam : champ invisible, rempli uniquement par les robots (ignoré par Formspree) -->
