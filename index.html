@@ -32,9 +32,17 @@
         if (!debug) location.replace("classique" + location.search);
       }
       window.__g3dFallback = fallback;
+      // navigateurs anciens (ex. Safari avant 16.4) : pas d'« import map » (nécessaire pour charger le moteur 3D)
+      if (!(window.HTMLScriptElement && HTMLScriptElement.supports && HTMLScriptElement.supports("importmap"))) return fallback("import map non prise en charge");
+      // le moteur 3D (Three.js récent) exige WebGL 2 : les vieux ordinateurs / navigateurs n'ont que WebGL 1
       try {
         var c = document.createElement("canvas");
-        if (!(c.getContext("webgl2") || c.getContext("webgl"))) return fallback("WebGL indisponible");
+        var gl = c.getContext("webgl2");
+        if (!gl) return fallback("WebGL 2 indisponible");
+        // carte graphique logicielle (pas d'accélération) : la 3D serait saccadée
+        var dbg = gl.getExtension("WEBGL_debug_renderer_info");
+        var gpu = dbg ? String(gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL)) : "";
+        if (/swiftshader|llvmpipe|software|basic render/i.test(gpu) && !debug) return fallback("rendu 3D logiciel (" + gpu + ")");
       } catch (e) { return fallback("WebGL indisponible"); }
       window.__g3dTimer = setTimeout(function () { fallback("salle pas prête en 20 s"); }, 20000);
     })();
@@ -61,7 +69,9 @@
       }
     }
   </script>
-  <script type="module" src="galerie.js?v=20261029a"></script>
+  <!-- navigateurs trop anciens pour les modules JavaScript : accueil sans 3D -->
+  <script nomodule>window.__g3dFallback && window.__g3dFallback("modules JavaScript non pris en charge");</script>
+  <script type="module" src="galerie.js?v=20261029b"></script>
   <!-- seo:head -->
   <link rel="canonical" href="https://annickbouvattier.art/" />
   <meta property="og:url" content="https://annickbouvattier.art/" />

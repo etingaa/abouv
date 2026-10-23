@@ -801,13 +801,15 @@ async function main(){
   let stride = 0;      // nombre de pas faits (la phase de la marche)
   let gait = 0;        // amplitude de la marche (0 à l'arrêt, 1 en marche)
   let hdCheck = 0;
-  let perfT = 0, perfN = 0;
+  let perfT = 0, perfN = 0, slow = 0;
   renderer.setAnimationLoop(() => {
     const raw = clock.getDelta(), dt = Math.min(.05, raw);
     // toutes les 2 s : si l'image met plus de 22 ms (< 45 i/s), on baisse la résolution ; si c'est très fluide, on remonte
     perfT += raw; perfN++;
     if (perfT > 2){
       const ms = perfT / perfN * 1000; perfT = 0; perfN = 0;
+      // ordinateur trop lent : même à la plus basse résolution, moins de 20 images par seconde -> accueil sans 3D
+      if (ms > 50 && dpr <= .75 && !/[?&]debug\b/.test(location.search)) { slow = (slow || 0) + 1; if (slow >= 2) { window.__g3dReady = false; location.replace("classique" + location.search); } }
       const next = ms > 22 ? Math.max(.75, dpr - .25) : (ms < 12 ? Math.min(DPR_MAX, dpr + .25) : dpr);
       if (next !== dpr){ dpr = next; renderer.setPixelRatio(dpr); renderer.setSize(innerWidth, innerHeight); }
     }
