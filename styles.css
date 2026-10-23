@@ -1423,7 +1423,7 @@ html[data-theme="light"] body.salle .modal__closeBtn:hover, html[data-theme="lig
 html[data-theme="light"] .nav__sub a{ color:rgba(22,30,56,.7); }
 html[data-theme="light"] .nav__sub a:hover{ color:#161e38; }
 /* grands mots en contour */
-html[data-theme="light"] .bigLink__w, html[data-theme="light"] .cx__links a{ color:rgba(22,30,56,.03); -webkit-text-stroke-color:rgba(22,30,56,.85); }
+html[data-theme="light"] .bigLink__w{ color:rgba(22,30,56,.03); -webkit-text-stroke-color:rgba(22,30,56,.85); }
 html[data-theme="light"] .bigLink:hover .bigLink__w, html[data-theme="light"] .cx__links a:hover{ color:#161e38; }
 /* contact : bouton Envoyer en encre */
 html[data-theme="light"] .contactPage .ix-form .sendBtn > span{ background:#161e38; color:#efebe3; }
@@ -1577,111 +1577,34 @@ body.portfolio .subtabs .tab[aria-pressed="true"] > span:first-child{ text-decor
 .contactPage .cx__links a:hover{ color:rgb(var(--tc)) !important; -webkit-text-stroke:0; border-bottom-color:rgb(var(--tc)); }
 @media (max-width:760px){ .contactPage .cx__links{ margin-left:0; width:100%; } .contactPage .cx__side{ margin-top:40px; } }
 
-
-/* =========================
-   CONTACT, dans le style des pages Expositions et Galeries : une carte arrondie avec filet de couleur en haut
-   (la couleur du sujet choisi), numéro + intitulé en petites capitales, la phrase à compléter, sujets en
-   pastilles teintées, message dans un cadre arrondi, bouton en capsule
-   ========================= */
-.contactPage .cx{ max-width:900px; }
-.ms{ padding:0 !important; border:0 !important; background:none !important; box-shadow:none !important; }
-.ms__letter{ --tc:var(--ink-rgb); position:relative; display:block; padding:clamp(26px, 4vw, 44px) clamp(22px, 4vw, 48px) clamp(24px, 3.4vw, 38px);
-  border:1px solid rgba(var(--ink-rgb),.2); border-radius:24px; background:rgba(var(--ink-rgb),.025); transition:border-color .3s ease; }
-.ms__letter[data-tc="tc-coral"]{ --tc:var(--t-coral); } .ms__letter[data-tc="tc-blue"]{ --tc:var(--t-blue); }
-.ms__letter[data-tc="tc-sand"]{ --tc:var(--t-sand); } .ms__letter[data-tc="tc-green"]{ --tc:var(--t-green); }
-.ms__letter[data-tc^="tc-"]{ border-color:rgba(var(--tc),.6); }
-.ms__letter::before{ content:""; position:absolute; left:24px; right:24px; top:0; height:3px; border-radius:0 0 3px 3px; background:rgb(var(--tc)); opacity:.35; transition:background-color .3s ease, opacity .3s ease; }
-.ms__letter[data-tc^="tc-"]::before{ opacity:1; }
-.ms__kick{ display:flex; align-items:baseline; gap:12px; margin:0 0 22px; font-size:11px; font-weight:500; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-faint); }
-.ms__kickN{ font-weight:600; color:rgb(var(--tc)); transition:color .3s ease; }
-/* formulaire classique : intitulés en petites capitales, champs soulignés, sur deux colonnes ; le tout centré */
-.contactPage .cx{ max-width:760px; margin:0 auto; }
-.ms__kick{ justify-content:center; }
-.ms__grid{ display:grid; grid-template-columns:1fr 1fr; gap:22px 28px; }
-.ms__f{ display:flex; flex-direction:column; gap:8px; min-width:0; }
-.ms__f--full{ grid-column:1 / -1; }
-.ms__l{ font-size:11px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint); }
-.ms__l b{ color:rgb(var(--t-coral)); font-weight:500; }
-.ms__l em{ font-style:normal; text-transform:none; letter-spacing:0; opacity:.7; }
-.ms__f input, .ms__f textarea{ width:100%; font:inherit; font-size:17px !important; color:var(--ink); outline:none;
-  background:rgba(var(--ink-rgb),.03) !important; border:1px solid rgba(var(--ink-rgb),.16) !important; border-radius:12px !important;
-  height:auto !important; padding:12px 14px !important; transition:border-color .2s ease, background-color .2s ease; }
-.ms__f textarea{ min-height:150px; resize:vertical; line-height:1.6; }
-.ms__f input:hover, .ms__f textarea:hover{ border-color:rgba(var(--ink-rgb),.3) !important; }
-.ms__f input:focus, .ms__f textarea:focus{ border-color:rgba(var(--t-blue),.85) !important; background:rgba(var(--ink-rgb),.05) !important; }
-.ms__f .topics{ display:flex; flex-wrap:wrap; gap:8px; }
-@media (max-width:760px){ .ms__grid{ grid-template-columns:1fr; } }
-.ms__foot{ display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:16px 28px; margin-top:26px; padding-top:20px; border-top:1px solid rgba(var(--ink-rgb),.12); }
-.ms__send{ display:inline-flex; align-items:center; gap:14px; height:50px; padding:0 22px 0 26px; border:0; border-radius:999px; cursor:pointer;
-  background:var(--ink); color:var(--bg); font:inherit; font-size:12px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; transition:transform .2s ease; }
-.ms__send svg{ width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; transition:transform .3s ease; }
-.ms__send:hover{ transform:translateY(-1px); }
-.ms__send:hover svg{ transform:translateX(4px); }
-.ms__send:disabled{ opacity:.5; cursor:progress; }
-.ms__note{ margin:0; max-width:44ch; font-size:12px; color:var(--ink-faint); }
-.ms__note a{ color:var(--ink-soft); border-bottom:1px solid rgba(var(--ink-rgb),.3); }
-.ms__alt{ margin:22px 0 0; font-size:13px; color:var(--ink-faint); text-align:center; }
-.ms__alt a{ color:var(--ink-soft); transition:color .2s ease; }
-.ms__alt a:hover{ color:var(--ink); }
-.ms__alt i{ font-style:normal; margin:0 6px; opacity:.5; }
-@media (max-width:760px){ .ms__letter{ border-radius:18px; } .ms__p{ font-size:21px; } .ms__send{ width:100%; justify-content:center; } }
-.ms__topic{ display:inline-flex; align-items:center; gap:8px; height:36px; padding:0 15px 0 13px; border:1px solid transparent; border-radius:999px; cursor:pointer;
-  background:rgba(var(--tc),.12); color:rgb(var(--tc)); font:inherit; font-size:11px; font-weight:600; letter-spacing:.14em; text-transform:uppercase;
-  transition:background-color .2s ease, border-color .2s ease; }
-.ms__topic::before{ content:""; width:7px; height:7px; border-radius:50%; background:rgb(var(--tc)); }
-.ms__topic:hover{ background:rgba(var(--tc),.2); }
-.ms__topic[aria-checked="true"]{ background:rgba(var(--tc),.24); border-color:rgb(var(--tc)); }
-
-/* Contact, version sobre (comme le reste du site) : pas de carte ni de cadres, des champs soulignés,
-   les sujets comme les filtres (petites capitales, soulignés en corail une fois choisis), bouton rectangle */
-.ms__letter{ padding:0 !important; border:0 !important; border-radius:0 !important; background:none !important; }
-.ms__letter::before{ display:none !important; }
-.ms__grid{ gap:30px 36px; }
-.ms__f input, .ms__f textarea{ background:none !important; border:0 !important; border-bottom:1px solid rgba(var(--ink-rgb),.3) !important; border-radius:0 !important; padding:8px 0 10px !important; }
-.ms__f textarea{ min-height:130px; }
-.ms__f input:hover, .ms__f textarea:hover{ border-bottom-color:rgba(var(--ink-rgb),.55) !important; }
-.ms__f input:focus, .ms__f textarea:focus{ border-bottom-color:var(--ink) !important; background:none !important; }
-.ms__f .topics{ gap:6px 26px; padding-top:4px; }
-.ms__topic{ height:auto !important; padding:0 0 4px !important; border:0 !important; border-bottom:1.5px solid transparent !important; border-radius:0 !important;
-  background:none !important; color:var(--ink-faint) !important; font-size:12px !important; font-weight:500 !important; letter-spacing:.12em !important; }
-.ms__topic::before{ display:none !important; }
-.ms__topic:hover{ color:var(--ink) !important; }
-.ms__topic[aria-checked="true"]{ color:var(--ink) !important; border-bottom-color:rgb(var(--t-coral)) !important; }
-.ms__foot{ border-top:0 !important; padding-top:0 !important; margin-top:34px !important; }
-.ms__send{ border-radius:0 !important; height:52px !important; padding:0 28px !important; }
-.ms__send svg{ stroke:rgb(var(--t-coral)) !important; }
-.ms__alt{ margin-top:48px !important; }
-
-/* Contact : titre aligné comme les autres pages, formulaire centré ; libellés flottants (dans le champ, ils montent
-   en petites capitales quand on écrit), grands champs soulignés */
-.contactPage .cx{ max-width:720px; margin:0 auto; }
-.ms__f{ position:relative; gap:0; }
-.ms__f > .ms__l{ order:-1; }
-.ms__f input, .ms__f textarea{ font-size:20px !important; padding:26px 0 10px !important; }
-.ms__f textarea{ min-height:150px; padding-top:30px !important; }
-.ms__f input ~ .ms__l, .ms__f textarea ~ .ms__l{ position:absolute; left:0; top:28px; order:0; pointer-events:none;
-  font-size:18px; letter-spacing:0; text-transform:none; color:var(--ink-faint); transition:top .2s ease, font-size .2s ease, letter-spacing .2s ease, color .2s ease; transform-origin:left; }
-.ms__f input:focus ~ .ms__l, .ms__f input:not(:placeholder-shown) ~ .ms__l,
-.ms__f textarea:focus ~ .ms__l, .ms__f textarea:not(:placeholder-shown) ~ .ms__l{ top:0; font-size:11px; letter-spacing:.14em; text-transform:uppercase; }
-.ms__f input:focus ~ .ms__l, .ms__f textarea:focus ~ .ms__l{ color:rgb(var(--t-coral)); }
-.ms__f input:focus, .ms__f textarea:focus{ border-bottom-color:rgb(var(--t-coral)) !important; }
-.ms__f .ms__l em{ font-size:.85em; }
-.ms__f--full:has(.topics){ flex-direction:row; flex-wrap:wrap; align-items:baseline; gap:10px 26px; }
-.ms__f--full:has(.topics) .ms__l{ position:static; margin-right:4px; }
-.ms__foot{ justify-content:space-between !important; flex-direction:row !important; }
-
-/* Contact : une toile à gauche, le formulaire sobre à droite (intitulés en petites capitales au-dessus des champs) */
-.contactPage .cx{ max-width:none; margin:0; display:grid !important; grid-template-columns:minmax(0, 5fr) minmax(0, 6fr); gap:clamp(32px, 6vw, 96px); align-items:start; }
-.cxArt{ position:sticky; top:calc(var(--shade-h, 90px) + 24px); margin:0; }
-.cxArt__frame{ display:block; overflow:hidden; border-radius:4px; box-shadow:0 40px 90px -36px rgba(0,0,0,.6); }
-.cxArt__frame img{ display:block; width:100%; height:auto; max-height:72vh; object-fit:cover; transition:transform .8s cubic-bezier(.2,.7,.2,1); }
-.cxArt__frame:hover img{ transform:scale(1.03); }
-.cxArt__cap{ margin-top:14px; font-size:11px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint); }
-.cxArt__cap a{ color:var(--ink-soft); border-bottom:1px solid rgba(var(--ink-rgb),.3); }
-.cxArt__cap a:hover{ color:var(--ink); }
-.ms__f{ gap:8px; }
-.ms__f input ~ .ms__l, .ms__f textarea ~ .ms__l{ position:static !important; order:-1; top:auto; font-size:11px !important; letter-spacing:.14em !important; text-transform:uppercase !important; color:var(--ink-faint) !important; }
-.ms__f input, .ms__f textarea{ font-size:18px !important; padding:6px 0 10px !important; }
-.ms__f textarea{ min-height:140px; padding-top:6px !important; }
-.ms__alt{ text-align:left !important; }
-@media (max-width:900px){ .contactPage .cx{ grid-template-columns:1fr; gap:28px; } .cxArt{ position:static; } .cxArt__frame img{ height:26vh; max-height:none; object-fit:cover; } }
+/* Contact : remerciement en fenêtre (après l'envoi) — coche qui se trace, MERCI qui monte, trait corail */
+.thx{ padding:0; border:0; background:none; color:var(--ink); max-width:none; max-height:none; overflow:visible; }
+.thx::backdrop{ background:rgba(5,8,16,.7); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px); opacity:0; transition:opacity .3s ease; }
+html[data-theme="light"] .thx::backdrop{ background:rgba(239,235,227,.75); }
+.thx.is-in::backdrop{ opacity:1; }
+.thx__box{ position:relative; width:min(520px, calc(100vw - 32px)); padding:44px 40px 34px; border:1px solid rgba(var(--ink-rgb),.16); border-radius:24px;
+  background:var(--bg); box-shadow:0 40px 100px -30px rgba(0,0,0,.6); text-align:center;
+  opacity:0; transform:translateY(16px) scale(.98); transition:opacity .35s ease, transform .5s cubic-bezier(.2,.8,.2,1); }
+.thx.is-in .thx__box{ opacity:1; transform:none; }
+.thx__close{ position:absolute; top:14px; right:14px; display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; padding:0; border-radius:50%;
+  border:1px solid rgba(var(--ink-rgb),.2); background:none; color:var(--ink); cursor:pointer; }
+.thx__close svg{ width:13px; height:13px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; }
+.thx__check{ width:56px; height:56px; margin:0 auto 18px; display:block; fill:none; stroke:rgb(var(--t-green, 118,196,146)); stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+.thx__check circle{ stroke-dasharray:151; stroke-dashoffset:151; opacity:.5; }
+.thx__check path{ stroke-dasharray:36; stroke-dashoffset:36; }
+.thx.is-in .thx__check circle{ animation:thxDraw .7s cubic-bezier(.65,0,.35,1) .15s forwards; }
+.thx.is-in .thx__check path{ animation:thxDraw .45s cubic-bezier(.65,0,.35,1) .7s forwards; }
+.thx__title{ margin:0 0 12px; font-size:clamp(46px, 8vw, 72px); font-weight:700; font-stretch:112%; line-height:.9; letter-spacing:-.02em; text-transform:uppercase; }
+.thx.is-in .thx__title{ animation:thxUp .7s cubic-bezier(.2,.8,.2,1) .35s both; }
+.thx__text{ margin:0 auto; max-width:34ch; font-size:16px; line-height:1.6; color:var(--ink-soft); }
+.thx__text::after{ content:""; display:block; width:0; height:3px; margin:22px auto 0; border-radius:2px; background:rgb(var(--t-coral, 236,118,104)); }
+.thx.is-in .thx__text::after{ animation:thxLine .8s cubic-bezier(.7,0,.2,1) .8s forwards; }
+.thx__acts{ display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:12px 24px; margin-top:26px; }
+.thx__btn{ display:inline-flex; align-items:center; gap:12px; height:48px; padding:0 22px; background:var(--ink); color:var(--bg); font-size:12px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; }
+.thx__btn svg{ width:16px; height:16px; fill:none; stroke:rgb(var(--t-coral, 236,118,104)); stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
+.thx__link{ padding:0 0 2px; border:0; border-bottom:1px solid transparent; background:none; cursor:pointer; font:inherit; font-size:12px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ink); }
+.thx__link:hover{ border-bottom-color:rgb(var(--t-coral, 236,118,104)); }
+@keyframes thxDraw{ to{ stroke-dashoffset:0; } }
+@keyframes thxUp{ from{ opacity:0; transform:translateY(16px); } to{ opacity:1; transform:none; } }
+@keyframes thxLine{ to{ width:64px; } }
+@media (prefers-reduced-motion: reduce){ .thx__box, .thx::backdrop{ transition:none; } .thx__check circle, .thx__check path{ stroke-dashoffset:0; animation:none !important; } .thx__title{ animation:none !important; } .thx__text::after{ width:64px; animation:none !important; } }

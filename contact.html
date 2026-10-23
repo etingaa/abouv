@@ -16,10 +16,9 @@
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <script src="i18n-langs.js?v=20261027h"></script>
   <script src="i18n.js?v=20261027i"></script>
-  <script src="sheet.js?v=20261027a"></script>
   <script src="site.js?v=20261026a"></script>
   <link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="styles.css?v=20261027v" />
+  <link rel="stylesheet" href="styles.css?v=20261027w" />
   <!-- pages préchargées au survol d'un lien : changement de page quasi instantané (la galerie 3D est seulement préchargée) -->
   <script type="speculationrules">
     {"prerender":[{"where":{"and":[{"selector_matches":".nav__link, .bottom__link--legal"},{"not":{"selector_matches":"[href='./'], [href='../']"}}]},"eagerness":"moderate"}],
@@ -114,54 +113,75 @@
     <h1 class="sr-only">Contact</h1>
     <h2 class="bigTitle">Contact</h2>
 
-
     <div class="contact cx">
-      <!-- une toile disponible, tirée au hasard à chaque visite (comme sur la page de remerciement) -->
-      <figure class="cxArt">
-        <a class="cxArt__frame" id="cxLink" href="oeuvres/face"><img id="cxImg" src="images/thumbs/Face.jpg" alt="Face, huile sur toile, par Annick Bouvattier" decoding="async"></a>
-        <figcaption class="cxArt__cap" id="cxCap" translate="no">Face · <a href="oeuvres/face">Voir l'œuvre</a></figcaption>
-      </figure>
-      <section class="formCard ms" aria-labelledby="formCardTitle">
-        <h2 class="sr-only" id="formCardTitle">Formulaire de contact</h2>
-        <!-- le formulaire se lit comme une phrase : on complète les blancs -->
-        <form class="ms__letter" id="contactForm" action="https://formspree.io/f/xdalokdl" method="POST">
-          <div class="ms__grid">
-            <label class="ms__f"><input type="text" name="Prénom" autocomplete="given-name" placeholder=" " required><span class="ms__l">Prénom <b aria-hidden="true">*</b></span></label>
-            <label class="ms__f"><input type="text" name="Nom" autocomplete="family-name" placeholder=" " required><span class="ms__l">Nom <b aria-hidden="true">*</b></span></label>
-            <label class="ms__f ms__f--full"><input type="email" name="email" autocomplete="email" placeholder=" " required><span class="ms__l">Email <b aria-hidden="true">*</b></span></label>
-            <label class="ms__f"><input type="text" name="Organisation" autocomplete="organization" placeholder=" "><span class="ms__l">Organisation <em>(facultatif)</em></span></label>
-            <label class="ms__f"><input type="text" name="Pays" autocomplete="country-name" placeholder=" "><span class="ms__l">Pays <em>(facultatif)</em></span></label>
-            <div class="ms__f ms__f--full">
-              <span class="ms__l" id="topicLabel">Sujet</span>
-              <span class="topics" role="radiogroup" aria-labelledby="topicLabel">
-                <button class="ms__topic tc-coral" type="button" role="radio" data-topic="Acquisition">Acquisition</button>
-                <button class="ms__topic tc-blue" type="button" role="radio" data-topic="Commande">Commande</button>
-                <button class="ms__topic tc-sand" type="button" role="radio" data-topic="Presse">Presse</button>
-                <button class="ms__topic tc-green" type="button" role="radio" data-topic="Autre">Autre</button>
-              </span>
-              <input type="hidden" name="Sujet" id="topicField" value="">
+      <section class="formCard" aria-labelledby="formCardTitle">
+        <h2 class="formCard__title" id="formCardTitle">Écrivez-moi pour parler d’une œuvre, d’une commande ou d’un projet.</h2>
+        <form class="form ix-form" id="contactForm" action="https://formspree.io/f/xdalokdl" method="POST">
+          <!-- Sujet : envoyé avec le message (champ « Sujet ») -->
+          <div class="field field--full">
+            <span class="field__label" id="topicLabel">Sujet <em>(choisissez ce qui vous amène)</em></span>
+            <div class="topics" role="radiogroup" aria-labelledby="topicLabel">
+              <button class="tab tab--sub" type="button" role="radio" data-topic="Acquisition"><i class="tick" aria-hidden="true"></i>Acquisition</button>
+              <button class="tab tab--sub" type="button" role="radio" data-topic="Commande"><i class="tick" aria-hidden="true"></i>Commande</button>
+              <button class="tab tab--sub" type="button" role="radio" data-topic="Presse"><i class="tick" aria-hidden="true"></i>Presse</button>
+              <button class="tab tab--sub" type="button" role="radio" data-topic="Autre"><i class="tick" aria-hidden="true"></i>Autre</button>
             </div>
-            <label class="ms__f ms__f--full"><textarea name="message" id="message" rows="6" placeholder=" " required></textarea><span class="ms__l">Message <b aria-hidden="true">*</b></span></label>
+            <input type="hidden" name="Sujet" id="topicField" value="">
           </div>
+
+          <label class="field">
+            <span class="field__label">Prénom <b class="req" aria-hidden="true">*</b></span>
+            <input type="text" name="Prénom" autocomplete="given-name" placeholder="Annick" required>
+          </label>
+          <label class="field">
+            <span class="field__label">Nom <b class="req" aria-hidden="true">*</b></span>
+            <input type="text" name="Nom" autocomplete="family-name" placeholder="Dupont" required>
+          </label>
+          <label class="field field--full">
+            <span class="field__label">Email <b class="req" aria-hidden="true">*</b></span>
+            <input type="email" name="email" autocomplete="email" placeholder="vous@exemple.fr" required>
+          </label>
+          <label class="field">
+            <span class="field__label">Organisation <em>(facultatif)</em></span>
+            <input type="text" name="Organisation" autocomplete="organization">
+          </label>
+          <label class="field">
+            <span class="field__label">Pays <em>(facultatif)</em></span>
+            <input type="text" name="Pays" autocomplete="country-name">
+          </label>
+          <label class="field field--full">
+            <span class="field__label">Message <b class="req" aria-hidden="true">*</b></span>
+            <textarea name="message" id="message" placeholder="Une œuvre, une commande, une date…" required></textarea>
+          </label>
 
           <!-- anti-spam : champ invisible, rempli uniquement par les robots (ignoré par Formspree) -->
           <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true"
                  style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
           <input type="hidden" name="_subject" value="Nouveau message depuis le site Annick Bouvattier">
-          <!-- après l'envoi classique (sans JavaScript), Formspree renvoie vers la page de remerciement -->
+          <!-- envoi classique (sans JavaScript) : Formspree renvoie vers la page de remerciement -->
           <input type="hidden" name="_next" value="https://annickbouvattier.art/merci">
           <!-- langue du site au moment de l'envoi : pour savoir en quelle langue répondre -->
           <input type="hidden" name="Langue" id="langField" value="fr">
 
-          <div class="ms__foot">
-            <p class="ms__note">Les informations saisies servent uniquement à répondre à votre demande. <a href="mentions-legales">En savoir plus</a></p>
-            <button class="ms__send" type="submit" id="submitBtn"><span>Envoyer</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>
+          <div class="form__foot field--full">
+            <button class="sendBtn" type="submit" id="submitBtn"><span>Envoyer</span><i class="sendBtn__arrow" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg></i></button>
+            <span class="form__alt">Pas encore sûr ? <a class="altBtn" href="mailto:abouvattier@free.fr">Écrire un e-mail</a></span>
+            <p class="formNote">Les informations saisies servent uniquement à répondre à votre demande. <a href="mentions-legales">En savoir plus</a></p>
           </div>
           <p id="formStatus" class="formStatus" role="status" aria-live="polite" hidden></p>
         </form>
-        <p class="ms__alt"><span>Ou directement</span> <a href="mailto:abouvattier@free.fr">abouvattier@free.fr</a> <i>·</i> <a href="https://www.instagram.com/annick.bouvattier/" target="_blank" rel="noopener noreferrer">Instagram</a> <i>·</i> <a href="https://www.facebook.com/annick.bouvattier/" target="_blank" rel="noopener noreferrer">Facebook</a></p>
       </section>
 
+      <aside class="cx__side" aria-label="Ailleurs">
+        <p class="cx__k">Écrire directement</p>
+        <a class="cx__mail" href="mailto:abouvattier@free.fr">abouvattier@free.fr</a>
+        <p class="cx__k cx__k--gap">Ailleurs</p>
+        <ul class="cx__links">
+          <li><a href="https://www.instagram.com/annick.bouvattier/" target="_blank" rel="noopener noreferrer">Instagram<i aria-hidden="true">↗</i></a></li>
+          <li><a href="https://www.facebook.com/annick.bouvattier/" target="_blank" rel="noopener noreferrer">Facebook<i aria-hidden="true">↗</i></a></li>
+          <li><a href="galeries">Galeries<i aria-hidden="true">→</i></a></li>
+        </ul>
+      </aside>
     </div>
 
     <footer class="bottom">
@@ -173,6 +193,20 @@
       </footer>
   </div>
   </div>
+
+  <!-- remerciement après l'envoi : une fenêtre par-dessus la page -->
+  <dialog class="thx" id="thx" aria-labelledby="thxTitle">
+    <div class="thx__box">
+      <button class="thx__close" type="button" aria-label="Fermer"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3l10 10M13 3 3 13"/></svg></button>
+      <svg class="thx__check" viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="26" r="24"/><path d="m15 27 7 7 15-16"/></svg>
+      <h2 class="thx__title" id="thxTitle">Merci</h2>
+      <p class="thx__text" id="thxText">Votre message a bien été envoyé. Annick Bouvattier vous répondra dès que possible.</p>
+      <div class="thx__acts">
+        <a class="thx__btn" href="portfolio"><span>Voir le portfolio</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+        <button class="thx__link" type="button" data-close>Fermer</button>
+      </div>
+    </div>
+  </dialog>
 
   <script>
   (() => {
@@ -189,11 +223,8 @@
       topicField.value = v;
       topics.forEach(b => b.setAttribute("aria-checked", String(b.dataset.topic === v)));
       topics.forEach(b => b.setAttribute("aria-pressed", String(b.dataset.topic === v)));
-      const on = [...topics].find(b => b.dataset.topic === v);
-      form.dataset.tc = on ? [...on.classList].find(c => c.startsWith("tc-")) || "" : "";
     }
     topics.forEach(b => b.addEventListener("click", () => setTopic(topicField.value === b.dataset.topic ? "" : b.dataset.topic)));
-
     setTopic("");
 
     // Arrivée avec un sujet pré-choisi : page Presse (?sujet=presse), galerie 3D (« Acquérir cette œuvre »)
@@ -225,23 +256,31 @@
 
     // Envoi sans quitter le site. En cas de souci (JS ou réponse inattendue), on retombe sur
     // l'envoi classique du formulaire, qui fonctionne toujours.
+    let sentPrenom = "";
+    const thxEl = document.getElementById("thx");
+    const closeThx = () => { thxEl.classList.remove("is-in"); setTimeout(() => thxEl.close(), 250); };
+    thxEl.querySelectorAll(".thx__close, [data-close]").forEach(b => b.addEventListener("click", closeThx));
+    thxEl.addEventListener("click", (e) => { if (e.target === thxEl) closeThx(); });
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       btn.disabled = true;
       status.hidden = true;
       try {
+        sentPrenom = (new FormData(form).get("Prénom") || "").toString();
         const res = await fetch(form.action, {
           method: "POST",
           body: new FormData(form),
           headers: { "Accept": "application/json" },
         });
         if (!res.ok) throw new Error("HTTP " + res.status);
-        // page de remerciement (avec le prénom)
-        const prenom = (new FormData(form).get("Prénom") || "").toString().trim();
         form.reset();
         setTopic("");
-        location.href = "merci" + (prenom ? "?prenom=" + encodeURIComponent(prenom) : "");
-        return;
+        const prenom = (sentPrenom || "").trim();
+        document.getElementById("thxText").textContent = prenom
+          ? t("{prenom}, votre message a bien été envoyé. Annick Bouvattier vous répondra dès que possible.", { prenom })
+          : t("Votre message a bien été envoyé. Annick Bouvattier vous répondra dès que possible.");
+        const thx = document.getElementById("thx");
+        thx.showModal(); requestAnimationFrame(() => thx.classList.add("is-in"));
       } catch (err) {
         console.warn("Envoi AJAX impossible, envoi classique.", err);
         form.submit();
@@ -249,19 +288,6 @@
         btn.disabled = false;
       }
     });
-
-    // toile du moment : une œuvre disponible au hasard (dont l'image existe)
-    if (window.abouvSheet) Promise.all([abouvSheet.artworks(), fetch("images/thumbs/sizes.json").then(r => r.json()).catch(() => null)]).then(([list, sizes]) => {
-      const av = list.filter(a => a.status === "disponible" && a.file && (!sizes || sizes[a.file]));
-      if (!av.length) return;
-      const a = av[Math.floor(Math.random() * av.length)];
-      const img = document.getElementById("cxImg");
-      img.src = a.thumb; img.alt = `${a.title}, ${t(a.technique || "")}, Annick Bouvattier`;
-      document.getElementById("cxLink").href = `oeuvres/${a.slug}`;
-      const cap = document.getElementById("cxCap"); cap.innerHTML = "";
-      cap.append(document.createTextNode(a.title + " · "));
-      const l = document.createElement("a"); l.href = `oeuvres/${a.slug}`; l.textContent = t("Voir l'œuvre"); cap.append(l);
-    }).catch(() => {});
   })();
   </script>
 <script>window.I18N && I18N.apply();</script><i id="i18n-end" hidden></i>

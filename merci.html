@@ -13,51 +13,13 @@
   <script src="i18n-langs.js?v=20261027h"></script>
   <script src="i18n.js?v=20261027i"></script>
   <script src="site.js?v=20261026a"></script>
-  <script src="sheet.js?v=20261027a"></script>
   <link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="styles.css?v=20261027v" />
+  <link rel="stylesheet" href="styles.css?v=20261027w" />
   <style>
-    /* Page de remerciement (après l'envoi du formulaire de contact ; aussi l'adresse de retour donnée à Formspree).
-       Une toile disponible, tirée au hasard, se dévoile de bas en haut ; MERCI monte lettre par lettre ;
-       un trait corail se trace sous le message. */
-    .ty{ display:grid; grid-template-columns:minmax(0, 6fr) minmax(0, 5fr); gap:clamp(32px, 6vw, 96px); align-items:center; min-height:calc(100vh - 260px); margin:8px 0 72px; }
-    .ty__art{ position:relative; margin:0; justify-self:center; width:100%; max-width:560px; }
-    .ty__frame{ display:block; position:relative; overflow:hidden; border-radius:4px; box-shadow:0 40px 90px -30px rgba(0,0,0,.6);
-      clip-path:inset(100% 0 0 0); animation:tyReveal 1.4s cubic-bezier(.7,0,.2,1) .15s forwards; animation-play-state:paused; }
-    .ty__frame.is-go{ animation-play-state:running; }
-    .ty__frame:not(.is-go) img{ animation-play-state:paused; }
-    .ty__frame img{ display:block; width:100%; height:auto; max-height:68vh; object-fit:contain; transform:scale(1.12); animation:tyZoom 2.6s cubic-bezier(.2,.7,.2,1) .15s forwards; }
-    .ty__cap{ margin-top:14px; font-size:11px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint);
-      opacity:0; animation:tyFade .8s ease 1.4s forwards; }
-    .ty__cap a{ color:var(--ink-soft); border-bottom:1px solid rgba(var(--ink-rgb),.3); }
-    .ty__cap a:hover{ color:var(--ink); }
-    .ty__title{ margin:0 0 22px; font-size:clamp(64px, 11vw, 168px); font-weight:700; font-stretch:112%; line-height:.85; letter-spacing:-.02em; text-transform:uppercase; color:var(--ink); }
-    .ty__title .ty__clip > span{ display:inline-block; transform:translateY(105%); opacity:0; animation:tyUp .9s cubic-bezier(.2,.8,.2,1) forwards; }
-    .ty__title .ty__clip{ display:inline-block; overflow:hidden; vertical-align:bottom; padding-bottom:.04em; }
-    .ty__who{ margin:0 0 10px; font-size:clamp(20px, 2vw, 28px); font-weight:500; color:var(--ink); opacity:0; animation:tyFade .8s ease .9s forwards; }
-    .ty__text{ margin:0; max-width:38ch; font-size:17px; line-height:1.65; color:var(--ink-soft); opacity:0; animation:tyFade .8s ease 1.05s forwards; }
-    .ty__line{ display:block; width:0; height:3px; margin:28px 0 30px; border-radius:2px; background:rgb(var(--t-coral, 236,118,104)); animation:tyLine 1.1s cubic-bezier(.7,0,.2,1) 1.2s forwards; }
-    .ty__acts{ display:flex; flex-wrap:wrap; gap:14px 28px; align-items:center; opacity:0; animation:tyFade .8s ease 1.5s forwards; }
-    .ty__btn{ display:inline-flex; align-items:center; gap:14px; height:52px; padding:0 26px; background:var(--ink); color:var(--bg);
-      font-size:12px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; transition:background-color .2s ease; }
-    .ty__btn svg{ width:18px; height:18px; fill:none; stroke:rgb(var(--t-coral, 236,118,104)); stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; transition:transform .3s ease; }
-    .ty__btn:hover svg{ transform:translateX(4px); }
-    .ty__link{ font-size:12px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ink); border-bottom:1px solid transparent; padding-bottom:2px; transition:border-color .2s ease; }
-    .ty__link:hover{ border-bottom-color:rgb(var(--t-coral, 236,118,104)); }
-    @keyframes tyReveal{ to{ clip-path:inset(0 0 0 0); } }
-    @keyframes tyZoom{ to{ transform:scale(1); } }
-    @keyframes tyUp{ to{ transform:none; opacity:1; } }
-    @keyframes tyFade{ from{ opacity:0; transform:translateY(8px); } to{ opacity:1; transform:none; } }
-    @keyframes tyLine{ to{ width:72px; } }
-    @media (max-width:900px){
-      .ty{ grid-template-columns:1fr; min-height:0; gap:36px; }
-      .ty__art{ order:2; max-width:420px; }
-      .ty__frame img{ max-height:52vh; }
-    }
-    @media (prefers-reduced-motion: reduce){
-      .ty__frame, .ty__frame img, .ty__title .ty__clip > span, .ty__text, .ty__line, .ty__cap, .ty__acts{ animation:none !important; clip-path:none; transform:none; opacity:1; }
-      .ty__line{ width:72px; }
-    }
+    /* Page de remerciement générale (adresse de retour donnée à Formspree, après un envoi sans JavaScript) :
+       même animation que la fenêtre de remerciement de la page Contact (styles.css, .thx) */
+    .tyPage{ display:flex; align-items:center; justify-content:center; min-height:calc(100vh - 260px); margin:8px 0 72px; }
+    .tyPage .thx__box{ opacity:1; transform:none; box-shadow:none; background:none; border:0; }
   </style>
   <!-- seo:head -->
   <link rel="canonical" href="https://annickbouvattier.art/merci" />
@@ -86,20 +48,16 @@
       </nav>
     </header>
 
-    <main class="ty">
-      <div class="ty__msg">
-        <h1 class="ty__title" id="tyTitle" aria-label="Merci">Merci</h1>
-        <p class="ty__text" id="tyText">Votre message a bien été envoyé. Annick Bouvattier vous répondra dès que possible.</p>
-        <span class="ty__line" aria-hidden="true"></span>
-        <div class="ty__acts">
-          <a class="ty__btn" href="portfolio"><span>Voir le portfolio</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
-          <a class="ty__link" href="./">Retour à l'accueil</a>
+    <main class="tyPage thx is-in">
+      <div class="thx__box">
+        <svg class="thx__check" viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="26" r="24"/><path d="m15 27 7 7 15-16"/></svg>
+        <h1 class="thx__title">Merci</h1>
+        <p class="thx__text">Votre message a bien été envoyé. Annick Bouvattier vous répondra dès que possible.</p>
+        <div class="thx__acts">
+          <a class="thx__btn" href="portfolio"><span>Voir le portfolio</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+          <a class="thx__link" href="./">Retour à l'accueil</a>
         </div>
       </div>
-      <figure class="ty__art">
-        <a class="ty__frame" id="tyLink" href="oeuvres/enigma"><img id="tyImg" src="images/thumbs/Enigma.jpg" alt="Enigma, huile sur toile, par Annick Bouvattier" width="1100" height="853"></a>
-        <figcaption class="ty__cap" id="tyCap" translate="no">Enigma · <a href="oeuvres/enigma">Voir l'œuvre</a></figcaption>
-      </figure>
     </main>
 
     <footer class="bottom">
@@ -111,43 +69,6 @@
       </footer>
   </div>
   </div>
-  <script>
-  (() => {
-    // MERCI lettre par lettre (une fois le mot traduit : on découpe le texte affiché)
-    document.addEventListener("DOMContentLoaded", () => {
-      const h = document.getElementById("tyTitle");
-      const word = h.textContent.trim();
-      h.setAttribute("aria-label", word);
-      h.innerHTML = [...word].map((c, i) => `<span class="ty__clip" aria-hidden="true"><span style="animation-delay:${(.25 + i * .07).toFixed(2)}s">${c}</span></span>`).join("");
-    });
-
-    // prénom transmis par le formulaire (?prenom=…)
-    const p = (new URLSearchParams(location.search).get("prenom") || "").trim().slice(0, 40);
-    if (p) document.getElementById("tyText").textContent = t("{prenom}, votre message a bien été envoyé. Annick Bouvattier vous répondra dès que possible.", { prenom: p });
-    if (p) { const u = new URL(location.href); u.searchParams.delete("prenom"); history.replaceState(null, "", u.href); }
-
-    // une toile disponible, tirée au hasard (Enigma si le Sheet ne répond pas) ; le dévoilement part quand l'image est prête
-    const frame = document.getElementById("tyLink");
-    let gone = false;
-    const go = () => { if (!gone){ gone = true; frame.classList.add("is-go"); } };
-    setTimeout(go, 1500);
-    const ready = (img) => { if (img.complete) go(); else { img.addEventListener("load", go, { once: true }); img.addEventListener("error", go, { once: true }); } };
-    if (!window.abouvSheet) ready(document.getElementById("tyImg"));
-    else Promise.all([abouvSheet.artworks(), fetch("images/thumbs/sizes.json").then(r => r.json()).catch(() => null)]).then(([list, sizes]) => {
-      const av = list.filter(a => a.status === "disponible" && a.file && (!sizes || sizes[a.file]));   // seulement les toiles dont l'image existe
-      if (!av.length) return ready(document.getElementById("tyImg"));
-      const a = av[Math.floor(Math.random() * av.length)];
-      const img = document.getElementById("tyImg");
-      img.removeAttribute("width"); img.removeAttribute("height");
-      img.src = a.thumb; ready(img); img.alt = `${a.title}, ${t(a.technique || "")}, Annick Bouvattier`;
-      document.getElementById("tyLink").href = `oeuvres/${a.slug}`;
-      const cap = document.getElementById("tyCap");
-      cap.innerHTML = "";
-      cap.append(document.createTextNode(a.title + " · "));
-      const l = document.createElement("a"); l.href = `oeuvres/${a.slug}`; l.textContent = t("Voir l'œuvre"); cap.append(l);
-    }).catch(() => ready(document.getElementById("tyImg")));
-  })();
-  </script>
 <script>window.I18N && I18N.apply();</script><i id="i18n-end" hidden></i>
 </body>
 </html>
