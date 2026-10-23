@@ -1577,12 +1577,56 @@ body.portfolio .subtabs .tab[aria-pressed="true"] > span:first-child{ text-decor
 .contactPage .cx__links a:hover{ color:rgb(var(--tc)) !important; -webkit-text-stroke:0; border-bottom-color:rgb(var(--tc)); }
 @media (max-width:760px){ .contactPage .cx__links{ margin-left:0; width:100%; } .contactPage .cx__side{ margin-top:40px; } }
 
-/* Contact : raccourcis en pastilles sous le titre (e-mail, réseaux, galeries), puis le formulaire seul, centré sur sa colonne */
-.cq{ display:flex; flex-wrap:wrap; gap:10px; margin:-16px 0 48px; }
-.cq__a{ display:inline-flex; align-items:center; gap:10px; height:44px; padding:0 18px 0 14px; border-radius:999px;
-  border:1px solid rgba(var(--tc),.45); background:rgba(var(--tc),.08); color:var(--ink); font-size:14px; font-weight:500;
-  transition:background-color .2s ease, border-color .2s ease, transform .2s ease; }
-.cq__a svg{ width:18px; height:18px; flex:none; fill:none; stroke:rgb(var(--tc)); stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
-.cq__a:hover{ background:rgba(var(--tc),.18); border-color:rgb(var(--tc)); transform:translateY(-1px); }
-.contactPage .cx{ max-width:820px; }
-@media (max-width:760px){ .cq{ margin:-6px 0 36px; } .cq__a{ height:40px; font-size:13px; } }
+
+/* =========================
+   CONTACT : le formulaire se lit comme une lettre — on complète les blancs (grand texte, champs soulignés),
+   le sujet en mots colorés, le message dans un cadre, organisation / pays repliés, envoi en capsule
+   ========================= */
+.contactPage .cx{ max-width:980px; }
+.ms{ padding:0 !important; border:0 !important; background:none !important; box-shadow:none !important; }
+.ms__form{ display:block; }
+.ms__line{ margin:0 0 .35em; font-size:clamp(24px, 3vw, 40px); font-weight:400; line-height:1.5; letter-spacing:-.015em; color:var(--ink-soft); }
+.ms__line > span{ color:var(--ink-soft); }
+.ms__in{ font:inherit; color:var(--ink); background:none !important; border:0 !important; border-bottom:1.5px solid rgba(var(--ink-rgb),.3) !important; border-radius:0 !important;
+  padding:0 .15em !important; margin:0 0 0 .2em; height:auto !important; min-width:4ch; max-width:100%; field-sizing:content; outline:none; transition:border-color .2s ease; }
+.ms__in::placeholder{ color:rgba(var(--ink-rgb),.3); font-style:italic; padding-right:.15em; }
+.ms__in:hover{ border-bottom-color:rgba(var(--ink-rgb),.55) !important; }
+.ms__in:focus{ border-bottom-color:rgb(var(--t-blue)) !important; }
+.ms__in:not(:placeholder-shown):valid{ border-bottom-color:rgba(var(--t-green),.8) !important; }
+.ms__line--topics{ display:flex; flex-wrap:wrap; align-items:baseline; gap:.2em .5em; margin-top:.2em; }
+.ms__line--topics .topics{ display:inline-flex; flex-wrap:wrap; gap:.25em .45em; }
+.ms__topic{ font:inherit; font-size:.82em; line-height:1.3; padding:.05em .55em .12em; border:1.5px solid rgba(var(--tc),.45); border-radius:999px; background:none; cursor:pointer;
+  color:var(--ink-faint); transition:color .2s ease, background-color .2s ease, border-color .2s ease; }
+.ms__topic:hover{ color:var(--ink); border-color:rgb(var(--tc)); }
+.ms__topic[aria-checked="true"]{ color:var(--ink); background:rgba(var(--tc),.18); border-color:rgb(var(--tc)); }
+.ms__msg{ display:block; margin-top:34px; }
+.ms__msg textarea{ display:block; width:100%; min-height:190px; padding:20px 22px !important; resize:vertical; font:inherit; font-size:18px !important; line-height:1.6; color:var(--ink);
+  background:rgba(var(--ink-rgb),.03) !important; border:1px solid rgba(var(--ink-rgb),.2) !important; border-radius:18px !important; outline:none; transition:border-color .2s ease, background-color .2s ease; }
+.ms__msg textarea::placeholder{ color:rgba(var(--ink-rgb),.35); font-style:italic; }
+.ms__msg textarea:focus{ border-color:rgb(var(--t-blue)) !important; background:rgba(var(--ink-rgb),.05) !important; }
+.ms__more{ margin-top:16px; }
+.ms__more summary{ display:inline-flex; gap:6px; cursor:pointer; list-style:none; font-size:13px; color:var(--ink-faint); border-bottom:1px dashed rgba(var(--ink-rgb),.3); }
+.ms__more summary::-webkit-details-marker{ display:none; }
+.ms__more summary::before{ content:"+"; color:rgb(var(--t-blue)); }
+.ms__more[open] summary::before{ content:"−"; }
+.ms__more summary em{ font-style:normal; opacity:.7; }
+.ms__moreRow{ display:flex; flex-wrap:wrap; gap:8px 28px; margin-top:12px; font-size:18px; }
+.ms__in--sm{ margin:0; min-width:14ch; }
+.ms__foot{ display:flex; flex-wrap:wrap; align-items:center; gap:14px 24px; margin-top:34px; }
+.ms__send{ display:inline-flex; align-items:center; gap:14px; height:56px; padding:0 26px 0 30px; border:0; border-radius:999px; cursor:pointer;
+  background:var(--ink); color:var(--bg); font:inherit; font-size:12px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; transition:transform .2s ease, background-color .2s ease; }
+.ms__send svg{ width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; transition:transform .3s ease; }
+.ms__send:hover{ transform:translateY(-1px); }
+.ms__send:hover svg{ transform:translateX(4px); }
+.ms__send:disabled{ opacity:.5; cursor:progress; }
+.ms__note{ margin:0; font-size:12px; color:var(--ink-faint); max-width:46ch; }
+.ms__note a{ color:var(--ink-soft); border-bottom:1px solid rgba(var(--ink-rgb),.3); }
+.ms__alt{ margin:56px 0 0; padding-top:18px; border-top:1px solid rgba(var(--ink-rgb),.1); font-size:13px; color:var(--ink-faint); }
+.ms__alt a{ color:var(--ink-soft); transition:color .2s ease; }
+.ms__alt a:hover{ color:var(--ink); }
+.ms__alt i{ font-style:normal; margin:0 6px; opacity:.5; }
+@media (max-width:760px){
+  .ms__line{ font-size:23px; line-height:1.55; }
+  .ms__msg textarea{ min-height:160px; font-size:16px !important; padding:16px !important; }
+  .ms__send{ width:100%; justify-content:center; }
+}
