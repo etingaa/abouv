@@ -3,6 +3,7 @@
 // Un texte absent ici s'affiche en anglais.
 window.I18N_LANGS = {
   es: {
+    "Le message n'a pas pu être envoyé. Réessayez dans un instant, ou écrivez directement à abouvattier@free.fr.": "No se ha podido enviar el mensaje. Inténtelo de nuevo en un momento o escriba directamente a abouvattier@free.fr.",
     "Ou directement par e-mail": "O directamente por correo",
     "ou via mes réseaux": "o a través de mis redes",
     "Merci": "Gracias",
@@ -329,6 +330,7 @@ window.I18N_LANGS = {
     "Voir le portfolio": "Ver el portafolio",
   },
   it: {
+    "Le message n'a pas pu être envoyé. Réessayez dans un instant, ou écrivez directement à abouvattier@free.fr.": "Non è stato possibile inviare il messaggio. Riprova tra un momento o scrivi direttamente a abouvattier@free.fr.",
     "Ou directement par e-mail": "Oppure direttamente via email",
     "ou via mes réseaux": "o tramite i miei social",
     "Merci": "Grazie",

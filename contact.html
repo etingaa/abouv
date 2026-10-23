@@ -14,8 +14,8 @@
   <meta property="og:title" content="Contact — Annick Bouvattier" />
   <meta property="og:description" content="Contacter Annick Bouvattier : renseignement sur une œuvre, une exposition ou une commande." />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-  <script src="i18n-langs.js?v=20261027i"></script>
-  <script src="i18n.js?v=20261027j"></script>
+  <script src="i18n-langs.js?v=20261028a"></script>
+  <script src="i18n.js?v=20261028a"></script>
   <script src="site.js?v=20261026a"></script>
   <link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="styles.css?v=20261028b" />
@@ -158,8 +158,6 @@
           <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true"
                  style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
           <input type="hidden" name="_subject" value="Nouveau message depuis le site Annick Bouvattier">
-          <!-- envoi classique (sans JavaScript) : Formspree renvoie vers la page de remerciement -->
-          <input type="hidden" name="_next" value="https://annickbouvattier.art/merci">
           <!-- langue du site au moment de l'envoi : pour savoir en quelle langue répondre -->
           <input type="hidden" name="Langue" id="langField" value="fr">
 
@@ -249,8 +247,8 @@
       status.hidden = false;
     }
 
-    // Envoi sans quitter le site. En cas de souci (JS ou réponse inattendue), on retombe sur
-    // l'envoi classique du formulaire, qui fonctionne toujours.
+    // Envoi sans quitter le site (Formspree en arrière-plan) ; une fois validé, la fenêtre de remerciement
+    // s'affiche ici même. En cas d'échec, un message d'erreur s'affiche sous le bouton.
     let sentPrenom = "";
     const thxEl = document.getElementById("thx");
     const closeThx = () => { thxEl.classList.remove("is-in"); setTimeout(() => thxEl.close(), 250); };
@@ -267,7 +265,11 @@
           body: new FormData(form),
           headers: { "Accept": "application/json" },
         });
-        if (!res.ok) throw new Error("HTTP " + res.status);
+        if (!res.ok) {
+          let detail = "";
+          try { const j = await res.json(); detail = (j.errors || []).map(e => e.message).join(" "); } catch (_) {}
+          throw new Error(detail || "HTTP " + res.status);
+        }
         form.reset();
         setTopic("");
         const prenom = (sentPrenom || "").trim();
@@ -277,8 +279,9 @@
         const thx = document.getElementById("thx");
         thx.showModal(); requestAnimationFrame(() => thx.classList.add("is-in"));
       } catch (err) {
-        console.warn("Envoi AJAX impossible, envoi classique.", err);
-        form.submit();
+        // on reste sur la page (pas d'envoi classique, qui afficherait la page de Formspree) : message d'erreur ici
+        console.warn("Envoi impossible.", err);
+        say(t("Le message n'a pas pu être envoyé. Réessayez dans un instant, ou écrivez directement à abouvattier@free.fr."), true);
       } finally {
         btn.disabled = false;
       }

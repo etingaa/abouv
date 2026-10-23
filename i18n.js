@@ -141,6 +141,7 @@
     "œuvre": "artwork",
     "œuvres": "artworks",
     "Passer": "Skip",
+    "Le message n'a pas pu être envoyé. Réessayez dans un instant, ou écrivez directement à abouvattier@free.fr.": "Your message could not be sent. Please try again in a moment, or write directly to abouvattier@free.fr.",
     "Ou directement par e-mail": "Or directly by email",
     "ou via mes réseaux": "or through my social media",
     "Merci": "Thank you",
