@@ -141,6 +141,8 @@
     "œuvre": "artwork",
     "œuvres": "artworks",
     "Passer": "Skip",
+    "exposition personnelle": "solo exhibition",
+    "Vue d'ensemble": "Overview",
     "Unité": "Unit",
     "Voir tout le portfolio": "See the whole portfolio",
     "Disponible": "Available",

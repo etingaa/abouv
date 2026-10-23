@@ -1505,3 +1505,17 @@ html[data-theme="light"] .ov__cta:hover{ background:#223a7a; }
   font:inherit; font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-soft); transition:color .3s ease; }
 .unitSwitch button:hover{ color:var(--ink); }
 .unitSwitch button[aria-pressed="true"]{ color:var(--bg); }
+
+/* portfolio : mosaïque en colonnes remplies ligne par ligne (portfolio.html, layoutMasonry) */
+body.portfolio .masonry.is-cols{ columns:auto; display:flex; align-items:flex-start; gap:14px; }
+body.portfolio .masonry.is-cols .mcol{ flex:1 1 0; min-width:0; display:flex; flex-direction:column; }
+@media (max-width:600px){ body.portfolio .masonry.is-cols{ gap:10px; } }
+
+/* « Disponible » en vert (point et texte), partout : vignettes, fiche, pages d'œuvres */
+body.salle{ --green-rgb:118,196,146; --green:rgb(var(--green-rgb)); }
+html[data-theme="light"] body.salle{ --green-rgb:38,122,74; --green:rgb(var(--green-rgb)); }
+body.portfolio .badge.disponible{ color:var(--green) !important; }
+body.portfolio .badge.disponible::before{ background:var(--green) !important; }
+.statusText.disponible{ color:var(--green) !important; }
+.ov__status--disponible{ color:var(--green); }
+.ov__status--disponible::before{ background:var(--green) !important; }

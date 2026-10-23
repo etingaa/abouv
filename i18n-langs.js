@@ -3,6 +3,8 @@
 // Un texte absent ici s'affiche en anglais.
 window.I18N_LANGS = {
   es: {
+    "exposition personnelle": "exposición individual",
+    "Vue d'ensemble": "Vista general",
     "Unité": "Unidad",
     "atelier": "taller de la artista",
     "Dimensions": "Dimensiones",
@@ -285,6 +287,8 @@ window.I18N_LANGS = {
     "Voir le portfolio": "Ver el portafolio",
   },
   it: {
+    "exposition personnelle": "mostra personale",
+    "Vue d'ensemble": "Panoramica",
     "Unité": "Unità",
     "atelier": "studio dell'artista",
     "Dimensions": "Dimensioni",

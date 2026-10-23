@@ -154,6 +154,7 @@
         const format = cleanNA(r[col("format")]);
         return {
           title: cleanNA(r[col("nom")]),
+          year: parseInt(cleanNA(r[col("annee")]), 10) || 0,
           category: cleanNA(r[col("categorie")]),
           technique: cleanNA(r[col("technique")]),
           size: format ? `${format} cm` : "",

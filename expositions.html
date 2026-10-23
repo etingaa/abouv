@@ -12,11 +12,11 @@
   <meta property="og:title" content="Expositions — Annick Bouvattier" />
   <meta property="og:description" content="Expositions personnelles, collectives et salons d'Annick Bouvattier depuis 1992." />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-  <script src="i18n-langs.js?v=20261026d"></script>
-  <script src="i18n.js?v=20261026d"></script>
+  <script src="i18n-langs.js?v=20261027b"></script>
+  <script src="i18n.js?v=20261027b"></script>
   <script src="site.js?v=20261026a"></script>
   <link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="styles.css?v=20261026c" />
+  <link rel="stylesheet" href="styles.css?v=20261027a" />
   <!-- pages préchargées au survol d'un lien : changement de page quasi instantané (la galerie 3D est seulement préchargée) -->
   <script type="speculationrules">
     {"prerender":[{"where":{"and":[{"selector_matches":".nav__link, .bottom__link--legal"},{"not":{"selector_matches":"[href='./'], [href='../']"}}]},"eagerness":"moderate"}],
@@ -459,11 +459,42 @@
     .tlYearLabel{ font-weight:700 !important; font-stretch:112% !important; letter-spacing:0 !important; }
     .tlCard__title{ font-weight:500 !important; font-stretch:100% !important; }
     /* défilement des villes : deux suites identiques, la piste glisse d'exactement une suite (boucle sans à-coup) */
-    .xrun__track{ display:flex !important; width:max-content; animation:xrun 70s linear infinite !important; will-change:transform; }
+    .xrun__track{ display:flex !important; width:max-content; animation:xrun 70s linear infinite !important; will-change:transform; transform:translate3d(0,0,0); backface-visibility:hidden; }
     .xrun__seq{ display:flex; flex:none; }
     .xrun__c{ margin:0 !important; padding:0 .9em 0 0 !important; }
     .xrun__c::after{ content:"" !important; display:inline-block; width:.6em; height:1px; margin:0 0 0 .9em !important; vertical-align:middle; background:rgba(var(--ink-rgb),.3) !important; }
     .xpills{ display:none !important; }
+    /* vue d'ensemble dépliable */
+    .xall{ margin:28px 0 8px; }
+    .xall summary{ display:inline-flex; align-items:center; gap:12px; height:40px; padding:0 18px; border:1px solid rgba(var(--ink-rgb),.28); border-radius:999px;
+      cursor:pointer; list-style:none; font-size:12px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--ink); transition:border-color .2s ease, background-color .2s ease; }
+    .xall summary::-webkit-details-marker{ display:none; }
+    .xall summary:hover{ border-color:var(--ink); }
+    .xall summary i{ position:relative; width:10px; height:10px; }
+    .xall summary i::before, .xall summary i::after{ content:""; position:absolute; left:0; top:4.5px; width:10px; height:1.5px; background:currentColor; transition:transform .3s ease; }
+    .xall summary i::after{ transform:rotate(90deg); }
+    .xall[open] summary i::after{ transform:rotate(0deg); }
+    .xall[open] summary{ background:var(--ink); color:var(--bg); border-color:var(--ink); }
+    .xall__body{ margin-top:22px; padding:24px 26px 28px; border:1px solid rgba(var(--ink-rgb),.16); border-radius:18px; animation:xallIn .35s ease; }
+    @keyframes xallIn{ from{ opacity:0; transform:translateY(-6px); } to{ opacity:1; transform:none; } }
+    .xall__stats{ margin:0 0 22px; font-size:13px; letter-spacing:.04em; color:var(--ink-faint); }
+    .xall__stats b{ color:var(--ink); font-weight:600; }
+    .xall__stats i{ font-style:normal; margin:0 10px; opacity:.5; }
+    .xall__key{ margin-left:22px; }
+    .xall__key::before{ content:""; display:inline-block; width:6px; height:6px; margin-right:7px; border-radius:50%; background:var(--accent); vertical-align:middle; }
+    .xall__grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:24px 32px; }
+    .xall__col h3{ margin:0 0 10px; padding-bottom:8px; border-bottom:1px solid rgba(var(--ink-rgb),.16); font-size:30px; font-weight:700; font-stretch:112%; line-height:1; color:var(--ink); }
+    .xall__col h3 small{ font-size:.5em; }
+    .xall ol{ list-style:none; margin:0; padding:0; }
+    .xall li{ display:grid; grid-template-columns:42px 1fr; column-gap:10px; padding:6px 0; cursor:pointer; border-radius:6px; transition:background-color .2s ease; }
+    .xall li:hover, .xall li:focus-visible{ background:rgba(var(--ink-rgb),.06); outline:none; }
+    .xall li b{ grid-row:span 2; font-size:13px; font-weight:600; color:var(--ink-faint); font-variant-numeric:tabular-nums; padding-left:4px; }
+    .xall__t{ font-size:14px; color:var(--ink); }
+    .xall__c{ font-size:12px; color:var(--ink-faint); }
+    .xall li[data-type="solo"] .xall__t::before{ content:""; display:inline-block; width:6px; height:6px; margin-right:7px; border-radius:50%; background:var(--accent); vertical-align:middle; }
+    @media (prefers-reduced-motion: reduce){ .xall__body{ animation:none; } }
+    .tlCard.is-flash{ animation:xflash 1.6s ease; }
+    @keyframes xflash{ 0%, 40%{ background:rgba(var(--accent-rgb),.14); } 100%{ background:transparent; } }
     .xfilter{ margin:-16px 0 0; }
     .xfilter button{
       padding:6px 0; border:0; background:none; cursor:pointer; font:inherit; font-size:13px; font-weight:500;
@@ -730,8 +761,9 @@
     const decadeMark = {}; // décennie -> première année (la plus ancienne) qui a des expositions
 
     // apparition douce des rangées au défilement
+    // (désactivé : les lignes apparaissaient en glissant au défilement, ce qui donnait une impression d'à-coups)
     function revealRows(){
-      if (matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window)) return;
+      return;
       const io = new IntersectionObserver((ents) => ents.forEach(en => {
         if (en.isIntersecting){ en.target.classList.add("is-in"); io.unobserve(en.target); }
       }), { rootMargin: "0px 0px -8% 0px" });
@@ -855,6 +887,23 @@
     // en tête : le titre, puis les villes qui défilent (construites une seule fois pour que le défilement
     // ne redémarre jamais) ; un clic sur une ville filtre la liste, un second clic (ou « × ») retire le filtre
     let xsumBuilt = false;
+    // Vue d'ensemble : tout le parcours d'un coup d'œil, par décennie (panneau qu'on déplie)
+    function overview(list){
+      const years = list.map(e => e.year), countries = new Set(list.map(e => e.country));
+      const by = (k) => list.filter(e => e.type === k).length;
+      const decades = [...new Set(list.map(e => Math.floor(e.year / 10) * 10))].sort((a, b) => b - a);
+      const stats = [
+        `<b>${list.length}</b> ${t("expositions")}`, `<b>${by("solo")}</b> ${t("personnelles")}`, `<b>${by("group")}</b> ${t("collectives")}`,
+        `<b>${by("salon")}</b> ${t("salons")}`, `<b>${countries.size}</b> ${t("pays")}`, `<b>${Math.min(...years)} – ${Math.max(...years)}</b>`,
+      ].join("<i>·</i>") + `<span class="xall__key">${t("exposition personnelle")}</span>`;
+      const cols = decades.map(d => `
+        <section class="xall__col"><h3>${d}<small>s</small></h3><ol>${list.map((e, k) => ({ e, k })).filter(({ e }) => Math.floor(e.year / 10) * 10 === d)
+          .sort((a, b) => b.e.year - a.e.year).map(({ e, k }) => `
+          <li data-k="${k}" data-type="${e.type}" tabindex="0"><b>${e.year}</b><span class="xall__t">${escapeHtml(e.title)}</span><span class="xall__c">${escapeHtml(t(e.city))}</span></li>`).join("")}</ol></section>`).join("");
+      return `<details class="xall"><summary><span>${t("Vue d'ensemble")}</span><i aria-hidden="true"></i></summary>
+        <div class="xall__body"><p class="xall__stats">${stats}</p><div class="xall__grid">${cols}</div></div></details>`;
+    }
+
     function renderSummary(n){
       const box = document.getElementById("xsum");
       const list = window.EXPOS || [];
@@ -872,9 +921,18 @@
         box.innerHTML = `
           <h2 class="xtitle">${t("Expositions")}<sup></sup></h2>
           <p class="xfilter" hidden></p>
-          <div class="xrun"><div class="xrun__track">${seq(false)}${seq(true)}</div></div>`;
+          <div class="xrun"><div class="xrun__track">${seq(false)}${seq(true)}</div></div>
+          ${overview(list)}`;
         box.querySelectorAll(".xrun__c").forEach(b => b.addEventListener("click", () => goCity(b.dataset.city)));
         box.querySelector(".xfilter").addEventListener("click", (e) => { if (e.target.closest("button")) goCity(filters.q); });
+        // vue d'ensemble : un clic sur une exposition referme le panneau et amène à sa ligne
+        box.querySelectorAll(".xall li").forEach(li => li.addEventListener("keydown", (ev) => { if (ev.key === "Enter" || ev.key === " "){ ev.preventDefault(); li.click(); } }));
+        box.querySelectorAll(".xall li").forEach(li => li.addEventListener("click", () => {
+          const e = list[+li.dataset.k], c = cards.find(x => x.expo === e);
+          if (!c) return;
+          box.querySelector(".xall").open = false;
+          if (c){ c.el.scrollIntoView({ behavior: "smooth", block: "center" }); c.el.classList.remove("is-flash"); void c.el.offsetWidth; c.el.classList.add("is-flash"); }
+        }));
       }
       box.querySelector(".xtitle sup").textContent = n;
       box.querySelectorAll(".xrun__c").forEach(b => b.classList.toggle("is-on", filters.q.toLowerCase() === b.dataset.city.toLowerCase()));
