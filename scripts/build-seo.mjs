@@ -115,8 +115,8 @@ async function loadArtworks(){
   // images absentes : pas de page (le portfolio les masque aussi)
   const ok = [];
   for (const a of list){ if (await exists("images/" + a.file)) ok.push(a); else console.warn("Image introuvable, œuvre ignorée :", a.title, a.file); }
-  // même ordre que le portfolio : disponibles d'abord, puis vendues
-  return ok.sort((a, b) => (a.status === "vendue") - (b.status === "vendue"));
+  // même ordre que le portfolio : disponibles d'abord, puis les plus récentes, puis par titre
+  return ok.sort((a, b) => (a.status === "vendue") - (b.status === "vendue") || (parseInt(b.year, 10) || 0) - (parseInt(a.year, 10) || 0) || a.title.localeCompare(b.title, "fr"));
 }
 
 /* ====== traductions anglaises (dictionnaire de i18n.js) ====== */
@@ -220,6 +220,8 @@ function workPage(a, i, list, tpl, EN, sizes, L){
 <html lang="fr">
 <head>
   <meta charset="utf-8" />
+  <script>/* thème clair mémorisé : appliqué avant tout affichage (pas de flash) */(function(){try{if(localStorage.getItem("abouv:theme")==="light"){var r=document.documentElement;r.setAttribute("data-theme","light");r.style.background="#efebe3";}}catch(e){}})();</script>
+  <link rel="expect" href="#i18n-end" blocking="render" />
   <style>html{background:#060b18}</style>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>${esc(title)}</title>
@@ -286,6 +288,7 @@ ${jsonld(ld)}
       ${tpl.footer}
     </div>
   </div>
+<script>window.I18N && I18N.apply();</script><i id="i18n-end" hidden></i>
 </body>
 </html>
 `;

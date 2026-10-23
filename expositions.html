@@ -2,6 +2,8 @@
 <html lang="fr">
 <head>
   <meta charset="utf-8" />
+  <script>/* thème clair mémorisé : appliqué avant tout affichage (pas de flash) */(function(){try{if(localStorage.getItem("abouv:theme")==="light"){var r=document.documentElement;r.setAttribute("data-theme","light");r.style.background="#efebe3";}}catch(e){}})();</script>
+  <link rel="expect" href="#i18n-end" blocking="render" />
   <style>html{background:#060b18}</style>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="description" content="Expositions personnelles, collectives et salons d'Annick Bouvattier depuis 1992." />
@@ -12,11 +14,11 @@
   <meta property="og:title" content="Expositions — Annick Bouvattier" />
   <meta property="og:description" content="Expositions personnelles, collectives et salons d'Annick Bouvattier depuis 1992." />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-  <script src="i18n-langs.js?v=20261027b"></script>
-  <script src="i18n.js?v=20261027b"></script>
+  <script src="i18n-langs.js?v=20261027c"></script>
+  <script src="i18n.js?v=20261027c"></script>
   <script src="site.js?v=20261026a"></script>
   <link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="styles.css?v=20261027d" />
+  <link rel="stylesheet" href="styles.css?v=20261027e" />
   <!-- pages préchargées au survol d'un lien : changement de page quasi instantané (la galerie 3D est seulement préchargée) -->
   <script type="speculationrules">
     {"prerender":[{"where":{"and":[{"selector_matches":".nav__link, .bottom__link--legal"},{"not":{"selector_matches":"[href='./'], [href='../']"}}]},"eagerness":"moderate"}],
@@ -487,7 +489,9 @@
     .xall__arrow:hover{ border-color:var(--ink); }
     .xall__arrow svg{ width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
     /* la page se résume à ce carrousel : on cache le bandeau des villes et la ligne du temps détaillée */
-    .xrun, #timelineView, .tlNav, .tlFoot, .tlHint, .xfilter{ display:none !important; }
+    #timelineView, .tlNav, .tlFoot, .tlHint, .xfilter{ display:none !important; }
+    .xrun{ pointer-events:none; user-select:none; margin-top:36px !important; }
+    .xrun__c{ cursor:default !important; }
     .xall__grid{ display:flex; gap:24px; overflow-x:auto; scroll-snap-type:x mandatory; overscroll-behavior-x:contain; scrollbar-width:none; -webkit-overflow-scrolling:touch;
       margin:0 calc(50% - 50vw); padding:10px 10vw 28px; perspective:1600px; }
     .xall__grid::-webkit-scrollbar{ display:none; }
@@ -1002,13 +1006,14 @@
       if (!xsumBuilt){
         xsumBuilt = true;
         const cities = [...new Set(list.map(e => e.city))];
+        // bandeau des villes : il défile, simple décor (pas de clic)
         const seq = (hidden) => `<div class="xrun__seq"${hidden ? ' aria-hidden="true"' : ""}>${cities.map(c =>
-          `<button type="button" class="xrun__c" data-city="${escapeHtml(c)}"${hidden ? ' tabindex="-1"' : ""}>${escapeHtml(t(c))}</button>`).join("")}</div>`;
+          `<span class="xrun__c" data-city="${escapeHtml(c)}">${escapeHtml(t(c))}</span>`).join("")}</div>`;
         box.innerHTML = `
           <h2 class="xtitle">${t("Expositions")}<sup></sup></h2>
           <p class="xfilter" hidden></p>
+          <div class="xrun" aria-hidden="true"><div class="xrun__track">${seq(false)}${seq(true)}</div></div>
           ${overview(list)}`;
-        box.querySelectorAll(".xrun__c").forEach(b => b.addEventListener("click", () => goCity(b.dataset.city)));
         box.querySelector(".xfilter").addEventListener("click", (e) => { if (e.target.closest("button")) goCity(filters.q); });
         // décennies : on glisse de l'une à l'autre (doigt, pavé tactile, flèches, onglets) ; l'onglet suit
         const grid = box.querySelector(".xall__grid"), colsEl = [...grid.children], tabsEl = [...box.querySelectorAll(".xall__tab")];
@@ -1195,5 +1200,6 @@
       if(qParam) apply(true); // arrivée depuis une galerie : on glisse vers ses expositions
     });
   </script>
+<script>window.I18N && I18N.apply();</script><i id="i18n-end" hidden></i>
 </body>
 </html>

@@ -3,6 +3,9 @@
 // Un texte absent ici s'affiche en anglais.
 window.I18N_LANGS = {
   es: {
+    "Page": "Página",
+    "Page précédente": "Página anterior",
+    "Page suivante": "Página siguiente",
     "exposition personnelle": "exposición individual",
     "Vue d'ensemble": "Vista general",
     "Unité": "Unidad",
@@ -287,6 +290,9 @@ window.I18N_LANGS = {
     "Voir le portfolio": "Ver el portafolio",
   },
   it: {
+    "Page": "Pagina",
+    "Page précédente": "Pagina precedente",
+    "Page suivante": "Pagina successiva",
     "exposition personnelle": "mostra personale",
     "Vue d'ensemble": "Panoramica",
     "Unité": "Unità",

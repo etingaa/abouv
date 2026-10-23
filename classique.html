@@ -2,6 +2,8 @@
 <html lang="fr">
 <head>
   <meta charset="utf-8" />
+  <script>/* thème clair mémorisé : appliqué avant tout affichage (pas de flash) */(function(){try{if(localStorage.getItem("abouv:theme")==="light"){var r=document.documentElement;r.setAttribute("data-theme","light");r.style.background="#efebe3";}}catch(e){}})();</script>
+  <link rel="expect" href="#i18n-end" blocking="render" />
   <meta name="robots" content="noindex" />
   <!-- version sans 3D de l'accueil (repli automatique) : l'adresse affichée reste celle du site de base -->
   <script>(function(){var p=location.pathname;if(/\/classique(\.html)?$/.test(p))history.replaceState(history.state,"",p.replace(/classique(\.html)?$/,"")+location.search+location.hash);})();</script>
@@ -14,8 +16,8 @@
   <meta property="og:title" content="Annick Bouvattier — Artiste peintre" />
   <meta property="og:description" content="Annick Bouvattier, artiste peintre : peintures à l'huile et portraits de femmes, en jeux d'ombre et de lumière." />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-  <script src="i18n-langs.js?v=20261027b"></script>
-  <script src="i18n.js?v=20261027b"></script>
+  <script src="i18n-langs.js?v=20261027c"></script>
+  <script src="i18n.js?v=20261027c"></script>
   <script src="site.js?v=20261026a"></script>
   <link rel="preconnect" href="https://docs.google.com" crossorigin />
   <script src="sheet.js?v=20261027a"></script>
@@ -29,7 +31,7 @@
   </script>
   <title>Annick Bouvattier — Artiste peintre</title>
 
-  <link rel="stylesheet" href="styles.css?v=20261027d" />
+  <link rel="stylesheet" href="styles.css?v=20261027e" />
 
   <style>
     /* Accueil : un livre d'art ouvert, posé au centre de la table blanche de l'atelier (vue de dessus) */
@@ -377,5 +379,6 @@
     });
   })();
   </script>
+<script>window.I18N && I18N.apply();</script><i id="i18n-end" hidden></i>
 </body>
 </html>

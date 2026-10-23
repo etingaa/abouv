@@ -141,6 +141,9 @@
     "œuvre": "artwork",
     "œuvres": "artworks",
     "Passer": "Skip",
+    "Page": "Page",
+    "Page précédente": "Previous page",
+    "Page suivante": "Next page",
     "exposition personnelle": "solo exhibition",
     "Vue d'ensemble": "Overview",
     "Unité": "Unit",
@@ -453,14 +456,26 @@
   const NAMES = { fr: "Français", en: "English", es: "Español", it: "Italiano" };
   const SHORT = { fr: "fra", en: "eng", es: "esp", it: "ita" };
 
+  // Changer de langue : on reste sur la même page, au même endroit (position gardée, sans flash).
+  // ?lang= dans l'adresse : sinon le navigateur peut ressortir une version de la page déjà préchargée
+  // dans l'ancienne langue. Une page peut indiquer l'adresse à recharger (window.I18N_URL : ex. le portfolio
+  // avec une fiche ouverte, dont l'adresse affichée est celle de l'œuvre).
+  const SCROLL_KEY = "abouv:lang-scroll";
   function switchTo(l){
     if (l === lang) return;
     store(l);
-    // ?lang= dans l'adresse : sinon le navigateur peut ressortir une version de la page déjà
-    // préchargée (règles de préchargement, survol du lien) dans l'ancienne langue
-    const url = new URL(location.href);
+    const url = new URL(typeof window.I18N_URL === "function" ? window.I18N_URL() : location.href, location.href);
     url.searchParams.set("lang", l);
+    try { sessionStorage.setItem(SCROLL_KEY, JSON.stringify({ path: url.pathname, y: scrollY })); } catch (_) {}
     location.replace(url.href);
+  }
+  // retour à la position d'avant le changement de langue (aussi après le chargement des œuvres)
+  function restoreScroll(){
+    let st = null;
+    try { st = JSON.parse(sessionStorage.getItem(SCROLL_KEY) || "null"); } catch (_) {}
+    if (!st || st.path !== location.pathname) return;
+    const go = () => scrollTo({ top: st.y, behavior: "instant" });
+    go(); addEventListener("load", go, { once: true }); setTimeout(go, 400); setTimeout(() => { go(); try { sessionStorage.removeItem(SCROLL_KEY); } catch (_) {} }, 1200);
   }
 
   // Page préchargée ou revenue par « Précédent » dans une langue qui n'est plus la bonne : on la recharge
@@ -521,13 +536,20 @@
     // (plus de choix de langue dans le pied de page : il est en haut à droite, et dans le menu du téléphone)
   }
 
-  document.addEventListener("DOMContentLoaded", () => {
+  // Traduction de la page : appelée par le petit script en fin de <body> (avant le premier affichage : pas de
+  // flash du français), sinon au DOMContentLoaded
+  let applied = false;
+  function apply(){
+    if (applied || !document.body) return;
+    applied = true;
     if (lang !== "fr") translatePage();
     addSwitch();
     root.classList.remove("i18n-wait");
+    restoreScroll();
     if (missing.size) console.info(`[i18n] textes sans traduction (${lang}) :`, [...missing]);
-  });
+  }
+  document.addEventListener("DOMContentLoaded", apply);
 
-  window.I18N = { lang, t, missing };
+  window.I18N = { lang, t, missing, apply };
   window.t = t;
 })();

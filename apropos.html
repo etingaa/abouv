@@ -2,6 +2,8 @@
 <html lang="fr">
 <head>
   <meta charset="utf-8" />
+  <script>/* thème clair mémorisé : appliqué avant tout affichage (pas de flash) */(function(){try{if(localStorage.getItem("abouv:theme")==="light"){var r=document.documentElement;r.setAttribute("data-theme","light");r.style.background="#efebe3";}}catch(e){}})();</script>
+  <link rel="expect" href="#i18n-end" blocking="render" />
   <style>html{background:#060b18}</style>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="description" content="Biographie d'Annick Bouvattier, artiste peintre : de la mode et du cinéma à la peinture à l'huile au couteau." />
@@ -12,11 +14,11 @@
   <meta property="og:title" content="À propos — Annick Bouvattier" />
   <meta property="og:description" content="Biographie d'Annick Bouvattier, artiste peintre : de la mode et du cinéma à la peinture à l'huile au couteau." />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-  <script src="i18n-langs.js?v=20261027b"></script>
-  <script src="i18n.js?v=20261027b"></script>
+  <script src="i18n-langs.js?v=20261027c"></script>
+  <script src="i18n.js?v=20261027c"></script>
   <script src="site.js?v=20261026a"></script>
   <link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="styles.css?v=20261027d" />
+  <link rel="stylesheet" href="styles.css?v=20261027e" />
   <!-- pages préchargées au survol d'un lien : changement de page quasi instantané (la galerie 3D est seulement préchargée) -->
   <script type="speculationrules">
     {"prerender":[{"where":{"and":[{"selector_matches":".nav__link, .bottom__link--legal"},{"not":{"selector_matches":"[href='./'], [href='../']"}}]},"eagerness":"moderate"}],
@@ -41,35 +43,31 @@
     .about__text p:first-child{ font-size:19px; line-height:1.6; color:var(--ink); }
     .about__text strong{ color:var(--ink); font-weight:700; }
 
-    /* ===== FAQ : questions dépliables ===== */
+    /* ===== Q&A : une carte par question (numérotée), sur deux colonnes ; on la déplie pour lire la réponse ===== */
     .faq{ max-width:none; border-top:0; scroll-margin-top:calc(var(--shade-h, 90px) + 60px); }
-    .faq details{ border-bottom:1px solid rgba(var(--ink-rgb),.09); }
-    .faq summary{
-      display:flex; align-items:center; justify-content:space-between; gap:16px;
-      padding:18px 2px; cursor:pointer; list-style:none;
-      font-size:16px; font-weight:600; color:rgba(var(--ink-rgb),.88);
-      transition:color var(--ease);
-    }
+    .faq > div[data-lang]{ display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:14px; counter-reset:q; align-items:start; }
+    .faq details{ counter-increment:q; border:1px solid rgba(var(--ink-rgb),.16); border-radius:18px; padding:0 22px; transition:border-color .3s ease, background-color .3s ease; }
+    .faq details:hover{ border-color:rgba(var(--ink-rgb),.32); }
+    .faq details[open]{ border-color:rgba(var(--t-sand),.7); background:rgba(var(--t-sand),.06); }
+    .faq summary{ display:grid; grid-template-columns:auto 1fr auto; align-items:start; gap:16px; padding:20px 0; cursor:pointer; list-style:none;
+      font-size:17px; font-weight:500; line-height:1.35; color:var(--ink); }
     .faq summary::-webkit-details-marker{ display:none; }
-    .faq summary:hover, .faq details[open] summary{ color:var(--ink); }
-    .faq details{ position:relative; }
-    .faq details[open]::before{ content:""; position:absolute; left:-14px; top:20px; bottom:20px; width:2px; border-radius:2px; background:rgb(var(--t-sand)); }
-    .faq details[open] summary::after{ border-color:rgb(var(--t-sand)) !important; color:rgb(var(--t-sand)); }
+    .faq summary::before{ content:counter(q, decimal-leading-zero); padding-top:3px; font-size:11px; font-weight:600; letter-spacing:.14em; color:rgb(var(--t-sand)); font-variant-numeric:tabular-nums; }
     /* + qui devient − à l'ouverture */
     .faq summary::after{
-      content:""; flex:none; width:26px; height:26px; border-radius:8px;
-      border:1px solid rgba(var(--ink-rgb),.14);
+      content:""; flex:none; width:28px; height:28px; border-radius:50%;
+      border:1px solid rgba(var(--ink-rgb),.25);
       background:
         linear-gradient(currentColor, currentColor) center / 10px 1.5px no-repeat,
         linear-gradient(currentColor, currentColor) center / 1.5px 10px no-repeat;
-      transition:background-size .3s ease, background-color var(--ease), border-color var(--ease);
+      transition:background-size .3s ease, background-color .2s ease, border-color .2s ease, transform .3s ease;
     }
-    .faq summary:hover::after{ background-color:rgba(var(--ink-rgb),.08); border-color:rgba(var(--ink-rgb),.26); }
-    .faq details[open] summary::after{ background-size:10px 1.5px, 1.5px 0; }
-    .faq__a{ padding:0 44px 20px 2px; animation:faqIn .35s ease; }
-    .faq__a p{ margin:0 0 10px; color:var(--ink-soft); line-height:1.7; font-size:15px; max-width:70ch; }
-    .faq__a a{ color:var(--ink); border-bottom:1px solid rgba(var(--ink-rgb),.35); }
+    .faq details[open] summary::after{ background-size:10px 1.5px, 1.5px 0; border-color:rgb(var(--t-sand)); color:rgb(var(--t-sand)); transform:rotate(180deg); }
+    .faq__a{ padding:0 0 20px 34px; animation:faqIn .35s ease; }
+    .faq__a p{ margin:0 0 10px; color:var(--ink-soft); line-height:1.7; font-size:15px; }
+    .faq__a a{ color:var(--ink); border-bottom:1px solid rgba(var(--t-sand),.7); }
     .faq__a a:hover{ border-bottom-color:var(--ink); }
+    @media (max-width:760px){ .faq > div[data-lang]{ grid-template-columns:1fr; } .faq details{ padding:0 16px; } .faq summary{ font-size:15.5px; } .faq__a{ padding-left:30px; } }
     @keyframes faqIn{ from{ opacity:0; transform:translateY(-4px); } to{ opacity:1; transform:none; } }
 
     @media (max-width:900px){
@@ -78,8 +76,6 @@
     }
     @media (max-width:600px){
       .about__text p:first-child{ font-size:17px; }
-      .faq summary{ font-size:15px; padding:16px 0; }
-      .faq__a{ padding-right:0; }
     }
     @media (prefers-reduced-motion: reduce){ .faq__a{ animation:none; } .faq summary::after{ transition:none; } }
 
@@ -89,23 +85,22 @@
     .abx .bigTitle{ margin-top:clamp(16px, 4vh, 40px); }
     .abx__grid{ display:grid; grid-template-columns:minmax(0, 5fr) minmax(0, 7fr); gap:clamp(32px, 6vw, 96px); }
     .abx__photo{ position:sticky; top:calc(var(--shade-h, 90px) + 24px); align-self:start; margin:0; }
-    .abx__photo img{ display:block; width:100%; height:min(76vh, 720px); object-fit:cover; filter:grayscale(1) contrast(1.06); }
+    .abx__photo img{ display:block; width:100%; height:min(76vh, 720px); object-fit:cover; }
     .abx__photo figcaption{ margin-top:12px; font-size:11px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint); }
     /* la biographie d'un seul tenant, en grand : le texte en retrait, les mots clés en blanc */
     .abx__text p{ margin:0 0 1.1em; font-size:clamp(20px, 1.85vw, 28px); font-weight:400; line-height:1.42; letter-spacing:-.012em; color:rgba(var(--ink-rgb),.5); }
     .abx__text p:first-child::first-line{ color:var(--ink); }
-    .abx__text strong{ font-weight:500; color:var(--ink); background:linear-gradient(rgba(var(--t-coral),.35), rgba(var(--t-coral),.35)) 0 100% / 100% 1px no-repeat; }
+    .abx__text strong{ font-weight:500; color:var(--ink); padding:0 .12em; margin:0 -.04em; border-radius:.2em; -webkit-box-decoration-break:clone; box-decoration-break:clone;
+      background:linear-gradient(transparent 58%, rgba(var(--t-coral),.22) 58%, rgba(var(--t-coral),.22) 92%, transparent 92%); }
     .abx__text em{ font-style:italic; }
     /* Q&A aligné sur la colonne de texte */
-    #questions > div{ display:grid; grid-template-columns:minmax(0, 5fr) minmax(0, 7fr); gap:clamp(32px, 6vw, 96px); }
-    #questions > div > *{ grid-column:2; }
+    #questions > div{ display:block; }
     .abs__contact{ display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:12px 32px; margin:0; padding:22px 0; border-top:1px solid rgba(var(--ink-rgb),.16); border-bottom:1px solid rgba(var(--ink-rgb),.16);
       font-size:12px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint); }
     .abs__contact a{ color:var(--ink); border-bottom:1px solid transparent; padding-bottom:2px; transition:border-color .2s ease; }
     .abs__contact a:hover{ border-bottom-color:rgb(var(--t-blue)); }
     @media (max-width:900px){
-      .abx__grid, #questions > div{ grid-template-columns:minmax(0, 1fr); gap:32px; }
-      #questions > div > *{ grid-column:1; }
+      .abx__grid{ grid-template-columns:minmax(0, 1fr); gap:32px; }
       .abx__photo{ position:static; }
       .abx__photo img{ height:auto; max-height:70vh; }
     }
@@ -143,119 +138,27 @@
       .facts--3{ grid-template-columns:1fr; }
     }
 
-    /* ══════════════════════════════════
-       PDF LIGHTBOX
-    ══════════════════════════════════ */
-    .pdfModal{
-      display:none;
-      position:fixed;
-      inset:0;
-      z-index:1000;
-      background:rgba(0,0,0,.82);
-      backdrop-filter:blur(6px);
-      -webkit-backdrop-filter:blur(6px);
-      align-items:center;
-      justify-content:center;
-      padding:24px;
-      box-sizing:border-box;
-    }
-    .pdfModal.is-open{ display:flex; }
-
-    .pdfModal__inner{
-      position:relative;
-      width:100%;
-      max-width:860px;
-      height:90vh;
-      max-height:1000px;
-      background:var(--bg);
-      border-radius:var(--radius-card);
-      overflow:hidden;
-      box-shadow:0 32px 90px rgba(0,0,0,.35);
-      border:1px solid rgba(var(--ink-rgb),.15);
-      display:flex;
-      flex-direction:column;
-    }
-
-    /* Barre du haut */
-    .pdfModal__bar{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:12px 18px;
-      background:rgba(var(--ink-rgb),.05);
-      border-bottom:1px solid rgba(var(--ink-rgb),.10);
-      flex-shrink:0;
-    }
-    .pdfModal__title{
-      color:var(--ink);
-      font-size:14px;
-      font-weight:600;
-      opacity:.85;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-    .pdfModal__actions{
-      display:flex;
-      gap:10px;
-      flex-shrink:0;
-    }
-    .pdfModal__btn{
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      height:34px;
-      padding:0 14px;
-      border-radius:8px;
-      font-size:13px;
-      font-weight:600;
-      font-family:inherit;
-      border:1px solid var(--line);
-      background:var(--fill);
-      color:var(--ink);
-      cursor:pointer;
-      text-decoration:none;
-      transition:background-color var(--ease);
-    }
-    .pdfModal__btn:hover{ background:var(--fill-hover); }
-    .pdfModal__close{
-      width:34px; height:34px; padding:0;
-      justify-content:center;
-      font-size:20px;
-    }
-
-    /* iframe */
-    .pdfModal__frame{
-      flex:1;
-      width:100%;
-      border:none;
-      display:block;
-    }
-
-    /* Fallback mobile (iOS ne supporte pas les PDF en iframe) */
-    .pdfModal__fallback{
-      display:none;
-      flex:1;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      gap:18px;
-      padding:32px;
-      text-align:center;
-      color:var(--ink-soft);
-      font-size:15px;
-    }
-    .pdfModal__fallback svg{
-      width:56px; height:56px;
-      opacity:.55;
-    }
-
-    @media (max-width:600px){
-      .pdfModal{ padding:12px; }
-      .pdfModal__inner{ height:95vh; border-radius:14px; }
-      .pdfModal__frame{ display:none; }
-      .pdfModal__fallback{ display:flex; }
-    }
+    /* ===== Liseuse du magazine : les pages côte à côte sur fond sombre, on les fait glisser ===== */
+    .reader{ position:fixed; inset:0; z-index:1000; display:flex; flex-direction:column; background:rgba(5,8,16,.94);
+      -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px); color:#efe9df; opacity:0; pointer-events:none; transition:opacity .3s ease; }
+    .reader.is-open{ opacity:1; pointer-events:auto; }
+    .reader__bar{ display:flex; align-items:center; gap:18px; padding:18px clamp(16px, 4vw, 48px); }
+    .reader__title{ flex:1; min-width:0; font-size:12px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .reader__count{ font-size:12px; letter-spacing:.14em; color:rgba(239,233,223,.6); font-variant-numeric:tabular-nums; }
+    .reader__count b{ color:#efe9df; }
+    .reader__dl{ font-size:11px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:#efe9df; border-bottom:1px solid rgba(126,162,240,.8); padding-bottom:2px; }
+    .reader__btn{ display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; padding:0; border-radius:50%;
+      border:1px solid rgba(239,233,223,.3); background:none; color:#efe9df; cursor:pointer; transition:border-color .2s ease, background-color .2s ease; }
+    .reader__btn:hover{ border-color:#efe9df; background:rgba(239,233,223,.08); }
+    .reader__btn svg{ width:15px; height:15px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
+    .reader__pages{ flex:1; min-height:0; display:flex; gap:clamp(12px, 2vw, 28px); overflow-x:auto; scroll-snap-type:x mandatory; scrollbar-width:none; overscroll-behavior:contain;
+      padding:0 clamp(16px, 8vw, 120px) 28px; align-items:center; }
+    .reader__pages::-webkit-scrollbar{ display:none; }
+    .reader__pages img{ flex:none; height:100%; max-height:calc(100vh - 110px); width:auto; max-width:84vw; object-fit:contain; scroll-snap-align:center;
+      border-radius:4px; box-shadow:0 30px 80px rgba(0,0,0,.5); background:#fff; }
+    .reader__nav{ position:absolute; top:50%; left:0; right:0; display:flex; justify-content:space-between; padding:0 clamp(10px, 2vw, 28px); pointer-events:none; }
+    .reader__nav .reader__btn{ pointer-events:auto; background:rgba(5,8,16,.6); }
+    @media (max-width:760px){ .reader__nav{ display:none; } .reader__pages{ padding:0 6vw 20px; } .reader__pages img{ max-width:88vw; height:auto; } }
     .ix-cover{ display:block; padding:0; border:0; background:none; cursor:zoom-in; }
     .ix-cover img{ filter:none; }
     /* Presse : grande couverture + le nom du magazine en très grand contour blanc */
@@ -304,7 +207,7 @@
     <section class="abx" id="artiste" aria-labelledby="t-artiste">
       <h2 class="bigTitle bigTitle--sub bigTitle--tc tc-coral" id="t-artiste" data-n="01">L’artiste</h2><span class="tbar tc-coral" aria-hidden="true"></span>
       <div class="abx__grid">
-        <figure class="abx__photo"><img src="images/annickbouvattier.jpg" alt="Annick Bouvattier dans son atelier" /><figcaption>Annick Bouvattier · Atelier</figcaption></figure>
+        <figure class="abx__photo"><img src="images/annickbouvattier.jpg" alt="Annick Bouvattier dans son atelier" /><figcaption>Annick Bouvattier</figcaption></figure>
         <div class="abx__text" data-lang="fr">
           <p><strong>Annick Bouvattier</strong> est née à Nevers. Son père, pédiatre et amateur d’art, lui transmet dès sa prime enfance le <strong>goût de l’art et de la peinture</strong>.</p>
           <p>Baccalauréat scientifique en poche, elle délaisse la tradition familiale des études de médecine pour s’inscrire à l’école de mode <strong>“Bercot – Marie Rucki”</strong> où, pendant deux ans, elle reçoit une <strong>formation de styliste</strong>. Ses créations, présentées à Paris et à la Villa Médicis à Rome, connaissent un succès d’estime auprès des professionnels et font l’objet de <strong>parutions dans la presse spécialisée</strong>.</p>
@@ -513,79 +416,68 @@
       </footer>
   </div>
   </div>
-<!-- LIGHTBOX PDF -->
-<div class="pdfModal" id="pdfModal" role="dialog" aria-modal="true" aria-labelledby="pdfModalTitle">
-  <div class="pdfModal__inner">
-    <div class="pdfModal__bar">
-      <span class="pdfModal__title" id="pdfModalTitle"></span>
-      <div class="pdfModal__actions">
-        <a class="pdfModal__btn" id="pdfModalOpen" href="#" target="_blank" rel="noopener">Ouvrir</a>
-        <a class="pdfModal__btn" id="pdfModalDownload" href="#" download>Télécharger</a>
-        <button class="pdfModal__btn pdfModal__close" id="pdfModalClose" type="button" aria-label="Fermer">×</button>
-      </div>
-    </div>
-
-    <iframe class="pdfModal__frame" id="pdfModalFrame" title="Aperçu du PDF"></iframe>
-
-    <!-- Mobile : les navigateurs mobiles n'affichent pas les PDF en iframe -->
-    <div class="pdfModal__fallback">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-        <polyline points="14 2 14 8 20 8"/>
-      </svg>
-      <p>L'aperçu n'est pas disponible sur cet appareil.</p>
-      <a class="thinBtn" id="pdfFallbackOpen" href="#" target="_blank" rel="noopener">Ouvrir le PDF</a>
-    </div>
+<!-- LISEUSE DU MAGAZINE (pages en images : images/presse/p1…p4.jpg, tirées du PDF) -->
+<div class="reader" id="reader" role="dialog" aria-modal="true" aria-labelledby="readerTitle" hidden>
+  <div class="reader__bar">
+    <span class="reader__title" id="readerTitle"></span>
+    <span class="reader__count"><b id="readerCur">1</b> / <span id="readerTot">4</span></span>
+    <a class="reader__dl" id="readerDl" href="images/ArtistesAnnickBouvattier.pdf" download>Télécharger</a>
+    <button class="reader__btn" id="readerClose" type="button" aria-label="Fermer"><svg viewBox="0 0 16 16"><path d="M3 3l10 10M13 3 3 13"/></svg></button>
+  </div>
+  <div class="reader__pages" id="readerPages"></div>
+  <div class="reader__nav">
+    <button class="reader__btn" data-d="-1" type="button" aria-label="Page précédente"><svg viewBox="0 0 16 16"><path d="M10 3 5 8l5 5"/></svg></button>
+    <button class="reader__btn" data-d="1" type="button" aria-label="Page suivante"><svg viewBox="0 0 16 16"><path d="m6 3 5 5-5 5"/></svg></button>
   </div>
 </div>
 
 <script>
 (() => {
-  const modal = document.getElementById("pdfModal");
-  const frame = document.getElementById("pdfModalFrame");
-  const title = document.getElementById("pdfModalTitle");
-  const openLinks = [document.getElementById("pdfModalOpen"), document.getElementById("pdfFallbackOpen")];
-  const dlLink = document.getElementById("pdfModalDownload");
-  const closeBtn = document.getElementById("pdfModalClose");
-  const desktop = window.matchMedia("(min-width: 601px)");
-  let lastTrigger = null;
-
-  function openPdf(src, label, trigger){
-    lastTrigger = trigger;
-    title.textContent = label;
-    openLinks.forEach(a => a.href = src);
-    dlLink.href = src;
-    // sur mobile l'iframe est masquée : on évite de télécharger le PDF pour rien
-    if (desktop.matches) frame.src = src;
-    modal.classList.add("is-open");
+  const PAGES = ["images/presse/p1.jpg", "images/presse/p2.jpg", "images/presse/p3.jpg", "images/presse/p4.jpg"];
+  const r = document.getElementById("reader"), box = document.getElementById("readerPages");
+  const cur = document.getElementById("readerCur");
+  document.getElementById("readerTot").textContent = PAGES.length;
+  let last = null, built = false;
+  const imgs = () => [...box.children];
+  function build(){
+    if (built) return; built = true;
+    box.innerHTML = PAGES.map((src, i) => `<img src="${src}" alt="${t("Page")} ${i + 1}" loading="${i < 2 ? "eager" : "lazy"}" decoding="async">`).join("");
+  }
+  function current(){
+    const mid = box.scrollLeft + box.clientWidth / 2;
+    let best = 0, bd = Infinity;
+    imgs().forEach((im, k) => { const d = Math.abs(im.offsetLeft + im.offsetWidth / 2 - mid); if (d < bd){ bd = d; best = k; } });
+    return best;
+  }
+  const go = (k) => { const im = imgs()[Math.max(0, Math.min(PAGES.length - 1, k))]; if (im) box.scrollTo({ left: im.offsetLeft - (box.clientWidth - im.offsetWidth) / 2, behavior: "smooth" }); };
+  box.addEventListener("scroll", () => requestAnimationFrame(() => { cur.textContent = current() + 1; }), { passive: true });
+  function open(label, trigger){
+    build(); last = trigger;
+    document.getElementById("readerTitle").textContent = label;
+    r.hidden = false; requestAnimationFrame(() => r.classList.add("is-open"));
     document.body.style.overflow = "hidden";
-    closeBtn.focus();
+    box.scrollLeft = 0; cur.textContent = 1;
+    document.getElementById("readerClose").focus({ preventScroll: true });
   }
-
-  function closePdf(){
-    modal.classList.remove("is-open");
-    frame.removeAttribute("src");
-    document.body.style.overflow = "";
-    if (lastTrigger) lastTrigger.focus();
+  function close(){
+    r.classList.remove("is-open"); document.body.style.overflow = "";
+    setTimeout(() => { r.hidden = true; }, 300);
+    if (last) last.focus({ preventScroll: true });
   }
-
-  document.querySelectorAll("[data-pdf]").forEach(el => {
-    const open = () => openPdf(el.dataset.pdf, el.dataset.title || "", el);
-    el.addEventListener("click", open);
-    el.addEventListener("keydown", (e) => {
-      if (el.tagName === "BUTTON") return; // un <button> gère déjà Entrée/Espace
-      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); open(); }
-    });
-  });
-
-  closeBtn.addEventListener("click", closePdf);
-  modal.addEventListener("click", (e) => { if (e.target === modal) closePdf(); });
+  document.querySelectorAll("[data-pdf]").forEach(el => el.addEventListener("click", () => open(el.dataset.title || "", el)));
+  document.getElementById("readerClose").addEventListener("click", close);
+  r.querySelectorAll(".reader__nav .reader__btn").forEach(b => b.addEventListener("click", () => go(current() + +b.dataset.d)));
+  r.addEventListener("click", (e) => { if (e.target === r || e.target === box) close(); });
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && modal.classList.contains("is-open")) closePdf();
+    if (r.hidden) return;
+    if (e.key === "Escape") close();
+    if (e.key === "ArrowRight") go(current() + 1);
+    if (e.key === "ArrowLeft") go(current() - 1);
   });
 })();
 </script>
 
+<script>window.I18N && I18N.apply();</script><i id="i18n-end" hidden></i>
 </body>
 </html>
 
