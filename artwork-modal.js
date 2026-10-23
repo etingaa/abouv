@@ -19,11 +19,35 @@
       .replaceAll("'","&#039;");
   }
 
+  // Unité des dimensions : cm (par défaut) ou pouces, choisie dans le portfolio et mémorisée.
+  // abouvUnits.fmt("100 x 81 cm") -> "100 × 81 cm" ou "39,4 × 31,9 in" (virgule sauf en anglais)
+  const UNIT_KEY = "abouv:unit";
+  let unit = "cm";
+  try { if (localStorage.getItem(UNIT_KEY) === "in") unit = "in"; } catch (_) {}
+  function fmtSize(str){
+    const m = String(str || "").replace(",", ".").match(/(\d+(?:\.\d+)?)\s*[x×]\s*(\d+(?:\.\d+)?)/i);
+    if(!m) return String(str || "");
+    if(unit === "cm") return `${m[1]} × ${m[2]} cm`;
+    const dec = document.documentElement.lang === "en" ? "." : ",";
+    const f = (v) => String(Math.round(v / 2.54 * 10) / 10).replace(".", dec);
+    return `${f(+m[1])} × ${f(+m[2])} in`;
+  }
+  window.abouvUnits = {
+    get: () => unit,
+    fmt: fmtSize,
+    set(u){
+      unit = u === "in" ? "in" : "cm";
+      try { localStorage.setItem(UNIT_KEY, unit); } catch (_) {}
+      if (els && els.dialog.open) show(index);
+      document.dispatchEvent(new CustomEvent("abouv:unit", { detail: { unit } }));
+    },
+  };
+
   // "Huile sur Toile · 60 x 120 cm" (sans les champs vides) — technique traduite en anglais
   // la technique est masquée sur téléphone dans les vignettes du portfolio (styles.css) ; la taille reste
   function metaLine(a){
     const tech = a.technique ? `<span class="capTech">${escapeHtml(t(a.technique))}</span>` : "";
-    const size = a.size ? `<span class="capSize">${escapeHtml(a.size.replace(/\s*x\s*/i, " × "))}</span>` : "";
+    const size = a.size ? `<span class="capSize">${escapeHtml(fmtSize(a.size))}</span>` : "";
     return tech && size ? `${tech}<span class="capTech"> · </span>${size}` : tech || size;
   }
 

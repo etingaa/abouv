@@ -15,12 +15,12 @@
   <meta property="og:title" content="Portfolio — Annick Bouvattier" />
   <meta property="og:description" content="Portfolio d'Annick Bouvattier : peintures à l'huile et sculptures, à filtrer par catégorie, technique, format et disponibilité." />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-  <script src="i18n-langs.js?v=20261026c"></script>
-  <script src="i18n.js?v=20261026c"></script>
+  <script src="i18n-langs.js?v=20261026d"></script>
+  <script src="i18n.js?v=20261026d"></script>
   <script src="site.js?v=20261026a"></script>
   <link rel="preconnect" href="https://docs.google.com" crossorigin />
   <script src="sheet.js?v=20261025b"></script>
-  <script src="artwork-modal.js?v=20261025b"></script>
+  <script src="artwork-modal.js?v=20261026a"></script>
   <link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
   <!-- pages préchargées au survol d'un lien : changement de page quasi instantané (la galerie 3D est seulement préchargée) -->
   <script type="speculationrules">
@@ -30,7 +30,7 @@
   <title>Portfolio — Annick Bouvattier</title>
 
 
-  <link rel="stylesheet" href="styles.css?v=20261025f">
+  <link rel="stylesheet" href="styles.css?v=20261026a">
 
   <!-- seo:head -->
   <link rel="canonical" href="https://annickbouvattier.art/portfolio" />
@@ -70,6 +70,10 @@
             <div class="group" data-group="technique"><button class="tab tab--group" type="button" data-group="technique" aria-expanded="false" aria-controls="subtabs"><span class="tab__name">Technique</span><span class="tab__value" translate="no"></span><svg class="tab__caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg></button><button class="group__clear" type="button" aria-label="Retirer ce filtre" title="Retirer ce filtre" hidden><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 2l6 6M8 2l-6 6"/></svg></button></div>
             <div class="group" data-group="format"><button class="tab tab--group" type="button" data-group="format" aria-expanded="false" aria-controls="subtabs"><span class="tab__name">Format</span><span class="tab__value" translate="no"></span><svg class="tab__caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg></button><button class="group__clear" type="button" aria-label="Retirer ce filtre" title="Retirer ce filtre" hidden><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 2l6 6M8 2l-6 6"/></svg></button></div>
             <div class="group" data-group="status"><button class="tab tab--group" type="button" data-group="status" aria-expanded="false" aria-controls="subtabs"><span class="tab__name">Disponibilité</span><span class="tab__value" translate="no"></span><svg class="tab__caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg></button><button class="group__clear" type="button" aria-label="Retirer ce filtre" title="Retirer ce filtre" hidden><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 2l6 6M8 2l-6 6"/></svg></button></div>
+          </div>
+          <!-- unité des dimensions : centimètres ou pouces (mémorisée) -->
+          <div class="unitSwitch" id="unitSwitch" role="group" aria-label="Unité">
+            <button type="button" data-u="cm">cm</button><button type="button" data-u="in">in</button>
           </div>
           <label class="search">
             <svg class="search__icon" viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="m13 13 4 4"/></svg>
@@ -322,7 +326,7 @@
        ========================= */
 
     function prettySize(sizeNorm){
-      return sizeNorm.replace(/\s*x\s*/g," × ").replace(/\s*cm\s*/g," cm");
+      return abouvUnits.fmt(sizeNorm);   // cm ou pouces (bouton à gauche de la recherche)
     }
 
     /* =========================
@@ -560,6 +564,12 @@
     /* =========================
        INIT
        ========================= */
+
+    // cm / pouces
+    const unitBtns = [...document.querySelectorAll("#unitSwitch button")];
+    const syncUnit = () => unitBtns.forEach(b => b.setAttribute("aria-pressed", String(b.dataset.u === abouvUnits.get())));
+    unitBtns.forEach(b => b.addEventListener("click", () => { abouvUnits.set(b.dataset.u); syncUnit(); render(); }));
+    syncUnit();
 
     // le Sheet relu en arrière-plan a changé : on redessine (sauf si une œuvre est ouverte)
     document.addEventListener("abouv:sheet-updated", async () => {

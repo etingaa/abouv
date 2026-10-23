@@ -141,6 +141,7 @@
     "œuvre": "artwork",
     "œuvres": "artworks",
     "Passer": "Skip",
+    "Unité": "Unit",
     "Voir tout le portfolio": "See the whole portfolio",
     "Disponible": "Available",
     "Vendue": "Sold",
