@@ -1579,44 +1579,54 @@ body.portfolio .subtabs .tab[aria-pressed="true"] > span:first-child{ text-decor
 
 
 /* =========================
-   CONTACT : le formulaire se lit comme une phrase qu'on complète (dans la voix du site : Archivo, champs soulignés),
-   sujets soulignés de leur couleur, message et P.-S. sobres, bouton Envoyer comme ailleurs
+   CONTACT, dans le style des pages Expositions et Galeries : une carte arrondie avec filet de couleur en haut
+   (la couleur du sujet choisi), numéro + intitulé en petites capitales, la phrase à compléter, sujets en
+   pastilles teintées, message dans un cadre arrondi, bouton en capsule
    ========================= */
-.contactPage .cx{ max-width:860px; }
+.contactPage .cx{ max-width:900px; }
 .ms{ padding:0 !important; border:0 !important; background:none !important; box-shadow:none !important; }
-.ms__letter{ display:block; }
+.ms__letter{ --tc:var(--ink-rgb); position:relative; display:block; padding:clamp(26px, 4vw, 44px) clamp(22px, 4vw, 48px) clamp(24px, 3.4vw, 38px);
+  border:1px solid rgba(var(--ink-rgb),.2); border-radius:24px; background:rgba(var(--ink-rgb),.025); transition:border-color .3s ease; }
+.ms__letter[data-tc="tc-coral"]{ --tc:var(--t-coral); } .ms__letter[data-tc="tc-blue"]{ --tc:var(--t-blue); }
+.ms__letter[data-tc="tc-sand"]{ --tc:var(--t-sand); } .ms__letter[data-tc="tc-green"]{ --tc:var(--t-green); }
+.ms__letter[data-tc^="tc-"]{ border-color:rgba(var(--tc),.6); }
+.ms__letter::before{ content:""; position:absolute; left:24px; right:24px; top:0; height:3px; border-radius:0 0 3px 3px; background:rgb(var(--tc)); opacity:.35; transition:background-color .3s ease, opacity .3s ease; }
+.ms__letter[data-tc^="tc-"]::before{ opacity:1; }
+.ms__kick{ display:flex; align-items:baseline; gap:12px; margin:0 0 22px; font-size:11px; font-weight:500; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-faint); }
+.ms__kickN{ font-weight:600; color:rgb(var(--tc)); transition:color .3s ease; }
 .ms__p{ margin:0 0 .45em; font-size:clamp(22px, 2.2vw, 30px); font-weight:400; line-height:1.6; letter-spacing:-.012em; color:var(--ink-soft); }
-.ms__in{ font:inherit; font-weight:500; color:var(--ink); background:none !important; border:0 !important; border-bottom:1.5px solid rgba(var(--ink-rgb),.28) !important; border-radius:0 !important;
+.ms__in{ font:inherit; font-weight:600; font-stretch:112%; color:var(--ink); background:none !important; border:0 !important; border-bottom:1.5px solid rgba(var(--ink-rgb),.28) !important; border-radius:0 !important;
   height:auto !important; padding:0 .15em .05em !important; margin:0 .08em; min-width:5ch; max-width:100%; field-sizing:content; outline:none; transition:border-color .2s ease; }
-.ms__in::placeholder{ color:rgba(var(--ink-rgb),.3); font-weight:400; }
+.ms__in::placeholder{ color:rgba(var(--ink-rgb),.28); font-weight:400; font-stretch:100%; }
 .ms__in:hover{ border-bottom-color:rgba(var(--ink-rgb),.55) !important; }
-.ms__in:focus{ border-bottom-color:var(--ink) !important; }
-.ms__topicLine .topics{ display:inline; }
-.ms__topicLine i{ font-style:normal; margin-right:.3em; }
-.ms__topicLine i.ms__or{ margin:0 .3em; }
-.ms__topic{ font:inherit; padding:0; margin:0; border:0; background:none; cursor:pointer; color:var(--ink-faint);
-  text-decoration:underline; text-decoration-thickness:1.5px; text-decoration-color:rgba(var(--tc),.5); text-underline-offset:.2em; transition:color .2s ease, text-decoration-color .2s ease; }
-.ms__topic:hover{ color:var(--ink); text-decoration-color:rgb(var(--tc)); }
-.ms__topic[aria-checked="true"]{ color:var(--ink); text-decoration-thickness:3px; text-decoration-color:rgb(var(--tc)); }
-.ms__msg{ display:block; margin:28px 0 18px; }
-.ms__msg textarea{ display:block; width:100%; min-height:150px; padding:12px 0 !important; resize:vertical; outline:none; font:inherit; font-size:18px !important; line-height:1.6; color:var(--ink);
-  background:none !important; border:0 !important; border-bottom:1.5px solid rgba(var(--ink-rgb),.28) !important; border-radius:0 !important; transition:border-color .2s ease; }
+.ms__in:focus{ border-bottom-color:rgb(var(--t-blue)) !important; }
+.ms__topicLine{ display:flex; flex-wrap:wrap; align-items:center; gap:10px 14px; margin-top:.3em; }
+.ms__topicLine .topics{ display:inline-flex; flex-wrap:wrap; gap:8px; }
+.ms__topic{ display:inline-flex; align-items:center; gap:8px; height:34px; padding:0 14px 0 12px; border:1px solid transparent; border-radius:999px; cursor:pointer;
+  background:rgba(var(--tc),.12); color:rgb(var(--tc)); font:inherit; font-size:11px; font-weight:600; letter-spacing:.14em; text-transform:uppercase;
+  transition:background-color .2s ease, border-color .2s ease, transform .2s ease; }
+.ms__topic::before{ content:""; width:7px; height:7px; border-radius:50%; background:rgb(var(--tc)); }
+.ms__topic:hover{ background:rgba(var(--tc),.2); }
+.ms__topic[aria-checked="true"]{ background:rgba(var(--tc),.24); border-color:rgb(var(--tc)); }
+.ms__msg{ display:block; margin:26px 0 14px; }
+.ms__msg textarea{ display:block; width:100%; min-height:160px; padding:18px 20px !important; resize:vertical; outline:none; font:inherit; font-size:17px !important; line-height:1.6; color:var(--ink);
+  background:rgba(var(--ink-rgb),.03) !important; border:1px solid rgba(var(--ink-rgb),.16) !important; border-radius:16px !important; transition:border-color .2s ease; }
 .ms__msg textarea::placeholder{ color:rgba(var(--ink-rgb),.3); }
-.ms__msg textarea:focus{ border-bottom-color:var(--ink) !important; }
-.ms__ps{ font-size:15px; color:var(--ink-faint); }
-.ms__ps .ms__in{ font-size:15px; }
-.ms__opt{ margin-left:.5em; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-faint); }
-.ms__foot{ display:flex; flex-wrap:wrap; align-items:center; gap:16px 28px; margin-top:32px; }
-.ms__send{ display:inline-flex; align-items:center; gap:14px; height:54px; padding:0 28px; border:0; border-radius:0; cursor:pointer;
-  background:var(--ink); color:var(--bg); font:inherit; font-size:12px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; transition:background-color .2s ease; }
-.ms__send svg{ width:18px; height:18px; fill:none; stroke:rgb(var(--t-coral)); stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; transition:transform .3s ease; }
+.ms__msg textarea:focus{ border-color:rgba(var(--t-blue),.8) !important; }
+.ms__ps{ font-size:14px; color:var(--ink-faint); }
+.ms__ps .ms__in{ font-size:14px; font-stretch:100%; font-weight:500; }
+.ms__opt{ margin-left:.5em; font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-faint); }
+.ms__foot{ display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:16px 28px; margin-top:26px; padding-top:20px; border-top:1px solid rgba(var(--ink-rgb),.12); }
+.ms__send{ display:inline-flex; align-items:center; gap:14px; height:50px; padding:0 22px 0 26px; border:0; border-radius:999px; cursor:pointer;
+  background:var(--ink); color:var(--bg); font:inherit; font-size:12px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; transition:transform .2s ease; }
+.ms__send svg{ width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; transition:transform .3s ease; }
+.ms__send:hover{ transform:translateY(-1px); }
 .ms__send:hover svg{ transform:translateX(4px); }
 .ms__send:disabled{ opacity:.5; cursor:progress; }
-.ms__foot{ flex-direction:row-reverse; justify-content:flex-end; }
 .ms__note{ margin:0; max-width:44ch; font-size:12px; color:var(--ink-faint); }
 .ms__note a{ color:var(--ink-soft); border-bottom:1px solid rgba(var(--ink-rgb),.3); }
-.ms__alt{ margin:56px 0 0; padding-top:18px; border-top:1px solid rgba(var(--ink-rgb),.1); font-size:13px; color:var(--ink-faint); }
+.ms__alt{ margin:22px 0 0; font-size:13px; color:var(--ink-faint); }
 .ms__alt a{ color:var(--ink-soft); transition:color .2s ease; }
 .ms__alt a:hover{ color:var(--ink); }
 .ms__alt i{ font-style:normal; margin:0 6px; opacity:.5; }
-@media (max-width:760px){ .ms__p{ font-size:21px; } .ms__send{ width:100%; justify-content:center; } }
+@media (max-width:760px){ .ms__letter{ border-radius:18px; } .ms__p{ font-size:21px; } .ms__send{ width:100%; justify-content:center; } }

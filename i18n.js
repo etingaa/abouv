@@ -141,6 +141,8 @@
     "œuvre": "artwork",
     "œuvres": "artworks",
     "Passer": "Skip",
+    "Écrire à l’artiste": "Write to the artist",
+    "Je vous écris au sujet de": "I am writing about",
     "À l’attention d’Annick Bouvattier": "For the attention of Annick Bouvattier",
     "Bonjour,": "Hello,",
     "Je m’appelle": "My name is",

@@ -3,6 +3,8 @@
 // Un texte absent ici s'affiche en anglais.
 window.I18N_LANGS = {
   es: {
+    "Écrire à l’artiste": "Escribir a la artista",
+    "Je vous écris au sujet de": "Le escribo sobre",
     "À l’attention d’Annick Bouvattier": "A la atención de Annick Bouvattier",
     "Bonjour,": "Hola:",
     "Je m’appelle": "Me llamo",
@@ -320,6 +322,8 @@ window.I18N_LANGS = {
     "Voir le portfolio": "Ver el portafolio",
   },
   it: {
+    "Écrire à l’artiste": "Scrivere all'artista",
+    "Je vous écris au sujet de": "Le scrivo a proposito di",
     "À l’attention d’Annick Bouvattier": "All'attenzione di Annick Bouvattier",
     "Bonjour,": "Buongiorno,",
     "Je m’appelle": "Mi chiamo",

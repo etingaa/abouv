@@ -14,11 +14,11 @@
   <meta property="og:title" content="Contact — Annick Bouvattier" />
   <meta property="og:description" content="Contacter Annick Bouvattier : renseignement sur une œuvre, une exposition ou une commande." />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-  <script src="i18n-langs.js?v=20261027e"></script>
-  <script src="i18n.js?v=20261027f"></script>
+  <script src="i18n-langs.js?v=20261027f"></script>
+  <script src="i18n.js?v=20261027g"></script>
   <script src="site.js?v=20261026a"></script>
   <link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="styles.css?v=20261027m" />
+  <link rel="stylesheet" href="styles.css?v=20261027n" />
   <!-- pages préchargées au survol d'un lien : changement de page quasi instantané (la galerie 3D est seulement préchargée) -->
   <script type="speculationrules">
     {"prerender":[{"where":{"and":[{"selector_matches":".nav__link, .bottom__link--legal"},{"not":{"selector_matches":"[href='./'], [href='../']"}}]},"eagerness":"moderate"}],
@@ -119,6 +119,7 @@
         <h2 class="sr-only" id="formCardTitle">Formulaire de contact</h2>
         <!-- le formulaire se lit comme une phrase : on complète les blancs -->
         <form class="ms__letter" id="contactForm" action="https://formspree.io/f/xdalokdl" method="POST">
+          <p class="ms__kick"><span class="ms__kickN">01</span>Écrire à l’artiste</p>
           <p class="ms__p">
             Je m’appelle
             <input class="ms__in" type="text" name="Prénom" autocomplete="given-name" placeholder="Prénom" aria-label="Prénom" required size="8">
@@ -127,12 +128,12 @@
             <input class="ms__in ms__in--mail" type="email" name="email" autocomplete="email" placeholder="E-mail" aria-label="Email" required size="18">.
           </p>
           <div class="ms__p ms__topicLine">
-            <span id="topicLabel">Je vous écris au sujet</span>
+            <span id="topicLabel">Je vous écris au sujet de</span>
             <span class="topics" role="radiogroup" aria-labelledby="topicLabel">
-              <button class="ms__topic tc-coral" type="button" role="radio" data-topic="Acquisition">d’une acquisition</button><i>,</i>
-              <button class="ms__topic tc-blue" type="button" role="radio" data-topic="Commande">d’une commande</button><i>,</i>
-              <button class="ms__topic tc-sand" type="button" role="radio" data-topic="Presse">de la presse</button><i class="ms__or">ou</i>
-              <button class="ms__topic tc-green" type="button" role="radio" data-topic="Autre">d’autre chose</button><i>.</i>
+              <button class="ms__topic tc-coral" type="button" role="radio" data-topic="Acquisition">Acquisition</button>
+              <button class="ms__topic tc-blue" type="button" role="radio" data-topic="Commande">Commande</button>
+              <button class="ms__topic tc-sand" type="button" role="radio" data-topic="Presse">Presse</button>
+              <button class="ms__topic tc-green" type="button" role="radio" data-topic="Autre">Autre</button>
             </span>
             <input type="hidden" name="Sujet" id="topicField" value="">
           </div>
@@ -192,6 +193,8 @@
       topicField.value = v;
       topics.forEach(b => b.setAttribute("aria-checked", String(b.dataset.topic === v)));
       topics.forEach(b => b.setAttribute("aria-pressed", String(b.dataset.topic === v)));
+      const on = [...topics].find(b => b.dataset.topic === v);
+      form.dataset.tc = on ? [...on.classList].find(c => c.startsWith("tc-")) || "" : "";
     }
     topics.forEach(b => b.addEventListener("click", () => setTopic(topicField.value === b.dataset.topic ? "" : b.dataset.topic)));
 
