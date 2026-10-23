@@ -65,10 +65,13 @@
 
   function mapSVG(V = VIEW, only) {
     const home = GALLERIES.find((g) => g.city === "Paris") || GALLERIES[0];
-    const arcs = only ? "" : GALLERIES.filter((g) => g !== home).map((g) => {
+    // arcs depuis Paris, avec une petite lueur qui circule le long de chacun (départs décalés)
+    const arcs = only ? "" : GALLERIES.map((g, i) => ({ g, i })).filter(({ g }) => g !== home).map(({ g, i }, n) => {
       const x1 = px(home.lng), y1 = py(home.lat), x2 = px(g.lng), y2 = py(g.lat);
       const mx = (x1 + x2) / 2, my = Math.min(y1, y2) - Math.abs(x2 - x1) * .18;
-      return `<path class="gx__arc gx__arc--${KEY[g.country] || "x"}" d="M${x1},${y1} Q${mx},${my} ${x2},${y2}"/>`;
+      const d = `M${x1},${y1} Q${mx},${my} ${x2},${y2}`, dur = (2.2 + Math.abs(x2 - x1) / 60).toFixed(2);
+      return `<path class="gx__arc gx__arc--${KEY[g.country] || "x"}" data-i="${i}" d="${d}"/>
+        <circle class="gx__comet gx__comet--${KEY[g.country] || "x"}" data-i="${i}" r=".5"><animateMotion dur="${dur}s" begin="${(n * .7).toFixed(1)}s" repeatCount="indefinite" path="${d}" keyPoints="0;1" keyTimes="0;1" calcMode="spline" keySplines=".45 0 .25 1"/></circle>`;
     }).join("");
     const k = V.w / VIEW.w;              // taille des repères proportionnelle au cadrage
     const pins = GALLERIES.map((g, i) => {
@@ -79,7 +82,7 @@
         <text x="${x}" y="${up ? y - (only ? k * 5.4 : 1.8) : y + (only ? k * 9 : 3.4)}" text-anchor="middle"${only ? ` style="font-size:${(k * 5.6).toFixed(2)}px"` : ""}>${escapeHtml(g.city)}</text></g>`;
     }).join("");
     return `<svg viewBox="${V.x} ${V.y} ${V.w} ${V.h}" role="img" aria-label="${t("Carte des galeries")}">
-      <image class="dots dots--d" href="images/world-dots.svg" x="0" y="0" width="360" height="128"/><image class="dots dots--l" href="images/world-dots-light.svg" x="0" y="0" width="360" height="128"/>${arcs}${pins}</svg>`;
+      <g class="gx__dots"><image class="dots dots--d" href="images/world-dots.svg" x="0" y="0" width="360" height="128"/><image class="dots dots--l" href="images/world-dots-light.svg" x="0" y="0" width="360" height="128"/></g>${arcs}${pins}</svg>`;
   }
 
   // téléphone : une seule carte, qui zoome sur le pays de la galerie affichée (cadrage animé) ;
@@ -136,7 +139,49 @@
     const pins = [...box.querySelectorAll(".gx__pin")], cards = [...box.querySelectorAll(".gx__panel")];
     const open = (i) => cards.forEach((c, k) => c.classList.toggle("is-open", k === i));
     // une galerie peut avoir plusieurs points (carte du monde + carte zoomée du téléphone)
-    const hot = (i, on) => { pins.forEach((p) => { if (+p.dataset.i === i) p.classList.toggle("is-hot", on); }); if (on) open(i); };
+    const hot = (i, on) => { pins.forEach((p) => { if (+p.dataset.i === i) p.classList.toggle("is-hot", on); }); if (on){ open(i); focusMap(i); } };
+
+    // carte de l'ordinateur, plus vivante : elle s'approche en douceur de la galerie survolée (et revient à la vue
+    // d'ensemble quand on quitte la section), l'arc de la galerie s'allume, le fond de points suit un peu la souris
+    const big = box.querySelector(".gx__map svg"), dots = big && big.querySelector(".gx__dots");
+    const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let vb = { ...VIEW }, vbAnim = 0, active = -1;
+    const setVB = (v) => big.setAttribute("viewBox", `${v.x} ${v.y} ${v.w} ${v.h}`);
+    function zoomVB(to){
+      if (!big) return;
+      cancelAnimationFrame(vbAnim);
+      if (calm){ vb = { ...to }; return setVB(vb); }
+      const from = { ...vb }, t0 = performance.now(), D = 900;
+      const step = (now) => {
+        const k = Math.min(1, (now - t0) / D), e = 1 - Math.pow(1 - k, 3);
+        for (const key of ["x", "y", "w", "h"]) vb[key] = from[key] + (to[key] - from[key]) * e;
+        setVB(vb);
+        if (k < 1) vbAnim = requestAnimationFrame(step);
+      };
+      vbAnim = requestAnimationFrame(step);
+    }
+    function focusMap(i){
+      if (!big || innerWidth <= 760 || i === active) return;
+      active = i;
+      big.querySelectorAll(".gx__arc, .gx__comet").forEach((a) => a.classList.toggle("is-on", +a.dataset.i === i));
+      big.classList.toggle("has-on", GALLERIES[i].city !== "Paris");
+      // on reste dans le cadrage de départ (pas de vide autour des continents)
+      const g = GALLERIES[i], z = 1.45, w = VIEW.w / z, h = VIEW.h / z;
+      const x = Math.max(VIEW.x, Math.min(VIEW.x + VIEW.w - w, px(g.lng) - w / 2)), y = Math.max(VIEW.y, Math.min(VIEW.y + VIEW.h - h, py(g.lat) - h * .5));
+      zoomVB({ x, y, w, h });
+    }
+    function overview(){
+      if (!big || active === -1) return;
+      active = -1;
+      big.querySelectorAll(".is-on").forEach((a) => a.classList.remove("is-on"));
+      big.classList.remove("has-on");
+      zoomVB({ ...VIEW });
+    }
+    box.addEventListener("mouseleave", overview);
+    if (big && dots && !calm) big.addEventListener("mousemove", (e) => {
+      const r = big.getBoundingClientRect(), mx = (e.clientX - r.left) / r.width - .5, my = (e.clientY - r.top) / r.height - .5;
+      dots.setAttribute("transform", `translate(${(-mx * 1.6).toFixed(2)} ${(-my * .8).toFixed(2)})`);
+    });
     cards.forEach((c, i) => {
       c.addEventListener("mouseenter", () => hot(i, true)); c.addEventListener("mouseleave", () => hot(i, false));
       c.addEventListener("focus", () => hot(i, true)); c.addEventListener("click", () => open(i));

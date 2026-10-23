@@ -42,7 +42,21 @@
     @keyframes gxPing{ from{ opacity:.9; transform:scale(1); } to{ opacity:0; transform:scale(4); } }
     .gx__pin text{ font-family:var(--font); font-size:2.1px; font-weight:500; letter-spacing:.12px; text-transform:uppercase; fill:rgba(236,231,222,.75); transition:fill .2s ease; }
     .gx__pin.is-hot text{ fill:#fff; }
-    .gx__arc{ fill:none; stroke:rgba(255,255,255,.2); stroke-width:.18; stroke-dasharray:.6 .6; }
+    .gx__arc{ fill:none; stroke:rgba(255,255,255,.2); stroke-width:.18; stroke-dasharray:.6 .6; animation:gxFlow 2.4s linear infinite, gxDraw 1.6s cubic-bezier(.6,0,.2,1) both; transition:stroke-width .3s ease, opacity .3s ease; }
+    @keyframes gxFlow{ to{ stroke-dashoffset:-2.4; } }
+    @keyframes gxDraw{ from{ opacity:0; } to{ opacity:1; } }
+    .gx__map svg.has-on .gx__arc:not(.is-on){ opacity:.35; }
+    .gx__arc.is-on{ stroke-width:.32; }
+    /* lueur qui voyage le long des arcs */
+    .gx__comet{ fill:#fff; opacity:.55; filter:drop-shadow(0 0 .6px rgba(255,255,255,.9)); pointer-events:none; transition:opacity .3s ease; }
+    .gx__comet--us{ fill:rgb(var(--c-us, 126,162,240)); } .gx__comet--fr{ fill:rgb(var(--c-fr, 236,118,104)); }
+    .gx__map svg.has-on .gx__comet:not(.is-on){ opacity:.15; }
+    .gx__comet.is-on{ opacity:1; }
+    /* chaque point respire doucement (décalés), même sans survol */
+    .gx__pin circle.ring{ animation:gxPing 3.2s ease-out infinite; animation-delay:calc(var(--d, 0) * 1s); }
+    .gx__pin:nth-of-type(2) circle.ring{ --d:.6; } .gx__pin:nth-of-type(3) circle.ring{ --d:1.2; } .gx__pin:nth-of-type(4) circle.ring{ --d:1.8; } .gx__pin:nth-of-type(5) circle.ring{ --d:2.4; }
+    .gx__dots{ transition:transform .6s cubic-bezier(.2,.7,.2,1); }
+    @media (prefers-reduced-motion: reduce){ .gx__arc, .gx__pin circle.ring{ animation:none; } .gx__comet{ display:none; } }
     @media (prefers-reduced-motion: reduce){ .gx__pin.is-hot circle.ring{ animation:none; } }
 
     /* accordéon : cinq volets ; replié = numéro + ville à la verticale, ouvert = la galerie en grand */
@@ -225,7 +239,7 @@
 
   <!-- expositions (pour « 4 expositions ici depuis 2005 »), puis la logique de la page -->
   <script src="expos-data.js?v=20261022n"></script>
-  <script src="./script.js?v=20261027a"></script>
+  <script src="./script.js?v=20261029c"></script>
 
 <script>window.I18N && I18N.apply();</script><i id="i18n-end" hidden></i>
 </body>
