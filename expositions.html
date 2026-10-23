@@ -470,7 +470,7 @@
     .xall__stats{ margin:0; font-size:13px; letter-spacing:.04em; color:var(--ink-faint); }
     .xall__stats b{ color:var(--ink); font-weight:600; }
     .xall__stats i{ font-style:normal; margin:0 10px; opacity:.5; }
-    .xall__key{ margin-left:22px; white-space:nowrap; }
+    .xall__key{ display:none; }
     .xall__key::before{ content:""; display:inline-block; width:6px; height:6px; margin-right:7px; border-radius:50%; background:var(--accent); vertical-align:middle; }
     .xall__nav{ display:flex; align-items:center; gap:8px; }
     .xall__tabs{ display:flex; gap:4px; margin-right:6px; }
@@ -483,30 +483,53 @@
     .xall__arrow svg{ width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
     /* la page se résume à ce carrousel : on cache le bandeau des villes et la ligne du temps détaillée */
     .xrun, #timelineView, .tlNav, .tlFoot, .tlHint, .xfilter{ display:none !important; }
-    .xall__grid{ display:flex; gap:20px; overflow-x:auto; scroll-snap-type:x mandatory; overscroll-behavior-x:contain; scrollbar-width:none; -webkit-overflow-scrolling:touch;
-      margin:0 calc(50% - 50vw); padding:10px max(20px, calc(50vw - 260px)) 28px; perspective:1400px; }
+    .xall__grid{ display:flex; gap:24px; overflow-x:auto; scroll-snap-type:x mandatory; overscroll-behavior-x:contain; scrollbar-width:none; -webkit-overflow-scrolling:touch;
+      margin:0 calc(50% - 50vw); padding:10px 10vw 28px; perspective:1600px; }
     .xall__grid::-webkit-scrollbar{ display:none; }
-    .xall__col{ --p:0; flex:0 0 min(520px, 84vw); scroll-snap-align:center; padding:26px 28px 22px; border:1px solid rgba(var(--ink-rgb),.2); border-radius:22px;
-      background:rgba(var(--ink-rgb),.025); cursor:pointer; transform-origin:center;
-      transform:rotateY(calc(var(--p) * -14deg)) scale(calc(1 - min(1, abs(var(--p))) * .1)); opacity:calc(1 - min(1, abs(var(--p))) * .55);
+    .xall__col{ --p:0; flex:0 0 min(1040px, 80vw); scroll-snap-align:center; padding:30px 34px 24px; border:1px solid rgba(var(--ink-rgb),.2); border-radius:24px;
+      background:rgba(var(--ink-rgb),.025); cursor:pointer; transform-origin:center; align-self:flex-start;
+      transform:rotateY(calc(var(--p) * -12deg)) scale(calc(1 - min(1, abs(var(--p))) * .08)); opacity:calc(1 - min(1, abs(var(--p))) * .55);
       transition:transform .15s linear, opacity .15s linear, border-color .3s ease; will-change:transform; }
-    .xall__col h3{ margin:0 0 16px; font-size:clamp(56px, 6vw, 88px); font-weight:700; font-stretch:112%; line-height:.9; letter-spacing:-.02em;
+    .xall__col h3{ margin:0 0 16px; font-size:clamp(56px, 6vw, 96px); font-weight:700; font-stretch:112%; line-height:.9; letter-spacing:-.02em;
       color:transparent; -webkit-text-stroke:1.2px rgba(var(--ink-rgb),.85); transform:translateX(calc(var(--p) * 70px)); transition:transform .15s linear, color .4s ease; }
     .xall__col h3 small{ font-size:.4em; }
     .xall__col:hover h3{ color:rgba(var(--ink-rgb),.08); }
-    .xall__col li{ transform:translateX(calc(var(--p) * 22px)); transition:transform .15s linear, background-color .2s ease, opacity .2s ease; }
-    @supports not (transform:scale(abs(-1))){ .xall__col{ transform:rotateY(calc(var(--p) * -14deg)); } }
+    .xall__col li{ transform:translateX(calc(var(--p) * 22px)); transition:transform .15s linear; }
+    @supports not (transform:scale(abs(-1))){ .xall__col{ transform:rotateY(calc(var(--p) * -12deg)); } }
     .xall__col:hover{ border-color:rgba(var(--ink-rgb),.4); }
     @media (prefers-reduced-motion: reduce){ .xall__col, .xall__col h3, .xall__col li{ transform:none !important; opacity:1 !important; } }
-    .xall__col{ align-self:flex-start; }
+    /* sur grand écran, les expositions d'une décennie sur deux colonnes */
+    @media (min-width:900px){ .xall__col ol{ columns:2; column-gap:40px; } .xall__col li{ break-inside:avoid; } }
     .xall ol{ list-style:none; margin:0; padding:0; }
-    .xall li{ display:grid; grid-template-columns:44px 1fr; column-gap:10px; padding:7px 4px; border-top:1px solid rgba(var(--ink-rgb),.1); border-radius:6px; }
+    .xall li{ display:grid; grid-template-columns:44px 1fr auto; column-gap:12px; align-items:baseline; padding:9px 4px; border-top:1px solid rgba(var(--ink-rgb),.1); }
     .xall li.is-dim{ opacity:.25; }
     .xall li b{ grid-row:span 2; font-size:13px; font-weight:600; color:var(--ink-faint); font-variant-numeric:tabular-nums; }
     .xall__t{ font-size:14px; color:var(--ink); }
-    .xall__c{ font-size:12px; color:var(--ink-faint); }
-    .xall li[data-type="solo"] .xall__t::before{ content:""; display:inline-block; width:6px; height:6px; margin-right:7px; border-radius:50%; background:var(--accent); vertical-align:middle; }
-    @media (max-width:760px){ .xall__stats{ font-size:12px; } .xall__arrow{ display:none; } }
+    .xall__c{ grid-column:2; font-size:12px; color:var(--ink-faint); }
+    .xall__ty{ grid-column:3; grid-row:1; display:inline-flex; align-items:center; gap:6px; font-size:10.5px; font-weight:500; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-faint); white-space:nowrap; }
+    .xall__ty::before{ content:""; width:6px; height:6px; border-radius:50%; background:rgba(var(--ink-rgb),.5); }
+    .xall li[data-type="solo"] .xall__ty{ color:var(--ink); }
+    .xall li[data-type="solo"] .xall__ty::before{ background:var(--accent); }
+    .xall li[data-type="salon"] .xall__ty::before{ background:transparent; border:1px solid rgba(var(--ink-rgb),.6); width:5px; height:5px; }
+    /* téléphone : en-tête compact, onglets au-dessus, une décennie presque plein écran, effets plus doux */
+    @media (max-width:760px){
+      .xall{ margin-top:18px; }
+      .xall__bar{ flex-direction:column; align-items:stretch; gap:12px; margin-bottom:10px; }
+      .xall__stats{ font-size:11.5px; line-height:1.9; }
+      .xall__stats i{ margin:0 6px; }
+      .xall__nav{ justify-content:space-between; }
+      .xall__tabs{ margin:0; gap:0; justify-content:space-between; width:100%; }
+      .xall__tab{ font-size:15px; padding:8px 4px; }
+      .xall__arrow{ display:none; }
+      .xall__grid{ gap:12px; padding:6px 6vw 20px; }
+      .xall__col{ flex-basis:88vw; padding:20px 16px 14px; border-radius:18px;
+        transform:rotateY(calc(var(--p) * -6deg)) scale(calc(1 - min(1, abs(var(--p))) * .05)); }
+      .xall__col h3{ font-size:52px; margin-bottom:10px; }
+      .xall li{ grid-template-columns:38px 1fr; padding:9px 2px; }
+      .xall li b{ grid-row:span 3; }
+      .xall__ty{ grid-column:2; grid-row:auto; margin-top:4px; font-size:10px; }
+      .xall__t{ font-size:14.5px; }
+    }
     .tlCard.is-flash{ animation:xflash 1.6s ease; }
     @keyframes xflash{ 0%, 40%{ background:rgba(var(--accent-rgb),.14); } 100%{ background:transparent; } }
     .xfilter{ margin:-16px 0 0; }
@@ -909,11 +932,11 @@
       const stats = [
         `<b>${list.length}</b> ${t("expositions")}`, `<b>${by("solo")}</b> ${t("personnelles")}`, `<b>${by("group")}</b> ${t("collectives")}`,
         `<b>${by("salon")}</b> ${t("salons")}`, `<b>${countries.size}</b> ${t("pays")}`, `<b>${Math.min(...years)} – ${Math.max(...years)}</b>`,
-      ].join("<i>·</i>") + `<span class="xall__key">${t("exposition personnelle")}</span>`;
+      ].join("<i>·</i>");
       const cols = decades.map(d => `
         <section class="xall__col"><h3>${d}<small>s</small></h3><ol>${list.map((e, k) => ({ e, k })).filter(({ e }) => Math.floor(e.year / 10) * 10 === d)
           .sort((a, b) => b.e.year - a.e.year).map(({ e, k }) => `
-          <li data-k="${k}" data-type="${e.type}"><b>${e.year}</b><span class="xall__t">${escapeHtml(e.title)}</span><span class="xall__c">${escapeHtml(t(e.city))}</span></li>`).join("")}</ol></section>`).join("");
+          <li data-k="${k}" data-type="${e.type}"><b>${e.year}</b><span class="xall__t">${escapeHtml(e.title)}</span><span class="xall__c">${escapeHtml(t(e.city))} · ${escapeHtml(t(e.country))}</span><span class="xall__ty">${typeLabel(e.type)}</span></li>`).join("")}</ol></section>`).join("");
       const tabs = decades.map((d, k) => `<button type="button" class="xall__tab" data-k="${k}">${d}<small>s</small></button>`).join("");
       return `<section class="xall" aria-label="${t("Vue d'ensemble")}">
         <div class="xall__bar"><p class="xall__stats">${stats}</p>
