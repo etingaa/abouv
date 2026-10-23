@@ -1608,3 +1608,7 @@ html[data-theme="light"] .thx::backdrop{ background:rgba(239,235,227,.75); }
 @keyframes thxUp{ from{ opacity:0; transform:translateY(16px); } to{ opacity:1; transform:none; } }
 @keyframes thxLine{ to{ width:64px; } }
 @media (prefers-reduced-motion: reduce){ .thx__box, .thx::backdrop{ transition:none; } .thx__check circle, .thx__check path{ stroke-dashoffset:0; animation:none !important; } .thx__title{ animation:none !important; } .thx__text::after{ width:64px; animation:none !important; } }
+
+/* Contact : le formulaire centré sur la page (le titre reste aligné comme ailleurs) */
+.contactPage .cx{ max-width:820px !important; margin-left:auto !important; margin-right:auto !important; }
+.contactPage .formCard__title{ max-width:none; }
