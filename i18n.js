@@ -141,6 +141,8 @@
     "œuvre": "artwork",
     "œuvres": "artworks",
     "Passer": "Skip",
+    "Ou directement par e-mail": "Or directly by email",
+    "ou via mes réseaux": "or through my social media",
     "Merci": "Thank you",
     "Merci — Annick Bouvattier": "Thank you — Annick Bouvattier",
     "{prenom}, votre message a bien été envoyé. Annick Bouvattier vous répondra dès que possible.": "{prenom}, your message has been sent. Annick Bouvattier will reply as soon as possible.",

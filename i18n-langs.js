@@ -3,6 +3,8 @@
 // Un texte absent ici s'affiche en anglais.
 window.I18N_LANGS = {
   es: {
+    "Ou directement par e-mail": "O directamente por correo",
+    "ou via mes réseaux": "o a través de mis redes",
     "Merci": "Gracias",
     "Merci — Annick Bouvattier": "Gracias — Annick Bouvattier",
     "{prenom}, votre message a bien été envoyé. Annick Bouvattier vous répondra dès que possible.": "{prenom}, su mensaje se ha enviado. Annick Bouvattier le responderá lo antes posible.",
@@ -327,6 +329,8 @@ window.I18N_LANGS = {
     "Voir le portfolio": "Ver el portafolio",
   },
   it: {
+    "Ou directement par e-mail": "Oppure direttamente via email",
+    "ou via mes réseaux": "o tramite i miei social",
     "Merci": "Grazie",
     "Merci — Annick Bouvattier": "Grazie — Annick Bouvattier",
     "{prenom}, votre message a bien été envoyé. Annick Bouvattier vous répondra dès que possible.": "{prenom}, il tuo messaggio è stato inviato. Annick Bouvattier ti risponderà al più presto.",
