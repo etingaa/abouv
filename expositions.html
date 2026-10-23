@@ -464,35 +464,37 @@
     .xrun__c{ margin:0 !important; padding:0 .9em 0 0 !important; }
     .xrun__c::after{ content:"" !important; display:inline-block; width:.6em; height:1px; margin:0 0 0 .9em !important; vertical-align:middle; background:rgba(var(--ink-rgb),.3) !important; }
     .xpills{ display:none !important; }
-    /* vue d'ensemble dépliable */
-    .xall{ margin:28px 0 8px; }
-    .xall summary{ display:inline-flex; align-items:center; gap:12px; height:40px; padding:0 18px; border:1px solid rgba(var(--ink-rgb),.28); border-radius:999px;
-      cursor:pointer; list-style:none; font-size:12px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--ink); transition:border-color .2s ease, background-color .2s ease; }
-    .xall summary::-webkit-details-marker{ display:none; }
-    .xall summary:hover{ border-color:var(--ink); }
-    .xall summary i{ position:relative; width:10px; height:10px; }
-    .xall summary i::before, .xall summary i::after{ content:""; position:absolute; left:0; top:4.5px; width:10px; height:1.5px; background:currentColor; transition:transform .3s ease; }
-    .xall summary i::after{ transform:rotate(90deg); }
-    .xall[open] summary i::after{ transform:rotate(0deg); }
-    .xall[open] summary{ background:var(--ink); color:var(--bg); border-color:var(--ink); }
-    .xall__body{ margin-top:22px; padding:24px 26px 28px; border:1px solid rgba(var(--ink-rgb),.16); border-radius:18px; animation:xallIn .35s ease; }
-    @keyframes xallIn{ from{ opacity:0; transform:translateY(-6px); } to{ opacity:1; transform:none; } }
-    .xall__stats{ margin:0 0 22px; font-size:13px; letter-spacing:.04em; color:var(--ink-faint); }
+    /* décennies côte à côte : on glisse de l'une à l'autre */
+    .xall{ margin:32px 0 16px; }
+    .xall__bar{ display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px 24px; margin-bottom:18px; }
+    .xall__stats{ margin:0; font-size:13px; letter-spacing:.04em; color:var(--ink-faint); }
     .xall__stats b{ color:var(--ink); font-weight:600; }
     .xall__stats i{ font-style:normal; margin:0 10px; opacity:.5; }
-    .xall__key{ margin-left:22px; }
+    .xall__key{ margin-left:22px; white-space:nowrap; }
     .xall__key::before{ content:""; display:inline-block; width:6px; height:6px; margin-right:7px; border-radius:50%; background:var(--accent); vertical-align:middle; }
-    .xall__grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:24px 32px; }
-    .xall__col h3{ margin:0 0 10px; padding-bottom:8px; border-bottom:1px solid rgba(var(--ink-rgb),.16); font-size:30px; font-weight:700; font-stretch:112%; line-height:1; color:var(--ink); }
-    .xall__col h3 small{ font-size:.5em; }
+    .xall__nav{ display:flex; align-items:center; gap:8px; }
+    .xall__tabs{ display:flex; gap:4px; margin-right:6px; }
+    .xall__tab{ padding:6px 8px; border:0; border-bottom:1.5px solid transparent; background:none; cursor:pointer; font:inherit; font-size:13px; font-weight:700; font-stretch:112%; color:var(--ink-faint); transition:color .2s ease, border-color .2s ease; }
+    .xall__tab small{ font-size:.75em; }
+    .xall__tab:hover{ color:var(--ink); }
+    .xall__tab.is-on{ color:var(--ink); border-bottom-color:var(--accent); }
+    .xall__arrow{ display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; padding:0; border-radius:50%; border:1px solid rgba(var(--ink-rgb),.25); background:none; color:var(--ink); cursor:pointer; transition:border-color .2s ease; }
+    .xall__arrow:hover{ border-color:var(--ink); }
+    .xall__arrow svg{ width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
+    .xall__grid{ display:flex; gap:16px; overflow-x:auto; scroll-snap-type:x mandatory; scroll-behavior:smooth; overscroll-behavior-x:contain; scrollbar-width:none; -webkit-overflow-scrolling:touch; padding-bottom:4px; }
+    .xall__grid::-webkit-scrollbar{ display:none; }
+    .xall__col{ flex:0 0 min(440px, 86%); scroll-snap-align:start; padding:22px 24px 18px; border:1px solid rgba(var(--ink-rgb),.16); border-radius:18px; }
+    .xall__col h3{ margin:0 0 14px; font-size:clamp(48px, 5vw, 72px); font-weight:700; font-stretch:112%; line-height:.9; letter-spacing:-.02em; color:transparent; -webkit-text-stroke:1.2px rgba(var(--ink-rgb),.8); }
+    .xall__col h3 small{ font-size:.4em; }
     .xall ol{ list-style:none; margin:0; padding:0; }
-    .xall li{ display:grid; grid-template-columns:42px 1fr; column-gap:10px; padding:6px 0; cursor:pointer; border-radius:6px; transition:background-color .2s ease; }
+    .xall li{ display:grid; grid-template-columns:44px 1fr; column-gap:10px; padding:7px 4px; border-top:1px solid rgba(var(--ink-rgb),.1); cursor:pointer; border-radius:6px; transition:background-color .2s ease, opacity .2s ease; }
     .xall li:hover, .xall li:focus-visible{ background:rgba(var(--ink-rgb),.06); outline:none; }
-    .xall li b{ grid-row:span 2; font-size:13px; font-weight:600; color:var(--ink-faint); font-variant-numeric:tabular-nums; padding-left:4px; }
+    .xall li.is-dim{ opacity:.25; }
+    .xall li b{ grid-row:span 2; font-size:13px; font-weight:600; color:var(--ink-faint); font-variant-numeric:tabular-nums; }
     .xall__t{ font-size:14px; color:var(--ink); }
     .xall__c{ font-size:12px; color:var(--ink-faint); }
     .xall li[data-type="solo"] .xall__t::before{ content:""; display:inline-block; width:6px; height:6px; margin-right:7px; border-radius:50%; background:var(--accent); vertical-align:middle; }
-    @media (prefers-reduced-motion: reduce){ .xall__body{ animation:none; } }
+    @media (max-width:760px){ .xall__stats{ font-size:12px; } .xall__arrow{ display:none; } }
     .tlCard.is-flash{ animation:xflash 1.6s ease; }
     @keyframes xflash{ 0%, 40%{ background:rgba(var(--accent-rgb),.14); } 100%{ background:transparent; } }
     .xfilter{ margin:-16px 0 0; }
@@ -900,8 +902,13 @@
         <section class="xall__col"><h3>${d}<small>s</small></h3><ol>${list.map((e, k) => ({ e, k })).filter(({ e }) => Math.floor(e.year / 10) * 10 === d)
           .sort((a, b) => b.e.year - a.e.year).map(({ e, k }) => `
           <li data-k="${k}" data-type="${e.type}" tabindex="0"><b>${e.year}</b><span class="xall__t">${escapeHtml(e.title)}</span><span class="xall__c">${escapeHtml(t(e.city))}</span></li>`).join("")}</ol></section>`).join("");
-      return `<details class="xall"><summary><span>${t("Vue d'ensemble")}</span><i aria-hidden="true"></i></summary>
-        <div class="xall__body"><p class="xall__stats">${stats}</p><div class="xall__grid">${cols}</div></div></details>`;
+      const tabs = decades.map((d, k) => `<button type="button" class="xall__tab" data-k="${k}">${d}<small>s</small></button>`).join("");
+      return `<section class="xall" aria-label="${t("Vue d'ensemble")}">
+        <div class="xall__bar"><p class="xall__stats">${stats}</p>
+          <div class="xall__nav"><div class="xall__tabs">${tabs}</div>
+            <button type="button" class="xall__arrow" data-d="-1" aria-label="${t("Plus récent")}"><svg viewBox="0 0 16 16"><path d="M10 3 5 8l5 5"/></svg></button>
+            <button type="button" class="xall__arrow" data-d="1" aria-label="${t("Plus ancien")}"><svg viewBox="0 0 16 16"><path d="m6 3 5 5-5 5"/></svg></button></div></div>
+        <div class="xall__grid">${cols}</div></section>`;
     }
 
     function renderSummary(n){
@@ -925,17 +932,31 @@
           ${overview(list)}`;
         box.querySelectorAll(".xrun__c").forEach(b => b.addEventListener("click", () => goCity(b.dataset.city)));
         box.querySelector(".xfilter").addEventListener("click", (e) => { if (e.target.closest("button")) goCity(filters.q); });
-        // vue d'ensemble : un clic sur une exposition referme le panneau et amène à sa ligne
+        // décennies : on glisse de l'une à l'autre (doigt, pavé tactile, flèches, onglets) ; l'onglet suit
+        const grid = box.querySelector(".xall__grid"), colsEl = [...grid.children], tabsEl = [...box.querySelectorAll(".xall__tab")];
+        let curDec = 0;
+        const goDec = (k) => { k = Math.max(0, Math.min(colsEl.length - 1, k)); grid.scrollTo({ left: colsEl[k].offsetLeft - grid.offsetLeft - grid.clientLeft, behavior: "smooth" }); };
+        const syncDec = () => {
+          let best = 0, bd = Infinity;
+          colsEl.forEach((c, k) => { const d = Math.abs(c.offsetLeft - grid.offsetLeft - grid.scrollLeft); if (d < bd){ bd = d; best = k; } });
+          curDec = best; tabsEl.forEach((b, k) => b.classList.toggle("is-on", k === best));
+        };
+        grid.addEventListener("scroll", () => requestAnimationFrame(syncDec), { passive: true });
+        tabsEl.forEach(b => b.addEventListener("click", () => goDec(+b.dataset.k)));
+        box.querySelectorAll(".xall__arrow").forEach(b => b.addEventListener("click", () => goDec(curDec + +b.dataset.d)));
+        syncDec();
+        // un clic sur une exposition amène à sa ligne dans la liste détaillée
         box.querySelectorAll(".xall li").forEach(li => li.addEventListener("keydown", (ev) => { if (ev.key === "Enter" || ev.key === " "){ ev.preventDefault(); li.click(); } }));
         box.querySelectorAll(".xall li").forEach(li => li.addEventListener("click", () => {
           const e = list[+li.dataset.k], c = cards.find(x => x.expo === e);
           if (!c) return;
-          box.querySelector(".xall").open = false;
           if (c){ c.el.scrollIntoView({ behavior: "smooth", block: "center" }); c.el.classList.remove("is-flash"); void c.el.offsetWidth; c.el.classList.add("is-flash"); }
         }));
       }
       box.querySelector(".xtitle sup").textContent = n;
       box.querySelectorAll(".xrun__c").forEach(b => b.classList.toggle("is-on", filters.q.toLowerCase() === b.dataset.city.toLowerCase()));
+      const qq = filters.q.trim().toLowerCase();
+      box.querySelectorAll(".xall li").forEach(li => li.classList.toggle("is-dim", !!qq && !li.textContent.toLowerCase().includes(qq)));
       const f = box.querySelector(".xfilter");
       f.hidden = !filters.q;
       f.innerHTML = filters.q ? `<button type="button">${escapeHtml(t(filters.q))} <span aria-hidden="true">×</span><span class="sr-only">${t("Retirer ce filtre")}</span></button>` : "";
