@@ -592,7 +592,9 @@ async function main(){
 
   /* ---------- pause / vitesse (boutons en bas à gauche ; la vitesse est mémorisée) ---------- */
   const SPEEDS = [.25, .5, .75, 1, 1.5, 2, 3, 4];
-  const ctrl = { paused: false, i: 3, get tempo(){ return SPEEDS[this.i]; } };
+  // « réduire les animations » (réglage du système) : la visite reste à l'arrêt ; on avance avec le curseur
+  const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const ctrl = { paused: calm, i: 3, get tempo(){ return SPEEDS[this.i]; } };
 
   /* ---------- avancer / reculer le long du chemin (curseur ; au doigt, glisser à gauche / à droite) ----------
      on reste sur le chemin autour du banc : seule la position sur le tour change, le regard suit */
@@ -861,7 +863,8 @@ async function main(){
   const th0 = Math.PI;                                   // côté porte de la boucle
   const gz0 = wanderGaze(th0);
   // on entre, on se retourne vers la droite pour voir le nom de l'artiste, et on continue dans le même sens
-  travel({ pos: onEllipse(th0), yaw: gz0.yaw, pitch: gz0.pitch }, () => { wander.on = true; wander.theta = th0; }, 6, LOOP_SPEED * ctrl.tempo, -1);
+  if (calm){ view.pos.copy(onEllipse(th0)); view.yaw = gz0.yaw; view.pitch = gz0.pitch; wander.on = true; wander.theta = th0; }
+  else travel({ pos: onEllipse(th0), yaw: gz0.yaw, pitch: gz0.pitch }, () => { wander.on = true; wander.theta = th0; }, 6, LOOP_SPEED * ctrl.tempo, -1);
   // (plus de bulle d'aide : le curseur suffit)
   ready.then(() => els.loading.classList.add("is-done"));
 }

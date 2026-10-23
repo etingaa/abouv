@@ -141,6 +141,8 @@
     "œuvre": "artwork",
     "œuvres": "artworks",
     "Passer": "Skip",
+    "Toiles disponibles": "Available paintings",
+    "Artiste peintre": "Painter",
     "Avancer ou reculer dans la visite": "Move forward or back in the tour",
     "Le message n'a pas pu être envoyé. Réessayez dans un instant, ou écrivez directement à abouvattier@free.fr.": "Your message could not be sent. Please try again in a moment, or write directly to abouvattier@free.fr.",
     "Ou directement par e-mail": "Or directly by email",
