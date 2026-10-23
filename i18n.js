@@ -141,21 +141,6 @@
     "œuvre": "artwork",
     "œuvres": "artworks",
     "Passer": "Skip",
-    "Bonjour, je m’appelle": "Hello, my name is",
-    "prénom": "first name",
-    "nom": "last name",
-    "vous pouvez me répondre à": "you can reply to me at",
-    "votre e-mail": "your email",
-    "Je vous écris pour": "I am writing about",
-    "une acquisition": "buying a work",
-    "une commande": "a commission",
-    "la presse": "the press",
-    "autre chose": "something else",
-    "Votre message…": "Your message…",
-    "Ajouter une organisation ou un pays": "Add an organization or a country",
-    "votre organisation": "your organization",
-    "votre pays": "your country",
-    "Ou directement": "Or directly",
     "Page": "Page",
     "Page précédente": "Previous page",
     "Page suivante": "Next page",
@@ -444,7 +429,6 @@
   const SKIP = new Set(["SCRIPT", "STYLE", "NOSCRIPT", "TEXTAREA"]);
 
   function translateTree(el){
-    if (el.tagName === "TEXTAREA") { ATTRS.forEach(a => { if (el.hasAttribute(a)) el.setAttribute(a, swap(el.getAttribute(a))); }); return; }
     if (SKIP.has(el.tagName) || el.dataset.lang) return;
     ATTRS.forEach(a => { if (el.hasAttribute(a)) el.setAttribute(a, swap(el.getAttribute(a))); });
     // translate="no" : contenu généré par un script (déjà traduit avec t()) ou noms propres
