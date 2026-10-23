@@ -1632,3 +1632,23 @@ body.portfolio .subtabs .tab[aria-pressed="true"] > span:first-child{ text-decor
 .ms__topic::before{ content:""; width:7px; height:7px; border-radius:50%; background:rgb(var(--tc)); }
 .ms__topic:hover{ background:rgba(var(--tc),.2); }
 .ms__topic[aria-checked="true"]{ background:rgba(var(--tc),.24); border-color:rgb(var(--tc)); }
+
+/* Contact, version sobre (comme le reste du site) : pas de carte ni de cadres, des champs soulignés,
+   les sujets comme les filtres (petites capitales, soulignés en corail une fois choisis), bouton rectangle */
+.ms__letter{ padding:0 !important; border:0 !important; border-radius:0 !important; background:none !important; }
+.ms__letter::before{ display:none !important; }
+.ms__grid{ gap:30px 36px; }
+.ms__f input, .ms__f textarea{ background:none !important; border:0 !important; border-bottom:1px solid rgba(var(--ink-rgb),.3) !important; border-radius:0 !important; padding:8px 0 10px !important; }
+.ms__f textarea{ min-height:130px; }
+.ms__f input:hover, .ms__f textarea:hover{ border-bottom-color:rgba(var(--ink-rgb),.55) !important; }
+.ms__f input:focus, .ms__f textarea:focus{ border-bottom-color:var(--ink) !important; background:none !important; }
+.ms__f .topics{ gap:6px 26px; padding-top:4px; }
+.ms__topic{ height:auto !important; padding:0 0 4px !important; border:0 !important; border-bottom:1.5px solid transparent !important; border-radius:0 !important;
+  background:none !important; color:var(--ink-faint) !important; font-size:12px !important; font-weight:500 !important; letter-spacing:.12em !important; }
+.ms__topic::before{ display:none !important; }
+.ms__topic:hover{ color:var(--ink) !important; }
+.ms__topic[aria-checked="true"]{ color:var(--ink) !important; border-bottom-color:rgb(var(--t-coral)) !important; }
+.ms__foot{ border-top:0 !important; padding-top:0 !important; margin-top:34px !important; }
+.ms__send{ border-radius:0 !important; height:52px !important; padding:0 28px !important; }
+.ms__send svg{ stroke:rgb(var(--t-coral)) !important; }
+.ms__alt{ margin-top:48px !important; }
