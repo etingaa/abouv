@@ -313,9 +313,12 @@
     async function loadArtworksFromSheet(){
       const [list, sizes] = await Promise.all([abouvSheet.artworks(), loadSizes()]);
       sizesMap = sizes || {};
+      // œuvre sans image dans images/thumbs (pas encore ajoutée) : écartée, comme dans la galerie 3D
+      // (sinon une vignette vide mènerait à une page d'œuvre qui n'existe pas)
+      const known = Object.keys(sizesMap).length > 0;
 
       // + format normalisé et orientation, pour les filtres ; œuvres disponibles d'abord, puis vendues
-      return list.slice().sort((a, b) => (a.status === "vendue") - (b.status === "vendue")).map(a => {
+      return list.filter(a => !known || sizesMap[a.file]).sort((a, b) => (a.status === "vendue") - (b.status === "vendue")).map(a => {
         const sizeNorm = a.size ? normSize(a.size) : "";
         return { ...a, sizeNorm, shape: a.size ? shapeFromSize(sizeNorm) : "unknown" };
       });
@@ -502,7 +505,6 @@
        ========================= */
 
     let pushed = false;
-    if("scrollRestoration" in history) history.scrollRestoration = "manual";
 
     function openWork(idx, opts = {}){
       abouvModal.open(currentList, idx, {
@@ -585,9 +587,11 @@
         artworks = await loadArtworksFromSheet();
         render();
         // ?oeuvre=<fichier> (clic sur une toile de la galerie 3D) : sa fiche s'ouvre directement
+        // (l'adresse est nettoyée : fermer la fiche ramène au portfolio, sans la rouvrir au rafraîchissement)
         const wanted = new URLSearchParams(location.search).get("oeuvre");
         const at = wanted ? currentList.findIndex(a => a.file === wanted || a.title === wanted) : -1;
-        if(at >= 0) abouvModal.open(currentList, at);
+        if(wanted){ const u = new URL(location.href); u.searchParams.delete("oeuvre"); history.replaceState(history.state, "", u.href); }
+        if(at >= 0) openWork(at);
       } catch(err){
         console.error(err);
         els.count.textContent = "";
