@@ -250,6 +250,7 @@
     "Huile sur Toile": "Oil on canvas",
     "Scultpure": "Sculpture",
     "Atelier": "Artist's studio",
+    "atelier": "artist's studio",
 
     /* ---------- Expositions ---------- */
     "En ce moment": "Now showing",

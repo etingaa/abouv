@@ -3,6 +3,7 @@
 // Un texte absent ici s'affiche en anglais.
 window.I18N_LANGS = {
   es: {
+    "atelier": "taller de la artista",
     "Dimensions": "Dimensiones",
     "France": "Francia",
     "Paris": "París",
@@ -283,6 +284,7 @@ window.I18N_LANGS = {
     "Voir le portfolio": "Ver el portafolio",
   },
   it: {
+    "atelier": "studio dell'artista",
     "Dimensions": "Dimensioni",
     "France": "Francia",
     "Paris": "Parigi",
