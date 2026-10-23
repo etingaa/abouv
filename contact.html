@@ -18,7 +18,7 @@
   <script src="i18n.js?v=20261027g"></script>
   <script src="site.js?v=20261026a"></script>
   <link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="styles.css?v=20261027n" />
+  <link rel="stylesheet" href="styles.css?v=20261027q" />
   <!-- pages préchargées au survol d'un lien : changement de page quasi instantané (la galerie 3D est seulement préchargée) -->
   <script type="speculationrules">
     {"prerender":[{"where":{"and":[{"selector_matches":".nav__link, .bottom__link--legal"},{"not":{"selector_matches":"[href='./'], [href='../']"}}]},"eagerness":"moderate"}],
@@ -120,35 +120,24 @@
         <!-- le formulaire se lit comme une phrase : on complète les blancs -->
         <form class="ms__letter" id="contactForm" action="https://formspree.io/f/xdalokdl" method="POST">
           <p class="ms__kick"><span class="ms__kickN">01</span>Écrire à l’artiste</p>
-          <p class="ms__p">
-            Je m’appelle
-            <input class="ms__in" type="text" name="Prénom" autocomplete="given-name" placeholder="Prénom" aria-label="Prénom" required size="8">
-            <input class="ms__in" type="text" name="Nom" autocomplete="family-name" placeholder="Nom" aria-label="Nom" required size="8">
-            et vous pouvez me répondre à l’adresse
-            <input class="ms__in ms__in--mail" type="email" name="email" autocomplete="email" placeholder="E-mail" aria-label="Email" required size="18">.
-          </p>
-          <div class="ms__p ms__topicLine">
-            <span id="topicLabel">Je vous écris au sujet de</span>
-            <span class="topics" role="radiogroup" aria-labelledby="topicLabel">
-              <button class="ms__topic tc-coral" type="button" role="radio" data-topic="Acquisition">Acquisition</button>
-              <button class="ms__topic tc-blue" type="button" role="radio" data-topic="Commande">Commande</button>
-              <button class="ms__topic tc-sand" type="button" role="radio" data-topic="Presse">Presse</button>
-              <button class="ms__topic tc-green" type="button" role="radio" data-topic="Autre">Autre</button>
-            </span>
-            <input type="hidden" name="Sujet" id="topicField" value="">
+          <div class="ms__grid">
+            <label class="ms__f"><span class="ms__l">Prénom <b aria-hidden="true">*</b></span><input type="text" name="Prénom" autocomplete="given-name" required></label>
+            <label class="ms__f"><span class="ms__l">Nom <b aria-hidden="true">*</b></span><input type="text" name="Nom" autocomplete="family-name" required></label>
+            <label class="ms__f ms__f--full"><span class="ms__l">Email <b aria-hidden="true">*</b></span><input type="email" name="email" autocomplete="email" required></label>
+            <div class="ms__f ms__f--full">
+              <span class="ms__l" id="topicLabel">Sujet</span>
+              <span class="topics" role="radiogroup" aria-labelledby="topicLabel">
+                <button class="ms__topic tc-coral" type="button" role="radio" data-topic="Acquisition">Acquisition</button>
+                <button class="ms__topic tc-blue" type="button" role="radio" data-topic="Commande">Commande</button>
+                <button class="ms__topic tc-sand" type="button" role="radio" data-topic="Presse">Presse</button>
+                <button class="ms__topic tc-green" type="button" role="radio" data-topic="Autre">Autre</button>
+              </span>
+              <input type="hidden" name="Sujet" id="topicField" value="">
+            </div>
+            <label class="ms__f ms__f--full"><span class="ms__l">Message <b aria-hidden="true">*</b></span><textarea name="message" id="message" rows="6" required></textarea></label>
+            <label class="ms__f"><span class="ms__l">Organisation <em>(facultatif)</em></span><input type="text" name="Organisation" autocomplete="organization"></label>
+            <label class="ms__f"><span class="ms__l">Pays <em>(facultatif)</em></span><input type="text" name="Pays" autocomplete="country-name"></label>
           </div>
-
-          <label class="ms__msg">
-            <span class="sr-only">Message</span>
-            <textarea name="message" id="message" rows="4" placeholder="Votre message…" required></textarea>
-          </label>
-
-          <p class="ms__p ms__ps">
-            <span>P.-S. — j’écris de la part de</span>
-            <input class="ms__in ms__in--sm" type="text" name="Organisation" autocomplete="organization" placeholder="Organisation" aria-label="Organisation" size="14">
-            <span>, depuis</span>
-            <input class="ms__in ms__in--sm" type="text" name="Pays" autocomplete="country-name" placeholder="Pays" aria-label="Pays" size="8"><span class="ms__opt">(facultatif)</span>
-          </p>
 
           <!-- anti-spam : champ invisible, rempli uniquement par les robots (ignoré par Formspree) -->
           <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true"
