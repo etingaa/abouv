@@ -465,7 +465,7 @@
     .xrun__c::after{ content:"" !important; display:inline-block; width:.6em; height:1px; margin:0 0 0 .9em !important; vertical-align:middle; background:rgba(var(--ink-rgb),.3) !important; }
     .xpills{ display:none !important; }
     /* décennies côte à côte : on glisse de l'une à l'autre */
-    .xall{ margin:32px 0 16px; }
+    .xall{ margin:28px 0 24px; }
     .xall__bar{ display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px 24px; margin-bottom:18px; }
     .xall__stats{ margin:0; font-size:13px; letter-spacing:.04em; color:var(--ink-faint); }
     .xall__stats b{ color:var(--ink); font-weight:600; }
@@ -481,14 +481,26 @@
     .xall__arrow{ display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; padding:0; border-radius:50%; border:1px solid rgba(var(--ink-rgb),.25); background:none; color:var(--ink); cursor:pointer; transition:border-color .2s ease; }
     .xall__arrow:hover{ border-color:var(--ink); }
     .xall__arrow svg{ width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
-    .xall__grid{ display:flex; gap:16px; overflow-x:auto; scroll-snap-type:x mandatory; scroll-behavior:smooth; overscroll-behavior-x:contain; scrollbar-width:none; -webkit-overflow-scrolling:touch; padding-bottom:4px; }
+    /* la page se résume à ce carrousel : on cache le bandeau des villes et la ligne du temps détaillée */
+    .xrun, #timelineView, .tlNav, .tlFoot, .tlHint, .xfilter{ display:none !important; }
+    .xall__grid{ display:flex; gap:20px; overflow-x:auto; scroll-snap-type:x mandatory; overscroll-behavior-x:contain; scrollbar-width:none; -webkit-overflow-scrolling:touch;
+      margin:0 calc(50% - 50vw); padding:10px max(20px, calc(50vw - 260px)) 28px; perspective:1400px; }
     .xall__grid::-webkit-scrollbar{ display:none; }
-    .xall__col{ flex:0 0 min(440px, 86%); scroll-snap-align:start; padding:22px 24px 18px; border:1px solid rgba(var(--ink-rgb),.16); border-radius:18px; }
-    .xall__col h3{ margin:0 0 14px; font-size:clamp(48px, 5vw, 72px); font-weight:700; font-stretch:112%; line-height:.9; letter-spacing:-.02em; color:transparent; -webkit-text-stroke:1.2px rgba(var(--ink-rgb),.8); }
+    .xall__col{ --p:0; flex:0 0 min(520px, 84vw); scroll-snap-align:center; padding:26px 28px 22px; border:1px solid rgba(var(--ink-rgb),.2); border-radius:22px;
+      background:rgba(var(--ink-rgb),.025); cursor:pointer; transform-origin:center;
+      transform:rotateY(calc(var(--p) * -14deg)) scale(calc(1 - min(1, abs(var(--p))) * .1)); opacity:calc(1 - min(1, abs(var(--p))) * .55);
+      transition:transform .15s linear, opacity .15s linear, border-color .3s ease; will-change:transform; }
+    .xall__col h3{ margin:0 0 16px; font-size:clamp(56px, 6vw, 88px); font-weight:700; font-stretch:112%; line-height:.9; letter-spacing:-.02em;
+      color:transparent; -webkit-text-stroke:1.2px rgba(var(--ink-rgb),.85); transform:translateX(calc(var(--p) * 70px)); transition:transform .15s linear, color .4s ease; }
     .xall__col h3 small{ font-size:.4em; }
+    .xall__col:hover h3{ color:rgba(var(--ink-rgb),.08); }
+    .xall__col li{ transform:translateX(calc(var(--p) * 22px)); transition:transform .15s linear, background-color .2s ease, opacity .2s ease; }
+    @supports not (transform:scale(abs(-1))){ .xall__col{ transform:rotateY(calc(var(--p) * -14deg)); } }
+    .xall__col:hover{ border-color:rgba(var(--ink-rgb),.4); }
+    @media (prefers-reduced-motion: reduce){ .xall__col, .xall__col h3, .xall__col li{ transform:none !important; opacity:1 !important; } }
+    .xall__col{ align-self:flex-start; }
     .xall ol{ list-style:none; margin:0; padding:0; }
-    .xall li{ display:grid; grid-template-columns:44px 1fr; column-gap:10px; padding:7px 4px; border-top:1px solid rgba(var(--ink-rgb),.1); cursor:pointer; border-radius:6px; transition:background-color .2s ease, opacity .2s ease; }
-    .xall li:hover, .xall li:focus-visible{ background:rgba(var(--ink-rgb),.06); outline:none; }
+    .xall li{ display:grid; grid-template-columns:44px 1fr; column-gap:10px; padding:7px 4px; border-top:1px solid rgba(var(--ink-rgb),.1); border-radius:6px; }
     .xall li.is-dim{ opacity:.25; }
     .xall li b{ grid-row:span 2; font-size:13px; font-weight:600; color:var(--ink-faint); font-variant-numeric:tabular-nums; }
     .xall__t{ font-size:14px; color:var(--ink); }
@@ -901,7 +913,7 @@
       const cols = decades.map(d => `
         <section class="xall__col"><h3>${d}<small>s</small></h3><ol>${list.map((e, k) => ({ e, k })).filter(({ e }) => Math.floor(e.year / 10) * 10 === d)
           .sort((a, b) => b.e.year - a.e.year).map(({ e, k }) => `
-          <li data-k="${k}" data-type="${e.type}" tabindex="0"><b>${e.year}</b><span class="xall__t">${escapeHtml(e.title)}</span><span class="xall__c">${escapeHtml(t(e.city))}</span></li>`).join("")}</ol></section>`).join("");
+          <li data-k="${k}" data-type="${e.type}"><b>${e.year}</b><span class="xall__t">${escapeHtml(e.title)}</span><span class="xall__c">${escapeHtml(t(e.city))}</span></li>`).join("")}</ol></section>`).join("");
       const tabs = decades.map((d, k) => `<button type="button" class="xall__tab" data-k="${k}">${d}<small>s</small></button>`).join("");
       return `<section class="xall" aria-label="${t("Vue d'ensemble")}">
         <div class="xall__bar"><p class="xall__stats">${stats}</p>
@@ -928,30 +940,42 @@
         box.innerHTML = `
           <h2 class="xtitle">${t("Expositions")}<sup></sup></h2>
           <p class="xfilter" hidden></p>
-          <div class="xrun"><div class="xrun__track">${seq(false)}${seq(true)}</div></div>
           ${overview(list)}`;
         box.querySelectorAll(".xrun__c").forEach(b => b.addEventListener("click", () => goCity(b.dataset.city)));
         box.querySelector(".xfilter").addEventListener("click", (e) => { if (e.target.closest("button")) goCity(filters.q); });
         // décennies : on glisse de l'une à l'autre (doigt, pavé tactile, flèches, onglets) ; l'onglet suit
         const grid = box.querySelector(".xall__grid"), colsEl = [...grid.children], tabsEl = [...box.querySelectorAll(".xall__tab")];
         let curDec = 0;
-        const goDec = (k) => { k = Math.max(0, Math.min(colsEl.length - 1, k)); grid.scrollTo({ left: colsEl[k].offsetLeft - grid.offsetLeft - grid.clientLeft, behavior: "smooth" }); };
+        const goDec = (k) => { k = Math.max(0, Math.min(colsEl.length - 1, k)); const c = colsEl[k]; grid.scrollTo({ left: c.offsetLeft - grid.offsetLeft - (grid.clientWidth - c.offsetWidth) / 2, behavior: "smooth" }); };
         const syncDec = () => {
           let best = 0, bd = Infinity;
-          colsEl.forEach((c, k) => { const d = Math.abs(c.offsetLeft - grid.offsetLeft - grid.scrollLeft); if (d < bd){ bd = d; best = k; } });
+          const mid = grid.scrollLeft + grid.clientWidth / 2;
+          colsEl.forEach((c, k) => { const d = Math.abs(c.offsetLeft - grid.offsetLeft + c.offsetWidth / 2 - mid); if (d < bd){ bd = d; best = k; } });
           curDec = best; tabsEl.forEach((b, k) => b.classList.toggle("is-on", k === best));
         };
-        grid.addEventListener("scroll", () => requestAnimationFrame(syncDec), { passive: true });
+        // effets : chaque décennie s'incline, rétrécit et s'estompe en s'éloignant du centre ; son grand titre glisse plus vite (parallaxe)
+        const fx = () => {
+          const mid = grid.scrollLeft + grid.clientWidth / 2;
+          colsEl.forEach(c => {
+            const p = Math.max(-1.4, Math.min(1.4, (c.offsetLeft - grid.offsetLeft + c.offsetWidth / 2 - mid) / c.offsetWidth));
+            c.style.setProperty("--p", p.toFixed(3));
+          });
+        };
+        let raf = 0;
+        grid.addEventListener("scroll", () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => { syncDec(); fx(); }); }, { passive: true });
+        addEventListener("resize", fx);
+        fx();
         tabsEl.forEach(b => b.addEventListener("click", () => goDec(+b.dataset.k)));
+        // clic sur une décennie à moitié visible : on la ramène au centre
+        colsEl.forEach((c, k) => c.addEventListener("click", () => { if (k !== curDec) goDec(k); }));
+        // arrivée filtrée (?q=… depuis la page Galeries) : on se place sur la décennie de la première exposition concernée
+        if (filters.q){
+          const qq = filters.q.toLowerCase(), k = colsEl.findIndex(c => c.textContent.toLowerCase().includes(qq));
+          if (k > 0) requestAnimationFrame(() => { grid.style.scrollBehavior = "auto"; goDec(k); grid.style.scrollBehavior = ""; });
+        }
         box.querySelectorAll(".xall__arrow").forEach(b => b.addEventListener("click", () => goDec(curDec + +b.dataset.d)));
         syncDec();
         // un clic sur une exposition amène à sa ligne dans la liste détaillée
-        box.querySelectorAll(".xall li").forEach(li => li.addEventListener("keydown", (ev) => { if (ev.key === "Enter" || ev.key === " "){ ev.preventDefault(); li.click(); } }));
-        box.querySelectorAll(".xall li").forEach(li => li.addEventListener("click", () => {
-          const e = list[+li.dataset.k], c = cards.find(x => x.expo === e);
-          if (!c) return;
-          if (c){ c.el.scrollIntoView({ behavior: "smooth", block: "center" }); c.el.classList.remove("is-flash"); void c.el.offsetWidth; c.el.classList.add("is-flash"); }
-        }));
       }
       box.querySelector(".xtitle sup").textContent = n;
       box.querySelectorAll(".xrun__c").forEach(b => b.classList.toggle("is-on", filters.q.toLowerCase() === b.dataset.city.toLowerCase()));
