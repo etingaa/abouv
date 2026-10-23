@@ -36,7 +36,8 @@ const PAGES = [
   { file: "apropos.html", url: "apropos" },
   { file: "contact.html", url: "contact" },
   { file: "mentions-legales.html", url: "mentions-legales" },
-  { file: "classique.html", url: "", noSitemap: true },   // accueil sans 3D (repli) : même page pour Google
+  { file: "classique.html", url: "", noSitemap: true },
+  { file: "merci.html", url: "merci", noSitemap: true },   // remerciement après le formulaire   // accueil sans 3D (repli) : même page pour Google
 ];
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");

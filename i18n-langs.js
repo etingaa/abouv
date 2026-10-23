@@ -3,6 +3,11 @@
 // Un texte absent ici s'affiche en anglais.
 window.I18N_LANGS = {
   es: {
+    "Merci": "Gracias",
+    "Merci — Annick Bouvattier": "Gracias — Annick Bouvattier",
+    "{prenom}, votre message a bien été envoyé. Annick Bouvattier vous répondra dès que possible.": "{prenom}, su mensaje se ha enviado. Annick Bouvattier le responderá lo antes posible.",
+    "Votre message a bien été envoyé. Annick Bouvattier vous répondra dès que possible.": "Su mensaje se ha enviado. Annick Bouvattier le responderá lo antes posible.",
+    "Voir l'œuvre": "Ver la obra",
     "Écrire à l’artiste": "Escribir a la artista",
     "Je vous écris au sujet de": "Le escribo sobre",
     "À l’attention d’Annick Bouvattier": "A la atención de Annick Bouvattier",
@@ -322,6 +327,11 @@ window.I18N_LANGS = {
     "Voir le portfolio": "Ver el portafolio",
   },
   it: {
+    "Merci": "Grazie",
+    "Merci — Annick Bouvattier": "Grazie — Annick Bouvattier",
+    "{prenom}, votre message a bien été envoyé. Annick Bouvattier vous répondra dès que possible.": "{prenom}, il tuo messaggio è stato inviato. Annick Bouvattier ti risponderà al più presto.",
+    "Votre message a bien été envoyé. Annick Bouvattier vous répondra dès que possible.": "Il tuo messaggio è stato inviato. Annick Bouvattier ti risponderà al più presto.",
+    "Voir l'œuvre": "Vedi l'opera",
     "Écrire à l’artiste": "Scrivere all'artista",
     "Je vous écris au sujet de": "Le scrivo a proposito di",
     "À l’attention d’Annick Bouvattier": "All'attenzione di Annick Bouvattier",
