@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <script>/* thème clair mémorisé : appliqué avant tout affichage (pas de flash) */(function(){try{if(localStorage.getItem("abouv:theme")==="light"){var r=document.documentElement;r.setAttribute("data-theme","light");r.style.background="#efebe3";}}catch(e){}})();</script>
+  <link rel="expect" href="#i18n-end" blocking="render" />
+  <meta name="robots" content="noindex" />
+  <!-- version sans 3D de l'accueil (repli automatique) : l'adresse affichée reste celle du site de base -->
+  <script>(function(){var p=location.pathname;if(/\/classique(\.html)?$/.test(p))history.replaceState(history.state,"",p.replace(/classique(\.html)?$/,"")+location.search+location.hash);})();</script>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="Annick Bouvattier, artiste peintre : peintures à l'huile et portraits de femmes, en jeux d'ombre et de lumière." />
+  <meta name="theme-color" content="#0B1120" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Annick Bouvattier" />
+  <meta property="og:locale" content="fr_FR" />
+  <meta property="og:title" content="Annick Bouvattier — Artiste peintre" />
+  <meta property="og:description" content="Annick Bouvattier, artiste peintre : peintures à l'huile et portraits de femmes, en jeux d'ombre et de lumière." />
+  <link rel="icon" href="favicon.ico" sizes="48x48" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="icon-192.png" type="image/png" sizes="192x192" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <script src="i18n-langs.js?v=20261030a"></script>
+  <script src="i18n.js?v=20261030a"></script>
+  <script src="site.js?v=20261029a"></script>
+  <link rel="preconnect" href="https://docs.google.com" crossorigin />
+  <script src="sheet.js?v=20261027a"></script>
+  <link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <style>html{background:#060b18}</style>
+  <title>Annick Bouvattier — Artiste peintre</title>
+  <link rel="stylesheet" href="styles.css?v=20261030a" />
+  <style>
+    /* Accueil sans 3D (repli : appareil sans 3D, chargement trop lent, erreur) — dans le style du site */
+    .hm{ margin:clamp(8px, 2vh, 24px) 0 80px; }
+    .hm__title{ margin:0; font-size:clamp(46px, 9vw, 150px); font-weight:700; font-stretch:112%; line-height:.88; letter-spacing:-.015em; text-transform:uppercase; color:var(--ink); }
+    .hm__kick{ display:flex; align-items:center; gap:14px; margin:18px 0 0; font-size:12px; font-weight:500; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-faint); }
+    .hm__kick::before{ content:""; width:48px; height:3px; border-radius:2px; background:rgb(var(--t-coral, 236,118,104)); }
+    .hm__intro{ display:grid; grid-template-columns:minmax(0, 7fr) minmax(0, 5fr); gap:clamp(24px, 5vw, 80px); align-items:end; margin:clamp(32px, 6vh, 64px) 0 clamp(40px, 7vh, 72px); }
+    .hm__intro p{ margin:0; max-width:62ch; font-size:clamp(17px, 1.4vw, 20px); line-height:1.7; color:var(--ink-soft); }
+    .hm__intro p a{ color:var(--ink); border-bottom:1px solid rgba(var(--ink-rgb),.35); }
+    .hm__cta{ justify-self:end; display:inline-flex; align-items:center; gap:12px; height:52px; padding:0 26px; background:var(--ink); color:var(--bg);
+      font-size:12px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; white-space:nowrap; }
+    .hm__cta svg{ width:16px; height:16px; fill:none; stroke:rgb(var(--t-coral, 236,118,104)); stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; transition:transform .3s ease; }
+    .hm__cta:hover svg{ transform:translateX(4px); }
+    .hm__h2{ display:flex; align-items:baseline; gap:12px; margin:0 0 20px; padding-top:18px; border-top:1px solid rgba(var(--ink-rgb),.16);
+      font-size:12px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:var(--ink); }
+    .hm__h2 span{ color:var(--green, #76c492); }
+    .hm__grid{ columns:4; column-gap:16px; }
+    .hm__w{ display:block; break-inside:avoid; margin:0 0 22px; color:inherit; }
+    .hm__w img{ display:block; width:100%; height:auto; background:rgba(var(--ink-rgb),.05); transition:opacity .2s ease; }
+    .hm__w:hover img{ opacity:.88; }
+    .hm__w b{ display:block; margin-top:10px; font-size:13px; font-weight:700; font-stretch:112%; text-transform:uppercase; color:var(--ink); }
+    .hm__w small{ display:block; margin-top:3px; font-size:12px; color:var(--ink-faint); }
+    @media (max-width:1100px){ .hm__grid{ columns:3; } }
+    @media (max-width:760px){ .hm__grid{ columns:2; column-gap:10px; } .hm__intro{ grid-template-columns:1fr; } .hm__cta{ justify-self:start; } }
+  </style>
+  <!-- seo:head -->
+  <link rel="canonical" href="https://annickbouvattier.art/fr/" />
+  <link rel="alternate" hreflang="fr" href="https://annickbouvattier.art/fr/" />
+  <link rel="alternate" hreflang="en" href="https://annickbouvattier.art/en/" />
+  <link rel="alternate" hreflang="es" href="https://annickbouvattier.art/es/" />
+  <link rel="alternate" hreflang="it" href="https://annickbouvattier.art/it/" />
+  <link rel="alternate" hreflang="x-default" href="https://annickbouvattier.art/" />
+  <meta property="og:url" content="https://annickbouvattier.art/fr/" />
+  <meta property="og:image" content="https://annickbouvattier.art/images/Enigma.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Annick Bouvattier — Artiste peintre" />
+  <meta name="twitter:description" content="Annick Bouvattier, artiste peintre : peintures à l'huile et portraits de femmes, en jeux d'ombre et de lumière." />
+  <meta name="twitter:image" content="https://annickbouvattier.art/images/Enigma.jpg" />
+  <!-- /seo:head -->
+</head>
+
+<body class="salle salle--portfolio">
+  <div class="page">
+    <div class="container">
+      <header class="top">
+        <a class="brand" href="./">ANNICK&nbsp;BOUVATTIER</a>
+        <nav class="top__nav" aria-label="Navigation principale">
+          <a class="nav__link is-active" aria-current="page" href="./">Accueil</a>
+          <a class="nav__link" href="portfolio">Portfolio</a>
+          <a class="nav__link" href="galeries">Galeries</a>
+          <a class="nav__link" href="expositions">Expositions</a>
+          <a class="nav__link" href="apropos">À propos</a>
+          <a class="nav__link" href="contact">Contact</a>
+        </nav>
+      </header>
+
+      <main class="hm">
+        <h1 class="hm__title">Annick<br>Bouvattier</h1>
+        <p class="hm__kick">Artiste peintre</p>
+        <div class="hm__intro">
+<p data-lang="fr">Née à Nevers, Annick Bouvattier a d’abord été styliste, formée à l’école Bercot – Marie Rucki, puis costumière pour le cinéma et la publicité, notamment dans les studios de Cinecittà. Depuis le milieu des années 1990, elle se consacre à la peinture à l’huile. Élève de Pierre Ramel, elle peint au couteau une peinture lissée, sans épaisseur de matière, tout en transparence. Elle peint essentiellement des femmes, dans des jeux d’ombres et de lumière (son parcours est raconté sur la page <a href="apropos">À propos</a>). Ses toiles ont été exposées en France et à l’étranger ; elles sont présentées par des galeries à Paris, Lyon, Laguna Beach, Carmel-by-the-Sea et New Orleans, et certaines sont disponibles à la vente dans le <a href="portfolio">portfolio</a>.</p>
+<p data-lang="en">Born in Nevers, Annick Bouvattier first worked as a fashion designer, trained at the Bercot – Marie Rucki school, then as a costume designer for film and advertising, notably at the Cinecittà studios. Since the mid-1990s she has devoted herself to oil painting. A pupil of Pierre Ramel, she paints with a palette knife, in smooth, transparent layers, without impasto. She mainly paints women, in plays of light and shadow (her story is told on the <a href="apropos">About</a> page). Her paintings have been exhibited in France and abroad; they are shown by galleries in Paris, Lyon, Laguna Beach, Carmel-by-the-Sea and New Orleans, and some are available for purchase in the <a href="portfolio">portfolio</a>.</p>
+<p data-lang="es">Nacida en Nevers, Annick Bouvattier fue primero estilista, formada en la escuela Bercot – Marie Rucki, y después figurinista para el cine y la publicidad, sobre todo en los estudios de Cinecittà. Desde mediados de los años noventa se dedica a la pintura al óleo. Alumna de Pierre Ramel, pinta con espátula una pintura lisa, sin espesor de materia, toda en transparencias. Pinta sobre todo mujeres, en juegos de luces y sombras (su trayectoria se cuenta en la página <a href="apropos">Sobre la artista</a>). Sus cuadros se han expuesto en Francia y en el extranjero; los presentan galerías de París, Lyon, Laguna Beach, Carmel-by-the-Sea y Nueva Orleans, y algunos están a la venta en el <a href="portfolio">portafolio</a>.</p>
+<p data-lang="it">Nata a Nevers, Annick Bouvattier è stata prima stilista, formata alla scuola Bercot – Marie Rucki, poi costumista per il cinema e la pubblicità, in particolare negli studi di Cinecittà. Dalla metà degli anni Novanta si dedica alla pittura a olio. Allieva di Pierre Ramel, dipinge a spatola una pittura liscia, senza spessore di materia, tutta per velature. Dipinge soprattutto donne, in giochi di luci e ombre (il suo percorso è raccontato nella pagina <a href="apropos">Chi sono</a>). I suoi quadri sono stati esposti in Francia e all'estero; sono presentati da gallerie a Parigi, Lione, Laguna Beach, Carmel-by-the-Sea e New Orleans, e alcuni sono in vendita nel <a href="portfolio">portfolio</a>.</p>
+          <a class="hm__cta" href="portfolio"><span>Voir le portfolio</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+        </div>
+        <h2 class="hm__h2">Toiles disponibles <span id="hmN"></span></h2>
+        <div class="hm__grid" id="hmGrid" translate="no"></div>
+      </main>
+
+      <footer class="bottom">
+        <div class="bottom__left">
+          <a class="bottom__link" href="https://www.instagram.com/annick.bouvattier/" target="_blank" rel="noopener noreferrer">instagram</a>
+          <a class="bottom__link" href="https://www.facebook.com/annick.bouvattier/" target="_blank" rel="noopener noreferrer">facebook</a>
+        </div>
+        <a class="bottom__link bottom__link--legal" href="mentions-legales">mentions légales</a>
+      </footer>
+    </div>
+  </div>
+
+  <script>
+  (() => {
+    "use strict";
+    const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[c]);
+    // les toiles disponibles (les plus récentes d'abord), dont l'image existe
+    Promise.all([abouvSheet.artworks(), fetch("images/thumbs/sizes.json").then(r => r.json()).catch(() => null)]).then(([list, sizes]) => {
+      const av = list.filter(a => a.status === "disponible" && (!sizes || sizes[a.file]))
+        .sort((a, b) => (b.year || 0) - (a.year || 0) || a.title.localeCompare(b.title, "fr"));
+      document.getElementById("hmN").textContent = av.length;
+      document.getElementById("hmGrid").innerHTML = av.map(a => {
+        const d = sizes && sizes[a.file], wh = d ? ` width="${d[0]}" height="${d[1]}"` : "";
+        const meta = [a.technique && t(a.technique), a.size && a.size.replace(/\s*x\s*/i, " × ")].filter(Boolean).join(" · ");
+        return `<a class="hm__w" href="oeuvres/${a.slug}"><img src="${a.thumbSmall}" alt="${esc(a.title)}"${wh} loading="lazy" decoding="async"><b>${esc(a.title)}</b><small>${esc(meta)}</small></a>`;
+      }).join("");
+    }).catch(() => {});
+  })();
+  </script>
+<script>window.I18N && I18N.apply();</script><i id="i18n-end" hidden></i>
+</body>
+</html>

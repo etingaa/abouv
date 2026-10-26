@@ -6,13 +6,16 @@
   <link rel="expect" href="#i18n-end" blocking="render" />
   <!-- GitHub Pages sert cette page pour n'importe quelle adresse introuvable, à n'importe quelle profondeur
        (ex. …/oeuvres/une-oeuvre-disparue.html) : on ancre les chemins relatifs à la racine du site
-       (le dossier /abouv/ sur etingaa.github.io, sinon la racine du domaine) -->
-  <script>(function(){var m=location.pathname.match(/^\/abouv\//),b=document.createElement("base");b.href=m?m[0]:"/";document.head.appendChild(b);})();</script>
+       (le dossier /abouv/ sur etingaa.github.io, sinon la racine du domaine ; avec la langue : /en/…) -->
+  <script>(function(){var m=location.pathname.match(/^(\/abouv)?\/((fr|en|es|it)\/)?/),b=document.createElement("base");b.href=m[0]||"/";document.head.appendChild(b);})();</script>
   <style>html{background:#060b18}</style>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="robots" content="noindex" />
   <meta name="theme-color" content="#0B1120" />
+  <link rel="icon" href="favicon.ico" sizes="48x48" />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="icon-192.png" type="image/png" sizes="192x192" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
   <script src="i18n-langs.js?v=20261030a"></script>
   <script src="i18n.js?v=20261030a"></script>
   <script src="site.js?v=20261029a"></script>

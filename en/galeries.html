@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <script>/* thème clair mémorisé : appliqué avant tout affichage (pas de flash) */(function(){try{if(localStorage.getItem("abouv:theme")==="light"){var r=document.documentElement;r.setAttribute("data-theme","light");r.style.background="#efebe3";}}catch(e){}})();</script>
+  <link rel="expect" href="#i18n-end" blocking="render" />
+  <style>html{background:#060b18}</style>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="The galleries showing Annick Bouvattier's work, in France and the United States." />
+  <meta name="theme-color" content="#0B1120" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Annick Bouvattier" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:title" content="Galleries — Annick Bouvattier" />
+  <meta property="og:description" content="The galleries showing Annick Bouvattier's work, in France and the United States." />
+  <link rel="icon" href="favicon.ico" sizes="48x48" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="icon-192.png" type="image/png" sizes="192x192" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <script src="i18n-langs.js?v=20261030a"></script>
+  <script src="i18n.js?v=20261030a"></script>
+  <script src="site.js?v=20261029a"></script>
+  <link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <!-- pages préchargées au survol d'un lien : changement de page quasi instantané (la galerie 3D est seulement préchargée) -->
+  <script type="speculationrules">
+    {"prerender":[{"where":{"and":[{"selector_matches":".nav__link, .bottom__link--legal"},{"not":{"selector_matches":"[href='./'], [href='../']"}}]},"eagerness":"conservative"}],
+     "prefetch":[{"where":{"selector_matches":".nav__link, .bottom__link--legal"},"eagerness":"moderate"}]}
+  </script>
+  <title>Galleries — Annick Bouvattier</title>
+  <style>
+    /* Galeries : une carte en points (pas de Leaflet) avec les galeries, puis les galeries en fiches */
+    .gx{ position:relative; }
+    .gx__title{ margin:clamp(0px, 3vh - 12px, 28px) 0 clamp(2px, 1.5vh, 16px); font-size:clamp(40px, min(6.4vw, 9.5vh), 104px); font-weight:700; font-stretch:112%; text-transform:uppercase; letter-spacing:-.01em; line-height:.9; color:var(--ink); }
+    .gx__title sup{ font-size:.2em; font-weight:500; letter-spacing:.06em; vertical-align:top; margin-left:.25em; position:relative; top:.6em; color:var(--ink-faint); font-stretch:100%; }
+
+    /* carte en points */
+    .gx__map{ position:relative; margin:0 calc(50% - 50vw) clamp(16px, 3vh, 36px); padding:0 max(20px, calc(50vw - 700px + 48px)); }
+    .gx__map svg{ display:block; width:100%; height:auto; overflow:hidden;
+      -webkit-mask-image:radial-gradient(ellipse 75% 85% at 50% 50%, #000 55%, transparent 100%); mask-image:radial-gradient(ellipse 75% 85% at 50% 50%, #000 55%, transparent 100%); }
+    .gx__pin{ cursor:pointer; outline:none; }
+    .gx__pin circle.dot{ fill:var(--accent); transition:r .3s ease; }
+    .gx__pin circle.ring{ fill:none; stroke:var(--accent); stroke-width:.25; opacity:0; transform-box:fill-box; transform-origin:center; }
+    .gx__pin.is-hot circle.ring{ animation:gxPing 1.4s ease-out infinite; }
+    .gx__pin.is-hot circle.dot, .gx__pin:focus-visible circle.dot{ fill:#fff; }
+    @keyframes gxPing{ from{ opacity:.9; transform:scale(1); } to{ opacity:0; transform:scale(4); } }
+    .gx__pin text{ font-family:var(--font); font-size:2.1px; font-weight:500; letter-spacing:.12px; text-transform:uppercase; fill:rgba(236,231,222,.75); transition:fill .2s ease; }
+    .gx__pin.is-hot text{ fill:#fff; }
+    .gx__arc{ fill:none; stroke:rgba(255,255,255,.2); stroke-width:.18; stroke-dasharray:.6 .6; animation:gxFlow 2.4s linear infinite, gxDraw 1.6s cubic-bezier(.6,0,.2,1) both; transition:stroke-width .3s ease, opacity .3s ease; }
+    @keyframes gxFlow{ to{ stroke-dashoffset:-2.4; } }
+    @keyframes gxDraw{ from{ opacity:0; } to{ opacity:1; } }
+    .gx__map svg.has-on .gx__arc:not(.is-on){ opacity:.35; }
+    .gx__arc.is-on{ stroke-width:.32; }
+    /* lueur qui voyage le long des arcs */
+    .gx__comet{ fill:#fff; opacity:.55; filter:drop-shadow(0 0 .6px rgba(255,255,255,.9)); pointer-events:none; transition:opacity .3s ease; }
+    .gx__comet--us{ fill:rgb(var(--c-us, 126,162,240)); } .gx__comet--fr{ fill:rgb(var(--c-fr, 236,118,104)); }
+    .gx__map svg.has-on .gx__comet:not(.is-on){ opacity:.15; }
+    .gx__comet.is-on{ opacity:1; }
+    /* chaque point respire doucement (décalés), même sans survol */
+    .gx__pin circle.ring{ animation:gxPing 3.2s ease-out infinite; animation-delay:calc(var(--d, 0) * 1s); }
+    .gx__pin:nth-of-type(2) circle.ring{ --d:.6; } .gx__pin:nth-of-type(3) circle.ring{ --d:1.2; } .gx__pin:nth-of-type(4) circle.ring{ --d:1.8; } .gx__pin:nth-of-type(5) circle.ring{ --d:2.4; }
+    .gx__dots{ transition:transform .6s cubic-bezier(.2,.7,.2,1); }
+    @media (prefers-reduced-motion: reduce){ .gx__arc, .gx__pin circle.ring{ animation:none; } .gx__comet{ display:none; } }
+    @media (prefers-reduced-motion: reduce){ .gx__pin.is-hot circle.ring{ animation:none; } }
+
+    /* accordéon : cinq volets ; replié = numéro + ville à la verticale, ouvert = la galerie en grand */
+    /* volets séparés, aux angles arrondis ; celui qu'on survole (ou ouvert) a un contour plus épais et plus net */
+    .gx__acc{ display:flex; gap:8px; height:clamp(250px, 42vh, 540px); }
+    .gx__panel{
+      position:relative; flex:1 1 0; min-width:0; overflow:hidden; cursor:pointer; outline:none; container-type:size;
+      border:1px solid rgba(var(--ink-rgb),.16); border-radius:18px;
+      transition:flex-grow .8s cubic-bezier(.7,0,.2,1), background-color .6s ease, border-color .3s ease, box-shadow .3s ease;
+      scroll-margin-top:calc(var(--shade-h, 90px) + 24px);
+    }
+    .gx__panel:hover, .gx__panel.is-open{ border-color:rgba(var(--ink-rgb),.7); box-shadow:inset 0 0 0 1.5px rgba(var(--ink-rgb),.7); }
+    .gx__panel.is-open{ flex-grow:5; cursor:default; background:linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,0)); }
+    .gx__num{ position:absolute; top:22px; left:22px; font-size:12px; font-weight:500; letter-spacing:.12em; color:var(--ink-faint); font-variant-numeric:tabular-nums; }
+    .gx__vcity{
+      position:absolute; left:50%; top:60px; margin:0; transform:translateX(-50%); writing-mode:vertical-rl;
+      /* taille calée sur la hauteur du volet et la longueur du nom : la ville se lit toujours en entier */
+      font-size:clamp(12px, min(2.2vw, calc((100cqh - 96px) / (var(--n, 10) * .86))), 34px); font-weight:700; font-stretch:112%; text-transform:uppercase; letter-spacing:.02em; white-space:nowrap;
+      color:transparent; -webkit-text-stroke:1px rgba(255,255,255,.7);
+      transition:opacity .4s ease, -webkit-text-stroke-color .3s ease;
+    }
+    .gx__panel:hover .gx__vcity{ -webkit-text-stroke-color:#fff; }
+    .gx__panel.is-open .gx__vcity{ opacity:0; }
+    .gx__body{
+      position:absolute; left:0; right:0; top:clamp(40px, 11cqh, 56px); padding:0 clamp(24px, 3vw, 48px);
+      display:flex; flex-direction:column; gap:6px; min-width:420px;
+      opacity:0; transform:translateY(16px); transition:opacity .4s ease, transform .6s cubic-bezier(.2,.7,.2,1);
+      pointer-events:none;
+    }
+    .gx__panel.is-open .gx__body{ opacity:1; transform:none; transition-delay:.35s; pointer-events:auto; }
+    .gx__country{ margin:0; font-size:11px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint); }
+    .gx__city{ margin:4px 0 12px; font-size:clamp(26px, min(4.6vw, 11cqh), 80px); font-weight:700; font-stretch:112%; text-transform:uppercase; line-height:.9; letter-spacing:-.01em; color:var(--ink); }
+    .gx__name{ margin:0; font-size:18px; font-weight:500; color:var(--ink); }
+    .gx__addr{ margin:0; font-size:14px; color:var(--ink-soft); }
+    .gx__expos{ align-self:flex-start; margin-top:8px; font-size:13px; color:var(--ink-faint); border-bottom:1px solid rgba(var(--ink-rgb),.25); }
+    .gx__expos:hover{ color:var(--ink); border-bottom-color:var(--ink); }
+    .gx__acts{ display:flex; flex-wrap:wrap; gap:8px 22px; margin-top:22px; }
+    .gx__acts a{ font-size:12px; font-weight:500; letter-spacing:.08em; text-transform:uppercase; color:var(--ink); border-bottom:1px solid transparent; padding-bottom:2px; transition:border-color .2s ease; }
+    .gx__acts a:hover{ border-bottom-color:var(--accent); }
+    /* bas du volet ouvert : coordonnées à gauche, grand numéro en contour à droite, sur un filet */
+    .gx__foot{
+      position:absolute; left:clamp(24px, 3vw, 48px); right:clamp(20px, 2.4vw, 36px); bottom:clamp(18px, 2.4vw, 30px);
+      display:flex; align-items:flex-end; justify-content:space-between; gap:20px; min-width:380px;
+      padding-top:14px; border-top:1px solid rgba(var(--ink-rgb),.14);
+      opacity:0; transform:translateY(12px); transition:opacity .4s ease, transform .6s cubic-bezier(.2,.7,.2,1); pointer-events:none;
+    }
+    .gx__panel.is-open .gx__foot{ opacity:1; transform:none; transition-delay:.45s; }
+    /* volet bas (petit écran) : le bas se réduit à un filet et aux coordonnées */
+    @container (max-height: 400px){ .gx__big{ display:none; } .gx__foot{ padding-top:10px; } .gx__acts{ margin-top:14px !important; } }
+    .gx__coords{ font-size:11px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint); font-variant-numeric:tabular-nums; }
+    .gx__big{ font-size:clamp(48px, min(5.4vw, 17cqh), 104px); font-weight:700; font-stretch:112%; line-height:.78; letter-spacing:-.03em;
+      color:transparent; -webkit-text-stroke:1.2px rgba(var(--ink-rgb),.35); font-variant-numeric:tabular-nums; }
+    @media (prefers-reduced-motion: reduce){ .gx__panel, .gx__body{ transition:none; } }
+
+    /* téléphone : les volets s'empilent, tout est visible */
+    /* téléphone : une carte qui se recadre sur le pays, puis les galeries en cartes qu'on fait glisser au doigt */
+    .gm, .gm__nav{ display:none; }
+    @media (max-width:760px){
+      .gx__title{ margin:18px 0 12px; font-size:44px; }
+      .gx__map{ display:none; }
+      /* la carte, bord à bord, remplit l'écran ; les cartes des galeries se posent sur son bas */
+      .gm{ display:block; position:relative; margin:0 -20px; min-height:360px; overflow:hidden;
+        -webkit-mask-image:linear-gradient(to bottom, transparent 0, #000 28px); mask-image:linear-gradient(to bottom, transparent 0, #000 28px); }
+      .gm svg{ display:block; width:100%; height:100%; }
+      .gm .gm__pin{ cursor:pointer; }
+      .gm .gm__pin text{ font-size:2.1px; }
+      .gm .gm__pin--us:not(.is-hot) circle.dot{ fill:rgba(var(--c-us),.6); } .gm .gm__pin--fr:not(.is-hot) circle.dot{ fill:rgba(var(--c-fr),.6); }
+      .gm .gm__pin:not(.is-hot) text{ fill:rgba(var(--ink-rgb),.5); }
+      .gm__cap{ position:absolute; z-index:1; left:20px; top:14px; display:flex; align-items:baseline; gap:8px; font-size:11px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint); }
+      .gm__cap span{ color:var(--ink); }
+      .gm__nav{ position:absolute; z-index:1; right:16px; top:6px; display:flex; align-items:center; gap:10px; }
+      .gm__count{ font-size:11px; font-weight:500; letter-spacing:.14em; color:var(--ink-faint); font-variant-numeric:tabular-nums; }
+      .gm__count b{ color:var(--ink); font-weight:600; }
+      .gm__arrow{ display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px; padding:0; border-radius:50%;
+        border:1px solid rgba(var(--ink-rgb),.25); background:none; color:var(--ink); cursor:pointer; }
+      .gm__arrow svg{ width:13px; height:13px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
+
+      /* les galeries : une rangée de cartes arrondies, compactes, qui flottent sur le bas de la carte */
+      .gx__acc{ position:relative; z-index:2; flex-direction:row; align-items:flex-end; height:auto; gap:10px; margin:0 -20px 24px; padding:0 20px;
+        overflow-x:auto; scroll-snap-type:x mandatory; scroll-padding:0 20px; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
+      .gx__acc::-webkit-scrollbar{ display:none; }
+      .gx__panel, .gx__panel:hover{ container-type:normal; flex:0 0 84%; scroll-snap-align:center; cursor:default;
+        border:1px solid rgba(var(--ink-rgb),.18); border-radius:18px; box-shadow:0 12px 40px rgba(0,0,0,.25);
+        background:rgba(var(--bg-rgb, 11,17,32),.94) !important; padding:16px 18px 14px; }
+      html[data-theme="light"] .gx__panel{ background:rgba(239,235,227,.92) !important; box-shadow:0 12px 40px rgba(22,30,56,.12); }
+      .gx__panel.is-open{ border-color:rgba(var(--ink-rgb),.7); box-shadow:inset 0 0 0 1.5px rgba(var(--ink-rgb),.7), 0 12px 40px rgba(0,0,0,.25); }
+      .gx__vcity{ display:none; }
+      .gx__num{ position:static; display:none; }
+      .gx__body{ position:static; min-width:0; opacity:1; transform:none; pointer-events:auto; padding:0; gap:2px; }
+      .gx__country{ font-size:10px; }
+      .gx__city{ font-size:clamp(24px, 7.5vw, 32px); margin:2px 0 8px; }
+      .gx__name{ font-size:15px; }
+      .gx__addr{ font-size:13px; }
+      .gx__expos{ margin-top:4px; }
+      .gx__acts{ margin-top:12px; gap:8px 18px; }
+      .gx__foot{ position:static; min-width:0; opacity:1; transform:none; margin:12px 0 0; padding-top:10px; }
+      .gx__big{ display:none; }
+    }
+
+    /* petites touches de couleur : une couleur par pays (États-Unis bleu, France corail) */
+    .gx{ --c-us:126,162,240; --c-fr:236,118,104; }
+    html[data-theme="light"] .gx{ --c-us:34,82,180; --c-fr:200,64,52; }
+    .gx--us{ --c:var(--c-us); } .gx--fr{ --c:var(--c-fr); }
+    .xflag{ display:inline-block; width:15px; height:10px; margin-right:7px; border-radius:2px; vertical-align:-1px; box-shadow:0 0 0 .5px rgba(var(--ink-rgb),.35); }
+    /* carte : points et arcs aux couleurs du pays */
+    .gx__pin--us circle.dot{ fill:rgb(var(--c-us)); } .gx__pin--fr circle.dot{ fill:rgb(var(--c-fr)); }
+    .gx__pin--us circle.ring{ stroke:rgb(var(--c-us)); } .gx__pin--fr circle.ring{ stroke:rgb(var(--c-fr)); }
+    .gx__arc--us{ stroke:rgba(var(--c-us),.45); }
+    /* fiches : pays en pastille teintée, filet de couleur en haut du volet, contour coloré au survol */
+    .gx__country{ display:inline-flex; align-items:center; align-self:flex-start; padding:4px 10px 4px 8px; border-radius:999px; color:rgb(var(--c)) !important; background:rgba(var(--c),.13); }
+    .gx__panel::before{ content:""; position:absolute; left:18px; right:18px; top:0; height:3px; border-radius:0 0 3px 3px; background:rgb(var(--c)); opacity:.35; transition:opacity .3s ease; }
+    .gx__panel:hover::before, .gx__panel.is-open::before{ opacity:1; }
+    .gx__panel:hover, .gx__panel.is-open{ border-color:rgba(var(--c),.75) !important; box-shadow:inset 0 0 0 1.5px rgba(var(--c),.75) !important; }
+    .gx__panel:hover .gx__vcity{ -webkit-text-stroke-color:rgb(var(--c)); }
+    .gx__num{ color:rgb(var(--c)) !important; }
+    .gx__coords{ color:rgba(var(--c),.9) !important; }
+    .gx__big{ -webkit-text-stroke-color:rgba(var(--c),.55) !important; }
+    .gx__acts a:hover{ border-bottom-color:rgb(var(--c)) !important; }
+    .gm .gm__pin:not(.is-hot) circle.dot{ opacity:.6; }
+    .gm .gm__cap .xflag{ width:15px; height:10px; flex:none; }
+    .gm__cap{ align-items:center; }
+    @media (max-width:760px){ .gx__panel::before{ left:16px; right:16px; } .gx__num{ display:none; } }
+  </style>
+
+
+
+  <link rel="stylesheet" href="styles.css?v=20261030a">
+
+  <!-- seo:head -->
+  <link rel="canonical" href="https://annickbouvattier.art/en/galeries" />
+  <link rel="alternate" hreflang="fr" href="https://annickbouvattier.art/fr/galeries" />
+  <link rel="alternate" hreflang="en" href="https://annickbouvattier.art/en/galeries" />
+  <link rel="alternate" hreflang="es" href="https://annickbouvattier.art/es/galeries" />
+  <link rel="alternate" hreflang="it" href="https://annickbouvattier.art/it/galeries" />
+  <link rel="alternate" hreflang="x-default" href="https://annickbouvattier.art/fr/galeries" />
+  <meta property="og:url" content="https://annickbouvattier.art/en/galeries" />
+  <meta property="og:image" content="https://annickbouvattier.art/images/Enigma.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Galleries — Annick Bouvattier" />
+  <meta name="twitter:description" content="The galleries showing Annick Bouvattier's work, in France and the United States." />
+  <meta name="twitter:image" content="https://annickbouvattier.art/images/Enigma.jpg" />
+  <!-- /seo:head -->
+</head>
+
+<body class="galeries salle salle--galeries">
+  <div class="page">
+    <div class="container">
+
+      <header class="top">
+        <a class="brand" href="./">ANNICK&nbsp;BOUVATTIER</a>
+        <nav class="top__nav" aria-label="Navigation principale">
+          <a class="nav__link" href="./">Accueil</a>
+          <a class="nav__link" href="portfolio">Portfolio</a>
+          <a class="nav__link is-active" aria-current="page" href="galeries">Galeries</a>
+          <a class="nav__link" href="expositions">Expositions</a>
+          <a class="nav__link" href="apropos">À propos</a>
+          <a class="nav__link" href="contact">Contact</a>
+        </nav>
+      </header>
+
+      <h1 class="sr-only">Galeries</h1>
+      <!-- Galeries : titre, villes qui défilent (cliquables), puis une rangée par galerie, groupées par pays (script.js) -->
+      <div class="gx" id="gx" translate="no"><!-- seo:galleries -->
+      <h2 class="gx__title">Galeries<sup>5</sup></h2>
+      <ul class="gx__static">
+        <li><h3>Carmel-by-the-Sea</h3><p>French Art Network — Carmel-by-the-Sea</p><p>San Carlos St, Carmel-by-the-Sea, CA 93921 · États-Unis</p><a href="https://www.frenchart.net" target="_blank" rel="noopener noreferrer">frenchart.net</a></li>
+        <li><h3>Laguna Beach</h3><p>Galerie Rue Toulouse (French Art Network)</p><p>390 S. Coast Hwy, Laguna Beach, CA 92651 · États-Unis</p><a href="https://www.frenchart.net" target="_blank" rel="noopener noreferrer">frenchart.net</a></li>
+        <li><h3>New Orleans</h3><p>French Art Network — New Orleans</p><p>509 Rue Royale, New Orleans, LA 70130 · États-Unis</p><a href="https://www.frenchart.net" target="_blank" rel="noopener noreferrer">frenchart.net</a></li>
+        <li><h3>Paris</h3><p>Artclub Gallery</p><p>172 Rue de Rivoli, 75001 Paris · France</p><a href="https://www.artclub.fr" target="_blank" rel="noopener noreferrer">artclub.fr</a></li>
+        <li><h3>Lyon</h3><p>Artclub Gallery</p><p>22 Place Bellecour, 69002 Lyon · France</p><a href="https://www.artclub.fr" target="_blank" rel="noopener noreferrer">artclub.fr</a></li>
+      </ul>
+      <!-- /seo:galleries --></div>
+
+    <footer class="bottom">
+        <div class="bottom__left">
+          <a class="bottom__link" href="https://www.instagram.com/annick.bouvattier/" target="_blank" rel="noopener noreferrer">instagram</a>
+          <a class="bottom__link" href="https://www.facebook.com/annick.bouvattier/" target="_blank" rel="noopener noreferrer">facebook</a>
+        </div>
+        <a class="bottom__link bottom__link--legal" href="mentions-legales">mentions légales</a>
+      </footer>
+  </div>
+  </div>
+
+
+
+  <!-- expositions (pour « 4 expositions ici depuis 2005 »), puis la logique de la page -->
+  <script src="expos-data.js?v=20261022n"></script>
+  <script src="./script.js?v=20261029c"></script>
+
+<script>window.I18N && I18N.apply();</script><i id="i18n-end" hidden></i>
+</body>
+</html>

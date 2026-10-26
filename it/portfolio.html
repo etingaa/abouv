@@ -1,0 +1,662 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <script>/* thème clair mémorisé : appliqué avant tout affichage (pas de flash) */(function(){try{if(localStorage.getItem("abouv:theme")==="light"){var r=document.documentElement;r.setAttribute("data-theme","light");r.style.background="#efebe3";}}catch(e){}})();</script>
+  <link rel="expect" href="#i18n-end" blocking="render" />
+  <style>html{background:#060b18}</style>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="Portfolio di Annick Bouvattier: dipinti a olio e sculture, filtrabili per categoria, tecnica, formato e disponibilità." />
+  <meta name="theme-color" content="#0B1120" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Annick Bouvattier" />
+  <meta property="og:locale" content="it_IT" />
+  <meta property="og:title" content="Portfolio — Annick Bouvattier" />
+  <meta property="og:description" content="Portfolio di Annick Bouvattier: dipinti a olio e sculture, filtrabili per categoria, tecnica, formato e disponibilità." />
+  <link rel="icon" href="favicon.ico" sizes="48x48" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="icon-192.png" type="image/png" sizes="192x192" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <script src="i18n-langs.js?v=20261030a"></script>
+  <script src="i18n.js?v=20261030a"></script>
+  <script src="site.js?v=20261029a"></script>
+  <link rel="preconnect" href="https://docs.google.com" crossorigin />
+  <script src="sheet.js?v=20261027a"></script>
+  <script src="artwork-modal.js?v=20261026a"></script>
+  <link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <!-- pages préchargées au survol d'un lien : changement de page quasi instantané (la galerie 3D est seulement préchargée) -->
+  <script type="speculationrules">
+    {"prerender":[{"where":{"and":[{"selector_matches":".nav__link, .bottom__link--legal"},{"not":{"selector_matches":"[href='./'], [href='../']"}}]},"eagerness":"conservative"}],
+     "prefetch":[{"where":{"selector_matches":".nav__link, .bottom__link--legal, a.piece"},"eagerness":"moderate"}]}
+  </script>
+  <title>Portfolio — Annick Bouvattier</title>
+
+
+  <link rel="stylesheet" href="styles.css?v=20261030a">
+
+  <!-- seo:head -->
+  <link rel="canonical" href="https://annickbouvattier.art/it/portfolio" />
+  <link rel="alternate" hreflang="fr" href="https://annickbouvattier.art/fr/portfolio" />
+  <link rel="alternate" hreflang="en" href="https://annickbouvattier.art/en/portfolio" />
+  <link rel="alternate" hreflang="es" href="https://annickbouvattier.art/es/portfolio" />
+  <link rel="alternate" hreflang="it" href="https://annickbouvattier.art/it/portfolio" />
+  <link rel="alternate" hreflang="x-default" href="https://annickbouvattier.art/fr/portfolio" />
+  <meta property="og:url" content="https://annickbouvattier.art/it/portfolio" />
+  <meta property="og:image" content="https://annickbouvattier.art/images/Enigma.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Portfolio — Annick Bouvattier" />
+  <meta name="twitter:description" content="Portfolio di Annick Bouvattier: dipinti a olio e sculture, filtrabili per categoria, tecnica, formato e disponibilità." />
+  <meta name="twitter:image" content="https://annickbouvattier.art/images/Enigma.jpg" />
+  <!-- /seo:head -->
+</head>
+
+<body class="portfolio salle salle--portfolio">
+  <div class="page">
+    <div class="container">
+      <header class="top">
+        <a class="brand" href="./">ANNICK&nbsp;BOUVATTIER</a>
+        <nav class="top__nav" aria-label="Navigation principale">
+          <a class="nav__link" href="./">Accueil</a>
+          <a class="nav__link is-active" aria-current="page" href="portfolio">Portfolio</a>
+          <a class="nav__link" href="galeries">Galeries</a>
+          <a class="nav__link" href="expositions">Expositions</a>
+          <a class="nav__link" href="apropos">À propos</a>
+          <a class="nav__link" href="contact">Contact</a>
+        </nav>
+      </header>
+
+      <h2 class="bigTitle pfTitle" aria-hidden="true">Portfolio<sup id="pfCount"></sup></h2>
+
+      <!-- Barre d'outils : onglets principaux + recherche, puis les choix de l'onglet ouvert -->
+      <section class="toolbar" aria-label="Filtres">
+        <div class="toolbar__row">
+          <h1 class="sr-only">Portfolio</h1>
+          <!-- chaque onglet affiche son choix en cours ; un clic déplie les choix en dessous ; × retire le filtre -->
+          <div class="tabs" id="groups" aria-label="Filtrer par">
+            <div class="group" data-group="category"><button class="tab tab--group" type="button" data-group="category" aria-expanded="false" aria-controls="subtabs"><span class="tab__name">Collection</span><span class="tab__value" translate="no"></span><svg class="tab__caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg></button><button class="group__clear" type="button" aria-label="Retirer ce filtre" title="Retirer ce filtre" hidden><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 2l6 6M8 2l-6 6"/></svg></button></div>
+            <div class="group" data-group="technique"><button class="tab tab--group" type="button" data-group="technique" aria-expanded="false" aria-controls="subtabs"><span class="tab__name">Technique</span><span class="tab__value" translate="no"></span><svg class="tab__caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg></button><button class="group__clear" type="button" aria-label="Retirer ce filtre" title="Retirer ce filtre" hidden><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 2l6 6M8 2l-6 6"/></svg></button></div>
+            <div class="group" data-group="format"><button class="tab tab--group" type="button" data-group="format" aria-expanded="false" aria-controls="subtabs"><span class="tab__name">Format</span><span class="tab__value" translate="no"></span><svg class="tab__caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg></button><button class="group__clear" type="button" aria-label="Retirer ce filtre" title="Retirer ce filtre" hidden><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 2l6 6M8 2l-6 6"/></svg></button></div>
+            <div class="group" data-group="status"><button class="tab tab--group" type="button" data-group="status" aria-expanded="false" aria-controls="subtabs"><span class="tab__name">Disponibilité</span><span class="tab__value" translate="no"></span><svg class="tab__caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg></button><button class="group__clear" type="button" aria-label="Retirer ce filtre" title="Retirer ce filtre" hidden><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 2l6 6M8 2l-6 6"/></svg></button></div>
+          </div>
+          <label class="search">
+            <svg class="search__icon" viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="m13 13 4 4"/></svg>
+            <input id="q" type="search" placeholder="Rechercher" aria-label="Rechercher une œuvre" />
+            <!-- nombre d'œuvres : affiché dans le placeholder, annoncé ici aux lecteurs d'écran -->
+            <span class="sr-only" id="count" aria-live="polite">Chargement…</span>
+          </label>
+          <!-- unité des dimensions : centimètres ou pouces (mémorisée) -->
+          <div class="unitSwitch" id="unitSwitch" role="group" aria-label="Unité">
+            <button type="button" data-u="cm">cm</button><button type="button" data-u="in">in</button>
+          </div>
+        </div>
+        <!-- choix de l'onglet ouvert (+ tailles quand une forme est choisie dans Format) -->
+        <div class="subtabs" id="subtabs" translate="no" hidden></div>
+        <div class="subtabs subtabs--sizes" id="sizes" translate="no" hidden></div>
+      </section>
+
+      <section class="masonry" id="masonry" aria-label="Œuvres" translate="no"><!-- seo:works -->
+        <a class="piece" href="oeuvres/en-compagnie-d-une-tomate-verte"><div class="imgWrap"><img src="images/thumbs/s/EnCompagnieDuneTomateVerte.jpg" srcset="images/thumbs/s/EnCompagnieDuneTomateVerte.jpg 640w, images/thumbs/EnCompagnieDuneTomateVerte.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="En compagnie d'une tomate verte" width="755" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">En compagnie d'une tomate verte</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">116 × 81 cm</span></p><span class="badge disponible">Disponible</span></div></a>
+        <a class="piece" href="oeuvres/floralia"><div class="imgWrap"><img src="images/thumbs/s/Floralia.jpg" srcset="images/thumbs/s/Floralia.jpg 640w, images/thumbs/Floralia.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Floralia" width="725" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Floralia</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">81 × 130 cm</span></p><span class="badge disponible">Disponible</span></div></a>
+        <a class="piece" href="oeuvres/salutations"><div class="imgWrap"><img src="images/thumbs/s/Salutations.jpg" srcset="images/thumbs/s/Salutations.jpg 640w, images/thumbs/Salutations.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Salutations" width="1100" height="1098" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Salutations</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">120 × 120 cm</span></p><span class="badge disponible">Disponible</span></div></a>
+        <a class="piece" href="oeuvres/elle"><div class="imgWrap"><img src="images/thumbs/s/Elle.jpg" srcset="images/thumbs/s/Elle.jpg 640w, images/thumbs/Elle.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Elle" width="1100" height="708" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Elle</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">146 × 97 cm</span></p><span class="badge disponible">Disponible</span></div></a>
+        <a class="piece" href="oeuvres/la-femme-en-rouge"><div class="imgWrap"><img src="images/thumbs/s/LaFemmeEnRouge.jpg" srcset="images/thumbs/s/LaFemmeEnRouge.jpg 640w, images/thumbs/LaFemmeEnRouge.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="La Femme En Rouge" width="1088" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">La Femme En Rouge</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">120 × 120 cm</span></p><span class="badge disponible">Disponible</span></div></a>
+        <a class="piece" href="oeuvres/ainsi-de-suite-1"><div class="imgWrap"><img src="images/thumbs/s/AinsiDeSuite.jpg" srcset="images/thumbs/s/AinsiDeSuite.jpg 640w, images/thumbs/AinsiDeSuite.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Ainsi De Suite 1" width="544" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Ainsi De Suite 1</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">50 × 100 cm</span></p><span class="badge disponible">Disponible</span></div></a>
+        <a class="piece" href="oeuvres/ainsi-de-suite-2"><div class="imgWrap"><img src="images/thumbs/s/AinsiDeSuite2.jpg" srcset="images/thumbs/s/AinsiDeSuite2.jpg 640w, images/thumbs/AinsiDeSuite2.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Ainsi De Suite 2" width="550" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Ainsi De Suite 2</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">50 × 100 cm</span></p><span class="badge disponible">Disponible</span></div></a>
+        <a class="piece" href="oeuvres/ainsi-de-suite-3"><div class="imgWrap"><img src="images/thumbs/s/AinsiDeSuite3.jpg" srcset="images/thumbs/s/AinsiDeSuite3.jpg 640w, images/thumbs/AinsiDeSuite3.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Ainsi De Suite 3" width="550" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Ainsi De Suite 3</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">50 × 100 cm</span></p><span class="badge disponible">Disponible</span></div></a>
+        <a class="piece" href="oeuvres/peau-de-peche"><div class="imgWrap"><img src="images/thumbs/s/PeauDePeche.jpg" srcset="images/thumbs/s/PeauDePeche.jpg 640w, images/thumbs/PeauDePeche.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Peau De Pêche" width="692" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Peau De Pêche</p><p class="capMeta"><span class="capTech">Huile sur Toile</span></p><span class="badge disponible">Disponible</span></div></a>
+        <a class="piece" href="oeuvres/rapsody-part-1"><div class="imgWrap"><img src="images/thumbs/s/RapsodyPart1.jpg" srcset="images/thumbs/s/RapsodyPart1.jpg 640w, images/thumbs/RapsodyPart1.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Rapsody Part 1" width="863" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Rapsody Part 1</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">73 × 82 cm</span></p><span class="badge disponible">Disponible</span></div></a>
+        <a class="piece" href="oeuvres/rapsody-part-2"><div class="imgWrap"><img src="images/thumbs/s/RapsodyPart2.jpg" srcset="images/thumbs/s/RapsodyPart2.jpg 640w, images/thumbs/RapsodyPart2.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Rapsody Part 2" width="772" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Rapsody Part 2</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">65 × 92 cm</span></p><span class="badge disponible">Disponible</span></div></a>
+        <a class="piece" href="oeuvres/rapsody-part-3"><div class="imgWrap"><img src="images/thumbs/s/RapsodyPart3.jpg" srcset="images/thumbs/s/RapsodyPart3.jpg 640w, images/thumbs/RapsodyPart3.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Rapsody Part 3" width="1100" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Rapsody Part 3</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">80 × 80 cm</span></p><span class="badge disponible">Disponible</span></div></a>
+        <a class="piece" href="oeuvres/cherry"><div class="imgWrap"><img src="images/thumbs/s/Cherry.jpg" srcset="images/thumbs/s/Cherry.jpg 640w, images/thumbs/Cherry.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Cherry" width="872" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Cherry</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">72 × 93 cm</span></p><span class="badge disponible">Disponible</span></div></a>
+        <a class="piece" href="oeuvres/impromptu"><div class="imgWrap"><img src="images/thumbs/s/Impromptu.jpg" srcset="images/thumbs/s/Impromptu.jpg 640w, images/thumbs/Impromptu.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Impromptu" width="1100" height="764" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Impromptu</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">116 × 81 cm</span></p><span class="badge disponible">Disponible</span></div></a>
+        <a class="piece" href="oeuvres/nuit-noire"><div class="imgWrap"><img src="images/thumbs/s/NuitNoire.jpg" srcset="images/thumbs/s/NuitNoire.jpg 640w, images/thumbs/NuitNoire.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Nuit Noire" width="1100" height="691" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Nuit Noire</p><p class="capMeta"><span class="capTech">Sculpture</span></p><span class="badge disponible">Disponible</span></div></a>
+        <a class="piece" href="oeuvres/show-room"><div class="imgWrap"><img src="images/thumbs/s/ShowRoom.jpg" srcset="images/thumbs/s/ShowRoom.jpg 640w, images/thumbs/ShowRoom.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Show Room" width="1100" height="1097" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Show Room</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">130 × 130 cm</span></p><span class="badge disponible">Disponible</span></div></a>
+        <a class="piece" href="oeuvres/suite-au-noir-premier-mouvement"><div class="imgWrap"><img src="images/thumbs/s/SuiteAuNoir_PremierMouvement.jpg" srcset="images/thumbs/s/SuiteAuNoir_PremierMouvement.jpg 640w, images/thumbs/SuiteAuNoir_PremierMouvement.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Suite Au Noir - Premier Mouvement" width="550" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Suite Au Noir - Premier Mouvement</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">50 × 100 cm</span></p><span class="badge disponible">Disponible</span></div></a>
+        <a class="piece" href="oeuvres/tanagra"><div class="imgWrap"><img src="images/thumbs/s/Tanagra.jpg" srcset="images/thumbs/s/Tanagra.jpg 640w, images/thumbs/Tanagra.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Tanagra" width="543" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Tanagra</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">60 × 120 cm</span></p><span class="badge disponible">Disponible</span></div></a>
+        <a class="piece" href="oeuvres/bleu-nuit"><div class="imgWrap"><img src="images/thumbs/s/BleuNuit.jpg" srcset="images/thumbs/s/BleuNuit.jpg 640w, images/thumbs/BleuNuit.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Bleu Nuit" width="552" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Bleu Nuit</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">60 × 120 cm</span></p><span class="badge disponible">Disponible</span></div></a>
+        <a class="piece" href="oeuvres/dessus-dessous"><div class="imgWrap"><img src="images/thumbs/s/DessusDessous.jpg" srcset="images/thumbs/s/DessusDessous.jpg 640w, images/thumbs/DessusDessous.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Dessus Dessous" width="710" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Dessus Dessous</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">65 × 100 cm</span></p><span class="badge disponible">Disponible</span></div></a>
+        <a class="piece" href="oeuvres/enigma"><div class="imgWrap"><img src="images/thumbs/s/Enigma.jpg" srcset="images/thumbs/s/Enigma.jpg 640w, images/thumbs/Enigma.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Enigma" width="1100" height="853" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Enigma</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">146 × 114 cm</span></p><span class="badge disponible">Disponible</span></div></a>
+        <a class="piece" href="oeuvres/face"><div class="imgWrap"><img src="images/thumbs/s/Face.jpg" srcset="images/thumbs/s/Face.jpg 640w, images/thumbs/Face.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Face" width="1100" height="656" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Face</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">162 × 97 cm</span></p><span class="badge disponible">Disponible</span></div></a>
+        <a class="piece" href="oeuvres/fashion-week"><div class="imgWrap"><img src="images/thumbs/s/FashionWeek.jpg" srcset="images/thumbs/s/FashionWeek.jpg 640w, images/thumbs/FashionWeek.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Fashion Week" width="1100" height="550" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Fashion Week</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">120 × 60 cm</span></p><span class="badge disponible">Disponible</span></div></a>
+        <a class="piece" href="oeuvres/glamour"><div class="imgWrap"><img src="images/thumbs/s/Glamour.jpg" srcset="images/thumbs/s/Glamour.jpg 640w, images/thumbs/Glamour.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Glamour" width="1091" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Glamour</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">100 × 100 cm</span></p><span class="badge disponible">Disponible</span></div></a>
+        <a class="piece" href="oeuvres/soko"><div class="imgWrap"><img src="images/thumbs/s/Soko.jpg" srcset="images/thumbs/s/Soko.jpg 640w, images/thumbs/Soko.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Soko" width="820" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Soko</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">73 × 100 cm</span></p><span class="badge disponible">Disponible</span></div></a>
+        <a class="piece" href="oeuvres/stand-up"><div class="imgWrap"><img src="images/thumbs/s/StandUp.jpg" srcset="images/thumbs/s/StandUp.jpg 640w, images/thumbs/StandUp.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Stand Up" width="519" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Stand Up</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">60 × 120 cm</span></p><span class="badge disponible">Disponible</span></div></a>
+        <a class="piece" href="oeuvres/transports-amoureux"><div class="imgWrap"><img src="images/thumbs/s/TransportsAmoureux.jpg" srcset="images/thumbs/s/TransportsAmoureux.jpg 640w, images/thumbs/TransportsAmoureux.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Transports Amoureux" width="1100" height="842" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Transports Amoureux</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">116 × 89 cm</span></p><span class="badge disponible">Disponible</span></div></a>
+        <a class="piece" href="oeuvres/entrechat"><div class="imgWrap"><img src="images/thumbs/s/Entrechat.jpg" srcset="images/thumbs/s/Entrechat.jpg 640w, images/thumbs/Entrechat.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Entrechat" width="828" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Entrechat</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">97 × 130 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/le-regard"><div class="imgWrap"><img src="images/thumbs/s/LeRegard.jpg" srcset="images/thumbs/s/LeRegard.jpg 640w, images/thumbs/LeRegard.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Le Regard" width="1100" height="712" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Le Regard</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">146 × 97 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/pose-attitude"><div class="imgWrap"><img src="images/thumbs/s/PoseAttitude.jpg" srcset="images/thumbs/s/PoseAttitude.jpg 640w, images/thumbs/PoseAttitude.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Pose Attitude" width="1100" height="1086" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Pose Attitude</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">90 × 90 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/aviatrice"><div class="imgWrap"><img src="images/thumbs/s/Aviatrice.jpg" srcset="images/thumbs/s/Aviatrice.jpg 640w, images/thumbs/Aviatrice.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Aviatrice" width="829" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Aviatrice</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">46 × 61 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/le-repos-du-cygne"><div class="imgWrap"><img src="images/thumbs/s/LeReposDuCygne.jpg" srcset="images/thumbs/s/LeReposDuCygne.jpg 640w, images/thumbs/LeReposDuCygne.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Le Repos Du Cygne" width="1100" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Le Repos Du Cygne</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">120 × 120 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/make-up"><div class="imgWrap"><img src="images/thumbs/s/MakeUp.jpg" srcset="images/thumbs/s/MakeUp.jpg 640w, images/thumbs/MakeUp.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Make Up" width="1100" height="759" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Make Up</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">73 × 50 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/swan-s-dream"><div class="imgWrap"><img src="images/thumbs/s/SwansDream.jpg" srcset="images/thumbs/s/SwansDream.jpg 640w, images/thumbs/SwansDream.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Swan's Dream" width="757" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Swan's Dream</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">97 × 130 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/a-la-pointe"><div class="imgWrap"><img src="images/thumbs/s/ALaPointe.jpg" srcset="images/thumbs/s/ALaPointe.jpg 640w, images/thumbs/ALaPointe.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="À La Pointe" width="1100" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">À La Pointe</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">120 × 120 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/billy"><div class="imgWrap"><img src="images/thumbs/s/Billie.jpg" srcset="images/thumbs/s/Billie.jpg 640w, images/thumbs/Billie.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Billy" width="753" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Billy</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">89 × 130 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/camisole"><div class="imgWrap"><img src="images/thumbs/s/Camisole.jpg" srcset="images/thumbs/s/Camisole.jpg 640w, images/thumbs/Camisole.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Camisole" width="824" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Camisole</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">97 × 130 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/cuir"><div class="imgWrap"><img src="images/thumbs/s/Cuir.jpg" srcset="images/thumbs/s/Cuir.jpg 640w, images/thumbs/Cuir.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Cuir" width="814" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Cuir</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">97 × 130 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/dorsale"><div class="imgWrap"><img src="images/thumbs/s/Dorsale.jpg" srcset="images/thumbs/s/Dorsale.jpg 640w, images/thumbs/Dorsale.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Dorsale" width="753" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Dorsale</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">89 × 130 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/dress-code"><div class="imgWrap"><img src="images/thumbs/s/DressCode.jpg" srcset="images/thumbs/s/DressCode.jpg 640w, images/thumbs/DressCode.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Dress Code" width="550" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Dress Code</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">60 × 120 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/l-attente"><div class="imgWrap"><img src="images/thumbs/s/LAttente.jpg" srcset="images/thumbs/s/LAttente.jpg 640w, images/thumbs/LAttente.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="L'Attente" width="550" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">L'Attente</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">60 × 120 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/l-ennui"><div class="imgWrap"><img src="images/thumbs/s/LEnnui.jpg" srcset="images/thumbs/s/LEnnui.jpg 640w, images/thumbs/LEnnui.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="L'Ennui" width="550" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">L'Ennui</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">60 × 120 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/le-repos-de-nina"><div class="imgWrap"><img src="images/thumbs/s/LeReposDeNina.jpg" srcset="images/thumbs/s/LeReposDeNina.jpg 640w, images/thumbs/LeReposDeNina.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Le Repos De Nina" width="1078" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Le Repos De Nina</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">120 × 120 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/les-mains-sur-les-hanches"><div class="imgWrap"><img src="images/thumbs/s/LesMainsSurLesHanches.jpg" srcset="images/thumbs/s/LesMainsSurLesHanches.jpg 640w, images/thumbs/LesMainsSurLesHanches.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Les Mains Sur Les Hanches" width="1100" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Les Mains Sur Les Hanches</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">120 × 120 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/liberte"><div class="imgWrap"><img src="images/thumbs/s/Liberte.jpg" srcset="images/thumbs/s/Liberte.jpg 640w, images/thumbs/Liberte.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Liberté" width="1100" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Liberté</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">100 × 100 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/mademoiselle"><div class="imgWrap"><img src="images/thumbs/s/Mademoiselle.jpg" srcset="images/thumbs/s/Mademoiselle.jpg 640w, images/thumbs/Mademoiselle.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Mademoiselle" width="550" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Mademoiselle</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">60 × 120 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/nina"><div class="imgWrap"><img src="images/thumbs/s/Danseuses.jpg" srcset="images/thumbs/s/Danseuses.jpg 640w, images/thumbs/Danseuses.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Nina" width="1100" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Nina</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">120 × 120 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/suspension"><div class="imgWrap"><img src="images/thumbs/s/Suspension.jpg" srcset="images/thumbs/s/Suspension.jpg 640w, images/thumbs/Suspension.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Suspension" width="1100" height="774" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Suspension</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">116 × 81 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/black-swan"><div class="imgWrap"><img src="images/thumbs/s/BlackSwan.jpg" srcset="images/thumbs/s/BlackSwan.jpg 640w, images/thumbs/BlackSwan.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Black Swan" width="1100" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Black Swan</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">120 × 120 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/bleu-blanc-rouge"><div class="imgWrap"><img src="images/thumbs/s/BleuBlancRouge.jpg" srcset="images/thumbs/s/BleuBlancRouge.jpg 640w, images/thumbs/BleuBlancRouge.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Bleu Blanc Rouge" width="550" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Bleu Blanc Rouge</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">60 × 120 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/enfance"><div class="imgWrap"><img src="images/thumbs/s/Enfance.jpg" srcset="images/thumbs/s/Enfance.jpg 640w, images/thumbs/Enfance.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Enfance" width="1100" height="802" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Enfance</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">33 × 24 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/miami"><div class="imgWrap"><img src="images/thumbs/s/Miami.jpg" srcset="images/thumbs/s/Miami.jpg 640w, images/thumbs/Miami.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Miami" width="818" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Miami</p><p class="capMeta"><span class="capTech">Huile sur Toile</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/petales"><div class="imgWrap"><img src="images/thumbs/s/Petales.jpg" srcset="images/thumbs/s/Petales.jpg 640w, images/thumbs/Petales.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Pétales" width="1100" height="1097" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Pétales</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">120 × 120 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/route-66"><div class="imgWrap"><img src="images/thumbs/s/Route66.jpg" srcset="images/thumbs/s/Route66.jpg 640w, images/thumbs/Route66.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Route 66" width="1100" height="545" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Route 66</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">140 × 70 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/to-two"><div class="imgWrap"><img src="images/thumbs/s/ToTwo.jpg" srcset="images/thumbs/s/ToTwo.jpg 640w, images/thumbs/ToTwo.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="To Two" width="787" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">To Two</p><p class="capMeta"><span class="capTech">Huile sur Toile</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/you-two"><div class="imgWrap"><img src="images/thumbs/s/YouTwo.jpg" srcset="images/thumbs/s/YouTwo.jpg 640w, images/thumbs/YouTwo.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="You Two" width="763" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">You Two</p><p class="capMeta"><span class="capTech">Huile sur Toile</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/cache-cache"><div class="imgWrap"><img src="images/thumbs/s/Cache_Cache.jpg" srcset="images/thumbs/s/Cache_Cache.jpg 640w, images/thumbs/Cache_Cache.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Cache-Cache" width="1080" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Cache-Cache</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">150 × 150 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/haribo"><div class="imgWrap"><img src="images/thumbs/s/Haribo.jpg" srcset="images/thumbs/s/Haribo.jpg 640w, images/thumbs/Haribo.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Haribo" width="810" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Haribo</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">73 × 92 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/lena"><div class="imgWrap"><img src="images/thumbs/s/Lena.jpg" srcset="images/thumbs/s/Lena.jpg 640w, images/thumbs/Lena.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Lena" width="555" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Lena</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">60 × 120 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/promenade"><div class="imgWrap"><img src="images/thumbs/s/Promenade.jpg" srcset="images/thumbs/s/Promenade.jpg 640w, images/thumbs/Promenade.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Promenade" width="1100" height="1078" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Promenade</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">120 × 120 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/variation"><div class="imgWrap"><img src="images/thumbs/s/Variation.jpg" srcset="images/thumbs/s/Variation.jpg 640w, images/thumbs/Variation.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Variation" width="541" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Variation</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">70 × 140 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/victoire-et-val"><div class="imgWrap"><img src="images/thumbs/s/VictoireEtVal.jpg" srcset="images/thumbs/s/VictoireEtVal.jpg 640w, images/thumbs/VictoireEtVal.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Victoire &amp; Val" width="1100" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Victoire &amp; Val</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">120 × 120 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/asphalte"><div class="imgWrap"><img src="images/thumbs/s/Asphalte.jpg" srcset="images/thumbs/s/Asphalte.jpg 640w, images/thumbs/Asphalte.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Asphalte" width="684" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Asphalte</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">81 × 130 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/dos-au-mur"><div class="imgWrap"><img src="images/thumbs/s/DosAuMur.jpg" srcset="images/thumbs/s/DosAuMur.jpg 640w, images/thumbs/DosAuMur.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Dos Au Mur" width="758" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Dos Au Mur</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">73 × 116 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/fureur-de-vivre"><div class="imgWrap"><img src="images/thumbs/s/FureurDeVivre.jpg" srcset="images/thumbs/s/FureurDeVivre.jpg 640w, images/thumbs/FureurDeVivre.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Fureur De Vivre" width="1100" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Fureur De Vivre</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">120 × 120 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/hauts-talons"><div class="imgWrap"><img src="images/thumbs/s/HautsTalons.jpg" srcset="images/thumbs/s/HautsTalons.jpg 640w, images/thumbs/HautsTalons.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Hauts Talons" width="534" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Hauts Talons</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">40 × 80 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/i-ve-got-the-blue"><div class="imgWrap"><img src="images/thumbs/s/IveGotTheBlue.jpg" srcset="images/thumbs/s/IveGotTheBlue.jpg 640w, images/thumbs/IveGotTheBlue.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="I've Got The Blue" width="1100" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">I've Got The Blue</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">120 × 120 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/nuit-americaine"><div class="imgWrap"><img src="images/thumbs/s/NuitAmericaine.jpg" srcset="images/thumbs/s/NuitAmericaine.jpg 640w, images/thumbs/NuitAmericaine.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Nuit Américaine" width="1100" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Nuit Américaine</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">120 × 120 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/perfecta"><div class="imgWrap"><img src="images/thumbs/s/Perfecta.jpg" srcset="images/thumbs/s/Perfecta.jpg 640w, images/thumbs/Perfecta.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Perfecta" width="1100" height="1073" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Perfecta</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">120 × 120 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/push-up"><div class="imgWrap"><img src="images/thumbs/s/PushUp.jpg" srcset="images/thumbs/s/PushUp.jpg 640w, images/thumbs/PushUp.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Push Up" width="1100" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Push Up</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">80 × 80 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/canicule"><div class="imgWrap"><img src="images/thumbs/s/Canicule.jpg" srcset="images/thumbs/s/Canicule.jpg 640w, images/thumbs/Canicule.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Canicule" width="471" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Canicule</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">60 × 120 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/etreinte"><div class="imgWrap"><img src="images/thumbs/s/Etreinte.jpg" srcset="images/thumbs/s/Etreinte.jpg 640w, images/thumbs/Etreinte.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Étreinte" width="1100" height="366" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Étreinte</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">120 × 40 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/golden-shoes"><div class="imgWrap"><img src="images/thumbs/s/GoldenShoes.jpg" srcset="images/thumbs/s/GoldenShoes.jpg 640w, images/thumbs/GoldenShoes.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Golden Shoes" width="536" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Golden Shoes</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">60 × 120 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/il-y-a-de-l-orage-dans-l-air"><div class="imgWrap"><img src="images/thumbs/s/IlYADeLOrageDansLAir.jpg" srcset="images/thumbs/s/IlYADeLOrageDansLAir.jpg 640w, images/thumbs/IlYADeLOrageDansLAir.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Il Y A De L'Orage Dans L'Air" width="1100" height="550" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Il Y A De L'Orage Dans L'Air</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">120 × 60 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/matin-bleu"><div class="imgWrap"><img src="images/thumbs/s/MatinBleu.jpg" srcset="images/thumbs/s/MatinBleu.jpg 640w, images/thumbs/MatinBleu.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Matin Bleu" width="1100" height="1066" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Matin Bleu</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">120 × 120 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/matin-satin"><div class="imgWrap"><img src="images/thumbs/s/MatinSatin.jpg" srcset="images/thumbs/s/MatinSatin.jpg 640w, images/thumbs/MatinSatin.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Matin Satin" width="808" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Matin Satin</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">97 × 130 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/mode-elle"><div class="imgWrap"><img src="images/thumbs/s/ModeElle.jpg" srcset="images/thumbs/s/ModeElle.jpg 640w, images/thumbs/ModeElle.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Mode Elle" width="1100" height="825" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Mode Elle</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">120 × 120 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/nostalgia"><div class="imgWrap"><img src="images/thumbs/s/Nostalgia.jpg" srcset="images/thumbs/s/Nostalgia.jpg 640w, images/thumbs/Nostalgia.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Nostalgia" width="1100" height="1091" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Nostalgia</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">100 × 100 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/or-ange"><div class="imgWrap"><img src="images/thumbs/s/OrAnge.jpg" srcset="images/thumbs/s/OrAnge.jpg 640w, images/thumbs/OrAnge.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Or Ange" width="693" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Or Ange</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">73 × 116 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/yoyo"><div class="imgWrap"><img src="images/thumbs/s/Yoyo.jpg" srcset="images/thumbs/s/Yoyo.jpg 640w, images/thumbs/Yoyo.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Yoyo" width="700" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Yoyo</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">73 × 116 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/guepiere"><div class="imgWrap"><img src="images/thumbs/s/Guepiere.jpg" srcset="images/thumbs/s/Guepiere.jpg 640w, images/thumbs/Guepiere.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Guépière" width="715" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Guépière</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">65 × 100 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/jardin-d-hiver"><div class="imgWrap"><img src="images/thumbs/s/JardinDHiver.jpg" srcset="images/thumbs/s/JardinDHiver.jpg 640w, images/thumbs/JardinDHiver.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Jardin D'Hiver" width="1100" height="873" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Jardin D'Hiver</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">100 × 81 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/touchez-pas-au-grisby"><div class="imgWrap"><img src="images/thumbs/s/TouchezPasAuGrisby.jpg" srcset="images/thumbs/s/TouchezPasAuGrisby.jpg 640w, images/thumbs/TouchezPasAuGrisby.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Touchez Pas Au Grisby" width="1100" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Touchez Pas Au Grisby</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">100 × 100 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/blue-jane"><div class="imgWrap"><img src="images/thumbs/s/BlueJane.jpg" srcset="images/thumbs/s/BlueJane.jpg 640w, images/thumbs/BlueJane.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Blue Jane" width="869" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Blue Jane</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">89 × 116 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/chouchou"><div class="imgWrap"><img src="images/thumbs/s/Chouchou.jpg" srcset="images/thumbs/s/Chouchou.jpg 640w, images/thumbs/Chouchou.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Chouchou" width="786" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Chouchou</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">73 × 100 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/denim"><div class="imgWrap"><img src="images/thumbs/s/Denim.jpg" srcset="images/thumbs/s/Denim.jpg 640w, images/thumbs/Denim.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Denim" width="1100" height="1088" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Denim</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">120 × 120 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/emma"><div class="imgWrap"><img src="images/thumbs/s/Emma.jpg" srcset="images/thumbs/s/Emma.jpg 640w, images/thumbs/Emma.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Emma" width="550" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Emma</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">70 × 140 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/flamenco"><div class="imgWrap"><img src="images/thumbs/s/Flamenco.jpg" srcset="images/thumbs/s/Flamenco.jpg 640w, images/thumbs/Flamenco.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Flamenco" width="796" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Flamenco</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">73 × 100 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/l-echarde"><div class="imgWrap"><img src="images/thumbs/s/LEcharde.jpg" srcset="images/thumbs/s/LEcharde.jpg 640w, images/thumbs/LEcharde.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="L'Écharde" width="838" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">L'Écharde</p><p class="capMeta"><span class="capTech">Sculpture</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/nuit-blanche"><div class="imgWrap"><img src="images/thumbs/s/NuitBlanche.jpg" srcset="images/thumbs/s/NuitBlanche.jpg 640w, images/thumbs/NuitBlanche.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Nuit Blanche" width="1100" height="768" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Nuit Blanche</p><p class="capMeta"><span class="capTech">Sculpture</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/short-cut"><div class="imgWrap"><img src="images/thumbs/s/ShortCut.jpg" srcset="images/thumbs/s/ShortCut.jpg 640w, images/thumbs/ShortCut.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Short Cut" width="774" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Short Cut</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">65 × 92 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/suite-au-noir"><div class="imgWrap"><img src="images/thumbs/s/SuiteAuNoir.jpg" srcset="images/thumbs/s/SuiteAuNoir.jpg 640w, images/thumbs/SuiteAuNoir.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Suite Au Noir" width="1100" height="777" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Suite Au Noir</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">50 × 100 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/suite-au-noir-deuxieme-mouvement"><div class="imgWrap"><img src="images/thumbs/s/SuiteAuNoir_DeuxiemeMouvement.jpg" srcset="images/thumbs/s/SuiteAuNoir_DeuxiemeMouvement.jpg 640w, images/thumbs/SuiteAuNoir_DeuxiemeMouvement.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Suite Au Noir - Deuxième Mouvement" width="550" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Suite Au Noir - Deuxième Mouvement</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">50 × 100 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/suite-au-noir-troisieme-mouvement"><div class="imgWrap"><img src="images/thumbs/s/SuiteAuNoir_TroisiemeMouvement.jpg" srcset="images/thumbs/s/SuiteAuNoir_TroisiemeMouvement.jpg 640w, images/thumbs/SuiteAuNoir_TroisiemeMouvement.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Suite Au Noir - Troisième Mouvement" width="550" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Suite Au Noir - Troisième Mouvement</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">50 × 100 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/voisine"><div class="imgWrap"><img src="images/thumbs/s/Voisine.jpg" srcset="images/thumbs/s/Voisine.jpg 640w, images/thumbs/Voisine.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Voisine" width="692" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Voisine</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">73 × 100 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/anamorphose"><div class="imgWrap"><img src="images/thumbs/s/Anamorphose.jpg" srcset="images/thumbs/s/Anamorphose.jpg 640w, images/thumbs/Anamorphose.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Anamorphose" width="1100" height="463" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Anamorphose</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">150 × 62 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/au-pre-des-vaches"><div class="imgWrap"><img src="images/thumbs/s/AuPreDesVaches.jpg" srcset="images/thumbs/s/AuPreDesVaches.jpg 640w, images/thumbs/AuPreDesVaches.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Au Pré… Des Vaches" width="1100" height="729" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Au Pré… Des Vaches</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">24 × 41 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/black-et-white-and-colors"><div class="imgWrap"><img src="images/thumbs/s/BlackWhiteAndColors.jpg" srcset="images/thumbs/s/BlackWhiteAndColors.jpg 640w, images/thumbs/BlackWhiteAndColors.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Black &amp; White And Colors" width="1100" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Black &amp; White And Colors</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">120 × 120 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/garconne"><div class="imgWrap"><img src="images/thumbs/s/Garconne.jpg" srcset="images/thumbs/s/Garconne.jpg 640w, images/thumbs/Garconne.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Garçonne" width="691" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Garçonne</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">81 × 116 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/intermede"><div class="imgWrap"><img src="images/thumbs/s/Intermede.jpg" srcset="images/thumbs/s/Intermede.jpg 640w, images/thumbs/Intermede.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Intermède" width="555" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Intermède</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">60 × 120 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/jeanne-et-augustin"><div class="imgWrap"><img src="images/thumbs/s/Jeanne&Augustin.jpg" srcset="images/thumbs/s/Jeanne&Augustin.jpg 640w, images/thumbs/Jeanne&Augustin.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Jeanne &amp; Augustin" width="1100" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Jeanne &amp; Augustin</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">35 × 35 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/kiss"><div class="imgWrap"><img src="images/thumbs/s/Kiss.jpg" srcset="images/thumbs/s/Kiss.jpg 640w, images/thumbs/Kiss.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Kiss" width="1100" height="685" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Kiss</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">130 × 81 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/marcel"><div class="imgWrap"><img src="images/thumbs/s/Marcel.jpg" srcset="images/thumbs/s/Marcel.jpg 640w, images/thumbs/Marcel.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Marcel" width="1085" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Marcel</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">100 × 100 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/oeillade"><div class="imgWrap"><img src="images/thumbs/s/Oeillade.jpg" srcset="images/thumbs/s/Oeillade.jpg 640w, images/thumbs/Oeillade.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Œillade" width="573" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Œillade</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">60 × 120 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/parfum-de-femme"><div class="imgWrap"><img src="images/thumbs/s/ParfumDeFemme.jpg" srcset="images/thumbs/s/ParfumDeFemme.jpg 640w, images/thumbs/ParfumDeFemme.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Parfum De Femme" width="780" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Parfum De Femme</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">89 × 130 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/pentouse"><div class="imgWrap"><img src="images/thumbs/s/Pentouse.jpg" srcset="images/thumbs/s/Pentouse.jpg 640w, images/thumbs/Pentouse.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Pentouse" width="1096" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Pentouse</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">100 × 100 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/rocking-shoes"><div class="imgWrap"><img src="images/thumbs/s/RockingShoes.jpg" srcset="images/thumbs/s/RockingShoes.jpg 640w, images/thumbs/RockingShoes.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Rocking Shoes" width="728" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Rocking Shoes</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">89 × 130 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/saharienne"><div class="imgWrap"><img src="images/thumbs/s/Saharienne.jpg" srcset="images/thumbs/s/Saharienne.jpg 640w, images/thumbs/Saharienne.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Saharienne" width="1087" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Saharienne</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">120 × 120 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/summer-time"><div class="imgWrap"><img src="images/thumbs/s/SummerTime.jpg" srcset="images/thumbs/s/SummerTime.jpg 640w, images/thumbs/SummerTime.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Summer Time" width="549" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Summer Time</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">60 × 120 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+        <a class="piece" href="oeuvres/wonder-woman"><div class="imgWrap"><img src="images/thumbs/s/WonderWoman.jpg" srcset="images/thumbs/s/WonderWoman.jpg 640w, images/thumbs/WonderWoman.jpg 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="Wonder Woman" width="844" height="1100" loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">Wonder Woman</p><p class="capMeta"><span class="capTech">Huile sur Toile</span><span class="capTech"> · </span><span class="capSize">89 × 116 cm</span></p><span class="badge vendue">Vendue</span></div></a>
+      <!-- /seo:works --></section>
+    <footer class="bottom">
+        <div class="bottom__left">
+          <a class="bottom__link" href="https://www.instagram.com/annick.bouvattier/" target="_blank" rel="noopener noreferrer">instagram</a>
+          <a class="bottom__link" href="https://www.facebook.com/annick.bouvattier/" target="_blank" rel="noopener noreferrer">facebook</a>
+        </div>
+        <a class="bottom__link bottom__link--legal" href="mentions-legales">mentions légales</a>
+      </footer>
+  </div>
+  </div>
+
+  <script>
+    /* =========================
+       CONFIG
+       ========================= */
+
+    const SIZES_URL = "images/thumbs/sizes.json";  // dimensions des miniatures (évite les sauts de mise en page)
+
+    /* =========================
+       DOM
+       ========================= */
+
+    const els = {
+      q: document.getElementById("q"),
+      masonry: document.getElementById("masonry"),
+      count: document.getElementById("count"),
+      groups: document.getElementById("groups"),
+      subtabs: document.getElementById("subtabs"),
+      sizes: document.getElementById("sizes"),
+    };
+
+    let artworks = [];
+    let sizesMap = {};      // nom de fichier -> [largeur, hauteur] de la miniature
+    let currentList = [];   // œuvres actuellement affichées (après filtres)
+
+    // plusieurs choix par onglet (Set vide = tous)
+    const filters = {
+      q: "",
+      category: new Set(),
+      technique: new Set(),
+      shape: new Set(),    // "carre" | "paysage" | "portrait"
+      size: new Set(),     // ex: "100 x 81 cm" normalisé (visible une fois la forme choisie)
+      status: new Set(),   // "disponible" | "vendue"
+    };
+
+    // onglets principaux -> filtre concerné, libellé de « tout », libellé de chaque choix
+    const GROUPS = {
+      category:  { key: "category",  all: "Toutes", label: v => t(v) },
+      technique: { key: "technique", all: "Toutes", label: v => t(v) },
+      format:    { key: "shape",     all: "Tous",   label: shapeLabel, values: ["carre","paysage","portrait"] },
+      status:    { key: "status",    all: "Tous",   label: statusLabel, values: ["disponible","vendue"] },
+    };
+    let activeGroup = null;   // onglet déplié (null = tous repliés)
+
+    /* =========================
+       HELPERS
+       ========================= */
+
+    function uniq(arr){ return [...new Set(arr)].sort((a,b)=> (""+a).localeCompare(""+b, "fr")); }
+
+    const { escapeHtml, metaLine } = abouvModal;
+
+    function normSize(s){
+      return String(s ?? "")
+        .toLowerCase()
+        .replaceAll("×","x")
+        .replace(/\s+/g," ")
+        .replace(/\s*x\s*/g," x ")
+        .replace(/\s*cm\s*/g," cm")
+        .trim();
+    }
+
+    function parseDims(sizeStr){
+      // attend un truc du style "100 x 81 cm" ou "100×81" ou "100 x 81"
+      const s = normSize(sizeStr);
+      const m = s.match(/(\d+(?:[.,]\d+)?)\s*x\s*(\d+(?:[.,]\d+)?)/i);
+      if(!m) return null;
+      const w = parseFloat(m[1].replace(",", "."));
+      const h = parseFloat(m[2].replace(",", "."));
+      if(!isFinite(w) || !isFinite(h)) return null;
+      return { w, h };
+    }
+
+    function shapeFromSize(sizeStr){
+      const d = parseDims(sizeStr);
+      if(!d) return "unknown";
+      if(Math.abs(d.w - d.h) < 0.0001) return "carre";
+      return (d.w > d.h) ? "paysage" : "portrait";
+    }
+
+    function shapeLabel(key){
+      if(key === "carre") return t("Carré");
+      if(key === "paysage") return t("Paysage");
+      if(key === "portrait") return t("Portrait");
+      return t("Autre");
+    }
+
+    function statusLabel(s){
+      return t(s === "vendue" ? "statut|Vendue" : "statut|Disponible");
+    }
+
+    /* =========================
+       LOAD
+       ========================= */
+
+    async function loadSizes(){
+      try{
+        const res = await fetch(SIZES_URL);
+        return res.ok ? await res.json() : {};
+      }catch(_){ return {}; }
+    }
+
+    async function loadArtworksFromSheet(){
+      const [list, sizes] = await Promise.all([abouvSheet.artworks(), loadSizes()]);
+      sizesMap = sizes || {};
+      // œuvre sans image dans images/thumbs (pas encore ajoutée) : écartée, comme dans la galerie 3D
+      // (sinon une vignette vide mènerait à une page d'œuvre qui n'existe pas)
+      const known = Object.keys(sizesMap).length > 0;
+
+      // + format normalisé et orientation, pour les filtres ; œuvres disponibles d'abord, puis vendues
+      // ordre : disponibles d'abord, puis les plus récentes (année), puis par titre
+      const order = (a, b) => (a.status === "vendue") - (b.status === "vendue") || (b.year || 0) - (a.year || 0) || a.title.localeCompare(b.title, "fr");
+      return list.filter(a => !known || sizesMap[a.file]).sort(order).map(a => {
+        const sizeNorm = a.size ? normSize(a.size) : "";
+        return { ...a, sizeNorm, shape: a.size ? shapeFromSize(sizeNorm) : "unknown" };
+      });
+    }
+
+    /* =========================
+       CHIPS
+       ========================= */
+
+    function prettySize(sizeNorm){
+      return abouvUnits.fmt(sizeNorm);   // cm ou pouces (bouton à gauche de la recherche)
+    }
+
+    /* =========================
+       FILTERING + RENDER
+       ========================= */
+
+    // ignore : filtres à ne pas appliquer (pour compter les œuvres de chaque choix d'un onglet)
+    function matchArtwork(a, ignore = []){
+      const on = (key) => filters[key].size && !ignore.includes(key);
+      if(a.broken) return false; // image introuvable (ni miniature ni original)
+      const q = (filters.q||"").trim().toLowerCase();
+      if(q && !a.title.toLowerCase().includes(q)) return false;
+
+      if(on("category") && !filters.category.has(a.category)) return false;
+      if(on("technique") && !filters.technique.has(a.technique)) return false;
+
+      // Format : forme + tailles (AND)
+      if(on("shape") && !filters.shape.has(a.shape)) return false;
+      if(on("size") && !filters.size.has(a.sizeNorm)) return false;
+
+      if(on("status") && !filters.status.has(a.status)) return false;
+
+      return true;
+    }
+
+    // Mosaïque remplie ligne par ligne (gauche -> droite, puis la ligne suivante) : chaque vignette va dans la
+    // colonne la moins haute ; les premières œuvres de la liste sont donc bien en haut de la page
+    let lastItems = [], lastCols = 0;
+    const colCount = () => innerWidth > 1200 ? 4 : innerWidth > 900 ? 3 : 2;
+    function layoutMasonry(items){
+      lastItems = items;
+      const n = colCount(); lastCols = n;
+      const cols = Array.from({ length: n }, () => { const c = document.createElement("div"); c.className = "mcol"; return c; });
+      const h = new Array(n).fill(0);
+      items.forEach(({ el, a }) => {
+        const d = sizesMap[a.file], ratio = d ? d[1] / d[0] : 1.25;
+        let k = 0; for (let i = 1; i < n; i++) if (h[i] < h[k] - .01) k = i;
+        cols[k].appendChild(el); h[k] += ratio + .28;     // + la légende
+      });
+      els.masonry.classList.add("is-cols");
+      els.masonry.replaceChildren(...cols.filter(c => c.childElementCount || n));
+    }
+    addEventListener("resize", () => { if (lastItems.length && colCount() !== lastCols) layoutMasonry(lastItems); });
+
+    let renderQueued = false;
+    function scheduleRender(){
+      if(renderQueued) return;
+      renderQueued = true;
+      requestAnimationFrame(() => { renderQueued = false; render(); });
+    }
+
+    /* =========================
+       ONGLETS
+       ========================= */
+
+    // une ligne de choix : « Tous » + un bouton par valeur, avec le nombre d'œuvres (les choix vides sont masqués)
+    // plusieurs choix possibles : un clic coche / décoche, « Toutes » efface la ligne
+    function fillChoices(box, key, allLabel, items, onChange){
+      const set = filters[key];
+      box.innerHTML = "";
+      items.forEach(it => {
+        if(!it.n && it.value && !set.has(it.value)) return;
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "tab tab--sub";
+        btn.setAttribute("aria-pressed", String(it.value ? set.has(it.value) : set.size === 0));
+        btn.innerHTML = `<span>${escapeHtml(it.value ? it.label : t(allLabel))}</span><span class="tab__count">${it.n}</span>`;
+        btn.addEventListener("click", () => {
+          if(!it.value) set.clear();
+          else if(set.has(it.value)) set.delete(it.value);
+          else set.add(it.value);
+          onChange && onChange();
+          render();
+        });
+        box.appendChild(btn);
+      });
+    }
+
+    // choix en cours d'un onglet, affiché à côté de son nom (« Toutes » s'il n'y a pas de filtre)
+    // onglet replié : le 1er choix + le nombre d'autres (« Danseuses +2 »)
+    function groupValue(name){
+      const g = GROUPS[name];
+      const short = (list) => list[0] + (list.length > 1 ? ` +${list.length - 1}` : "");
+      const vals = [...filters[g.key]].map(g.label);
+      if(!vals.length) return t(g.all);
+      if(name === "format" && filters.size.size) return `${short(vals)} · ${short([...filters.size].map(prettySize))}`;
+      return short(vals);
+    }
+
+    function renderTabs(){
+      els.groups.querySelectorAll(".tab").forEach(btn => {
+        const name = btn.dataset.group;
+        const on = filters[GROUPS[name].key].size > 0;
+        btn.setAttribute("aria-expanded", String(name === activeGroup));
+        btn.parentElement.classList.toggle("has-filter", on);
+        btn.nextElementSibling.hidden = !on;
+        btn.querySelector(".tab__value").textContent = groupValue(name);
+      });
+
+      els.subtabs.hidden = !activeGroup;
+      els.sizes.hidden = true;
+      if(!activeGroup) return;
+
+      const g = GROUPS[activeGroup];
+      const pool = artworks.filter(a => matchArtwork(a, g.key === "shape" ? ["shape","size"] : [g.key]));
+      const values = g.values || uniq(artworks.map(a => a[g.key]).filter(Boolean));
+      fillChoices(els.subtabs, g.key, g.all, [{ value: "", n: pool.length }]
+        .concat(values.map(v => ({ value: v, label: g.label(v), n: pool.filter(a => a[g.key] === v).length }))),
+        g.key === "shape" ? () => filters.size.clear() : null);
+
+      // Format : une fois une forme choisie, ses tailles en dessous
+      const showSizes = activeGroup === "format" && filters.shape.size > 0;
+      els.sizes.hidden = !showSizes;
+      if(showSizes){
+        const sizePool = artworks.filter(a => matchArtwork(a, ["size"]));
+        const area = (v) => { const d = parseDims(v); return d ? d.w * d.h : 0; };
+        const sizes = uniq(sizePool.map(a => a.sizeNorm).filter(Boolean)).sort((a, b) => area(a) - area(b));
+        fillChoices(els.sizes, "size", "Toutes", [{ value: "", n: sizePool.length }]
+          .concat(sizes.map(v => ({ value: v, label: prettySize(v), n: sizePool.filter(a => a.sizeNorm === v).length }))));
+      }
+    }
+
+    function render(){
+      renderTabs();
+
+      const list = artworks.filter(a => matchArtwork(a));
+      currentList = list;
+
+      els.masonry.innerHTML = "";
+
+      if(!list.length){
+        els.masonry.innerHTML = `<p class="statusMsg">${t("Aucune œuvre ne correspond à ces filtres.")}</p>`;
+      }
+
+      const items = [];
+      list.forEach((a, idx)=>{
+        // un vrai lien vers la page de l'œuvre
+        const item = document.createElement("a");
+        item.className = "piece";
+        item.href = `oeuvres/${a.slug}`;
+        item.setAttribute("aria-label", `${a.title} — ${statusLabel(a.status)}. ${t("Ouvrir l'œuvre")}`);
+
+        const dims = sizesMap[a.file];
+        const dimAttrs = dims ? ` width="${dims[0]}" height="${dims[1]}"` : "";
+        const meta = metaLine(a);
+
+        item.innerHTML = `
+          <div class="imgWrap">
+            <img src="${a.thumbSmall}" srcset="${a.thumbSmall} 640w, ${a.thumb} 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="${escapeHtml(a.title)}"${dimAttrs} loading="lazy" decoding="async">
+          </div>
+          <div class="cap">
+            <p class="capTitle">${escapeHtml(a.title)}</p>
+            ${meta ? `<p class="capMeta">${meta}</p>` : ""}
+            <span class="badge ${a.status}">
+              ${statusLabel(a.status)}
+            </span>
+          </div>
+        `;
+
+        // miniature absente -> image d'origine ; si elle manque aussi -> l'œuvre est masquée
+        const img = item.querySelector("img");
+        let triedOriginal = false;
+        img.addEventListener("error", () => {
+          if(!triedOriginal){ triedOriginal = true; img.removeAttribute("srcset"); img.src = a.image; return; }
+          console.warn("Image introuvable, œuvre masquée :", a.title, a.image);
+          a.broken = true;
+          scheduleRender();
+        });
+
+        // clic normal : on note la liste filtrée et la position, puis on suit le lien (la vraie page de l'œuvre)
+        item.addEventListener("click", (e)=>{
+          if(e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;   // nouvel onglet
+          saveState(a.slug);
+        });
+        items.push({ el: item, a });
+      });
+      layoutMasonry(items);
+
+      const n = `${list.length} ${t(list.length>1 ? "œuvres" : "œuvre")}`;
+      els.count.textContent = n;
+      const sup = document.getElementById("pfCount");
+      if(sup) sup.textContent = list.length;
+      els.q.placeholder = `${t("Rechercher parmi")} ${n}`;
+    }
+
+    /* =========================
+       RETOUR DEPUIS UNE ŒUVRE : un clic ouvre la vraie page oeuvres/<slug> ; en revenant (bouton retour,
+       « ← Portfolio »), on retrouve les filtres, la recherche et la position dans la page.
+       Si le navigateur a gardé la page en mémoire (bfcache), rien à faire ; sinon on relit sessionStorage
+       « abouv:pf » (aussi lu par oeuvre.js : liste filtrée pour précédente / suivante).
+       ========================= */
+
+    const PF_KEY = "abouv:pf";
+    if("scrollRestoration" in history) history.scrollRestoration = "manual";   // position remise par restoreState()
+
+    // position : une œuvre repère (celle cliquée, sinon la première visible) et sa hauteur à l'écran ;
+    // plus juste qu'un simple scrollY quand la page change un peu de hauteur (choix de filtre replié…)
+    function saveState(openSlug){
+      const pieces = [...els.masonry.querySelectorAll("a.piece")];
+      const anchor = (openSlug && pieces.find(p => p.getAttribute("href") === `oeuvres/${openSlug}`))
+        || pieces.find(p => p.getBoundingClientRect().bottom > 0);
+      const state = {
+        q: filters.q,
+        f: Object.fromEntries(["category","technique","shape","size","status"].map(k => [k, [...filters[k]]])),
+        y: Math.round(scrollY),
+        anchor: anchor ? { href: anchor.getAttribute("href"), top: Math.round(anchor.getBoundingClientRect().top) } : null,
+        list: currentList.map(a => [a.slug, a.title]),
+      };
+      try{
+        sessionStorage.setItem(PF_KEY, JSON.stringify(state));
+        if(openSlug) sessionStorage.setItem("abouv:pf-open", openSlug);
+      }catch(_){}
+    }
+    function restoreScroll(st){
+      const a = st.anchor && [...els.masonry.querySelectorAll("a.piece")].find(p => p.getAttribute("href") === st.anchor.href);
+      scrollTo(0, a ? a.getBoundingClientRect().top + scrollY - st.anchor.top : st.y || 0);
+    }
+    addEventListener("pagehide", () => saveState());
+
+    // filtres seulement si on revient (retour / avance du navigateur, ou rechargement) ; la position est remise après render()
+    function restoreState(){
+      const nav = performance.getEntriesByType && performance.getEntriesByType("navigation")[0];
+      if(!nav || (nav.type !== "back_forward" && nav.type !== "reload")) return null;
+      let st = null;
+      try{ st = JSON.parse(sessionStorage.getItem(PF_KEY) || "null"); }catch(_){}
+      if(!st) return null;
+      filters.q = st.q || "";
+      els.q.value = filters.q;
+      for(const [k, vals] of Object.entries(st.f || {})) if(filters[k]) vals.forEach(v => filters[k].add(v));
+      return st;
+    }
+
+    /* =========================
+       EVENTS
+       ========================= */
+
+    els.q.addEventListener("input", () => {
+      filters.q = els.q.value || "";
+      render();
+    });
+
+    els.groups.addEventListener("click", (e) => {
+      const clear = e.target.closest(".group__clear");
+      if(clear){
+        const g = GROUPS[clear.parentElement.dataset.group];
+        filters[g.key].clear();
+        if(g.key === "shape") filters.size.clear();
+        render();
+        return;
+      }
+      const btn = e.target.closest(".tab");
+      if(!btn) return;
+      activeGroup = (activeGroup === btn.dataset.group) ? null : btn.dataset.group;
+      renderTabs();
+    });
+
+    // clic en dehors de la barre ou Échap : on replie
+    document.addEventListener("click", (e) => {
+      // composedPath : le bouton cliqué a pu être retiré de la page entre-temps (choix redessinés)
+      const inside = e.composedPath().some(n => n.classList && n.classList.contains("toolbar"));
+      if(activeGroup && !inside){ activeGroup = null; renderTabs(); }
+    });
+
+    document.addEventListener("keydown", (e)=>{
+      if(e.key === "Escape" && activeGroup){
+        const btn = els.groups.querySelector(`[data-group="${activeGroup}"]`);
+        activeGroup = null;
+        renderTabs();
+        btn.focus();
+      }
+    });
+
+    /* =========================
+       INIT
+       ========================= */
+
+    // cm / pouces
+    const unitBtns = [...document.querySelectorAll("#unitSwitch button")];
+    const syncUnit = () => unitBtns.forEach(b => b.setAttribute("aria-pressed", String(b.dataset.u === abouvUnits.get())));
+    unitBtns.forEach(b => b.addEventListener("click", () => { abouvUnits.set(b.dataset.u); syncUnit(); render(); }));
+    syncUnit();
+
+    // le Sheet relu en arrière-plan a changé : on redessine
+    document.addEventListener("abouv:sheet-updated", async () => {
+      try{ artworks = await loadArtworksFromSheet(); render(); }catch(_){}
+    });
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      // ?q=<titre> (liens de la galerie 3D) : recherche pré-remplie
+      const params = new URLSearchParams(location.search);
+      // ?oeuvre=<fichier> (clic sur une toile de la galerie 3D) : on passe directement à la page de l'œuvre
+      const wanted = params.get("oeuvre");
+      const back = wanted ? null : restoreState();
+      // ?q=<titre> (liens de la galerie 3D) : recherche pré-remplie
+      const q0 = params.get("q");
+      if(q0 && !back){ els.q.value = q0.slice(0, 80); filters.q = els.q.value; }
+      // ?collection=<catégorie>, ?dispo=1 (anciennes adresses du site, redirigées ici) : filtres déjà choisis
+      if(!back){
+        params.getAll("collection").forEach(c => filters.category.add(c));
+        if(params.get("dispo")) filters.status.add("disponible");
+      }
+      try{
+        artworks = await loadArtworksFromSheet();
+        if(wanted){
+          const w = artworks.find(a => a.file === wanted || a.title === wanted);
+          if(w){ location.replace(`oeuvres/${w.slug}`); return; }
+        }
+        render();
+        if(back) restoreScroll(back);
+      } catch(err){
+        console.error(err);
+        els.count.textContent = "";
+        els.masonry.innerHTML =
+          `<p class="statusMsg">${t("Impossible de charger les œuvres pour le moment. Vérifiez votre connexion, puis")} ` +
+          `<a href="portfolio">${t("actualisez la page")}</a>.</p>`;
+      }
+    });
+  </script>
+<script>window.I18N && I18N.apply();</script><i id="i18n-end" hidden></i>
+</body>
+</html>

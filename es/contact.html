@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <script>/* thème clair mémorisé : appliqué avant tout affichage (pas de flash) */(function(){try{if(localStorage.getItem("abouv:theme")==="light"){var r=document.documentElement;r.setAttribute("data-theme","light");r.style.background="#efebe3";}}catch(e){}})();</script>
+  <link rel="expect" href="#i18n-end" blocking="render" />
+  <style>html{background:#060b18}</style>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="Contactar con Annick Bouvattier: información sobre una obra, una exposición o un encargo." />
+  <meta name="theme-color" content="#0B1120" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Annick Bouvattier" />
+  <meta property="og:locale" content="es_ES" />
+  <meta property="og:title" content="Contacto — Annick Bouvattier" />
+  <meta property="og:description" content="Contactar con Annick Bouvattier: información sobre una obra, una exposición o un encargo." />
+  <link rel="icon" href="favicon.ico" sizes="48x48" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="icon-192.png" type="image/png" sizes="192x192" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <script src="i18n-langs.js?v=20261030a"></script>
+  <script src="i18n.js?v=20261030a"></script>
+  <script src="site.js?v=20261029a"></script>
+  <link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="styles.css?v=20261030a" />
+  <!-- pages préchargées au survol d'un lien : changement de page quasi instantané (la galerie 3D est seulement préchargée) -->
+  <script type="speculationrules">
+    {"prerender":[{"where":{"and":[{"selector_matches":".nav__link, .bottom__link--legal"},{"not":{"selector_matches":"[href='./'], [href='../']"}}]},"eagerness":"conservative"}],
+     "prefetch":[{"where":{"selector_matches":".nav__link, .bottom__link--legal"},"eagerness":"moderate"}]}
+  </script>
+  <title>Contacto — Annick Bouvattier</title>
+
+
+  <style>
+    /* ===== Formulaire à gauche, « Ailleurs » à droite ===== */
+    .contact{ display:grid; grid-template-columns:minmax(0, 1.25fr) minmax(0, .75fr); gap:48px; align-items:start; }
+    .lead{ margin:0 0 20px; color:var(--ink-soft); line-height:1.6; }
+
+    .form{
+      margin:0; display:grid; grid-template-columns:1fr 1fr; gap:14px 12px;
+      padding:22px; border:1px solid rgba(var(--ink-rgb),.12); border-radius:var(--radius-card);
+      background:rgba(var(--ink-rgb),.02);
+    }
+    .field{ display:flex; flex-direction:column; gap:6px; min-width:0; }
+    .field--full{ grid-column:1 / -1; }
+    .field__label{ font-size:12px; font-weight:500; color:var(--ink-faint); }
+    .field__label em{ font-style:normal; color:var(--ink-faint); }
+    .form input, .form textarea{
+      width:100%; height:38px; padding:0 12px;
+      border:1px solid rgba(var(--ink-rgb),.14); border-radius:8px;
+      background:rgba(var(--ink-rgb),.03); color:var(--ink);
+      font:inherit; font-size:14px; outline:none;
+      transition:border-color var(--ease), background-color var(--ease);
+    }
+    .form textarea{ height:auto; min-height:150px; padding:10px 12px; resize:vertical; line-height:1.5; }
+    .form input:hover, .form textarea:hover{ border-color:rgba(var(--ink-rgb),.26); }
+    .form input:focus, .form textarea:focus{ border-color:rgba(var(--ink-rgb),.4); background:rgba(var(--ink-rgb),.06); }
+
+    /* Sujet : mêmes onglets que les filtres */
+    .topics{ display:flex; flex-wrap:wrap; gap:4px; }
+
+    .form__foot{ display:flex; flex-wrap:wrap; align-items:center; gap:12px 16px; }
+    .sendBtn{
+      height:36px; padding:0 18px;
+      border:1px solid var(--ink); border-radius:8px; background:var(--ink); color:var(--bg);
+      font:inherit; font-size:14px; font-weight:600; cursor:pointer;
+      transition:background-color var(--ease), border-color var(--ease);
+    }
+    .sendBtn:hover{ background:rgba(var(--ink-rgb),.85); border-color:rgba(var(--ink-rgb),.85); }
+    .sendBtn:disabled{ opacity:.6; cursor:progress; }
+    .formNote{ margin:0; flex:1; min-width:220px; font-size:12px; line-height:1.5; color:var(--ink-faint); }
+    .formNote a{ border-bottom:1px solid rgba(var(--ink-rgb),.35); }
+    .formStatus{ grid-column:1 / -1; margin:0; line-height:1.5; color:var(--ink-soft); }
+    .formStatus.is-error{ color:var(--red); }
+
+    /* Ailleurs : tuiles empilées */
+    .elsewhere .facts{ grid-template-columns:1fr; }
+    .elsewhere .fact__big{ font-size:18px; }
+
+    @media (max-width:900px){
+      .contact{ grid-template-columns:1fr; gap:40px; }
+      .elsewhere .facts{ grid-template-columns:repeat(2, 1fr); }
+    }
+    @media (max-width:600px){
+      .form{ grid-template-columns:1fr; padding:16px; }
+      .form input{ height:42px; font-size:16px; } /* 16 px : iOS ne zoome pas sur le champ */
+      .form textarea{ font-size:16px; }
+      .topics .tab{ height:32px; }
+    }
+  </style>
+  <!-- seo:head -->
+  <link rel="canonical" href="https://annickbouvattier.art/es/contact" />
+  <link rel="alternate" hreflang="fr" href="https://annickbouvattier.art/fr/contact" />
+  <link rel="alternate" hreflang="en" href="https://annickbouvattier.art/en/contact" />
+  <link rel="alternate" hreflang="es" href="https://annickbouvattier.art/es/contact" />
+  <link rel="alternate" hreflang="it" href="https://annickbouvattier.art/it/contact" />
+  <link rel="alternate" hreflang="x-default" href="https://annickbouvattier.art/fr/contact" />
+  <meta property="og:url" content="https://annickbouvattier.art/es/contact" />
+  <meta property="og:image" content="https://annickbouvattier.art/images/Enigma.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Contacto — Annick Bouvattier" />
+  <meta name="twitter:description" content="Contactar con Annick Bouvattier: información sobre una obra, una exposición o un encargo." />
+  <meta name="twitter:image" content="https://annickbouvattier.art/images/Enigma.jpg" />
+  <!-- /seo:head -->
+</head>
+
+<body class="contactPage salle salle--contact">
+  <div class="page">
+  <div class="container">
+    <header class="top">
+      <a class="brand" href="./">ANNICK&nbsp;BOUVATTIER</a>
+      <nav class="top__nav" aria-label="Navigation principale">
+        <a class="nav__link" href="./">Accueil</a>
+        <a class="nav__link" href="portfolio">Portfolio</a>
+        <a class="nav__link" href="galeries">Galeries</a>
+        <a class="nav__link" href="expositions">Expositions</a>
+        <a class="nav__link" href="apropos">À propos</a>
+        <a class="nav__link is-active" aria-current="page" href="contact">Contact</a>
+      </nav>
+    </header>
+
+    <h1 class="sr-only">Contact</h1>
+    <h2 class="bigTitle">Contact</h2>
+
+    <div class="contact cx">
+      <section class="formCard" aria-labelledby="formCardTitle">
+        <h2 class="formCard__title" id="formCardTitle">Écrivez-moi pour parler d’une œuvre, d’une commande ou d’un projet.</h2>
+        <form class="form ix-form" id="contactForm" action="https://formspree.io/f/xdalokdl" method="POST">
+          <!-- Sujet : envoyé avec le message (champ « Sujet ») -->
+          <div class="field field--full">
+            <span class="field__label" id="topicLabel">Sujet <em>(choisissez ce qui vous amène)</em></span>
+            <div class="topics" role="radiogroup" aria-labelledby="topicLabel">
+              <button class="tab tab--sub" type="button" role="radio" data-topic="Acquisition"><i class="tick" aria-hidden="true"></i>Acquisition</button>
+              <button class="tab tab--sub" type="button" role="radio" data-topic="Commande"><i class="tick" aria-hidden="true"></i>Commande</button>
+              <button class="tab tab--sub" type="button" role="radio" data-topic="Presse"><i class="tick" aria-hidden="true"></i>Presse</button>
+              <button class="tab tab--sub" type="button" role="radio" data-topic="Autre"><i class="tick" aria-hidden="true"></i>Autre</button>
+            </div>
+            <input type="hidden" name="Sujet" id="topicField" value="">
+          </div>
+
+          <label class="field">
+            <span class="field__label">Prénom <b class="req" aria-hidden="true">*</b></span>
+            <input type="text" name="Prénom" autocomplete="given-name" placeholder="Annick" required>
+          </label>
+          <label class="field">
+            <span class="field__label">Nom <b class="req" aria-hidden="true">*</b></span>
+            <input type="text" name="Nom" autocomplete="family-name" placeholder="Dupont" required>
+          </label>
+          <label class="field field--full">
+            <span class="field__label">Email <b class="req" aria-hidden="true">*</b></span>
+            <input type="email" name="email" autocomplete="email" placeholder="vous@exemple.fr" required>
+          </label>
+          <label class="field">
+            <span class="field__label">Organisation <em>(facultatif)</em></span>
+            <input type="text" name="Organisation" autocomplete="organization">
+          </label>
+          <label class="field">
+            <span class="field__label">Pays <em>(facultatif)</em></span>
+            <input type="text" name="Pays" autocomplete="country-name">
+          </label>
+          <label class="field field--full">
+            <span class="field__label">Message <b class="req" aria-hidden="true">*</b></span>
+            <textarea name="message" id="message" placeholder="Une œuvre, une commande, une date…" required></textarea>
+          </label>
+
+          <!-- anti-spam : champ invisible, rempli uniquement par les robots (ignoré par Formspree) -->
+          <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true"
+                 style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+          <input type="hidden" name="_subject" value="Nouveau message depuis le site Annick Bouvattier">
+          <!-- langue du site au moment de l'envoi : pour savoir en quelle langue répondre -->
+          <input type="hidden" name="Langue" id="langField" value="fr">
+
+          <div class="form__foot field--full">
+            <button class="sendBtn" type="submit" id="submitBtn"><span>Envoyer</span><i class="sendBtn__arrow" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg></i></button>
+            <p class="formNote">Les informations saisies servent uniquement à répondre à votre demande. <a href="mentions-legales">En savoir plus</a></p>
+          </div>
+          <p id="formStatus" class="formStatus" role="status" aria-live="polite" hidden></p>
+        </form>
+      </section>
+
+      <!-- autres moyens : l'e-mail, ou les réseaux (dans le pied de page : la flèche y mène) -->
+      <aside class="cxOr" aria-label="Ailleurs">
+        <span>Ou directement par e-mail</span> <a class="cxOr__mail" href="mailto:abouvattier@free.fr">abouvattier@free.fr</a>
+        <span class="cxOr__sep">·</span>
+        <a class="cxOr__soc" href="#piedDePage"><span>ou via mes réseaux</span><svg viewBox="0 0 16 24" aria-hidden="true"><path d="M8 2v19M2 15l6 6 6-6"/></svg></a>
+      </aside>
+    </div>
+
+    <footer class="bottom" id="piedDePage">
+        <div class="bottom__left">
+          <a class="bottom__link" href="https://www.instagram.com/annick.bouvattier/" target="_blank" rel="noopener noreferrer">instagram</a>
+          <a class="bottom__link" href="https://www.facebook.com/annick.bouvattier/" target="_blank" rel="noopener noreferrer">facebook</a>
+        </div>
+        <a class="bottom__link bottom__link--legal" href="mentions-legales">mentions légales</a>
+      </footer>
+  </div>
+  </div>
+
+  <!-- remerciement après l'envoi : une fenêtre par-dessus la page -->
+  <dialog class="thx" id="thx" aria-labelledby="thxTitle">
+    <div class="thx__box">
+      <button class="thx__close" type="button" aria-label="Fermer"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3l10 10M13 3 3 13"/></svg></button>
+      <svg class="thx__check" viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="26" r="24"/><path d="m15 27 7 7 15-16"/></svg>
+      <h2 class="thx__title" id="thxTitle">Merci</h2>
+      <p class="thx__text" id="thxText">Votre message a bien été envoyé. Annick Bouvattier vous répondra dès que possible.</p>
+      <div class="thx__acts">
+        <a class="thx__btn" href="portfolio"><span>Voir le portfolio</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+        <button class="thx__link" type="button" data-close>Fermer</button>
+      </div>
+    </div>
+  </dialog>
+
+  <script>
+  (() => {
+    const form = document.getElementById("contactForm");
+    const status = document.getElementById("formStatus");
+    const btn = document.getElementById("submitBtn");
+    const msg = document.getElementById("message");
+    document.getElementById("langField").value = ({ en: "anglais", es: "espagnol", it: "italien" })[I18N.lang] || "français";
+
+    // Sujet : un seul choix, envoyé dans le champ caché « Sujet »
+    const topicField = document.getElementById("topicField");
+    const topics = document.querySelectorAll("[data-topic]");
+    function setTopic(v){
+      topicField.value = v;
+      topics.forEach(b => b.setAttribute("aria-checked", String(b.dataset.topic === v)));
+      topics.forEach(b => b.setAttribute("aria-pressed", String(b.dataset.topic === v)));
+    }
+    topics.forEach(b => b.addEventListener("click", () => setTopic(topicField.value === b.dataset.topic ? "" : b.dataset.topic)));
+    setTopic("");
+
+    // Arrivée avec un sujet pré-choisi : page Presse (?sujet=presse), galerie 3D (« Acquérir cette œuvre »)
+    // ou fiche du portfolio (« Demander des informations », ?oeuvre=…)
+    const params = new URLSearchParams(location.search);
+    const sujet = (params.get("sujet") || "").toLowerCase();
+    const oeuvre = (params.get("oeuvre") || "").slice(0, 120);
+    if (sujet === "presse") setTopic("Presse");
+    if (sujet === "acquisition" || oeuvre) setTopic("Acquisition");
+
+    // message pré-rempli
+    if (oeuvre && !msg.value) {
+      if (sujet === "acquisition") {
+        // « Acquérir cette œuvre » : titre, puis technique et dimensions entre parenthèses
+        const technique = (params.get("technique") || "").slice(0, 80);
+        const details = [technique && t(technique), (params.get("dimensions") || "").slice(0, 40)].filter(Boolean).join(", ");
+        msg.value = t("Bonjour, je suis intéressé(e) par l'œuvre « {oeuvre} »{details}. Pourriez-vous m'indiquer son prix et les modalités d'acquisition ?",
+                      { oeuvre, details: details ? ` (${details})` : "" });
+      } else {
+        msg.value = t("Bonjour,\n\nJe souhaiterais avoir des informations sur l'œuvre « {oeuvre} ».\n\nMerci,", { oeuvre });
+      }
+    }
+
+    function say(text, isError) {
+      status.textContent = text;
+      status.classList.toggle("is-error", !!isError);
+      status.hidden = false;
+    }
+
+    // Envoi sans quitter le site (Formspree en arrière-plan) ; une fois validé, la fenêtre de remerciement
+    // s'affiche ici même. En cas d'échec, un message d'erreur s'affiche sous le bouton.
+    let sentPrenom = "";
+    const thxEl = document.getElementById("thx");
+    const closeThx = () => { thxEl.classList.remove("is-in"); setTimeout(() => thxEl.close(), 250); };
+    thxEl.querySelectorAll(".thx__close, [data-close]").forEach(b => b.addEventListener("click", closeThx));
+    thxEl.addEventListener("click", (e) => { if (e.target === thxEl) closeThx(); });
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      btn.disabled = true;
+      status.hidden = true;
+      try {
+        sentPrenom = (new FormData(form).get("Prénom") || "").toString();
+        const res = await fetch(form.action, {
+          method: "POST",
+          body: new FormData(form),
+          headers: { "Accept": "application/json" },
+        });
+        if (!res.ok) {
+          let detail = "";
+          try { const j = await res.json(); detail = (j.errors || []).map(e => e.message).join(" "); } catch (_) {}
+          throw new Error(detail || "HTTP " + res.status);
+        }
+        form.reset();
+        setTopic("");
+        const prenom = (sentPrenom || "").trim();
+        document.getElementById("thxText").textContent = prenom
+          ? t("{prenom}, votre message a bien été envoyé. Annick Bouvattier vous répondra dès que possible.", { prenom })
+          : t("Votre message a bien été envoyé. Annick Bouvattier vous répondra dès que possible.");
+        const thx = document.getElementById("thx");
+        thx.showModal(); requestAnimationFrame(() => thx.classList.add("is-in"));
+      } catch (err) {
+        // on reste sur la page (pas d'envoi classique, qui afficherait la page de Formspree) : message d'erreur ici
+        console.warn("Envoi impossible.", err);
+        say(t("Le message n'a pas pu être envoyé. Réessayez dans un instant, ou écrivez directement à abouvattier@free.fr."), true);
+      } finally {
+        btn.disabled = false;
+      }
+    });
+  })();
+  </script>
+<script>window.I18N && I18N.apply();</script><i id="i18n-end" hidden></i>
+</body>
+</html>

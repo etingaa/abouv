@@ -394,7 +394,19 @@
     try { localStorage.setItem(STORE_KEY, lang); } catch (_) {}
   }
 
+  // langue donnée par l'adresse : /fr/…, /en/…, /es/…, /it/… (pages générées par scripts/build-seo.mjs)
+  // (aussi sous /abouv/ sur GitHub Pages)
+  const PATH_RE = /^(\/(?:abouv\/)?)(fr|en|es|it)(?=\/|$)/;
+  const pathLang = (location.pathname.match(PATH_RE) || [])[2] || null;
+
+  // cookie lu par le serveur (.htaccess) : l'adresse de base « / » renvoie vers la langue choisie
+  function rememberForServer(l){
+    try { document.cookie = "abouv_lang=" + l + "; path=/; max-age=31536000; SameSite=Lax"; } catch (_) {}
+  }
+
   function detect(){
+    // 0. l'adresse fait foi
+    if (pathLang) { store(pathLang); rememberForServer(pathLang); return pathLang; }
     // 1. lien explicite : page.html?lang=en
     const param = new URLSearchParams(location.search).get("lang");
     if (LANGS.includes(param)) {
@@ -502,17 +514,20 @@
   const SHORT = { fr: "fra", en: "eng", es: "esp", it: "ita" };
 
   // Changer de langue : on reste sur la même page, au même endroit (position gardée, sans flash).
-  // ?lang= dans l'adresse : sinon le navigateur peut ressortir une version de la page déjà préchargée
+  // Pages /fr/…, /en/… : on passe à la même adresse dans l'autre langue. Sinon ?lang= dans l'adresse : sinon le navigateur peut ressortir une version de la page déjà préchargée
   // dans l'ancienne langue. Une page peut indiquer l'adresse à recharger (window.I18N_URL : ex. le portfolio
   // avec une fiche ouverte, dont l'adresse affichée est celle de l'œuvre).
   const SCROLL_KEY = "abouv:lang-scroll";
   function switchTo(l){
     if (l === lang) return;
     store(l);
+    rememberForServer(l);
     const url = new URL(typeof window.I18N_URL === "function" ? window.I18N_URL() : location.href, location.href);
-    url.searchParams.set("lang", l);
+    // adresse avec la langue (/fr/portfolio -> /en/portfolio) ; sinon ?lang=
+    if (PATH_RE.test(url.pathname)) url.pathname = url.pathname.replace(PATH_RE, "$1" + l);
+    else url.searchParams.set("lang", l);
     try { sessionStorage.setItem(SCROLL_KEY, JSON.stringify({ path: url.pathname, y: scrollY })); } catch (_) {}
-    location.replace(url.href);
+    location.href = url.href;
   }
   // retour à la position d'avant le changement de langue (aussi après le chargement des œuvres)
   function restoreScroll(){
@@ -525,6 +540,7 @@
 
   // Page préchargée ou revenue par « Précédent » dans une langue qui n'est plus la bonne : on la recharge
   function stale(){
+    if (pathLang) return false;   // l'adresse donne la langue : jamais périmée
     const saved = readStored();
     return LANGS.includes(saved) && saved !== lang && !new URLSearchParams(location.search).get("lang");
   }

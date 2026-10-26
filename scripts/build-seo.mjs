@@ -7,7 +7,10 @@
 //   1. relit le Google Sheet des œuvres (copie à jour dans data/sheet.csv ; si Google ne répond pas, la copie existante sert)
 //   2. génère une page par œuvre : oeuvres/<slug>.html (adresse publique : oeuvres/<slug>) (titre, image, technique, dimensions, disponibilité,
 //      « Demander des informations », précédente / suivante, balises de partage, JSON-LD VisualArtwork ; comportement : oeuvre.js)
-//   3. écrit sitemap.xml et robots.txt
+//   3. copie chaque page dans chaque langue : fr/<page>.html, en/…, es/…, it/… (adresses /fr/portfolio, /en/oeuvres/enigma…)
+//      avec la langue, l'adresse canonique, les liens vers les autres langues (hreflang), titre et description traduits
+//   4. écrit dans .htaccess les redirections des adresses de l'ancien site (liste : data/old-urls.txt)
+//   5. écrit sitemap.xml (toutes les langues) et robots.txt
 //   4. réécrit, entre des commentaires marqueurs, dans les pages existantes :
 //        <!-- seo:head --> … <!-- /seo:head -->       canonical, og:url, og:image, twitter:card (+ JSON-LD Person sur l'accueil)
 //        <!-- seo:works --> … <!-- /seo:works -->     portfolio.html : la liste des œuvres en HTML (remplacée par le script de la page)
@@ -25,6 +28,8 @@ const SITE_URL = "https://annickbouvattier.art";          // adresse du site, sa
 const DEFAULT_OG_IMAGE = "images/Enigma.jpg";             // image de partage des pages principales (une toile disponible)
 const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSmK-RAKlpq_VMnhd78eWdWeMTnCkU3_-411IzeTyzO9j0zbJdkkhzfxlRDZpqzKixpoUgTtAAI_Auw/pub?output=csv";
 const ARTIST = "Annick Bouvattier";
+const LANGS = ["fr", "en", "es", "it"];                    // une copie de chaque page par langue : fr/…, en/…, es/…, it/…
+const OG_LOCALE = { fr: "fr_FR", en: "en_US", es: "es_ES", it: "it_IT" };
 const OEUVRE_JS_V = "20261030a";                           // version de oeuvre.js (à changer quand on le modifie)
 
 // pages principales : fichier -> adresse publique (l'accueil est la racine)
@@ -121,6 +126,20 @@ async function loadArtworks(){
   return ok.sort((a, b) => (a.status === "vendue") - (b.status === "vendue") || (parseInt(b.year, 10) || 0) - (parseInt(a.year, 10) || 0) || a.title.localeCompare(b.title, "fr"));
 }
 
+/* ====== dictionnaires (i18n.js : anglais ; i18n-langs.js : espagnol, italien) ====== */
+async function loadDicts(){
+  const win = {};
+  try { new Function("window", await rd("i18n-langs.js"))(win); } catch (_) {}
+  const src = await rd("i18n.js");
+  const start = src.indexOf("const EN = {"), end = src.indexOf("\n  };", start);
+  let EN = {};
+  try { EN = new Function("return " + src.slice(start + "const EN = ".length, end + 4))(); } catch (_) {}
+  const L = win.I18N_LANGS || {};
+  return { en: EN, es: L.es || {}, it: L.it || {}, EN };
+}
+// texte traduit (comme i18n.js : la langue, à défaut l'anglais, à défaut le français)
+const tr = (D, lang, s) => !s || lang === "fr" ? s : (D[lang][s] ?? D.EN[s] ?? s);
+
 /* ====== gabarit commun (repris de portfolio.html) ====== */
 async function loadTemplate(){
   const pf = await rd("portfolio.html");
@@ -141,13 +160,18 @@ const dims = (a) => a.cm ? `${a.cm.w} × ${a.cm.h} cm` : (a.size || "").replace(
 
 // texte des balises description / partage (la page elle-même ne le montre pas : ce serait un doublon des infos ;
 // pas d'année non plus)
-function describe(a){
-  const d = dims(a);
+const DESC = {
+  fr: { of: (t) => `« ${t} », œuvre d’${ARTIST}`, coll: (c) => `Collection « ${c} ».`, av: "Disponible.", sold: "Vendue." },
+  en: { of: (t) => `“${t}”, a work by ${ARTIST}`, coll: (c) => `“${c}” collection.`, av: "Available.", sold: "Sold." },
+  es: { of: (t) => `«${t}», obra de ${ARTIST}`, coll: (c) => `Colección «${c}».`, av: "Disponible.", sold: "Vendida." },
+  it: { of: (t) => `«${t}», opera di ${ARTIST}`, coll: (c) => `Collezione «${c}».`, av: "Disponibile.", sold: "Venduta." },
+};
+function describe(a, D, lang = "fr"){
+  const d = dims(a), X = DESC[lang], tech = tr(D, lang, a.technique);
   return [
-    `« ${a.title} », œuvre d’${ARTIST}` +
-      (a.technique || d ? ` (${[a.technique && a.technique.toLowerCase(), d].filter(Boolean).join(", ")})` : "") + ".",
-    a.category ? `Collection « ${a.category} ».` : "",
-    a.status === "disponible" ? "Disponible." : "Vendue.",
+    X.of(a.title) + (tech || d ? ` (${[tech && tech.toLowerCase(), d].filter(Boolean).join(", ")})` : "") + ".",
+    a.category ? X.coll(tr(D, lang, a.category)) : "",
+    a.status === "disponible" ? X.av : X.sold,
   ].filter(Boolean).join(" ");
 }
 // meta description : les phrases entières qui tiennent en ~160 caractères (sinon la première, coupée proprement)
@@ -158,11 +182,11 @@ function clip(s, n = 160){
   return out.trim() || s.slice(0, n - 1).replace(/\s+\S*$/, "") + "…";
 }
 
-function workPage(a, i, list, tpl, sizes){
+function workPage(a, i, list, tpl, sizes, D){
   const prev = list[(i - 1 + list.length) % list.length], next = list[(i + 1) % list.length];
-  const d = dims(a), url = abs(`oeuvres/${a.slug}`), img = abs(`images/${a.file}`);
+  const d = dims(a), url = abs(`fr/oeuvres/${a.slug}`), img = abs(`images/${a.file}`);
   const title = `${a.title} — ${[a.technique, d].filter(Boolean).join(" ")} | ${ARTIST}`;
-  const fr = describe(a);
+  const fr = describe(a, D);
   const alt = `${a.title}${a.technique ? `, ${a.technique.toLowerCase()}` : ""}, par ${ARTIST}`;
   const wh = sizes[a.file] ? ` width="${sizes[a.file][0]}" height="${sizes[a.file][1]}"` : "";
   const thumb = `../images/thumbs/${a.file}`;
@@ -206,7 +230,10 @@ function workPage(a, i, list, tpl, sizes){
   <meta name="twitter:title" content="${esc(`${a.title} — ${ARTIST}`)}" />
   <meta name="twitter:description" content="${esc(clip(fr))}" />
   <meta name="twitter:image" content="${img}" />
+  <link rel="icon" href="../favicon.ico" sizes="48x48" />
   <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="../icon-192.png" type="image/png" sizes="192x192" />
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png" />
   <script src="../i18n-langs.js?v=${tpl.v.langs}"></script>
   <script src="../i18n.js?v=${tpl.v.i18n}"></script>
   <script src="../site.js?v=${tpl.v.site}"></script>
@@ -259,6 +286,72 @@ ${jsonld(ld)}
 `;
 }
 
+/* ====== versions par langue ====== */
+const unesc = (s) => String(s).replace(/&quot;/g, '"').replace(/&#0?39;/g, "'").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
+// adresse publique d'une page dans une langue (rel : "", "portfolio", "oeuvres/enigma")
+const langUrl = (lang, rel) => `${SITE_URL}/${lang}/${rel}`;
+function alternates(rel){
+  return [...LANGS.map(l => `<link rel="alternate" hreflang="${l}" href="${langUrl(l, rel)}" />`),
+    `<link rel="alternate" hreflang="x-default" href="${rel ? langUrl("fr", rel) : SITE_URL + "/"}" />`].join("\n  ");
+}
+// page source (française) -> page de la langue : lang, adresses, balises de partage, titre et description traduits
+// (le texte de la page est traduit à l'affichage par i18n.js, qui lit la langue dans l'adresse)
+// texts(fr) -> traduction d'un titre / d'une description ; desc : description déjà écrite dans la langue (œuvres)
+function localize(html, lang, rel, texts){
+  html = html.replace('<html lang="fr"', `<html lang="${lang}"`)
+    .split(`"${langUrl("fr", rel)}"`).join(`"${langUrl(lang, rel)}"`)
+    .replace(/(<meta property="og:locale" content=")[^"]*"/, `$1${OG_LOCALE[lang]}"`)
+    .replace(/(<link rel="canonical" href="[^"]*" \/>)/, `$1\n  ${alternates(rel)}`);
+  if (lang === "fr") return html;
+  const sub = (re) => { html = html.replace(re, (m, a, v, b) => a + esc(texts(unesc(v))) + b); };
+  sub(/(<title>)([^<]*)(<\/title>)/);
+  for (const k of ['name="description"', 'property="og:title"', 'property="og:description"', 'name="twitter:title"', 'name="twitter:description"'])
+    sub(new RegExp(`(<meta ${k} content=")([^"]*)(")`));
+  return html;
+}
+
+/* ====== anciennes adresses (ancien site) -> redirections 301 dans .htaccess ====== */
+const OLD_PAGES = {
+  // ancien site : français à la racine, anglais sous /en/
+  "": "", "index.htm": "", "galerie_3_eng.htm": "",
+  "a-propos": "apropos", "parcours": "apropos", "about": "apropos", "artistic-journey": "apropos",
+  "presse": "apropos#presse", "press": "apropos#presse",
+  "contact": "contact", "commandes": "contact", "commissions": "contact",
+  "expositions": "expositions", "exhibitions": "expositions",
+  "galeries": "galeries", "galleries": "galeries", "galeries-and-expositions": "galeries", "galleries-and-exhibitions": "galeries",
+  "portfolio": "portfolio", "septieme-art": "portfolio", "cinema": "portfolio", "sleepy": "portfolio", "les-belles-endormies": "portfolio",
+  "drapes": "portfolio", "drapery": "portfolio", "30-ans-30-jours-30-toiles": "portfolio", "30-years-30-canvases-30-days": "portfolio",
+  "a-la-vente": "portfolio?dispo=1", "disponibilites": "portfolio?dispo=1", "toiles-disponibles": "portfolio?dispo=1",
+  "for-sale": "portfolio?dispo=1", "availability": "portfolio?dispo=1", "available-canvases": "portfolio?dispo=1",
+  "close-up": "portfolio?collection=Close%20up", "close-ups": "portfolio?collection=Close%20up",
+  "dans-la-ville": "portfolio?collection=Dans%20les%20villes", "in-the-city": "portfolio?collection=Dans%20les%20villes",
+  "danseuses": "portfolio?collection=Danseuses", "dancers": "portfolio?collection=Danseuses",
+  "feminitude": "portfolio?collection=F%C3%A9minitude", "femininity": "portfolio?collection=F%C3%A9minitude",
+  "interieurs": "portfolio?collection=Int%C3%A9rieur", "interiors": "portfolio?collection=Int%C3%A9rieur",
+  "nature": "portfolio?collection=Nature", "the-nature": "portfolio?collection=Nature",
+};
+async function redirectsBlock(list){
+  const slugs = new Set(list.map(a => a.slug));
+  let src = ""; try { src = await rd("data/old-urls.txt"); } catch (_) {}
+  const lines = [];
+  for (const raw of src.split("\n").map(l => l.trim()).filter(l => l && !l.startsWith("#"))){
+    const m = raw.replace(/^\/+|\/+$/g, "").match(/^(?:(en)(?:\/|$))?(.*)$/);
+    const lang = m[1] || "fr", old = m[2];
+    if (!old && !m[1]) continue;                                   // l'accueil : règle générale
+    let to = OLD_PAGES[old];
+    if (to === undefined){
+      // une œuvre : même nom sans les suffixes de l'ancien site (-i, -in, -v, -2, -copy…)
+      const base = old.replace(/(-copy\d*)+$/, "").replace(/-(i|in|v|2)$/, "");
+      to = slugs.has(base) ? `oeuvres/${base}` : slugs.has(base.replace(/^en-/, "")) ? `oeuvres/${base.replace(/^en-/, "")}`
+        : /^blog-post/.test(old) ? "" : "portfolio";
+    }
+    if (to === old) continue;                                      // même adresse dans le nouveau site
+    const re = "^" + raw.replace(/^\/+|\/+$/g, "").replace(/[.]/g, "\\.") + "/?$";
+    lines.push(`RewriteRule ${re} /${lang}/${to.replace(/%/g, "\\%").replace(/#/g, "\\#")} [R=301,L,NE]`);
+  }
+  return "\n" + lines.join("\n") + "\n";
+}
+
 /* ====== blocs insérés entre marqueurs ====== */
 function between(html, tag, inner, fallbackInsert){
   const open = `<!-- seo:${tag} -->`, close = `<!-- /seo:${tag} -->`;
@@ -270,7 +363,7 @@ function between(html, tag, inner, fallbackInsert){
 const meta = (html, re) => ((html.match(re) || [])[1] || "").trim();
 
 function headBlock(html, page, tpl, list){
-  const url = SITE_URL + "/" + page.url;
+  const url = SITE_URL + "/fr/" + page.url;
   const title = meta(html, /<title>([^<]*)<\/title>/);
   const desc = meta(html, /<meta name="description" content="([^"]*)"/);
   const hasOgTitle = /property="og:title"/.test(html.replace(/<!-- seo:head -->[\s\S]*?<!-- \/seo:head -->/, ""));
@@ -335,14 +428,14 @@ async function exposBlock(){
 
 /* ====== programme ====== */
 async function main(){
-  const [list, tpl] = await Promise.all([loadArtworks(), loadTemplate()]);
+  const [list, tpl, D] = await Promise.all([loadArtworks(), loadTemplate(), loadDicts()]);
   let sizes = {}; try { sizes = JSON.parse(await rd("images/thumbs/sizes.json")); } catch (_) {}
 
   // 1. pages des œuvres (les anciennes pages d'œuvres disparues sont supprimées)
   await mkdir(OUT_DIR, { recursive: true });
   const keep = new Set(list.map(a => a.slug + ".html"));
   for (const f of await readdir(OUT_DIR)) if (f.endsWith(".html") && !keep.has(f)) await unlink(path.join(OUT_DIR, f));
-  await Promise.all(list.map((a, i) => writeFile(path.join(OUT_DIR, a.slug + ".html"), workPage(a, i, list, tpl, sizes))));
+  await Promise.all(list.map((a, i) => writeFile(path.join(OUT_DIR, a.slug + ".html"), workPage(a, i, list, tpl, sizes, D))));
 
   // 2. pages principales : balises SEO, listes en HTML
   for (const page of PAGES){
@@ -355,19 +448,47 @@ async function main(){
     await writeFile(path.join(ROOT, page.file), html);
   }
 
-  // 3. sitemap.xml + robots.txt
+  // 3. une copie de chaque page par langue (fr/, en/, es/, it/) : mêmes fichiers, adresses relatives inchangées
+  //    (les images, styles et scripts demandés sous /en/… sont servis depuis la racine : voir .htaccess)
+  for (const lang of LANGS){
+    const dir = path.join(ROOT, lang), odir = path.join(dir, "oeuvres");
+    await mkdir(odir, { recursive: true });
+    for (const page of PAGES){
+      if (!(await exists(page.file))) continue;
+      await writeFile(path.join(dir, page.file), localize(await rd(page.file), lang, page.url, (t) => tr(D, lang, t)));
+    }
+    for (const f of await readdir(odir)) if (f.endsWith(".html") && !keep.has(f)) await unlink(path.join(odir, f));
+    await Promise.all(list.map((a, i) => {
+      const texts = (t) => t.startsWith(`${a.title} — `) && t.endsWith(` | ${ARTIST}`)
+        ? `${a.title} — ${[tr(D, lang, a.technique), dims(a)].filter(Boolean).join(" ")} | ${ARTIST}`
+        : t.startsWith(`« ${a.title} »`) ? clip(describe(a, D, lang)) : t;
+      return writeFile(path.join(odir, a.slug + ".html"), localize(workPage(a, i, list, tpl, sizes, D), lang, `oeuvres/${a.slug}`, texts));
+    }));
+  }
+
+  // 4. anciennes adresses -> redirections (.htaccess, entre « # seo:redirects » et « # /seo:redirects »)
+  {
+    const ht = await rd(".htaccess"), o = "# seo:redirects", c = "# /seo:redirects";
+    const i = ht.indexOf(o), j = ht.indexOf(c);
+    if (i >= 0 && j > i) await writeFile(path.join(ROOT, ".htaccess"), ht.slice(0, i + o.length) + await redirectsBlock(list) + ht.slice(j));
+  }
+
+  // 5. sitemap.xml (chaque page dans les 4 langues, avec les liens entre versions) + robots.txt
   const today = new Date().toISOString().slice(0, 10);
-  const urls = [
-    ...PAGES.filter(p => !p.noSitemap).map(p => ({ loc: SITE_URL + "/" + p.url, pri: p.url === "" ? "1.0" : "0.8" })),
-    ...list.map(a => ({ loc: abs(`oeuvres/${a.slug}`), pri: a.status === "disponible" ? "0.7" : "0.5" })),
+  const rels = [
+    ...PAGES.filter(p => !p.noSitemap).map(p => ({ rel: p.url, pri: p.url === "" ? "1.0" : "0.8" })),
+    ...list.map(a => ({ rel: `oeuvres/${a.slug}`, pri: a.status === "disponible" ? "0.7" : "0.5" })),
   ];
+  const alt = (rel) => [...LANGS.map(l => `<xhtml:link rel="alternate" hreflang="${l}" href="${esc(langUrl(l, rel))}"/>`),
+    `<xhtml:link rel="alternate" hreflang="x-default" href="${esc(rel ? langUrl("fr", rel) : SITE_URL + "/")}"/>`].join("");
+  const urls = rels.flatMap(r => LANGS.map(l =>
+    `  <url><loc>${esc(langUrl(l, r.rel))}</loc>${alt(r.rel)}<lastmod>${today}</lastmod><priority>${l === "fr" ? r.pri : (r.pri - .1).toFixed(1)}</priority></url>`));
   await writeFile(path.join(ROOT, "sitemap.xml"),
-    `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
-    urls.map(u => `  <url><loc>${esc(u.loc)}</loc><lastmod>${today}</lastmod><priority>${u.pri}</priority></url>`).join("\n") +
-    `\n</urlset>\n`);
+    `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n` +
+    urls.join("\n") + `\n</urlset>\n`);
   await writeFile(path.join(ROOT, "robots.txt"), `User-agent: *\nAllow: /\n\nSitemap: ${SITE_URL}/sitemap.xml\n`);
 
-  console.log(`${list.length} pages d'œuvres dans oeuvres/, ${urls.length} adresses dans sitemap.xml.`);
+  console.log(`${list.length} œuvres × ${LANGS.length} langues, ${urls.length} adresses dans sitemap.xml.`);
 }
 
 main().catch(err => { console.error(err); process.exit(1); });

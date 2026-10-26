@@ -13,7 +13,10 @@
   <meta property="og:locale" content="fr_FR" />
   <meta property="og:title" content="Portfolio — Annick Bouvattier" />
   <meta property="og:description" content="Portfolio d'Annick Bouvattier : peintures à l'huile et sculptures, à filtrer par catégorie, technique, format et disponibilité." />
+  <link rel="icon" href="favicon.ico" sizes="48x48" />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="icon-192.png" type="image/png" sizes="192x192" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
   <script src="i18n-langs.js?v=20261030a"></script>
   <script src="i18n.js?v=20261030a"></script>
   <script src="site.js?v=20261029a"></script>
@@ -32,8 +35,8 @@
   <link rel="stylesheet" href="styles.css?v=20261030a">
 
   <!-- seo:head -->
-  <link rel="canonical" href="https://annickbouvattier.art/portfolio" />
-  <meta property="og:url" content="https://annickbouvattier.art/portfolio" />
+  <link rel="canonical" href="https://annickbouvattier.art/fr/portfolio" />
+  <meta property="og:url" content="https://annickbouvattier.art/fr/portfolio" />
   <meta property="og:image" content="https://annickbouvattier.art/images/Enigma.jpg" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Portfolio — Annick Bouvattier" />
@@ -627,6 +630,11 @@
       // ?q=<titre> (liens de la galerie 3D) : recherche pré-remplie
       const q0 = params.get("q");
       if(q0 && !back){ els.q.value = q0.slice(0, 80); filters.q = els.q.value; }
+      // ?collection=<catégorie>, ?dispo=1 (anciennes adresses du site, redirigées ici) : filtres déjà choisis
+      if(!back){
+        params.getAll("collection").forEach(c => filters.category.add(c));
+        if(params.get("dispo")) filters.status.add("disponible");
+      }
       try{
         artworks = await loadArtworksFromSheet();
         if(wanted){

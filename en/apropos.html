@@ -1,0 +1,491 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <script>/* thème clair mémorisé : appliqué avant tout affichage (pas de flash) */(function(){try{if(localStorage.getItem("abouv:theme")==="light"){var r=document.documentElement;r.setAttribute("data-theme","light");r.style.background="#efebe3";}}catch(e){}})();</script>
+  <link rel="expect" href="#i18n-end" blocking="render" />
+  <style>html{background:#060b18}</style>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="Biography of Annick Bouvattier, painter: from fashion and film to palette-knife oil painting." />
+  <meta name="theme-color" content="#0B1120" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Annick Bouvattier" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:title" content="About — Annick Bouvattier" />
+  <meta property="og:description" content="Biography of Annick Bouvattier, painter: from fashion and film to palette-knife oil painting." />
+  <link rel="icon" href="favicon.ico" sizes="48x48" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="icon-192.png" type="image/png" sizes="192x192" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <script src="i18n-langs.js?v=20261030a"></script>
+  <script src="i18n.js?v=20261030a"></script>
+  <script src="site.js?v=20261029a"></script>
+  <link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="styles.css?v=20261030a" />
+  <!-- pages préchargées au survol d'un lien : changement de page quasi instantané (la galerie 3D est seulement préchargée) -->
+  <script type="speculationrules">
+    {"prerender":[{"where":{"and":[{"selector_matches":".nav__link, .bottom__link--legal"},{"not":{"selector_matches":"[href='./'], [href='../']"}}]},"eagerness":"conservative"}],
+     "prefetch":[{"where":{"selector_matches":".nav__link, .bottom__link--legal"},"eagerness":"moderate"}]}
+  </script>
+  <title>About — Annick Bouvattier</title>
+
+  <style>
+    /* ===== Biographie : photo à gauche (accrochée au défilement), texte à droite ===== */
+    .about{
+      display:grid; grid-template-columns:minmax(260px, .8fr) 1.2fr; gap:56px; align-items:start;
+      margin-bottom:56px;
+    }
+    .about__photo{
+      position:sticky; top:calc(var(--shade-h, 90px) + 16px);
+      margin:0; border-radius:var(--radius-card); overflow:hidden;
+      border:1px solid rgba(var(--ink-rgb),.12);
+      aspect-ratio:4 / 5; background:var(--bg-deep);
+    }
+    .about__photo img{ width:100%; height:100%; object-fit:cover; display:block; filter:grayscale(100%) contrast(1.05); }
+    .about__text p{ margin:0 0 18px; max-width:64ch; color:var(--ink-soft); font-size:16px; line-height:1.75; }
+    .about__text p:first-child{ font-size:19px; line-height:1.6; color:var(--ink); }
+    .about__text strong{ color:var(--ink); font-weight:700; }
+
+    /* ===== Q&A : une carte par question (numérotée), sur deux colonnes ; on la déplie pour lire la réponse ===== */
+    .faq{ max-width:none; border-top:0; scroll-margin-top:calc(var(--shade-h, 90px) + 60px); }
+    .faq > div[data-lang]{ display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:14px; counter-reset:q; align-items:start; }
+    .faq details{ counter-increment:q; border:1px solid rgba(var(--ink-rgb),.16); border-radius:18px; padding:0 22px; transition:border-color .3s ease, background-color .3s ease; }
+    .faq details:hover{ border-color:rgba(var(--ink-rgb),.32); }
+    .faq details[open]{ border-color:rgba(var(--t-sand),.7); background:rgba(var(--t-sand),.06); }
+    .faq summary{ display:grid; grid-template-columns:auto 1fr auto; align-items:start; gap:16px; padding:20px 0; cursor:pointer; list-style:none;
+      font-size:17px; font-weight:500; line-height:1.35; color:var(--ink); }
+    .faq summary::-webkit-details-marker{ display:none; }
+    .faq summary::before{ content:counter(q, decimal-leading-zero); padding-top:3px; font-size:11px; font-weight:600; letter-spacing:.14em; color:rgb(var(--t-sand)); font-variant-numeric:tabular-nums; }
+    /* + qui devient − à l'ouverture */
+    .faq summary::after{
+      content:""; flex:none; width:28px; height:28px; border-radius:50%;
+      border:1px solid rgba(var(--ink-rgb),.25);
+      background:
+        linear-gradient(currentColor, currentColor) center / 10px 1.5px no-repeat,
+        linear-gradient(currentColor, currentColor) center / 1.5px 10px no-repeat;
+      transition:background-size .3s ease, background-color .2s ease, border-color .2s ease, transform .3s ease;
+    }
+    .faq details[open] summary::after{ background-size:10px 1.5px, 1.5px 0; border-color:rgb(var(--t-sand)); color:rgb(var(--t-sand)); transform:rotate(180deg); }
+    .faq__a{ padding:0 0 20px 34px; animation:faqIn .35s ease; }
+    .faq__a p{ margin:0 0 10px; color:var(--ink-soft); line-height:1.7; font-size:15px; }
+    .faq__a a{ color:var(--ink); border-bottom:1px solid rgba(var(--t-sand),.7); }
+    .faq__a a:hover{ border-bottom-color:var(--ink); }
+    @media (max-width:760px){ .faq > div[data-lang]{ grid-template-columns:1fr; } .faq details{ padding:0 16px; } .faq summary{ font-size:15.5px; } .faq__a{ padding-left:30px; } }
+    @keyframes faqIn{ from{ opacity:0; transform:translateY(-4px); } to{ opacity:1; transform:none; } }
+
+    @media (max-width:900px){
+      .about{ grid-template-columns:1fr; gap:28px; }
+      .about__photo{ position:static; max-width:420px; }
+    }
+    @media (max-width:600px){
+      .about__text p:first-child{ font-size:17px; }
+    }
+    @media (prefers-reduced-motion: reduce){ .faq__a{ animation:none; } .faq summary::after{ transition:none; } }
+
+
+    /* À propos : trois parties (L'artiste, Presse, Q&A), chacune avec son grand titre ; même grille 5/7 partout */
+    .abx, .abs{ margin-bottom:clamp(72px, 10vw, 140px); }
+    .abx .bigTitle{ margin-top:clamp(16px, 4vh, 40px); }
+    .abx__grid{ display:grid; grid-template-columns:minmax(0, 5fr) minmax(0, 7fr); gap:clamp(32px, 6vw, 96px); }
+    .abx__photo{ position:sticky; top:calc(var(--shade-h, 90px) + 24px); align-self:start; margin:0; }
+    .abx__photo img{ display:block; width:100%; height:min(76vh, 720px); object-fit:cover; }
+    .abx__photo figcaption{ margin-top:12px; font-size:11px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint); }
+    /* la biographie d'un seul tenant, en grand : le texte en retrait, les mots clés en blanc */
+    .abx__text p{ margin:0 0 1.1em; font-size:clamp(20px, 1.85vw, 28px); font-weight:400; line-height:1.42; letter-spacing:-.012em; color:rgba(var(--ink-rgb),.5); }
+    .abx__text p:first-child::first-line{ color:var(--ink); }
+    .abx__text strong{ font-weight:500; color:var(--ink); padding:0 .12em; margin:0 -.04em; border-radius:.2em; -webkit-box-decoration-break:clone; box-decoration-break:clone;
+      background:linear-gradient(transparent 58%, rgba(var(--t-coral),.22) 58%, rgba(var(--t-coral),.22) 92%, transparent 92%); }
+    .abx__text em{ font-style:italic; }
+    /* Q&A aligné sur la colonne de texte */
+    #questions > div{ display:block; }
+    .abs__contact{ display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:12px 32px; margin:0; padding:22px 0; border-top:1px solid rgba(var(--ink-rgb),.16); border-bottom:1px solid rgba(var(--ink-rgb),.16);
+      font-size:12px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint); }
+    .abs__contact a{ color:var(--ink); border-bottom:1px solid transparent; padding-bottom:2px; transition:border-color .2s ease; }
+    .abs__contact a:hover{ border-bottom-color:rgb(var(--t-blue)); }
+    @media (max-width:900px){
+      .abx__grid{ grid-template-columns:minmax(0, 1fr); gap:32px; }
+      .abx__photo{ position:static; }
+      .abx__photo img{ height:auto; max-height:70vh; }
+    }
+
+    /* ===== Presse (réunie dans À propos) ===== */
+    /* ===== Parution : couverture + texte, en carte ===== */
+    .pub{
+      display:grid; grid-template-columns:minmax(0, 1.1fr) minmax(0, .9fr); gap:40px; align-items:center;
+      margin-bottom:56px;
+    }
+    .pub__cover{
+      position:relative; display:block; width:100%; padding:0;
+      border:1px solid rgba(var(--ink-rgb),.12); border-radius:var(--radius-card); overflow:hidden;
+      background:var(--bg-deep); cursor:zoom-in;
+    }
+    .pub__cover img{ width:100%; display:block; transition:transform .5s ease; }
+    .pub__cover:hover img{ transform:scale(1.02); }
+    .pub__cover span{
+      position:absolute; left:14px; bottom:14px;
+      display:inline-flex; align-items:center; gap:6px; height:28px; padding:0 10px;
+      border-radius:8px; background:rgba(10,15,27,.75); border:1px solid rgba(var(--ink-rgb),.2);
+      -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+      font-size:12px; font-weight:500; color:var(--ink);
+      opacity:0; transform:translateY(4px); transition:opacity var(--ease), transform var(--ease);
+    }
+    .pub__cover:hover span, .pub__cover:focus-visible span{ opacity:1; transform:none; }
+    .pub__cover svg{ width:13px; height:13px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; }
+    .pub__kicker{ font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-faint); }
+    .pub__title{ margin:10px 0 12px; font-size:24px; font-weight:700; line-height:1.25; letter-spacing:-.01em; }
+    .pub__text{ margin:0 0 20px; color:var(--ink-soft); line-height:1.7; max-width:46ch; }
+    .pub__actions{ display:flex; flex-wrap:wrap; gap:8px; }
+    .facts--3{ grid-template-columns:repeat(3, 1fr); }
+    @media (max-width:900px){
+      .pub{ grid-template-columns:1fr; gap:22px; }
+      .facts--3{ grid-template-columns:1fr; }
+    }
+
+    /* ===== Liseuse du magazine : les pages côte à côte sur fond sombre, on les fait glisser ===== */
+    .reader{ position:fixed; inset:0; z-index:1000; display:flex; flex-direction:column; background:rgba(5,8,16,.94);
+      -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px); color:#efe9df; opacity:0; pointer-events:none; transition:opacity .3s ease; }
+    .reader.is-open{ opacity:1; pointer-events:auto; }
+    .reader__bar{ display:flex; align-items:center; gap:18px; padding:18px clamp(16px, 4vw, 48px); }
+    .reader__title{ flex:1; min-width:0; font-size:12px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .reader__count{ font-size:12px; letter-spacing:.14em; color:rgba(239,233,223,.6); font-variant-numeric:tabular-nums; }
+    .reader__count b{ color:#efe9df; }
+    .reader__dl{ font-size:11px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:#efe9df; border-bottom:1px solid rgba(126,162,240,.8); padding-bottom:2px; }
+    .reader__btn{ display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; padding:0; border-radius:50%;
+      border:1px solid rgba(239,233,223,.3); background:none; color:#efe9df; cursor:pointer; transition:border-color .2s ease, background-color .2s ease; }
+    .reader__btn:hover{ border-color:#efe9df; background:rgba(239,233,223,.08); }
+    .reader__btn svg{ width:15px; height:15px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
+    .reader__pages{ flex:1; min-height:0; display:flex; gap:clamp(12px, 2vw, 28px); overflow-x:auto; scroll-snap-type:x mandatory; scrollbar-width:none; overscroll-behavior:contain;
+      padding:0 clamp(16px, 8vw, 120px) 28px; align-items:center; }
+    .reader__pages::-webkit-scrollbar{ display:none; }
+    .reader__pages img{ flex:none; height:100%; max-height:calc(100vh - 110px); width:auto; max-width:84vw; object-fit:contain; scroll-snap-align:center;
+      border-radius:4px; box-shadow:0 30px 80px rgba(0,0,0,.5); background:#fff; }
+    .reader__nav{ position:absolute; top:50%; left:0; right:0; display:flex; justify-content:space-between; padding:0 clamp(10px, 2vw, 28px); pointer-events:none; }
+    .reader__nav .reader__btn{ pointer-events:auto; background:rgba(5,8,16,.6); }
+    @media (max-width:760px){ .reader__nav{ display:none; } .reader__pages{ padding:0 6vw 20px; } .reader__pages img{ max-width:88vw; height:auto; } }
+    .ix-cover{ display:block; padding:0; border:0; background:none; cursor:zoom-in; }
+    .ix-cover img{ filter:none; }
+    /* Presse : grande couverture + le nom du magazine en très grand contour blanc */
+    .prx__pub{ display:grid; grid-template-columns:minmax(0, 5fr) minmax(0, 7fr); gap:clamp(32px, 6vw, 96px); align-items:center; padding:0 0 56px; }
+    .prx__cover{ display:block; padding:0; border:0; background:none; cursor:zoom-in; }
+    .prx__cover img{ display:block; width:100%; box-shadow:0 30px 80px rgba(0,0,0,.45); transition:transform .6s cubic-bezier(.2,.7,.2,1); }
+    .prx__cover:hover img{ transform:translateY(-6px) rotate(-1deg); }
+    .prx__k{ display:flex; gap:18px; margin:0 0 8px; font-size:12px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:rgb(var(--t-blue)); }
+    .prx__mag{ margin:0 0 24px; font-size:clamp(44px, 5.4vw, 88px); font-weight:700; font-stretch:112%; text-transform:uppercase; line-height:.88; letter-spacing:-.01em;
+      color:var(--ink); }
+    .prx__q{ margin:0 0 10px; font-size:clamp(24px, 2.6vw, 38px); font-weight:500; line-height:1.12; letter-spacing:-.015em; color:var(--ink); }
+    .prx__d{ margin:0; font-size:15px; color:var(--ink-soft); }
+    .prx__acts{ display:flex; gap:26px; margin-top:32px; }
+    .prx__acts a, .prx__acts button{ padding:0 0 2px; border:0; border-bottom:1px solid transparent; background:none; font:inherit; font-size:12px; font-weight:500; letter-spacing:.08em; text-transform:uppercase; color:var(--ink); cursor:pointer; transition:border-color .2s ease; }
+    .prx__acts a:hover, .prx__acts button:hover{ border-bottom-color:var(--accent); }
+    @media (max-width:760px){ .prx__pub{ grid-template-columns:1fr; gap:32px; padding-top:32px; } .prx__cover{ max-width:320px; } }
+  </style>
+  <!-- seo:head -->
+  <link rel="canonical" href="https://annickbouvattier.art/en/apropos" />
+  <link rel="alternate" hreflang="fr" href="https://annickbouvattier.art/fr/apropos" />
+  <link rel="alternate" hreflang="en" href="https://annickbouvattier.art/en/apropos" />
+  <link rel="alternate" hreflang="es" href="https://annickbouvattier.art/es/apropos" />
+  <link rel="alternate" hreflang="it" href="https://annickbouvattier.art/it/apropos" />
+  <link rel="alternate" hreflang="x-default" href="https://annickbouvattier.art/fr/apropos" />
+  <meta property="og:url" content="https://annickbouvattier.art/en/apropos" />
+  <meta property="og:image" content="https://annickbouvattier.art/images/Enigma.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="About — Annick Bouvattier" />
+  <meta name="twitter:description" content="Biography of Annick Bouvattier, painter: from fashion and film to palette-knife oil painting." />
+  <meta name="twitter:image" content="https://annickbouvattier.art/images/Enigma.jpg" />
+  <!-- /seo:head -->
+</head>
+
+<body class="apropos salle salle--apropos">
+  <div class="page">
+  <div class="container">
+    <header class="top">
+      <a class="brand" href="./">ANNICK&nbsp;BOUVATTIER</a>
+      <nav class="top__nav" aria-label="Navigation principale">
+        <a class="nav__link" href="./">Accueil</a>
+        <a class="nav__link" href="portfolio">Portfolio</a>
+        <a class="nav__link" href="galeries">Galeries</a>
+        <a class="nav__link" href="expositions">Expositions</a>
+        <a class="nav__link is-active" aria-current="page" href="apropos">À propos</a>
+        <a class="nav__link" href="contact">Contact</a>
+      </nav>
+    </header>
+
+    <h1 class="sr-only">À propos</h1>
+    <!-- L'artiste : le portrait, et la biographie d'un seul tenant, en grand ; les mots clés ressortent en blanc -->
+    <section class="abx" id="artiste" aria-labelledby="t-artiste">
+      <h2 class="bigTitle bigTitle--sub bigTitle--tc tc-coral" id="t-artiste" data-n="01">L’artiste</h2><span class="tbar tc-coral" aria-hidden="true"></span>
+      <div class="abx__grid">
+        <figure class="abx__photo"><img src="images/annickbouvattier.jpg" alt="Annick Bouvattier dans son atelier" /><figcaption>Annick Bouvattier</figcaption></figure>
+        <div class="abx__text" data-lang="fr">
+          <p><strong>Annick Bouvattier</strong> est née à Nevers. Son père, pédiatre et amateur d’art, lui transmet dès sa prime enfance le <strong>goût de l’art et de la peinture</strong>.</p>
+          <p>Baccalauréat scientifique en poche, elle délaisse la tradition familiale des études de médecine pour s’inscrire à l’école de mode <strong>“Bercot – Marie Rucki”</strong> où, pendant deux ans, elle reçoit une <strong>formation de styliste</strong>. Ses créations, présentées à Paris et à la Villa Médicis à Rome, connaissent un succès d’estime auprès des professionnels et font l’objet de <strong>parutions dans la presse spécialisée</strong>.</p>
+          <p>Cependant, <strong>plus attirée par la mode spectacle</strong> que par celle des boutiques, elle s’oriente très vite vers le cinéma et la publicité. <strong>Costumière styliste</strong>, elle travaille souvent dans les studios de Cinecittà à <strong>Rome</strong>. De ses séjours italiens, elle gardera le goût des couleurs chaudes, sensuelles, profondes : ocres ensoleillés, rouges sourds, bleus intenses, verts profonds.</p>
+          <p>Au milieu des années 1990, sur les conseils de son mari et grâce à son soutien, elle décide de se consacrer exclusivement à <strong>la peinture à l’huile</strong>. Après deux années de recherche <strong>autodidacte</strong>, elle devient pendant 4 ans l’élève de <strong>Pierre Ramel</strong>, disciple et massier de Édouard Mac-Avoy et vice-président du Salon d’Automne. Il lui enseignera la technique de la peinture à l’huile au couteau qu’elle travaille lissée, sans épaisseur de matière, tout en transparence.</p>
+          <p>Annick Bouvattier peint essentiellement <strong>des femmes</strong>, dans des jeux <strong>d’ombres et de lumière</strong>. Elles vivent leur féminité sans fausse pudeur, indifférentes aux regards extérieurs.</p>
+        </div>
+        <div class="abx__text" data-lang="en">
+          <p><strong>Annick Bouvattier</strong> was born in Nevers, France. Her father, a pediatrician and art lover, passed on to her from early childhood a <strong>love of art and painting</strong>.</p>
+          <p>With a science baccalaureate in hand, she broke with the family tradition of studying medicine and enrolled at the <strong>“Bercot – Marie Rucki”</strong> fashion school, where she spent two years <strong>training as a fashion designer</strong>. Her creations, shown in Paris and at the Villa Medici in Rome, were well received by professionals and <strong>featured in the specialist press</strong>.</p>
+          <p>Yet, <strong>more drawn to fashion for the stage and screen</strong> than to boutique fashion, she soon turned to film and advertising. As a <strong>costume designer</strong>, she often worked at the Cinecittà studios in <strong>Rome</strong>. From her years in Italy she kept a taste for warm, sensual, deep colors: sunlit ochres, muted reds, intense blues, deep greens.</p>
+          <p>In the mid-1990s, on her husband’s advice and with his support, she decided to devote herself entirely to <strong>oil painting</strong>. After two years of <strong>self-taught</strong> exploration, she spent four years as a pupil of <strong>Pierre Ramel</strong>, disciple and <em>massier</em> (head student) of Édouard Mac-Avoy and vice-president of the Salon d’Automne. He taught her the technique of palette-knife oil painting, which she works smooth, without impasto, in transparent layers.</p>
+          <p>Annick Bouvattier mainly paints <strong>women</strong>, in plays of <strong>light and shadow</strong>. They live their femininity without false modesty, indifferent to the gaze of others.</p>
+        </div>
+        <div class="abx__text" data-lang="es">
+          <p><strong>Annick Bouvattier</strong> nació en Nevers. Su padre, pediatra y aficionado al arte, le transmitió desde la primera infancia el <strong>gusto por el arte y la pintura</strong>.</p>
+          <p>Con el bachillerato científico en el bolsillo, dejó de lado la tradición familiar de los estudios de medicina para inscribirse en la escuela de moda <strong>“Bercot – Marie Rucki”</strong>, donde durante dos años recibió una <strong>formación de estilista</strong>. Sus creaciones, presentadas en París y en la Villa Médici de Roma, obtuvieron el reconocimiento de los profesionales y fueron objeto de <strong>publicaciones en la prensa especializada</strong>.</p>
+          <p>Sin embargo, <strong>más atraída por la moda del espectáculo</strong> que por la de las boutiques, pronto se orientó hacia el cine y la publicidad. Como <strong>figurinista estilista</strong>, trabajó a menudo en los estudios de Cinecittà, en <strong>Roma</strong>. De sus estancias italianas conservará el gusto por los colores cálidos, sensuales y profundos: ocres soleados, rojos apagados, azules intensos, verdes profundos.</p>
+          <p>A mediados de los años noventa, por consejo de su marido y gracias a su apoyo, decidió dedicarse exclusivamente a <strong>la pintura al óleo</strong>. Tras dos años de búsqueda <strong>autodidacta</strong>, fue durante cuatro años alumna de <strong>Pierre Ramel</strong>, discípulo y <em>massier</em> de Édouard Mac-Avoy y vicepresidente del Salon d’Automne. Él le enseñó la técnica de la pintura al óleo con espátula, que ella trabaja lisa, sin espesor de materia, toda en transparencias.</p>
+          <p>Annick Bouvattier pinta sobre todo <strong>mujeres</strong>, en juegos de <strong>luces y sombras</strong>. Viven su feminidad sin falso pudor, indiferentes a las miradas ajenas.</p>
+        </div>
+        <div class="abx__text" data-lang="it">
+          <p><strong>Annick Bouvattier</strong> è nata a Nevers. Suo padre, pediatra e appassionato d’arte, le trasmette fin dalla prima infanzia il <strong>gusto per l’arte e la pittura</strong>.</p>
+          <p>Con la maturità scientifica in tasca, abbandona la tradizione familiare degli studi di medicina per iscriversi alla scuola di moda <strong>“Bercot – Marie Rucki”</strong>, dove per due anni riceve una <strong>formazione da stilista</strong>. Le sue creazioni, presentate a Parigi e a Villa Medici a Roma, ottengono il favore dei professionisti e sono oggetto di <strong>pubblicazioni sulla stampa specializzata</strong>.</p>
+          <p>Tuttavia, <strong>più attratta dalla moda di spettacolo</strong> che da quella delle boutique, si orienta presto verso il cinema e la pubblicità. <strong>Costumista e stilista</strong>, lavora spesso negli studi di Cinecittà a <strong>Roma</strong>. Dai suoi soggiorni italiani conserverà il gusto per i colori caldi, sensuali, profondi: ocra assolati, rossi smorzati, blu intensi, verdi profondi.</p>
+          <p>A metà degli anni Novanta, su consiglio del marito e grazie al suo sostegno, decide di dedicarsi esclusivamente alla <strong>pittura a olio</strong>. Dopo due anni di ricerca da <strong>autodidatta</strong>, è per quattro anni allieva di <strong>Pierre Ramel</strong>, discepolo e <em>massier</em> di Édouard Mac-Avoy e vicepresidente del Salon d’Automne. Lui le insegna la tecnica della pittura a olio a spatola, che lei lavora liscia, senza spessore di materia, tutta per velature.</p>
+          <p>Annick Bouvattier dipinge soprattutto <strong>donne</strong>, in giochi di <strong>luci e ombre</strong>. Vivono la loro femminilità senza falso pudore, indifferenti agli sguardi altrui.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="abs" id="presse" aria-labelledby="t-presse">
+    <h2 class="bigTitle bigTitle--sub bigTitle--tc tc-blue" id="t-presse" data-n="02">Presse<sup>1</sup></h2><span class="tbar tc-blue" aria-hidden="true"></span>
+    <!-- une parution = un <article class="pub"> (couverture + texte) -->
+    <section class="prx" aria-label="Parutions">
+      <article class="pub prx__pub">
+        <button class="prx__cover" type="button" data-pdf="images/ArtistesAnnickBouvattier.pdf" data-title='Magazine "Artistes" — Mai/Juin 2019' aria-label="Lire le PDF">
+          <img src="images/ArtistesCover.jpg" alt="Couverture du magazine « Artistes », mai/juin 2019">
+        </button>
+        <div class="prx__txt">
+          <p class="prx__k"><span>01</span>Mai / Juin 2019</p>
+          <h3 class="prx__mag">Artistes</h3>
+          <p class="prx__q">« Réussir à sublimer la féminité »</p>
+          <p class="prx__d">Dossier « Savoir-faire » consacré à la peinture d’Annick Bouvattier.</p>
+          <div class="prx__acts">
+            <button type="button" data-pdf="images/ArtistesAnnickBouvattier.pdf" data-title='Magazine "Artistes" — Mai/Juin 2019'>Lire ↗</button>
+            <a href="images/ArtistesAnnickBouvattier.pdf" download>Télécharger ↓</a>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <p class="abs__contact"><span>Contact presse — entretien, visuels en haute définition, exposition</span><a href="contact?sujet=presse">Écrire →</a></p>
+    </section>
+
+    <section class="abs" id="questions" aria-labelledby="t-qa">
+      <h2 class="bigTitle bigTitle--sub bigTitle--tc tc-sand" id="t-qa" data-n="03">Q&amp;A</h2><span class="tbar tc-sand" aria-hidden="true"></span>
+      <div>
+    <section class="faq" id="faq" aria-label="Questions fréquentes">
+      <!-- Questions / réponses : version française et version anglaise (i18n.js affiche la bonne) -->
+      <div data-lang="fr">
+        <details>
+          <summary>Comment acquérir une œuvre ?</summary>
+          <div class="faq__a">
+            <p>Les œuvres disponibles sont signalées « Disponible » dans le <a href="portfolio">portfolio</a>. Ouvrez la fiche d'une œuvre puis « Demander des informations » : le formulaire de contact s'ouvre avec son titre déjà indiqué.</p>
+            <p>Certaines œuvres sont également présentées dans les <a href="galeries">galeries partenaires</a>.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Où voir les tableaux en vrai ?</summary>
+          <div class="faq__a">
+            <p>Plusieurs galeries présentent le travail d'Annick Bouvattier, en France et aux États-Unis : leurs adresses et itinéraires sont sur la page <a href="galeries">Galeries</a>. Les expositions passées sont retracées sur la page <a href="expositions">Expositions</a>.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Est-il possible de commander une œuvre ?</summary>
+          <div class="faq__a">
+            <p>Le portfolio rassemble plusieurs œuvres réalisées sur commande (collection « Commandes »). Pour un projet, décrivez-le — sujet, format souhaité, délai — via le <a href="contact">formulaire de contact</a>.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Quelle technique utilise Annick Bouvattier ?</summary>
+          <div class="faq__a">
+            <p>La peinture à l'huile au couteau, apprise auprès de Pierre Ramel. Elle la travaille lissée, sans épaisseur de matière, tout en transparence.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Journaliste, organisateur : qui contacter ?</summary>
+          <div class="faq__a">
+            <p>Les parutions sont réunies plus haut, dans la partie <a href="#presse">Presse</a>. Pour une interview, une exposition ou une demande de visuels, écrivez via le <a href="contact">formulaire de contact</a>.</p>
+          </div>
+        </details>
+      </div>
+
+      <div data-lang="en">
+        <details>
+          <summary>How can I buy a painting?</summary>
+          <div class="faq__a">
+            <p>Available works are marked “Available” in the <a href="portfolio">portfolio</a>. Open a work, then “Request information”: the contact form opens with its title already filled in.</p>
+            <p>Some works are also shown in <a href="galeries">partner galleries</a>.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Where can I see the paintings in person?</summary>
+          <div class="faq__a">
+            <p>Several galleries show Annick Bouvattier's work, in France and the United States: addresses and directions are on the <a href="galeries">Galleries</a> page. Past exhibitions are traced on the <a href="expositions">Exhibitions</a> page.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Can I commission a painting?</summary>
+          <div class="faq__a">
+            <p>The portfolio includes several commissioned works (“Commissions” collection). To discuss a project, describe it — subject, preferred size, timing — through the <a href="contact">contact form</a>.</p>
+          </div>
+        </details>
+        <details>
+          <summary>What technique does Annick Bouvattier use?</summary>
+          <div class="faq__a">
+            <p>Palette-knife oil painting, learned from Pierre Ramel. She works it smooth, without impasto, in transparent layers.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Press or event organizer: who should I contact?</summary>
+          <div class="faq__a">
+            <p>Publications are gathered above, in the <a href="#presse">Press</a> section. For an interview, an exhibition or image requests, write through the <a href="contact">contact form</a>.</p>
+          </div>
+
+      <div data-lang="es">
+        <details>
+          <summary>¿Cómo comprar una obra?</summary>
+          <div class="faq__a">
+            <p>Las obras disponibles están marcadas como «Disponible» en el <a href="portfolio">portafolio</a>. Abra una obra y luego «Solicitar información»: el formulario de contacto se abre con su título ya indicado.</p>
+            <p>Algunas obras también se presentan en las <a href="galeries">galerías asociadas</a>.</p>
+          </div>
+        </details>
+        <details>
+          <summary>¿Dónde ver los cuadros en persona?</summary>
+          <div class="faq__a">
+            <p>Varias galerías presentan la obra de Annick Bouvattier, en Francia y en Estados Unidos: las direcciones y cómo llegar figuran en la página <a href="galeries">Galerías</a>. Las exposiciones pasadas se recogen en la página <a href="expositions">Exposiciones</a>.</p>
+          </div>
+        </details>
+        <details>
+          <summary>¿Se puede encargar una obra?</summary>
+          <div class="faq__a">
+            <p>El portafolio incluye varias obras de encargo (colección «Encargos»). Para hablar de un proyecto, descríbalo —tema, formato deseado, plazos— a través del <a href="contact">formulario de contacto</a>.</p>
+          </div>
+        </details>
+        <details>
+          <summary>¿Qué técnica utiliza Annick Bouvattier?</summary>
+          <div class="faq__a">
+            <p>La pintura al óleo con espátula, aprendida con Pierre Ramel. La trabaja lisa, sin espesor de materia, toda en transparencias.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Periodista u organizador: ¿con quién contactar?</summary>
+          <div class="faq__a">
+            <p>Las publicaciones se reúnen más arriba, en el apartado <a href="#presse">Prensa</a>. Para una entrevista, una exposición o una solicitud de imágenes, escriba a través del <a href="contact">formulario de contacto</a>.</p>
+          </div>
+        </details>
+      </div>
+
+      <div data-lang="it">
+        <details>
+          <summary>Come acquistare un'opera?</summary>
+          <div class="faq__a">
+            <p>Le opere disponibili sono indicate come «Disponibile» nel <a href="portfolio">portfolio</a>. Apri un'opera, poi «Richiedi informazioni»: il modulo di contatto si apre con il titolo già indicato.</p>
+            <p>Alcune opere sono esposte anche nelle <a href="galeries">gallerie partner</a>.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Dove vedere i quadri dal vivo?</summary>
+          <div class="faq__a">
+            <p>Diverse gallerie espongono il lavoro di Annick Bouvattier, in Francia e negli Stati Uniti: indirizzi e indicazioni sono nella pagina <a href="galeries">Gallerie</a>. Le mostre passate sono raccolte nella pagina <a href="expositions">Mostre</a>.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Si può commissionare un'opera?</summary>
+          <div class="faq__a">
+            <p>Il portfolio comprende diverse opere su commissione (collezione «Commissioni»). Per parlare di un progetto, descrivilo —soggetto, formato desiderato, tempi— tramite il <a href="contact">modulo di contatto</a>.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Quale tecnica usa Annick Bouvattier?</summary>
+          <div class="faq__a">
+            <p>La pittura a olio a spatola, appresa da Pierre Ramel. La lavora liscia, senza spessore di materia, tutta per velature.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Giornalista o organizzatore: a chi rivolgersi?</summary>
+          <div class="faq__a">
+            <p>Le pubblicazioni sono raccolte più in alto, nella sezione <a href="#presse">Stampa</a>. Per un'intervista, una mostra o una richiesta di immagini, scrivi tramite il <a href="contact">modulo di contatto</a>.</p>
+          </div>
+        </details>
+      </div>
+        </details>
+      </div>
+    </section>
+      </div>
+    </section>
+
+    <footer class="bottom">
+        <div class="bottom__left">
+          <a class="bottom__link" href="https://www.instagram.com/annick.bouvattier/" target="_blank" rel="noopener noreferrer">instagram</a>
+          <a class="bottom__link" href="https://www.facebook.com/annick.bouvattier/" target="_blank" rel="noopener noreferrer">facebook</a>
+        </div>
+        <a class="bottom__link bottom__link--legal" href="mentions-legales">mentions légales</a>
+      </footer>
+  </div>
+  </div>
+<!-- LISEUSE DU MAGAZINE (pages en images : images/presse/p1…p4.jpg, tirées du PDF) -->
+<div class="reader" id="reader" role="dialog" aria-modal="true" aria-labelledby="readerTitle" hidden>
+  <div class="reader__bar">
+    <span class="reader__title" id="readerTitle"></span>
+    <span class="reader__count"><b id="readerCur">1</b> / <span id="readerTot">4</span></span>
+    <a class="reader__dl" id="readerDl" href="images/ArtistesAnnickBouvattier.pdf" download>Télécharger</a>
+    <button class="reader__btn" id="readerClose" type="button" aria-label="Fermer"><svg viewBox="0 0 16 16"><path d="M3 3l10 10M13 3 3 13"/></svg></button>
+  </div>
+  <div class="reader__pages" id="readerPages"></div>
+  <div class="reader__nav">
+    <button class="reader__btn" data-d="-1" type="button" aria-label="Page précédente"><svg viewBox="0 0 16 16"><path d="M10 3 5 8l5 5"/></svg></button>
+    <button class="reader__btn" data-d="1" type="button" aria-label="Page suivante"><svg viewBox="0 0 16 16"><path d="m6 3 5 5-5 5"/></svg></button>
+  </div>
+</div>
+
+<script>
+(() => {
+  const PAGES = ["images/presse/p1.jpg", "images/presse/p2.jpg", "images/presse/p3.jpg", "images/presse/p4.jpg"];
+  const r = document.getElementById("reader"), box = document.getElementById("readerPages");
+  const cur = document.getElementById("readerCur");
+  document.getElementById("readerTot").textContent = PAGES.length;
+  let last = null, built = false;
+  const imgs = () => [...box.children];
+  function build(){
+    if (built) return; built = true;
+    box.innerHTML = PAGES.map((src, i) => `<img src="${src}" alt="${t("Page")} ${i + 1}" loading="${i < 2 ? "eager" : "lazy"}" decoding="async">`).join("");
+  }
+  function current(){
+    const mid = box.scrollLeft + box.clientWidth / 2;
+    let best = 0, bd = Infinity;
+    imgs().forEach((im, k) => { const d = Math.abs(im.offsetLeft + im.offsetWidth / 2 - mid); if (d < bd){ bd = d; best = k; } });
+    return best;
+  }
+  const go = (k) => { const im = imgs()[Math.max(0, Math.min(PAGES.length - 1, k))]; if (im) box.scrollTo({ left: im.offsetLeft - (box.clientWidth - im.offsetWidth) / 2, behavior: "smooth" }); };
+  box.addEventListener("scroll", () => requestAnimationFrame(() => { cur.textContent = current() + 1; }), { passive: true });
+  function open(label, trigger){
+    build(); last = trigger;
+    document.getElementById("readerTitle").textContent = label;
+    r.hidden = false; requestAnimationFrame(() => r.classList.add("is-open"));
+    document.body.style.overflow = "hidden";
+    box.scrollLeft = 0; cur.textContent = 1;
+    document.getElementById("readerClose").focus({ preventScroll: true });
+  }
+  function close(){
+    r.classList.remove("is-open"); document.body.style.overflow = "";
+    setTimeout(() => { r.hidden = true; }, 300);
+    if (last) last.focus({ preventScroll: true });
+  }
+  document.querySelectorAll("[data-pdf]").forEach(el => el.addEventListener("click", () => open(el.dataset.title || "", el)));
+  document.getElementById("readerClose").addEventListener("click", close);
+  r.querySelectorAll(".reader__nav .reader__btn").forEach(b => b.addEventListener("click", () => go(current() + +b.dataset.d)));
+  r.addEventListener("click", (e) => { if (e.target === r || e.target === box) close(); });
+  document.addEventListener("keydown", (e) => {
+    if (r.hidden) return;
+    if (e.key === "Escape") close();
+    if (e.key === "ArrowRight") go(current() + 1);
+    if (e.key === "ArrowLeft") go(current() - 1);
+  });
+})();
+</script>
+
+<script>window.I18N && I18N.apply();</script><i id="i18n-end" hidden></i>
+</body>
+</html>
+

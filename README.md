@@ -84,7 +84,19 @@ Les liens du site n'ont pas d'extension : `portfolio`, `oeuvres/enigma`, `./` po
 
 Aperçu local (comme GitHub Pages) :  `node scripts/serve.mjs`  puis http://localhost:8000/
 
-## Langues
+## Langues : adresses /fr/, /en/, /es/, /it/
+
+Chaque page existe dans les 4 langues, dans son dossier : `/fr/portfolio`, `/en/portfolio`, `/en/oeuvres/enigma`…
+On change de langue en changeant le début de l'adresse, ou avec le menu « FR ▾ ».
+- **Pages à modifier** : celles de la racine (`portfolio.html`…). Les dossiers `fr/`, `en/`, `es/`, `it/` sont **générés** par
+  `node scripts/build-seo.mjs` (langue, adresse canonique, liens entre langues pour Google, titre et description traduits) :
+  le relancer après toute modification d'une page.
+- **Adresse de base `/`** : renvoie vers la langue choisie sur le site, sinon celle du navigateur, sinon `/fr/` (`.htaccess`).
+- **Anciennes adresses** (ancien site, encore connues de Google) : redirigées vers la page la plus proche (liste dans
+  `data/old-urls.txt`, règles écrites dans `.htaccess` par le script). Les adresses sans langue (`/portfolio`) vont vers `/fr/`.
+- Images, styles et scripts restent à la racine : `/en/images/x.jpg` est servi depuis `images/x.jpg` (`.htaccess`).
+- Icône du site : `favicon.ico` (48 px, pour Google), `favicon.svg`, `icon-192.png`, `apple-touch-icon.png`.
+
 
 Français (langue des pages), anglais, espagnol et italien. Les textes courts sont traduits par dictionnaire :
 anglais dans `i18n.js` (EN), espagnol et italien dans `i18n-langs.js` (ES, IT) — même clé : le texte français exact.

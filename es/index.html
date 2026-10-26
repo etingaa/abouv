@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <script>/* thème clair mémorisé : appliqué avant tout affichage (pas de flash) */(function(){try{if(localStorage.getItem("abouv:theme")==="light"){var r=document.documentElement;r.setAttribute("data-theme","light");r.style.background="#efebe3";}}catch(e){}})();</script>
+  <link rel="expect" href="#i18n-end" blocking="render" />
+  <style>html{background:#060b18}</style>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="description" content="Annick Bouvattier, pintora: pasee por una galería virtual entre sus cuadros disponibles, colgados a su tamaño real." />
+  <meta name="theme-color" content="#0C1220" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Annick Bouvattier" />
+  <meta property="og:locale" content="es_ES" />
+  <meta property="og:title" content="Annick Bouvattier — Pintora" />
+  <meta property="og:description" content="Annick Bouvattier, pintora: pasee por una galería virtual entre sus cuadros disponibles, colgados a su tamaño real." />
+  <link rel="icon" href="favicon.ico" sizes="48x48" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="icon-192.png" type="image/png" sizes="192x192" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <!-- pages préchargées au survol d'un lien : changement de page quasi instantané (la galerie 3D est seulement préchargée) -->
+  <script type="speculationrules">
+    {"prerender":[{"where":{"and":[{"selector_matches":".nav__link, .bottom__link--legal"},{"not":{"selector_matches":"[href='./'], [href='../']"}}]},"eagerness":"conservative"}],
+     "prefetch":[{"where":{"selector_matches":".nav__link, .bottom__link--legal"},"eagerness":"moderate"}]}
+  </script>
+  <title>Annick Bouvattier — Pintora</title>
+
+  <!-- Repli vers l'accueil classique : pas de WebGL, mouvement réduit demandé, ou galerie pas prête en 10 s.
+       (?debug dans l'adresse : pas de repli, pour tester) -->
+  <script>
+    (function () {
+      var debug = /[?&]debug\b/.test(location.search);
+      function fallback(reason) {
+        if (window.__g3dReady) return;
+        console.warn("Galerie 3D : repli vers classique (" + reason + ")");
+        if (!debug) location.replace("classique" + location.search);
+      }
+      window.__g3dFallback = fallback;
+      // navigateurs anciens (ex. Safari avant 16.4) : pas d'« import map » (nécessaire pour charger le moteur 3D)
+      if (!(window.HTMLScriptElement && HTMLScriptElement.supports && HTMLScriptElement.supports("importmap"))) return fallback("import map non prise en charge");
+      // le moteur 3D (Three.js récent) exige WebGL 2 : les vieux ordinateurs / navigateurs n'ont que WebGL 1
+      try {
+        var c = document.createElement("canvas");
+        var gl = c.getContext("webgl2");
+        if (!gl) return fallback("WebGL 2 indisponible");
+        // carte graphique logicielle (pas d'accélération) : la 3D serait saccadée
+        var dbg = gl.getExtension("WEBGL_debug_renderer_info");
+        var gpu = dbg ? String(gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL)) : "";
+        if (/swiftshader|llvmpipe|software|basic render/i.test(gpu) && !debug) return fallback("rendu 3D logiciel (" + gpu + ")");
+      } catch (e) { return fallback("WebGL indisponible"); }
+      window.__g3dTimer = setTimeout(function () { fallback("salle pas prête en 20 s"); }, 20000);
+    })();
+  </script>
+
+  <script src="i18n-langs.js?v=20261030a"></script>
+  <script src="i18n.js?v=20261030a"></script>
+  <script src="site.js?v=20261029a"></script>
+  <link rel="preconnect" href="https://docs.google.com" crossorigin />
+  <script src="sheet.js?v=20261027a"></script>
+  <link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="fonts/cormorant-garamond-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="styles.css?v=20261030a" />
+  <link rel="stylesheet" href="galerie.css?v=20261030c" />
+
+  <!-- Three.js, version épinglée -->
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js" crossorigin />
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+      }
+    }
+  </script>
+  <!-- navigateurs trop anciens pour les modules JavaScript : accueil sans 3D -->
+  <script nomodule>window.__g3dFallback && window.__g3dFallback("modules JavaScript non pris en charge");</script>
+  <script type="module" src="galerie.js?v=20261030b"></script>
+  <!-- seo:head -->
+  <link rel="canonical" href="https://annickbouvattier.art/es/" />
+  <link rel="alternate" hreflang="fr" href="https://annickbouvattier.art/fr/" />
+  <link rel="alternate" hreflang="en" href="https://annickbouvattier.art/en/" />
+  <link rel="alternate" hreflang="es" href="https://annickbouvattier.art/es/" />
+  <link rel="alternate" hreflang="it" href="https://annickbouvattier.art/it/" />
+  <link rel="alternate" hreflang="x-default" href="https://annickbouvattier.art/" />
+  <meta property="og:url" content="https://annickbouvattier.art/es/" />
+  <meta property="og:image" content="https://annickbouvattier.art/images/Enigma.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Annick Bouvattier — Pintora" />
+  <meta name="twitter:description" content="Annick Bouvattier, pintora: pasee por una galería virtual entre sus cuadros disponibles, colgados a su tamaño real." />
+  <meta name="twitter:image" content="https://annickbouvattier.art/images/Enigma.jpg" />
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Annick Bouvattier",
+  "jobTitle": "Artiste peintre",
+  "url": "https://annickbouvattier.art/",
+  "image": "https://annickbouvattier.art/images/annickbouvattier.jpg",
+  "sameAs": [
+    "https://www.instagram.com/annick.bouvattier/",
+    "https://www.facebook.com/annick.bouvattier/"
+  ]
+}
+  </script>
+  <!-- /seo:head -->
+</head>
+
+<body class="gallery3d">
+  <!-- écran d'accueil : le nom de l'artiste dans un flou granuleux pendant que la galerie se charge ; ensuite le flou
+       et le grain se dissipent et la salle apparaît au travers (galerie.js envoie « g3d:ready » quand elle est prête ;
+       l'animation dure environ 2 s et n'est jamais coupée) -->
+  <div class="intro" id="intro" aria-hidden="true">
+    <div class="intro__blur"></div>
+    <div class="intro__veil"></div>
+    <div class="intro__grain"></div>
+    <div class="intro__in">
+      <p class="intro__title" translate="no">Annick Bouvattier</p>
+      <p class="intro__kick">Artiste-peintre</p>
+    </div>
+  </div>
+  <script>
+    // l'animation va toujours jusqu'au bout (nom, puis « Artiste-peintre », un temps de pause) avant le dévoilement ;
+    // la promenade dans la salle n'attend que ça pour démarrer (window.__introRevealed, lu par galerie.js)
+    (function () {
+      var intro = document.getElementById("intro"), done;
+      window.__introRevealed = new Promise(function (r) { done = r; });
+      var minDone = false, ready = !!window.__g3dReady;
+      var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+      setTimeout(function () { minDone = true; lift(); }, reduce ? 1200 : 2200);
+      document.addEventListener("g3d:ready", function () { ready = true; lift(); });
+      function lift() {
+        if (!minDone || !ready || intro.classList.contains("is-out")) return;
+        intro.classList.add("is-out");
+        done();
+        setTimeout(function () { intro.remove(); }, 1500);
+      }
+    })();
+  </script>
+  <div class="g3d-stage" id="stage" aria-hidden="true"></div>
+
+  <div class="page">
+    <div class="container">
+      <header class="top">
+        <a class="brand" href="./">ANNICK&nbsp;BOUVATTIER</a>
+        <nav class="top__nav" aria-label="Navigation principale">
+          <a class="nav__link is-active" aria-current="page" href="./">Accueil</a>
+          <a class="nav__link" href="portfolio">Portfolio</a>
+          <a class="nav__link" href="galeries">Galeries</a>
+          <a class="nav__link" href="expositions">Expositions</a>
+          <a class="nav__link" href="apropos">À propos</a>
+          <a class="nav__link" href="contact">Contact</a>
+        </nav>
+      </header>
+
+      <main>
+        <h1 class="sr-only">Annick Bouvattier — galerie virtuelle</h1>
+
+        <!-- chargement des toiles : fine ligne en bas de l'écran -->
+        <div class="g3d-loading" id="loading" role="progressbar" aria-label="Chargement des œuvres" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <span class="g3d-progress__bar" id="progressBar"></span>
+        </div>
+
+        <!-- pause / vitesse de la promenade (affiché par galerie.js) -->
+        <div class="g3d-ctrl" id="ctrl" role="group" aria-label="Visite" hidden>
+          <button class="g3d-ctrl__play" id="ctrlPlay" type="button" aria-pressed="false" aria-label="Mettre en pause">
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path class="i-pause" d="M5 3.5v9M11 3.5v9"/><path class="i-play" d="M5.5 3.2v9.6L13 8z"/></svg>
+          </button>
+          <input class="g3d-ctrl__path" id="ctrlPath" type="range" min="0" max="1000" step="1" value="0" aria-label="Avancer ou reculer dans la visite">
+          <span class="g3d-ctrl__sep" aria-hidden="true"></span>
+          <button class="g3d-ctrl__step" id="ctrlSlow" type="button" aria-label="Ralentir"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 8h8"/></svg></button>
+          <span class="g3d-ctrl__speed" id="ctrlSpeed" aria-live="polite">1×</span>
+          <button class="g3d-ctrl__step" id="ctrlFast" type="button" aria-label="Accélérer"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 8h8M8 4v8"/></svg></button>
+        </div>
+        <!-- présentation de l'artiste (lue par les lecteurs d'écran et les moteurs ; pas affichée) -->
+        <section class="sr-only" aria-labelledby="aboutTitle">
+            <h2 id="aboutTitle">Annick Bouvattier, artiste peintre</h2>
+            <p data-lang="fr">Née à Nevers, Annick Bouvattier a d’abord été styliste, formée à l’école Bercot – Marie Rucki, puis costumière pour le cinéma et la publicité, notamment dans les studios de Cinecittà. Depuis le milieu des années 1990, elle se consacre à la peinture à l’huile. Élève de Pierre Ramel, elle peint au couteau une peinture lissée, sans épaisseur de matière, tout en transparence. Elle peint essentiellement des femmes, dans des jeux d’ombres et de lumière (son parcours est raconté sur la page <a href="apropos">À propos</a>). Ses toiles ont été exposées en France et à l’étranger ; elles sont présentées par des galeries à Paris, Lyon, Laguna Beach, Carmel-by-the-Sea et New Orleans, et certaines sont disponibles à la vente dans le <a href="portfolio">portfolio</a>.</p>
+            <p data-lang="en">Born in Nevers, Annick Bouvattier first worked as a fashion designer, trained at the Bercot – Marie Rucki school, then as a costume designer for film and advertising, notably at the Cinecittà studios. Since the mid-1990s she has devoted herself to oil painting. A pupil of Pierre Ramel, she paints with a palette knife, in smooth, transparent layers, without impasto. She mainly paints women, in plays of light and shadow (her story is told on the <a href="apropos">About</a> page). Her paintings have been exhibited in France and abroad; they are shown by galleries in Paris, Lyon, Laguna Beach, Carmel-by-the-Sea and New Orleans, and some are available for purchase in the <a href="portfolio">portfolio</a>.</p>
+            <p data-lang="es">Nacida en Nevers, Annick Bouvattier fue primero estilista, formada en la escuela Bercot – Marie Rucki, y después figurinista para el cine y la publicidad, sobre todo en los estudios de Cinecittà. Desde mediados de los años noventa se dedica a la pintura al óleo. Alumna de Pierre Ramel, pinta con espátula una pintura lisa, sin espesor de materia, toda en transparencias. Pinta sobre todo mujeres, en juegos de luces y sombras (su trayectoria se cuenta en la página <a href="apropos">Sobre la artista</a>). Sus cuadros se han expuesto en Francia y en el extranjero; los presentan galerías de París, Lyon, Laguna Beach, Carmel-by-the-Sea y Nueva Orleans, y algunos están a la venta en el <a href="portfolio">portafolio</a>.</p>
+            <p data-lang="it">Nata a Nevers, Annick Bouvattier è stata prima stilista, formata alla scuola Bercot – Marie Rucki, poi costumista per il cinema e la pubblicità, in particolare negli studi di Cinecittà. Dalla metà degli anni Novanta si dedica alla pittura a olio. Allieva di Pierre Ramel, dipinge a spatola una pittura liscia, senza spessore di materia, tutta per velature. Dipinge soprattutto donne, in giochi di luci e ombre (il suo percorso è raccontato nella pagina <a href="apropos">Chi sono</a>). I suoi quadri sono stati esposti in Francia e all'estero; sono presentati da gallerie a Parigi, Lione, Laguna Beach, Carmel-by-the-Sea e New Orleans, e alcuni sono in vendita nel <a href="portfolio">portfolio</a>.</p>
+          </section>
+        <p class="g3d-hint" id="hint" hidden>Faites glisser pour regarder autour de vous · cliquez sur le parquet pour vous déplacer · survolez une toile</p>
+
+        <!-- Étiquette au survol d'une toile -->
+        <div class="g3d-tip" id="tip" hidden>
+          <p class="g3d-tip__title" id="tipTitle"></p>
+          <p class="g3d-tip__meta" id="tipMeta"></p>
+          <a class="g3d-tip__link" id="tipLink" href="portfolio">Voir dans le portfolio <span aria-hidden="true">→</span></a>
+        </div>
+
+        <!-- Liste des œuvres pour les lecteurs d'écran et les moteurs de recherche (remplie par galerie.js) -->
+        <section class="sr-only" aria-label="Œuvres de la galerie">
+          <ul id="srList"></ul>
+          <noscript><a href="portfolio">Voir les œuvres</a></noscript>
+        </section>
+      </main>
+
+      <footer class="bottom">
+        <div class="bottom__left">
+          <a class="bottom__link" href="https://www.instagram.com/annick.bouvattier/" target="_blank" rel="noopener noreferrer">instagram</a>
+          <a class="bottom__link" href="https://www.facebook.com/annick.bouvattier/" target="_blank" rel="noopener noreferrer">facebook</a>
+        </div>
+        <a class="bottom__link bottom__link--legal" href="mentions-legales">mentions légales</a>
+      </footer>
+    </div>
+  </div>
+<script>window.I18N && I18N.apply();</script><i id="i18n-end" hidden></i>
+</body>
+</html>
