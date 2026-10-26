@@ -7,27 +7,30 @@
   <style>html{background:#060b18}</style>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Pentouse — Huile sur Toile 100 × 100 cm | Annick Bouvattier</title>
-  <meta name="description" content="« Pentouse » est une œuvre d’Annick Bouvattier, réalisée en 2011 (huile sur toile, 100 × 100 cm). Elle fait partie de la collection « Close up »." />
+  <meta name="description" content="« Pentouse », œuvre d’Annick Bouvattier (huile sur toile, 100 × 100 cm). Collection « Close up ». Vendue." />
   <meta name="theme-color" content="#0B1120" />
   <link rel="canonical" href="https://annickbouvattier.art/oeuvres/pentouse" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Annick Bouvattier" />
   <meta property="og:locale" content="fr_FR" />
   <meta property="og:title" content="Pentouse — Annick Bouvattier" />
-  <meta property="og:description" content="« Pentouse » est une œuvre d’Annick Bouvattier, réalisée en 2011 (huile sur toile, 100 × 100 cm). Elle fait partie de la collection « Close up »." />
+  <meta property="og:description" content="« Pentouse », œuvre d’Annick Bouvattier (huile sur toile, 100 × 100 cm). Collection « Close up ». Vendue." />
   <meta property="og:url" content="https://annickbouvattier.art/oeuvres/pentouse" />
   <meta property="og:image" content="https://annickbouvattier.art/images/Pentouse.jpg" />
   <meta property="og:image:alt" content="Pentouse, huile sur toile, par Annick Bouvattier" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Pentouse — Annick Bouvattier" />
-  <meta name="twitter:description" content="« Pentouse » est une œuvre d’Annick Bouvattier, réalisée en 2011 (huile sur toile, 100 × 100 cm). Elle fait partie de la collection « Close up »." />
+  <meta name="twitter:description" content="« Pentouse », œuvre d’Annick Bouvattier (huile sur toile, 100 × 100 cm). Collection « Close up ». Vendue." />
   <meta name="twitter:image" content="https://annickbouvattier.art/images/Pentouse.jpg" />
   <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
-  <script src="../i18n-langs.js?v=20261028c"></script>
-  <script src="../i18n.js?v=20261028c"></script>
+  <script src="../i18n-langs.js?v=20261030a"></script>
+  <script src="../i18n.js?v=20261030a"></script>
   <script src="../site.js?v=20261029a"></script>
+  <script src="../oeuvre.js?v=20261030a" defer></script>
   <link rel="preload" href="../fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="../styles.css?v=20261029a" />
+  <!-- œuvres voisines et portfolio récupérés au survol : on passe de l'une à l'autre sans attente -->
+  <script type="speculationrules">{"prefetch":[{"where":{"selector_matches":".ov__step, .ov__back, .nav__link"},"eagerness":"moderate"}]}</script>
+  <link rel="stylesheet" href="../styles.css?v=20261030a" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -51,7 +54,7 @@
     "name": "Annick Bouvattier",
     "url": "https://annickbouvattier.art/"
   },
-  "description": "« Pentouse » est une œuvre d’Annick Bouvattier, réalisée en 2011 (huile sur toile, 100 × 100 cm). Elle fait partie de la collection « Close up ». Cette œuvre a été vendue."
+  "description": "« Pentouse », œuvre d’Annick Bouvattier (huile sur toile, 100 × 100 cm). Collection « Close up ». Vendue."
 }
   </script>
 </head>
@@ -72,25 +75,21 @@
       </header>
 
       <main class="ov">
-        <a class="ov__back" href="../portfolio"><span aria-hidden="true">← </span><span>Voir tout le portfolio</span></a>
+        <a class="ov__back" href="../portfolio"><span aria-hidden="true">← </span><span>Portfolio</span></a>
         <article class="ov__grid">
           <figure class="ov__media">
-            <img src="../images/Pentouse.jpg" srcset="../images/thumbs/Pentouse.jpg 1100w, ../images/Pentouse.jpg 2000w" sizes="(max-width:900px) 100vw, 58vw" alt="Pentouse, huile sur toile, par Annick Bouvattier" width="1096" height="1100" decoding="async" />
+            <img src="../images/Pentouse.jpg" srcset="../images/thumbs/Pentouse.jpg 1096w, ../images/Pentouse.jpg 2000w" sizes="(max-width:900px) 100vw, 75vw" alt="Pentouse, huile sur toile, par Annick Bouvattier" width="1096" height="1100" fetchpriority="high" decoding="async" />
+            <a class="ov__more" href="#infos"><span>Informations</span><svg viewBox="0 0 14 8" aria-hidden="true"><path d="M1 1l6 6 6-6"/></svg></a>
           </figure>
-          <div class="ov__info">
+          <div class="ov__info" id="infos">
             <p class="ov__kicker">Close up</p>
             <h1 class="ov__title" translate="no">Pentouse</h1>
             <dl class="ov__facts">
               <div><dt>Technique</dt><dd>Huile sur Toile</dd></div>
-              <div><dt>Dimensions</dt><dd>100 × 100 cm</dd></div>
-              <div><dt>Année</dt><dd>2011</dd></div>
+              <div><dt>Dimensions</dt><dd class="ov__size" translate="no">100 × 100 cm</dd></div>
               <div><dt>Disponibilité</dt><dd class="ov__status ov__status--vendue">Vendue</dd></div>
               
             </dl>
-            <p class="ov__desc" data-lang="fr">« Pentouse » est une œuvre d’Annick Bouvattier, réalisée en 2011 (huile sur toile, 100 × 100 cm). Elle fait partie de la collection « Close up ». Cette œuvre a été vendue.</p>
-            <p class="ov__desc" data-lang="en">“Pentouse” is a work by Annick Bouvattier, created in 2011 (oil on canvas, 100 × 100 cm). It belongs to the “Close-up” collection. This work has been sold.</p>
-            <p class="ov__desc" data-lang="es">«Pentouse» es una obra de Annick Bouvattier, realizada en 2011 (óleo sobre lienzo, 100 × 100 cm). Forma parte de la colección «Primer plano». Esta obra ha sido vendida.</p>
-            <p class="ov__desc" data-lang="it">«Pentouse» è un'opera di Annick Bouvattier, realizzata nel 2011 (olio su tela, 100 × 100 cm). Fa parte della collezione «Primo piano». Quest'opera è stata venduta.</p>
             
             <nav class="ov__nav" aria-label="Autres œuvres">
               <a class="ov__step ov__step--prev" rel="prev" href="parfum-de-femme"><span class="ov__stepK">← <span>Œuvre précédente</span></span><span class="ov__stepT" translate="no">Parfum De Femme</span></a>

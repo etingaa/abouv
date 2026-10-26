@@ -4,9 +4,6 @@
   <meta charset="utf-8" />
   <script>/* thème clair mémorisé : appliqué avant tout affichage (pas de flash) */(function(){try{if(localStorage.getItem("abouv:theme")==="light"){var r=document.documentElement;r.setAttribute("data-theme","light");r.style.background="#efebe3";}}catch(e){}})();</script>
   <link rel="expect" href="#i18n-end" blocking="render" />
-  <!-- la fiche d'une œuvre met oeuvres/<slug>.html dans l'adresse (history.pushState) : on fige ici le dossier
-       du portfolio pour que les chemins relatifs (images, liens) restent justes, sous /abouv/ comme à la racine -->
-  <script>(function(){var b=document.createElement("base");b.href=location.href.replace(/[?#].*$/,"").replace(/oeuvres\/[^\/]*$/,"").replace(/[^\/]*$/,"");document.head.appendChild(b);})();</script>
   <style>html{background:#060b18}</style>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="description" content="Portfolio d'Annick Bouvattier : peintures à l'huile et sculptures, à filtrer par catégorie, technique, format et disponibilité." />
@@ -17,8 +14,8 @@
   <meta property="og:title" content="Portfolio — Annick Bouvattier" />
   <meta property="og:description" content="Portfolio d'Annick Bouvattier : peintures à l'huile et sculptures, à filtrer par catégorie, technique, format et disponibilité." />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-  <script src="i18n-langs.js?v=20261028c"></script>
-  <script src="i18n.js?v=20261028c"></script>
+  <script src="i18n-langs.js?v=20261030a"></script>
+  <script src="i18n.js?v=20261030a"></script>
   <script src="site.js?v=20261029a"></script>
   <link rel="preconnect" href="https://docs.google.com" crossorigin />
   <script src="sheet.js?v=20261027a"></script>
@@ -27,12 +24,12 @@
   <!-- pages préchargées au survol d'un lien : changement de page quasi instantané (la galerie 3D est seulement préchargée) -->
   <script type="speculationrules">
     {"prerender":[{"where":{"and":[{"selector_matches":".nav__link, .bottom__link--legal"},{"not":{"selector_matches":"[href='./'], [href='../']"}}]},"eagerness":"conservative"}],
-     "prefetch":[{"where":{"selector_matches":".nav__link, .bottom__link--legal"},"eagerness":"moderate"}]}
+     "prefetch":[{"where":{"selector_matches":".nav__link, .bottom__link--legal, a.piece"},"eagerness":"moderate"}]}
   </script>
   <title>Portfolio — Annick Bouvattier</title>
 
 
-  <link rel="stylesheet" href="styles.css?v=20261029a">
+  <link rel="stylesheet" href="styles.css?v=20261030a">
 
   <!-- seo:head -->
   <link rel="canonical" href="https://annickbouvattier.art/portfolio" />
@@ -470,8 +467,7 @@
 
       const items = [];
       list.forEach((a, idx)=>{
-        // un vrai lien vers la page de l'œuvre (Google, Cmd/Ctrl + clic, clic molette) ;
-        // un clic normal ouvre la fiche par-dessus la grille
+        // un vrai lien vers la page de l'œuvre
         const item = document.createElement("a");
         item.className = "piece";
         item.href = `oeuvres/${a.slug}`;
@@ -504,13 +500,10 @@
           scheduleRender();
         });
 
+        // clic normal : on note la liste filtrée et la position, puis on suit le lien (la vraie page de l'œuvre)
         item.addEventListener("click", (e)=>{
-          if(e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;   // nouvel onglet : la vraie page
-          e.preventDefault();
-          openWork(idx, { pointer: e.detail > 0 });
-        });
-        item.addEventListener("keydown", (e)=>{
-          if(e.key === " "){ e.preventDefault(); openWork(idx); }
+          if(e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;   // nouvel onglet
+          saveState(a.slug);
         });
         items.push({ el: item, a });
       });
@@ -524,33 +517,51 @@
     }
 
     /* =========================
-       MODAL : la fiche s'ouvre par-dessus la grille, l'adresse devient oeuvres/<slug>.html ;
-       fermer (×, Échap, clic à côté) ou « retour » du navigateur la referme et rend l'adresse du portfolio,
-       sans rechargement (filtres et position dans la page conservés)
+       RETOUR DEPUIS UNE ŒUVRE : un clic ouvre la vraie page oeuvres/<slug> ; en revenant (bouton retour,
+       « ← Portfolio »), on retrouve les filtres, la recherche et la position dans la page.
+       Si le navigateur a gardé la page en mémoire (bfcache), rien à faire ; sinon on relit sessionStorage
+       « abouv:pf » (aussi lu par oeuvre.js : liste filtrée pour précédente / suivante).
        ========================= */
 
-    let pushed = false;
+    const PF_KEY = "abouv:pf";
+    if("scrollRestoration" in history) history.scrollRestoration = "manual";   // position remise par restoreState()
 
-    // changement de langue avec une fiche ouverte : on revient au portfolio, fiche rouverte (pas la page de l'œuvre)
-    let shown = null;
-    window.I18N_URL = () => abouvModal.isOpen() && shown ? new URL("portfolio?oeuvre=" + encodeURIComponent(shown.file), document.baseURI).href : location.href;
-    function openWork(idx, opts = {}){
-      abouvModal.open(currentList, idx, {
-        pointer: opts.pointer,
-        onShow: (a) => {
-          shown = a;
-          const url = `oeuvres/${a.slug}`;
-          if(!pushed){ history.pushState({ oeuvre: a.slug }, "", url); pushed = true; }
-          else history.replaceState({ oeuvre: a.slug }, "", url);
-        },
-        onClose: () => { if(pushed){ pushed = false; history.back(); } },
-      });
+    // position : une œuvre repère (celle cliquée, sinon la première visible) et sa hauteur à l'écran ;
+    // plus juste qu'un simple scrollY quand la page change un peu de hauteur (choix de filtre replié…)
+    function saveState(openSlug){
+      const pieces = [...els.masonry.querySelectorAll("a.piece")];
+      const anchor = (openSlug && pieces.find(p => p.getAttribute("href") === `oeuvres/${openSlug}`))
+        || pieces.find(p => p.getBoundingClientRect().bottom > 0);
+      const state = {
+        q: filters.q,
+        f: Object.fromEntries(["category","technique","shape","size","status"].map(k => [k, [...filters[k]]])),
+        y: Math.round(scrollY),
+        anchor: anchor ? { href: anchor.getAttribute("href"), top: Math.round(anchor.getBoundingClientRect().top) } : null,
+        list: currentList.map(a => [a.slug, a.title]),
+      };
+      try{
+        sessionStorage.setItem(PF_KEY, JSON.stringify(state));
+        if(openSlug) sessionStorage.setItem("abouv:pf-open", openSlug);
+      }catch(_){}
     }
-    // bouton « retour » (ordinateur, téléphone) : on ferme la fiche
-    window.addEventListener("popstate", () => {
-      if(abouvModal.isOpen()){ pushed = false; abouvModal.close(); }
-      else if(pushed){ pushed = false; }
-    });
+    function restoreScroll(st){
+      const a = st.anchor && [...els.masonry.querySelectorAll("a.piece")].find(p => p.getAttribute("href") === st.anchor.href);
+      scrollTo(0, a ? a.getBoundingClientRect().top + scrollY - st.anchor.top : st.y || 0);
+    }
+    addEventListener("pagehide", () => saveState());
+
+    // filtres seulement si on revient (retour / avance du navigateur, ou rechargement) ; la position est remise après render()
+    function restoreState(){
+      const nav = performance.getEntriesByType && performance.getEntriesByType("navigation")[0];
+      if(!nav || (nav.type !== "back_forward" && nav.type !== "reload")) return null;
+      let st = null;
+      try{ st = JSON.parse(sessionStorage.getItem(PF_KEY) || "null"); }catch(_){}
+      if(!st) return null;
+      filters.q = st.q || "";
+      els.q.value = filters.q;
+      for(const [k, vals] of Object.entries(st.f || {})) if(filters[k]) vals.forEach(v => filters[k].add(v));
+      return st;
+    }
 
     /* =========================
        EVENTS
@@ -584,7 +595,7 @@
     });
 
     document.addEventListener("keydown", (e)=>{
-      if(e.key === "Escape" && activeGroup && !abouvModal.isOpen()){
+      if(e.key === "Escape" && activeGroup){
         const btn = els.groups.querySelector(`[data-group="${activeGroup}"]`);
         activeGroup = null;
         renderTabs();
@@ -602,25 +613,28 @@
     unitBtns.forEach(b => b.addEventListener("click", () => { abouvUnits.set(b.dataset.u); syncUnit(); render(); }));
     syncUnit();
 
-    // le Sheet relu en arrière-plan a changé : on redessine (sauf si une œuvre est ouverte)
+    // le Sheet relu en arrière-plan a changé : on redessine
     document.addEventListener("abouv:sheet-updated", async () => {
-      if(abouvModal.isOpen()) return;
       try{ artworks = await loadArtworksFromSheet(); render(); }catch(_){}
     });
 
     document.addEventListener("DOMContentLoaded", async () => {
       // ?q=<titre> (liens de la galerie 3D) : recherche pré-remplie
-      const q0 = new URLSearchParams(location.search).get("q");
-      if(q0){ els.q.value = q0.slice(0, 80); filters.q = els.q.value; }
+      const params = new URLSearchParams(location.search);
+      // ?oeuvre=<fichier> (clic sur une toile de la galerie 3D) : on passe directement à la page de l'œuvre
+      const wanted = params.get("oeuvre");
+      const back = wanted ? null : restoreState();
+      // ?q=<titre> (liens de la galerie 3D) : recherche pré-remplie
+      const q0 = params.get("q");
+      if(q0 && !back){ els.q.value = q0.slice(0, 80); filters.q = els.q.value; }
       try{
         artworks = await loadArtworksFromSheet();
+        if(wanted){
+          const w = artworks.find(a => a.file === wanted || a.title === wanted);
+          if(w){ location.replace(`oeuvres/${w.slug}`); return; }
+        }
         render();
-        // ?oeuvre=<fichier> (clic sur une toile de la galerie 3D) : sa fiche s'ouvre directement
-        // (l'adresse est nettoyée : fermer la fiche ramène au portfolio, sans la rouvrir au rafraîchissement)
-        const wanted = new URLSearchParams(location.search).get("oeuvre");
-        const at = wanted ? currentList.findIndex(a => a.file === wanted || a.title === wanted) : -1;
-        if(wanted){ const u = new URL(location.href); u.searchParams.delete("oeuvre"); history.replaceState(history.state, "", u.href); }
-        if(at >= 0) openWork(at);
+        if(back) restoreScroll(back);
       } catch(err){
         console.error(err);
         els.count.textContent = "";

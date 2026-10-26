@@ -1457,35 +1457,49 @@ body.portfolio a.piece{ display:block; color:inherit; text-decoration:none; }
 /* =========================
    PAGE D'UNE ŒUVRE (oeuvres/<slug>.html, générée par scripts/build-seo.mjs)
    ========================= */
-.ov{ margin:clamp(8px, 2vh, 24px) 0 clamp(64px, 9vw, 120px); }
-.ov__back{ display:inline-flex; gap:2px; margin-bottom:clamp(20px, 3vh, 36px); font-size:12px; font-weight:500; letter-spacing:.12em; text-transform:uppercase; color:var(--ink); border-bottom:1px solid transparent; padding-bottom:2px; transition:border-color .2s ease; }
+/* la toile aussi grande que l'écran le permet ; les infos dans une colonne étroite à droite
+   (téléphone : la toile remplit l'écran, une flèche « Informations » invite à descendre) */
+.ov{ --ov-h:calc(100svh - var(--header-h, 74px) - 28px - 34px - 40px); margin:0 0 clamp(64px, 9vw, 120px); }
+.ov__back{ display:inline-flex; gap:2px; margin:0 0 16px; font-size:12px; font-weight:500; letter-spacing:.12em; text-transform:uppercase; color:var(--ink); border-bottom:1px solid transparent; padding-bottom:2px; transition:border-color .2s ease; }
 .ov__back:hover{ border-bottom-color:var(--accent); }
-.ov__grid{ display:grid; grid-template-columns:minmax(0, 7fr) minmax(0, 5fr); gap:clamp(32px, 5vw, 80px); align-items:start; }
-.ov__media{ margin:0; position:sticky; top:calc(var(--shade-h, 90px) + 24px); }
-.ov__media img{ display:block; width:auto; max-width:100%; height:auto; max-height:min(82vh, 900px); margin:0 auto; box-shadow:0 30px 80px rgba(0,0,0,.35); }
+.ov__grid{ display:grid; grid-template-columns:minmax(0, 1fr) clamp(280px, 24vw, 360px); gap:clamp(28px, 3.5vw, 56px); align-items:start; }
+.ov__media{ position:relative; margin:0; height:var(--ov-h); min-height:320px; display:flex; align-items:center; justify-content:center; }
+/* l'image remplit la zone sans être déformée (object-fit) ; l'ombre suit la toile, pas la zone */
+.ov__media img{ display:block; width:100%; height:100%; object-fit:contain; filter:drop-shadow(0 24px 40px rgba(0,0,0,.4)); }
+.ov__more{ display:none; }
+.ov__info{ scroll-margin-top:calc(var(--header-h, 74px) + 16px); }
 .ov__kicker{ margin:0 0 10px; font-size:11px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint); }
-.ov__title{ margin:0 0 28px; font-size:clamp(36px, 4.6vw, 72px); font-weight:700; font-stretch:112%; text-transform:uppercase; line-height:.92; letter-spacing:-.01em; color:var(--ink); }
+.ov__title{ margin:0 0 24px; font-size:clamp(30px, 3vw, 52px); font-weight:700; font-stretch:112%; text-transform:uppercase; line-height:.95; letter-spacing:-.01em; color:var(--ink); overflow-wrap:anywhere; }
 .ov__facts{ margin:0 0 28px; border-top:1px solid rgba(var(--ink-rgb),.16); }
 .ov__facts > div{ display:flex; justify-content:space-between; gap:20px; padding:12px 0; border-bottom:1px solid rgba(var(--ink-rgb),.16); }
 .ov__facts dt{ font-size:11px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint); }
 .ov__facts dd{ margin:0; font-size:15px; color:var(--ink); text-align:right; }
 .ov__status--disponible::before{ content:""; display:inline-block; width:6px; height:6px; margin-right:8px; border-radius:50%; background:var(--accent); vertical-align:middle; }
-.ov__desc{ margin:0 0 28px; font-size:16px; line-height:1.7; color:var(--ink-soft); }
-.ov__cta{ display:inline-flex; align-items:center; height:52px; padding:0 28px; background:var(--ink); color:var(--bg); font-size:12px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; transition:background-color .2s ease; }
+.ov__cta{ display:flex; align-items:center; justify-content:center; height:52px; padding:0 20px; background:var(--ink); color:var(--bg); font-size:12px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; text-align:center; transition:background-color .2s ease; }
 .ov__cta:hover{ background:#fff; }
 html[data-theme="light"] .ov__cta{ background:#161e38; color:#efebe3; }
 html[data-theme="light"] .ov__cta:hover{ background:#223a7a; }
-.ov__nav{ display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:44px; padding-top:20px; border-top:1px solid rgba(var(--ink-rgb),.16); }
+.ov__nav{ display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:36px; padding-top:20px; border-top:1px solid rgba(var(--ink-rgb),.16); }
 .ov__step{ display:flex; flex-direction:column; gap:6px; min-width:0; }
 .ov__step--next{ text-align:right; align-items:flex-end; }
 .ov__stepK{ font-size:11px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint); }
 .ov__stepT{ font-size:14px; font-weight:700; font-stretch:112%; text-transform:uppercase; color:var(--ink); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:100%; }
 .ov__step:hover .ov__stepT{ color:var(--accent); }
 @media (max-width:900px){
-  .ov__grid{ grid-template-columns:minmax(0, 1fr); }
-  .ov__media{ position:static; }
-  .ov__media img{ max-height:70vh; }
+  /* la toile prend toute la largeur et au plus la hauteur de l'écran ; la flèche juste dessous */
+  .ov{ --ov-h:calc(100svh - var(--header-h, 64px) - 28px - 30px - 52px); }
+  .ov__back{ margin-bottom:12px; }
+  .ov__grid{ grid-template-columns:minmax(0, 1fr); gap:0; }
+  .ov__media{ display:block; height:auto; min-height:0; }
+  .ov__media img{ height:auto; max-height:var(--ov-h); filter:drop-shadow(0 16px 28px rgba(0,0,0,.4)); }
+  .ov__more{ display:flex; flex-direction:column; align-items:center; gap:4px; width:max-content; margin:6px auto 0; padding:6px 14px;
+    font-size:10px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-soft); transition:opacity .3s ease; }
+  .ov__more svg{ width:16px; height:9px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; animation:ovNudge 1.8s ease-in-out infinite; }
+  .ov__more.is-gone{ opacity:0; pointer-events:none; }
+  .ov__info{ padding-top:24px; }
 }
+@keyframes ovNudge{ 0%, 100%{ transform:translateY(0); } 50%{ transform:translateY(5px); } }
+@media (prefers-reduced-motion: reduce){ .ov__more svg{ animation:none; } }
 
 /* listes en HTML pour Google (galeries, expositions) : remplacées par le script de la page au chargement */
 .gx__static, .xstatic{ list-style:none; margin:0; padding:0; }

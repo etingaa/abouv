@@ -7,27 +7,30 @@
   <style>html{background:#060b18}</style>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Glamour — Huile sur Toile 100 × 100 cm | Annick Bouvattier</title>
-  <meta name="description" content="« Glamour » est une œuvre d’Annick Bouvattier, réalisée en 2011 (huile sur toile, 100 × 100 cm). Elle fait partie de la collection « Féminitude »." />
+  <meta name="description" content="« Glamour », œuvre d’Annick Bouvattier (huile sur toile, 100 × 100 cm). Collection « Féminitude ». Disponible." />
   <meta name="theme-color" content="#0B1120" />
   <link rel="canonical" href="https://annickbouvattier.art/oeuvres/glamour" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Annick Bouvattier" />
   <meta property="og:locale" content="fr_FR" />
   <meta property="og:title" content="Glamour — Annick Bouvattier" />
-  <meta property="og:description" content="« Glamour » est une œuvre d’Annick Bouvattier, réalisée en 2011 (huile sur toile, 100 × 100 cm). Elle fait partie de la collection « Féminitude »." />
+  <meta property="og:description" content="« Glamour », œuvre d’Annick Bouvattier (huile sur toile, 100 × 100 cm). Collection « Féminitude ». Disponible." />
   <meta property="og:url" content="https://annickbouvattier.art/oeuvres/glamour" />
   <meta property="og:image" content="https://annickbouvattier.art/images/Glamour.jpg" />
   <meta property="og:image:alt" content="Glamour, huile sur toile, par Annick Bouvattier" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Glamour — Annick Bouvattier" />
-  <meta name="twitter:description" content="« Glamour » est une œuvre d’Annick Bouvattier, réalisée en 2011 (huile sur toile, 100 × 100 cm). Elle fait partie de la collection « Féminitude »." />
+  <meta name="twitter:description" content="« Glamour », œuvre d’Annick Bouvattier (huile sur toile, 100 × 100 cm). Collection « Féminitude ». Disponible." />
   <meta name="twitter:image" content="https://annickbouvattier.art/images/Glamour.jpg" />
   <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
-  <script src="../i18n-langs.js?v=20261028c"></script>
-  <script src="../i18n.js?v=20261028c"></script>
+  <script src="../i18n-langs.js?v=20261030a"></script>
+  <script src="../i18n.js?v=20261030a"></script>
   <script src="../site.js?v=20261029a"></script>
+  <script src="../oeuvre.js?v=20261030a" defer></script>
   <link rel="preload" href="../fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="../styles.css?v=20261029a" />
+  <!-- œuvres voisines et portfolio récupérés au survol : on passe de l'une à l'autre sans attente -->
+  <script type="speculationrules">{"prefetch":[{"where":{"selector_matches":".ov__step, .ov__back, .nav__link"},"eagerness":"moderate"}]}</script>
+  <link rel="stylesheet" href="../styles.css?v=20261030a" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -51,7 +54,7 @@
     "name": "Annick Bouvattier",
     "url": "https://annickbouvattier.art/"
   },
-  "description": "« Glamour » est une œuvre d’Annick Bouvattier, réalisée en 2011 (huile sur toile, 100 × 100 cm). Elle fait partie de la collection « Féminitude ». Cette œuvre est disponible."
+  "description": "« Glamour », œuvre d’Annick Bouvattier (huile sur toile, 100 × 100 cm). Collection « Féminitude ». Disponible."
 }
   </script>
 </head>
@@ -72,25 +75,21 @@
       </header>
 
       <main class="ov">
-        <a class="ov__back" href="../portfolio"><span aria-hidden="true">← </span><span>Voir tout le portfolio</span></a>
+        <a class="ov__back" href="../portfolio"><span aria-hidden="true">← </span><span>Portfolio</span></a>
         <article class="ov__grid">
           <figure class="ov__media">
-            <img src="../images/Glamour.jpg" srcset="../images/thumbs/Glamour.jpg 1100w, ../images/Glamour.jpg 2000w" sizes="(max-width:900px) 100vw, 58vw" alt="Glamour, huile sur toile, par Annick Bouvattier" width="1091" height="1100" decoding="async" />
+            <img src="../images/Glamour.jpg" srcset="../images/thumbs/Glamour.jpg 1091w, ../images/Glamour.jpg 2000w" sizes="(max-width:900px) 100vw, 75vw" alt="Glamour, huile sur toile, par Annick Bouvattier" width="1091" height="1100" fetchpriority="high" decoding="async" />
+            <a class="ov__more" href="#infos"><span>Informations</span><svg viewBox="0 0 14 8" aria-hidden="true"><path d="M1 1l6 6 6-6"/></svg></a>
           </figure>
-          <div class="ov__info">
+          <div class="ov__info" id="infos">
             <p class="ov__kicker">Féminitude</p>
             <h1 class="ov__title" translate="no">Glamour</h1>
             <dl class="ov__facts">
               <div><dt>Technique</dt><dd>Huile sur Toile</dd></div>
-              <div><dt>Dimensions</dt><dd>100 × 100 cm</dd></div>
-              <div><dt>Année</dt><dd>2011</dd></div>
+              <div><dt>Dimensions</dt><dd class="ov__size" translate="no">100 × 100 cm</dd></div>
               <div><dt>Disponibilité</dt><dd class="ov__status ov__status--disponible">Disponible</dd></div>
               <div><dt>Où la voir</dt><dd>Atelier</dd></div>
             </dl>
-            <p class="ov__desc" data-lang="fr">« Glamour » est une œuvre d’Annick Bouvattier, réalisée en 2011 (huile sur toile, 100 × 100 cm). Elle fait partie de la collection « Féminitude ». Cette œuvre est disponible.</p>
-            <p class="ov__desc" data-lang="en">“Glamour” is a work by Annick Bouvattier, created in 2011 (oil on canvas, 100 × 100 cm). It belongs to the “Femininity” collection. This work is available.</p>
-            <p class="ov__desc" data-lang="es">«Glamour» es una obra de Annick Bouvattier, realizada en 2011 (óleo sobre lienzo, 100 × 100 cm). Forma parte de la colección «Feminidad». Esta obra está disponible.</p>
-            <p class="ov__desc" data-lang="it">«Glamour» è un'opera di Annick Bouvattier, realizzata nel 2011 (olio su tela, 100 × 100 cm). Fa parte della collezione «Femminilità». Quest'opera è disponibile.</p>
             <a class="ov__cta" href="../contact?oeuvre=Glamour">Demander des informations</a>
             <nav class="ov__nav" aria-label="Autres œuvres">
               <a class="ov__step ov__step--prev" rel="prev" href="fashion-week"><span class="ov__stepK">← <span>Œuvre précédente</span></span><span class="ov__stepT" translate="no">Fashion Week</span></a>

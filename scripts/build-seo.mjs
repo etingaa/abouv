@@ -6,7 +6,7 @@
 // Ce que le script fait :
 //   1. relit le Google Sheet des œuvres (copie à jour dans data/sheet.csv ; si Google ne répond pas, la copie existante sert)
 //   2. génère une page par œuvre : oeuvres/<slug>.html (adresse publique : oeuvres/<slug>) (titre, image, technique, dimensions, disponibilité,
-//      description, « Demander des informations », précédente / suivante, balises de partage, JSON-LD VisualArtwork)
+//      « Demander des informations », précédente / suivante, balises de partage, JSON-LD VisualArtwork ; comportement : oeuvre.js)
 //   3. écrit sitemap.xml et robots.txt
 //   4. réécrit, entre des commentaires marqueurs, dans les pages existantes :
 //        <!-- seo:head --> … <!-- /seo:head -->       canonical, og:url, og:image, twitter:card (+ JSON-LD Person sur l'accueil)
@@ -25,6 +25,7 @@ const SITE_URL = "https://annickbouvattier.art";          // adresse du site, sa
 const DEFAULT_OG_IMAGE = "images/Enigma.jpg";             // image de partage des pages principales (une toile disponible)
 const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSmK-RAKlpq_VMnhd78eWdWeMTnCkU3_-411IzeTyzO9j0zbJdkkhzfxlRDZpqzKixpoUgTtAAI_Auw/pub?output=csv";
 const ARTIST = "Annick Bouvattier";
+const OEUVRE_JS_V = "20261030a";                           // version de oeuvre.js (à changer quand on le modifie)
 
 // pages principales : fichier -> adresse publique (l'accueil est la racine)
 // (adresses sans « .html » : GitHub Pages sert portfolio.html à l'adresse /portfolio)
@@ -120,21 +121,6 @@ async function loadArtworks(){
   return ok.sort((a, b) => (a.status === "vendue") - (b.status === "vendue") || (parseInt(b.year, 10) || 0) - (parseInt(a.year, 10) || 0) || a.title.localeCompare(b.title, "fr"));
 }
 
-/* ====== traductions anglaises (dictionnaire de i18n.js) ====== */
-async function loadEN(){
-  const src = await rd("i18n.js");
-  const start = src.indexOf("const EN = {"), end = src.indexOf("\n  };", start);
-  try { return new Function("return " + src.slice(start + "const EN = ".length, end + 4))(); }
-  catch (_) { return {}; }
-}
-
-/* ====== traductions espagnoles et italiennes (i18n-langs.js) ====== */
-async function loadLangs(){
-  const win = {};
-  try { new Function("window", await rd("i18n-langs.js"))(win); } catch (_) {}
-  return win.I18N_LANGS || { es: {}, it: {} };
-}
-
 /* ====== gabarit commun (repris de portfolio.html) ====== */
 async function loadTemplate(){
   const pf = await rd("portfolio.html");
@@ -143,7 +129,7 @@ async function loadTemplate(){
   // liens relatifs du header et du footer, vus depuis le dossier oeuvres/
   const up = (html) => html.replace(/href="\.\/"/g, 'href="../"').replace(/href="(?!https?:|mailto:|tel:|#|\.\.\/)([^"]+)"/g, 'href="../$1"');
   return {
-    v: { styles: v("styles.css"), i18n: v("i18n.js"), langs: v("i18n-langs.js"), site: v("site.js") },
+    v: { styles: v("styles.css"), i18n: v("i18n.js"), langs: v("i18n-langs.js"), site: v("site.js"), oeuvre: OEUVRE_JS_V },
     header: up(block(/<header class="top">[\s\S]*?<\/header>/)),
     footer: up(block(/<footer class="bottom">[\s\S]*?<\/footer>/)),
     social: [...block(/<div class="bottom__left">[\s\S]*?<\/div>/).matchAll(/href="(https?:[^"]+)"/g)].map(m => m[1]),
@@ -152,38 +138,17 @@ async function loadTemplate(){
 
 /* ====== textes d'une œuvre (uniquement à partir des données) ====== */
 const dims = (a) => a.cm ? `${a.cm.w} × ${a.cm.h} cm` : (a.size || "").replace(/\s*x\s*/i, " × ");
-const tr = (EN, s) => (EN[s] ?? s);
 
-function describe(a, EN, L = { es: {}, it: {} }){
+// texte des balises description / partage (la page elle-même ne le montre pas : ce serait un doublon des infos ;
+// pas d'année non plus)
+function describe(a){
   const d = dims(a);
-  const fr = [
-    `« ${a.title} » est une œuvre d’${ARTIST}${a.year ? `, réalisée en ${a.year}` : ""}` +
+  return [
+    `« ${a.title} », œuvre d’${ARTIST}` +
       (a.technique || d ? ` (${[a.technique && a.technique.toLowerCase(), d].filter(Boolean).join(", ")})` : "") + ".",
-    a.category ? `Elle fait partie de la collection « ${a.category} ».` : "",
-    a.status === "disponible" ? "Cette œuvre est disponible." : "Cette œuvre a été vendue.",
+    a.category ? `Collection « ${a.category} ».` : "",
+    a.status === "disponible" ? "Disponible." : "Vendue.",
   ].filter(Boolean).join(" ");
-  const tech = a.technique ? tr(EN, a.technique) : "";
-  const en = [
-    `“${a.title}” is a work by ${ARTIST}${a.year ? `, created in ${a.year}` : ""}` +
-      (tech || d ? ` (${[tech && tech.toLowerCase(), d].filter(Boolean).join(", ")})` : "") + ".",
-    a.category ? `It belongs to the “${tr(EN, a.category)}” collection.` : "",
-    a.status === "disponible" ? "This work is available." : "This work has been sold.",
-  ].filter(Boolean).join(" ");
-  const techL = (d2) => a.technique ? (d2[a.technique] ?? tr(EN, a.technique)).toLowerCase() : "";
-  const catL = (d2) => d2[a.category] ?? a.category;
-  const es = [
-    `«${a.title}» es una obra de ${ARTIST}${a.year ? `, realizada en ${a.year}` : ""}` +
-      (a.technique || d ? ` (${[techL(L.es), d].filter(Boolean).join(", ")})` : "") + ".",
-    a.category ? `Forma parte de la colección «${catL(L.es)}».` : "",
-    a.status === "disponible" ? "Esta obra está disponible." : "Esta obra ha sido vendida.",
-  ].filter(Boolean).join(" ");
-  const it = [
-    `«${a.title}» è un'opera di ${ARTIST}${a.year ? `, realizzata nel ${a.year}` : ""}` +
-      (a.technique || d ? ` (${[techL(L.it), d].filter(Boolean).join(", ")})` : "") + ".",
-    a.category ? `Fa parte della collezione «${catL(L.it)}».` : "",
-    a.status === "disponible" ? "Quest'opera è disponibile." : "Quest'opera è stata venduta.",
-  ].filter(Boolean).join(" ");
-  return { fr, en, es, it };
 }
 // meta description : les phrases entières qui tiennent en ~160 caractères (sinon la première, coupée proprement)
 function clip(s, n = 160){
@@ -193,11 +158,11 @@ function clip(s, n = 160){
   return out.trim() || s.slice(0, n - 1).replace(/\s+\S*$/, "") + "…";
 }
 
-function workPage(a, i, list, tpl, EN, sizes, L){
+function workPage(a, i, list, tpl, sizes){
   const prev = list[(i - 1 + list.length) % list.length], next = list[(i + 1) % list.length];
   const d = dims(a), url = abs(`oeuvres/${a.slug}`), img = abs(`images/${a.file}`);
   const title = `${a.title} — ${[a.technique, d].filter(Boolean).join(" ")} | ${ARTIST}`;
-  const { fr, en, es, it } = describe(a, EN, L);
+  const fr = describe(a);
   const alt = `${a.title}${a.technique ? `, ${a.technique.toLowerCase()}` : ""}, par ${ARTIST}`;
   const wh = sizes[a.file] ? ` width="${sizes[a.file][0]}" height="${sizes[a.file][1]}"` : "";
   const thumb = `../images/thumbs/${a.file}`;
@@ -211,7 +176,7 @@ function workPage(a, i, list, tpl, EN, sizes, L){
     creator: { "@type": "Person", name: ARTIST, url: SITE_URL + "/" },
     description: fr,
   };
-  const fact = (k, v, raw) => v ? `<div><dt>${k}</dt><dd${raw ? "" : ""}>${esc(v)}</dd></div>` : "";
+  const fact = (k, v) => v ? `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>` : "";
   const cta = a.status === "disponible"
     ? `<a class="ov__cta" href="../contact?oeuvre=${encodeURIComponent(a.title)}">Demander des informations</a>` : "";
   const navLink = (w, rel, label, arrow) =>
@@ -245,7 +210,10 @@ function workPage(a, i, list, tpl, EN, sizes, L){
   <script src="../i18n-langs.js?v=${tpl.v.langs}"></script>
   <script src="../i18n.js?v=${tpl.v.i18n}"></script>
   <script src="../site.js?v=${tpl.v.site}"></script>
+  <script src="../oeuvre.js?v=${tpl.v.oeuvre}" defer></script>
   <link rel="preload" href="../fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <!-- œuvres voisines et portfolio récupérés au survol : on passe de l'une à l'autre sans attente -->
+  <script type="speculationrules">{"prefetch":[{"where":{"selector_matches":".ov__step, .ov__back, .nav__link"},"eagerness":"moderate"}]}</script>
   <link rel="stylesheet" href="../styles.css?v=${tpl.v.styles}" />
   <script type="application/ld+json">
 ${jsonld(ld)}
@@ -258,25 +226,21 @@ ${jsonld(ld)}
       ${tpl.header}
 
       <main class="ov">
-        <a class="ov__back" href="../portfolio"><span aria-hidden="true">← </span><span>Voir tout le portfolio</span></a>
+        <a class="ov__back" href="../portfolio"><span aria-hidden="true">← </span><span>Portfolio</span></a>
         <article class="ov__grid">
           <figure class="ov__media">
-            <img src="../images/${encodeURI(a.file)}" srcset="${encodeURI(thumb)} 1100w, ../images/${encodeURI(a.file)} 2000w" sizes="(max-width:900px) 100vw, 58vw" alt="${esc(alt)}"${wh} decoding="async" />
+            <img src="../images/${encodeURI(a.file)}" srcset="${encodeURI(thumb)} ${sizes[a.file] ? sizes[a.file][0] : 1100}w, ../images/${encodeURI(a.file)} 2000w" sizes="(max-width:900px) 100vw, 75vw" alt="${esc(alt)}"${wh} fetchpriority="high" decoding="async" />
+            <a class="ov__more" href="#infos"><span>Informations</span><svg viewBox="0 0 14 8" aria-hidden="true"><path d="M1 1l6 6 6-6"/></svg></a>
           </figure>
-          <div class="ov__info">
+          <div class="ov__info" id="infos">
             ${a.category ? `<p class="ov__kicker">${esc(a.category)}</p>` : ""}
             <h1 class="ov__title" translate="no">${esc(a.title)}</h1>
             <dl class="ov__facts">
               ${fact("Technique", a.technique)}
-              ${fact("Dimensions", d)}
-              ${fact("Année", a.year)}
+              ${d ? `<div><dt>Dimensions</dt><dd class="ov__size" translate="no">${esc(d)}</dd></div>` : ""}
               <div><dt>Disponibilité</dt><dd class="ov__status ov__status--${a.status}">${a.status === "disponible" ? "Disponible" : "Vendue"}</dd></div>
               ${a.status === "disponible" ? fact("Où la voir", a.where) : ""}
             </dl>
-            <p class="ov__desc" data-lang="fr">${esc(fr)}</p>
-            <p class="ov__desc" data-lang="en">${esc(en)}</p>
-            <p class="ov__desc" data-lang="es">${esc(es)}</p>
-            <p class="ov__desc" data-lang="it">${esc(it)}</p>
             ${cta}
             <nav class="ov__nav" aria-label="Autres œuvres">
               ${navLink(prev, "prev", "Œuvre précédente", "←")}
@@ -332,7 +296,7 @@ function headBlock(html, page, tpl, list){
   return "\n  " + lines.join("\n  ") + "\n  ";
 }
 
-function worksBlock(list, EN, sizes){
+function worksBlock(list, sizes){
   const tech = (a) => a.technique ? `<span class="capTech">${esc(a.technique)}</span>` : "";
   const size = (a) => a.size ? `<span class="capSize">${esc(a.size.replace(/\s*x\s*/i, " × "))}</span>` : "";
   return list.map(a => {
@@ -371,21 +335,21 @@ async function exposBlock(){
 
 /* ====== programme ====== */
 async function main(){
-  const [list, EN, tpl, L] = await Promise.all([loadArtworks(), loadEN(), loadTemplate(), loadLangs()]);
+  const [list, tpl] = await Promise.all([loadArtworks(), loadTemplate()]);
   let sizes = {}; try { sizes = JSON.parse(await rd("images/thumbs/sizes.json")); } catch (_) {}
 
   // 1. pages des œuvres (les anciennes pages d'œuvres disparues sont supprimées)
   await mkdir(OUT_DIR, { recursive: true });
   const keep = new Set(list.map(a => a.slug + ".html"));
   for (const f of await readdir(OUT_DIR)) if (f.endsWith(".html") && !keep.has(f)) await unlink(path.join(OUT_DIR, f));
-  await Promise.all(list.map((a, i) => writeFile(path.join(OUT_DIR, a.slug + ".html"), workPage(a, i, list, tpl, EN, sizes, L))));
+  await Promise.all(list.map((a, i) => writeFile(path.join(OUT_DIR, a.slug + ".html"), workPage(a, i, list, tpl, sizes))));
 
   // 2. pages principales : balises SEO, listes en HTML
   for (const page of PAGES){
     if (!(await exists(page.file))) continue;
     let html = await rd(page.file);
     html = between(html, "head", headBlock(html, page, tpl, list), (h, blk) => h.replace("</head>", `  ${blk}\n</head>`));
-    if (page.file === "portfolio.html") html = between(html, "works", worksBlock(list, EN, sizes));
+    if (page.file === "portfolio.html") html = between(html, "works", worksBlock(list, sizes));
     if (page.file === "galeries.html"){ const b = await galleriesBlock(); if (b) html = between(html, "galleries", b); }
     if (page.file === "expositions.html") html = between(html, "expos", await exposBlock());
     await writeFile(path.join(ROOT, page.file), html);

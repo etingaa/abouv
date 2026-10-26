@@ -1,5 +1,6 @@
 // artwork-modal.js — fiche d'une œuvre en plein écran (image, titre, technique, format, statut,
-// « Demander des informations »), avec précédent / suivant. Utilisée par le portfolio et l'accueil.
+// « Demander des informations »), avec précédent / suivant. Le portfolio ne l'ouvre plus (un clic mène à la vraie
+// page oeuvres/<slug>, voir oeuvre.js) mais s'en sert pour abouvUnits, escapeHtml et metaLine.
 // abouvModal.open(liste, index, { onShow(œuvre), onClose() }) : liste d'œuvres au format de abouvSheet.artworks() ;
 // onShow est appelé à chaque œuvre affichée (ouverture, précédent / suivant), onClose à la fermeture
 // (le portfolio s'en sert pour l'adresse oeuvres/<slug>.html et le bouton retour).

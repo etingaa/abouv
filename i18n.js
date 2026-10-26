@@ -191,6 +191,7 @@
     "Vue d'ensemble": "Overview",
     "Unité": "Unit",
     "Voir tout le portfolio": "See the whole portfolio",
+    "Informations": "Details",              // flèche sous la toile (page d'une œuvre, téléphone)
     "Disponible": "Available",
     "Vendue": "Sold",
     "Où la voir": "Where to see it",

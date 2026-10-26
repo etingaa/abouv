@@ -67,6 +67,9 @@ python3 scripts/make-thumbs.py   # miniatures (si de nouvelles images ont été 
 node scripts/build-seo.mjs       # pages oeuvres/<slug>.html, sitemap.xml, robots.txt, balises de partage
 ```
 
+Un clic sur une œuvre du portfolio ouvre sa page `oeuvres/<slug>` ; le retour (bouton du navigateur ou « ← Portfolio »)
+retrouve les filtres, la recherche et la position (sessionStorage, `portfolio.html` et `oeuvre.js`).
+
 Le script relit le Sheet (copie dans `data/sheet.csv`) et réécrit tout ce qui se trouve entre les commentaires
 `<!-- seo:… -->` des pages. L'adresse publique du site (`SITE_URL`) et l'image de partage par défaut
 (`DEFAULT_OG_IMAGE`) se règlent en haut de `scripts/build-seo.mjs`. Les liens du site restent relatifs :
