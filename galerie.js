@@ -870,9 +870,12 @@ async function main(){
   // la salle est prête : plus de repli possible
   window.__g3dReady = true;
   clearTimeout(window.__g3dTimer);
+  document.dispatchEvent(new Event("g3d:ready"));   // l'écran d'accueil (index.html) peut se lever
 
   /* ---------- arrivée : on franchit la porte et on commence la promenade ---------- */
   await Promise.race([firstLoaded, new Promise(r => setTimeout(r, 2500))]);
+  // écran d'accueil (index.html) : on reste immobile à l'entrée tant qu'il n'a pas commencé à se dissiper
+  if (window.__introRevealed) await window.__introRevealed;
   const th0 = Math.PI;                                   // côté porte de la boucle
   const gz0 = wanderGaze(th0);
   // on entre, on se retourne vers la droite pour voir le nom de l'artiste, et on continue dans le même sens

@@ -56,7 +56,7 @@
   <link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preload" href="fonts/cormorant-garamond-latin.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="styles.css?v=20261030a" />
-  <link rel="stylesheet" href="galerie.css?v=20261028a" />
+  <link rel="stylesheet" href="galerie.css?v=20261030c" />
 
   <!-- Three.js, version épinglée -->
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
@@ -71,7 +71,7 @@
   </script>
   <!-- navigateurs trop anciens pour les modules JavaScript : accueil sans 3D -->
   <script nomodule>window.__g3dFallback && window.__g3dFallback("modules JavaScript non pris en charge");</script>
-  <script type="module" src="galerie.js?v=20261029b"></script>
+  <script type="module" src="galerie.js?v=20261030b"></script>
   <!-- seo:head -->
   <link rel="canonical" href="https://annickbouvattier.art/" />
   <meta property="og:url" content="https://annickbouvattier.art/" />
@@ -98,6 +98,36 @@
 </head>
 
 <body class="gallery3d">
+  <!-- écran d'accueil : le nom de l'artiste dans un flou granuleux pendant que la galerie se charge ; ensuite le flou
+       et le grain se dissipent et la salle apparaît au travers (galerie.js envoie « g3d:ready » quand elle est prête ;
+       l'animation dure environ 2 s et n'est jamais coupée) -->
+  <div class="intro" id="intro" aria-hidden="true">
+    <div class="intro__blur"></div>
+    <div class="intro__veil"></div>
+    <div class="intro__grain"></div>
+    <div class="intro__in">
+      <p class="intro__title" translate="no">Annick Bouvattier</p>
+      <p class="intro__kick">Artiste-peintre</p>
+    </div>
+  </div>
+  <script>
+    // l'animation va toujours jusqu'au bout (nom, puis « Artiste-peintre », un temps de pause) avant le dévoilement ;
+    // la promenade dans la salle n'attend que ça pour démarrer (window.__introRevealed, lu par galerie.js)
+    (function () {
+      var intro = document.getElementById("intro"), done;
+      window.__introRevealed = new Promise(function (r) { done = r; });
+      var minDone = false, ready = !!window.__g3dReady;
+      var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+      setTimeout(function () { minDone = true; lift(); }, reduce ? 1200 : 2200);
+      document.addEventListener("g3d:ready", function () { ready = true; lift(); });
+      function lift() {
+        if (!minDone || !ready || intro.classList.contains("is-out")) return;
+        intro.classList.add("is-out");
+        done();
+        setTimeout(function () { intro.remove(); }, 1500);
+      }
+    })();
+  </script>
   <div class="g3d-stage" id="stage" aria-hidden="true"></div>
 
   <div class="page">
