@@ -5,6 +5,9 @@
 (() => {
   "use strict";
 
+  // racine du site (dossier de script.js) : les images restent justes depuis /fr/galeries, /en/galeries…
+  const ROOT = document.currentScript ? new URL(".", document.currentScript.src).href : "";
+
   document.addEventListener("DOMContentLoaded", initGaleriesPage);
 
   // Données, dans l'ordre de la carte (d'ouest en est). expos : comment retrouver les expositions de la galerie dans expos-data.js
@@ -82,7 +85,7 @@
         <text x="${x}" y="${up ? y - (only ? k * 5.4 : 1.8) : y + (only ? k * 9 : 3.4)}" text-anchor="middle"${only ? ` style="font-size:${(k * 5.6).toFixed(2)}px"` : ""}>${escapeHtml(g.city)}</text></g>`;
     }).join("");
     return `<svg viewBox="${V.x} ${V.y} ${V.w} ${V.h}" role="img" aria-label="${t("Carte des galeries")}">
-      <g class="gx__dots"><image class="dots dots--d" href="images/world-dots.svg" x="0" y="0" width="360" height="128"/><image class="dots dots--l" href="images/world-dots-light.svg" x="0" y="0" width="360" height="128"/></g>${arcs}${pins}</svg>`;
+      <g class="gx__dots"><image class="dots dots--d" href="${ROOT}images/world-dots.svg" x="0" y="0" width="360" height="128"/><image class="dots dots--l" href="${ROOT}images/world-dots-light.svg" x="0" y="0" width="360" height="128"/></g>${arcs}${pins}</svg>`;
   }
 
   // téléphone : une seule carte, qui zoome sur le pays de la galerie affichée (cadrage animé) ;
@@ -97,7 +100,7 @@
         <text y="${up ? -1.9 : 3.5}" text-anchor="middle">${escapeHtml(g.city)}</text></g></g>`;
     }).join("");
     return `<svg viewBox="${V.x} ${V.y} ${V.w} ${V.h}" preserveAspectRatio="xMidYMin meet">
-      <image class="dots dots--d" href="images/world-dots.svg" x="0" y="0" width="360" height="128"/><image class="dots dots--l" href="images/world-dots-light.svg" x="0" y="0" width="360" height="128"/>${pins}</svg>`;
+      <image class="dots dots--d" href="${ROOT}images/world-dots.svg" x="0" y="0" width="360" height="128"/><image class="dots dots--l" href="${ROOT}images/world-dots-light.svg" x="0" y="0" width="360" height="128"/>${pins}</svg>`;
   }
 
   function initGaleriesPage() {

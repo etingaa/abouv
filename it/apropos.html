@@ -13,15 +13,15 @@
   <meta property="og:locale" content="it_IT" />
   <meta property="og:title" content="Chi sono — Annick Bouvattier" />
   <meta property="og:description" content="Biografia di Annick Bouvattier, pittrice: dalla moda e dal cinema alla pittura a olio a spatola." />
-  <link rel="icon" href="favicon.ico" sizes="48x48" />
-  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-  <link rel="icon" href="icon-192.png" type="image/png" sizes="192x192" />
-  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
-  <script src="i18n-langs.js?v=20261030a"></script>
-  <script src="i18n.js?v=20261030a"></script>
-  <script src="site.js?v=20261029a"></script>
-  <link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="styles.css?v=20261030a" />
+  <link rel="icon" href="../favicon.ico" sizes="48x48" />
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="../icon-192.png" type="image/png" sizes="192x192" />
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png" />
+  <script src="../i18n-langs.js?v=20261030a"></script>
+  <script src="../i18n.js?v=20261030a"></script>
+  <script src="../site.js?v=20261029a"></script>
+  <link rel="preload" href="../fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="../styles.css?v=20261030a" />
   <!-- pages préchargées au survol d'un lien : changement de page quasi instantané (la galerie 3D est seulement préchargée) -->
   <script type="speculationrules">
     {"prerender":[{"where":{"and":[{"selector_matches":".nav__link, .bottom__link--legal"},{"not":{"selector_matches":"[href='./'], [href='../']"}}]},"eagerness":"conservative"}],
@@ -215,7 +215,7 @@
     <section class="abx" id="artiste" aria-labelledby="t-artiste">
       <h2 class="bigTitle bigTitle--sub bigTitle--tc tc-coral" id="t-artiste" data-n="01">L’artiste</h2><span class="tbar tc-coral" aria-hidden="true"></span>
       <div class="abx__grid">
-        <figure class="abx__photo"><img src="images/annickbouvattier.jpg" alt="Annick Bouvattier dans son atelier" /><figcaption>Annick Bouvattier</figcaption></figure>
+        <figure class="abx__photo"><img src="../images/annickbouvattier.jpg" alt="Annick Bouvattier dans son atelier" /><figcaption>Annick Bouvattier</figcaption></figure>
         <div class="abx__text" data-lang="fr">
           <p><strong>Annick Bouvattier</strong> est née à Nevers. Son père, pédiatre et amateur d’art, lui transmet dès sa prime enfance le <strong>goût de l’art et de la peinture</strong>.</p>
           <p>Baccalauréat scientifique en poche, elle délaisse la tradition familiale des études de médecine pour s’inscrire à l’école de mode <strong>“Bercot – Marie Rucki”</strong> où, pendant deux ans, elle reçoit une <strong>formation de styliste</strong>. Ses créations, présentées à Paris et à la Villa Médicis à Rome, connaissent un succès d’estime auprès des professionnels et font l’objet de <strong>parutions dans la presse spécialisée</strong>.</p>
@@ -252,8 +252,8 @@
     <!-- une parution = un <article class="pub"> (couverture + texte) -->
     <section class="prx" aria-label="Parutions">
       <article class="pub prx__pub">
-        <button class="prx__cover" type="button" data-pdf="images/ArtistesAnnickBouvattier.pdf" data-title='Magazine "Artistes" — Mai/Juin 2019' aria-label="Lire le PDF">
-          <img src="images/ArtistesCover.jpg" alt="Couverture du magazine « Artistes », mai/juin 2019">
+        <button class="prx__cover" type="button" data-pdf="../images/ArtistesAnnickBouvattier.pdf" data-title='Magazine "Artistes" — Mai/Juin 2019' aria-label="Lire le PDF">
+          <img src="../images/ArtistesCover.jpg" alt="Couverture du magazine « Artistes », mai/juin 2019">
         </button>
         <div class="prx__txt">
           <p class="prx__k"><span>01</span>Mai / Juin 2019</p>
@@ -261,8 +261,8 @@
           <p class="prx__q">« Réussir à sublimer la féminité »</p>
           <p class="prx__d">Dossier « Savoir-faire » consacré à la peinture d’Annick Bouvattier.</p>
           <div class="prx__acts">
-            <button type="button" data-pdf="images/ArtistesAnnickBouvattier.pdf" data-title='Magazine "Artistes" — Mai/Juin 2019'>Lire ↗</button>
-            <a href="images/ArtistesAnnickBouvattier.pdf" download>Télécharger ↓</a>
+            <button type="button" data-pdf="../images/ArtistesAnnickBouvattier.pdf" data-title='Magazine "Artistes" — Mai/Juin 2019'>Lire ↗</button>
+            <a href="../images/ArtistesAnnickBouvattier.pdf" download>Télécharger ↓</a>
           </div>
         </div>
       </article>
@@ -429,7 +429,7 @@
   <div class="reader__bar">
     <span class="reader__title" id="readerTitle"></span>
     <span class="reader__count"><b id="readerCur">1</b> / <span id="readerTot">4</span></span>
-    <a class="reader__dl" id="readerDl" href="images/ArtistesAnnickBouvattier.pdf" download>Télécharger</a>
+    <a class="reader__dl" id="readerDl" href="../images/ArtistesAnnickBouvattier.pdf" download>Télécharger</a>
     <button class="reader__btn" id="readerClose" type="button" aria-label="Fermer"><svg viewBox="0 0 16 16"><path d="M3 3l10 10M13 3 3 13"/></svg></button>
   </div>
   <div class="reader__pages" id="readerPages"></div>
@@ -441,7 +441,7 @@
 
 <script>
 (() => {
-  const PAGES = ["images/presse/p1.jpg", "images/presse/p2.jpg", "images/presse/p3.jpg", "images/presse/p4.jpg"];
+  const PAGES = ["../images/presse/p1.jpg", "../images/presse/p2.jpg", "../images/presse/p3.jpg", "../images/presse/p4.jpg"];
   const r = document.getElementById("reader"), box = document.getElementById("readerPages");
   const cur = document.getElementById("readerCur");
   document.getElementById("readerTot").textContent = PAGES.length;

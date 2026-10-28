@@ -19,6 +19,9 @@
 import * as THREE from "three";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 
+// racine du site (dossier de galerie.js) : les chemins restent justes depuis /fr/, /en/…
+const ROOT = new URL(".", import.meta.url).href;
+
 const CFG = {
   count: 12,            // toiles tirées au hasard (dont 2 de part et d'autre de la porte)
   eye: 1.6,             // hauteur des yeux (m)
@@ -31,7 +34,7 @@ const CFG = {
   door: { w: 1.4, h: 2.6 },
   vestibule: 3.2,       // profondeur du vestibule (m)
   travel: 1.3,          // durée d'un déplacement (s)
-  hdList: "images/hd/list.json",
+  hdList: ROOT + "images/hd/list.json",
   wall: 0x2c406a,       // bleu nuit
   trim: 0x1a2742,
   // version claire (bouton du header) : murs ivoire, plinthes grège, fond papier, lumière plus généreuse
@@ -73,7 +76,7 @@ function shuffle(arr){
 // Œuvres disponibles avec dimensions lisibles, en mètres ; CFG.count tirées au hasard.
 // Si l'image et le format ne vont pas dans le même sens (portrait / paysage), on se fie à l'image.
 async function loadWorks(){
-  const [all, sizes] = await Promise.all([abouvSheet.artworks(), loadJSON("images/thumbs/sizes.json")]);
+  const [all, sizes] = await Promise.all([abouvSheet.artworks(), loadJSON(ROOT + "images/thumbs/sizes.json")]);
   const works = [];
   for (const a of all){
     if (a.status !== "disponible") continue;
@@ -542,7 +545,7 @@ async function main(){
     for (const p of pieces){
       if (p.hd || !hdFiles.has(p.work.file) || p.center.distanceTo(pos) > 3.5) continue;
       p.hd = true;
-      loader.load(encodeURI("images/hd/" + p.work.file), (t) => {
+      loader.load(ROOT + encodeURI("images/hd/" + p.work.file), (t) => {
         const old = p.face.map; p.face.map = prepare(t); p.face.needsUpdate = true; if (old) old.dispose();
       }, undefined, () => {});
     }

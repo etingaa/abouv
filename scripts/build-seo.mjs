@@ -101,7 +101,12 @@ async function loadSheet(){
 async function loadArtworks(){
   const rows = parseCSV(await loadSheet());
   const header = rows.shift().map(normalizeHeader);
-  const col = (n) => header.indexOf(normalizeHeader(n));
+  // titre de colonne abîmé dans le Sheet : la colonne à sa place habituelle (comme sheet.js)
+  const COLS = ["nom", "annee", "categorie", "technique", "format", "disponible", "jpg", "disponible ou ?", "accueil"];
+  const col = (n) => {
+    const i = header.indexOf(normalizeHeader(n)), k = COLS.indexOf(normalizeHeader(n));
+    return i >= 0 || k < 0 || COLS.includes(header[k]) ? i : k;
+  };
   const seen = new Map();
   const list = rows.map(r => {
     const file = cleanFile(cleanNA(r[col("jpg")]));
@@ -297,8 +302,19 @@ function alternates(rel){
 // page source (française) -> page de la langue : lang, adresses, balises de partage, titre et description traduits
 // (le texte de la page est traduit à l'affichage par i18n.js, qui lit la langue dans l'adresse)
 // texts(fr) -> traduction d'un titre / d'une description ; desc : description déjà écrite dans la langue (œuvres)
+// fichiers (images, styles, scripts, polices, données) : un dossier plus haut, puisque la page est dans fr/, en/…
+// (GitHub Pages ne lit pas le .htaccess : /fr/images/… n'y existe pas) ; les liens vers les pages ne bougent pas
+const ASSET = /\.(?:css|m?js|json|csv|ico|svg|png|jpe?g|webp|gif|woff2?|pdf|mp4|txt)(?:[?#][^"]*)?$/i;
+const isRel = (u) => !/^(?:[a-z]+:|\/|#|\$)/i.test(u);   // ${…} : valeur écrite par un script
+function rebase(html){
+  return html
+    .replace(/(\s(?:src|href|data-pdf|poster)=")([^"]+)"/g, (m, a, u) => isRel(u) && ASSET.test(u) ? `${a}../${u}"` : m)
+    .replace(/(\ssrcset=")([^"]+)"/g, (m, a, v) => a + v.split(",").map(c => c.replace(/^(\s*)(\S+)/, (x, sp, u) => isRel(u) ? `${sp}../${u}` : x)).join(",") + '"')
+    // chemins écrits dans les scripts et les styles de la page : "images/…", 'data/…', url(fonts/…)
+    .replace(/(["'`(])(images|data|fonts)\//g, "$1../$2/");
+}
 function localize(html, lang, rel, texts){
-  html = html.replace('<html lang="fr"', `<html lang="${lang}"`)
+  html = rebase(html).replace('<html lang="fr"', `<html lang="${lang}"`)
     .split(`"${langUrl("fr", rel)}"`).join(`"${langUrl(lang, rel)}"`)
     .replace(/(<meta property="og:locale" content=")[^"]*"/, `$1${OG_LOCALE[lang]}"`)
     .replace(/(<link rel="canonical" href="[^"]*" \/>)/, `$1\n  ${alternates(rel)}`);
@@ -448,8 +464,8 @@ async function main(){
     await writeFile(path.join(ROOT, page.file), html);
   }
 
-  // 3. une copie de chaque page par langue (fr/, en/, es/, it/) : mêmes fichiers, adresses relatives inchangées
-  //    (les images, styles et scripts demandés sous /en/… sont servis depuis la racine : voir .htaccess)
+  // 3. une copie de chaque page par langue (fr/, en/, es/, it/) : liens entre pages inchangés,
+  //    fichiers (images, styles, scripts) pris un dossier plus haut (voir rebase)
   for (const lang of LANGS){
     const dir = path.join(ROOT, lang), odir = path.join(dir, "oeuvres");
     await mkdir(odir, { recursive: true });

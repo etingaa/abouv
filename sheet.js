@@ -10,7 +10,9 @@
 
   const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSmK-RAKlpq_VMnhd78eWdWeMTnCkU3_-411IzeTyzO9j0zbJdkkhzfxlRDZpqzKixpoUgTtAAI_Auw/pub?output=csv";
   const CACHE_KEY = "abouv:sheet-csv";
-  const SNAPSHOT_URL = "data/sheet.csv";
+  // racine du site (dossier de sheet.js) : les chemins restent justes depuis /fr/, /en/oeuvres/…
+  const ROOT = document.currentScript ? new URL(".", document.currentScript.src).href : "";
+  const SNAPSHOT_URL = ROOT + "data/sheet.csv";
 
   // minuscules, sans accents : "Disponible où ?" -> "disponible ou ?"
   function normalizeHeader(h){
@@ -97,12 +99,20 @@
     return refresh(null);
   }
 
+  // ordre habituel des colonnes : si un titre de colonne est effacé ou modifié par erreur dans le Sheet
+  // (ex. « Nom » remplacé par des lettres tapées au hasard), on retrouve la colonne à sa place habituelle
+  const COLS = ["nom", "annee", "categorie", "technique", "format", "disponible", "jpg", "disponible ou ?", "accueil"];
+
   // -> { rows: [[…], …] sans l'en-tête, col("Nom") -> index de la colonne }
   async function load(){
     const rows = parseCSV(await fetchCSV());
     if(!rows.length) throw new Error("Sheet vide");
     const header = rows.shift().map(normalizeHeader);
-    return { rows, col: (name) => header.indexOf(normalizeHeader(name)) };
+    const col = (name) => {
+      const n = normalizeHeader(name), i = header.indexOf(n), k = COLS.indexOf(n);
+      return i >= 0 || k < 0 || COLS.includes(header[k]) ? i : k;
+    };
+    return { rows, col };
   }
 
   function cleanNA(v){
@@ -138,9 +148,9 @@
     });
   }
 
-  const imagePath = (file) => encodeURI(`images/${file}`);
-  const thumbPath = (file) => encodeURI(`images/thumbs/${file}`); // voir scripts/make-thumbs.py
-  const thumbSmallPath = (file) => encodeURI(`images/thumbs/s/${file}`); // 640 px de large, pour la grille
+  const imagePath = (file) => ROOT + encodeURI(`images/${file}`);
+  const thumbPath = (file) => ROOT + encodeURI(`images/thumbs/${file}`); // voir scripts/make-thumbs.py
+  const thumbSmallPath = (file) => ROOT + encodeURI(`images/thumbs/s/${file}`); // 640 px de large, pour la grille
 
   // Une œuvre par ligne ayant un Nom et un Jpg.
   // status : « VENDUE » -> "vendue", toute autre valeur -> "disponible"

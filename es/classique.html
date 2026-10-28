@@ -15,19 +15,19 @@
   <meta property="og:locale" content="es_ES" />
   <meta property="og:title" content="Annick Bouvattier — Pintora" />
   <meta property="og:description" content="Annick Bouvattier, pintora: óleos y retratos de mujeres, en juegos de luces y sombras." />
-  <link rel="icon" href="favicon.ico" sizes="48x48" />
-  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-  <link rel="icon" href="icon-192.png" type="image/png" sizes="192x192" />
-  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
-  <script src="i18n-langs.js?v=20261030a"></script>
-  <script src="i18n.js?v=20261030a"></script>
-  <script src="site.js?v=20261029a"></script>
+  <link rel="icon" href="../favicon.ico" sizes="48x48" />
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="../icon-192.png" type="image/png" sizes="192x192" />
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png" />
+  <script src="../i18n-langs.js?v=20261030a"></script>
+  <script src="../i18n.js?v=20261030a"></script>
+  <script src="../site.js?v=20261029a"></script>
   <link rel="preconnect" href="https://docs.google.com" crossorigin />
-  <script src="sheet.js?v=20261027a"></script>
-  <link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <script src="../sheet.js?v=20261027b"></script>
+  <link rel="preload" href="../fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
   <style>html{background:#060b18}</style>
   <title>Annick Bouvattier — Pintora</title>
-  <link rel="stylesheet" href="styles.css?v=20261030a" />
+  <link rel="stylesheet" href="../styles.css?v=20261030a" />
   <style>
     /* Accueil sans 3D (repli : appareil sans 3D, chargement trop lent, erreur) — dans le style du site */
     .hm{ margin:clamp(8px, 2vh, 24px) 0 80px; }
@@ -113,7 +113,7 @@
     "use strict";
     const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[c]);
     // les toiles disponibles (les plus récentes d'abord), dont l'image existe
-    Promise.all([abouvSheet.artworks(), fetch("images/thumbs/sizes.json").then(r => r.json()).catch(() => null)]).then(([list, sizes]) => {
+    Promise.all([abouvSheet.artworks(), fetch("../images/thumbs/sizes.json").then(r => r.json()).catch(() => null)]).then(([list, sizes]) => {
       const av = list.filter(a => a.status === "disponible" && (!sizes || sizes[a.file]))
         .sort((a, b) => (b.year || 0) - (a.year || 0) || a.title.localeCompare(b.title, "fr"));
       document.getElementById("hmN").textContent = av.length;
