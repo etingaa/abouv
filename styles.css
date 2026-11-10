@@ -1542,7 +1542,7 @@ body.portfolio .masonry.is-cols .mcol{ flex:1 1 0; min-width:0; display:flex; fl
 
 /* « Disponible » en vert (point et texte), partout : vignettes, fiche, pages d'œuvres */
 body.salle{ --green-rgb:118,196,146; --green:rgb(var(--green-rgb)); }
-html[data-theme="light"] body.salle{ --green-rgb:38,122,74; --green:rgb(var(--green-rgb)); }
+html[data-theme="light"] body.salle{ --green-rgb:28,100,60; --green:rgb(var(--green-rgb)); }
 body.portfolio .badge.disponible{ color:var(--green) !important; }
 body.portfolio .badge.disponible::before{ background:var(--green) !important; }
 .statusText.disponible{ color:var(--green) !important; }
@@ -1553,7 +1553,7 @@ body.portfolio .badge.disponible::before{ background:var(--green) !important; }
    PETITES TOUCHES DE COULEUR (comme Expositions et Galeries) : corail, bleu, sable, vert
    ========================= */
 body.salle{ --t-coral:236,118,104; --t-blue:126,162,240; --t-sand:222,184,112; --t-green:118,196,146; }
-html[data-theme="light"] body.salle{ --t-coral:200,64,52; --t-blue:34,82,180; --t-sand:160,110,24; --t-green:38,122,74; }
+html[data-theme="light"] body.salle{ --t-coral:166,48,38; --t-blue:34,82,180; --t-sand:124,84,14; --t-green:28,100,60; }   /* ≥ 4,5:1 sur le papier et sur les pastilles */
 .tc-coral{ --tc:var(--t-coral); } .tc-blue{ --tc:var(--t-blue); } .tc-sand{ --tc:var(--t-sand); } .tc-green{ --tc:var(--t-green); }
 
 /* sous-menu À propos : un point de couleur par partie */

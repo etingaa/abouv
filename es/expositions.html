@@ -456,7 +456,7 @@
     .rv.is-in{ opacity:1; transform:none; }
     .tlCard.rv.is-in.is-dim{ opacity:.18; }
     /* typographie alignée sur le header : capitales Archivo (nom en 700 élargi, menu en 500 espacé) */
-    .xtitle{ font-weight:700 !important; font-stretch:112% !important; text-transform:uppercase; letter-spacing:-.01em !important; font-size:clamp(48px, 8.4vw, 132px) !important; line-height:.9 !important; }
+    .xtitle{ font-weight:700 !important; font-stretch:112% !important; text-transform:uppercase; letter-spacing:-.01em !important; font-size:clamp(min(48px, 10.4vw), 8.4vw, 132px) !important; line-height:.9 !important; }   /* téléphone : rétrécit pour tenir sur la largeur (48 px débordait à 390 px) */
     .xtitle sup{ font-weight:500; letter-spacing:.06em; font-stretch:100%; }
     .xpill{ text-transform:uppercase; letter-spacing:.06em !important; font-size:13px !important; font-weight:500 !important; }
     .xrun__c{ font-weight:500 !important; font-stretch:100% !important; text-transform:uppercase; letter-spacing:.06em !important; font-size:clamp(22px, 2.4vw, 34px) !important; }
@@ -520,7 +520,7 @@
     .xall__ty{ grid-column:3; grid-row:1; display:inline-flex; align-items:center; gap:6px; font-size:10.5px; font-weight:500; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-faint); white-space:nowrap; }
     /* une couleur par type : personnelle (corail), collective (bleu), salon (sable) */
     .xall{ --c-solo:236,118,104; --c-group:126,162,240; --c-salon:222,184,112; }
-    html[data-theme="light"] .xall{ --c-solo:200,64,52; --c-group:34,82,180; --c-salon:160,110,24; }
+    html[data-theme="light"] .xall{ --c-solo:166,48,38; --c-group:34,82,180; --c-salon:124,84,14; }
     .xall__ty{ padding:3px 9px 3px 8px; border-radius:999px; }
     .xall__ty::before{ content:""; width:6px; height:6px; border-radius:50%; }
     .xall li[data-type="solo"]  .xall__ty{ color:rgb(var(--c-solo));  background:rgba(var(--c-solo),.14); }
