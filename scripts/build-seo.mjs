@@ -227,7 +227,8 @@ function workPage(a, i, list, tpl, sizes, D, big = {}){
   <meta name="description" content="${esc(clip(fr))}" />
   <meta name="theme-color" content="#0B1120" />
   <link rel="canonical" href="${url}" />
-  <meta property="og:type" content="website" />
+  <meta name="author" content="${ARTIST}" />
+  <meta property="og:type" content="article" />
   <meta property="og:site_name" content="${ARTIST}" />
   <meta property="og:locale" content="fr_FR" />
   <meta property="og:title" content="${esc(`${a.title} — ${ARTIST}`)}" />
@@ -389,9 +390,13 @@ function headBlock(html, page, tpl, list){
   const url = SITE_URL + "/fr/" + page.url;
   const title = meta(html, /<title>([^<]*)<\/title>/);
   const desc = meta(html, /<meta name="description" content="([^"]*)"/);
-  const hasOgTitle = /property="og:title"/.test(html.replace(/<!-- seo:head -->[\s\S]*?<!-- \/seo:head -->/, ""));
+  const outside = html.replace(/<!-- seo:head -->[\s\S]*?<!-- \/seo:head -->/, "");   // balises écrites à la main
+  const hasOgTitle = /property="og:title"/.test(outside);
   const lines = [
     `<link rel="canonical" href="${url}" />`,
+    ...(/name="author"/.test(outside) ? [] : [`<meta name="author" content="${ARTIST}" />`]),
+    // pages du site : « website » (les pages d'œuvres, faites plus haut, sont des « article »)
+    ...(/property="og:type"/.test(outside) ? [] : [`<meta property="og:type" content="website" />`]),
     ...(hasOgTitle ? [] : [`<meta property="og:title" content="${title}" />`, `<meta property="og:description" content="${desc}" />`]),
     `<meta property="og:url" content="${url}" />`,
     `<meta property="og:image" content="${abs(DEFAULT_OG_IMAGE)}" />`,
