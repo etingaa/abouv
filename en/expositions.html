@@ -17,11 +17,11 @@
   <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
   <link rel="icon" href="../icon-192.png" type="image/png" sizes="192x192" />
   <link rel="apple-touch-icon" href="../apple-touch-icon.png" />
-  <script src="../i18n-langs.js?v=20261030a"></script>
-  <script src="../i18n.js?v=20261030a"></script>
+  <script src="../i18n-langs.js?v=20261110a"></script>
+  <script src="../i18n.js?v=20261110a"></script>
   <script src="../site.js?v=20261029a"></script>
   <link rel="preload" href="../fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="../styles.css?v=20261030a" />
+  <link rel="stylesheet" href="../styles.css?v=20261110a" />
   <!-- pages préchargées au survol d'un lien : changement de page quasi instantané (la galerie 3D est seulement préchargée) -->
   <script type="speculationrules">
     {"prerender":[{"where":{"and":[{"selector_matches":".nav__link, .bottom__link--legal"},{"not":{"selector_matches":"[href='./'], [href='../']"}}]},"eagerness":"conservative"}],
@@ -322,7 +322,7 @@
       margin:0; font-size:clamp(64px, 11vw, 170px); font-weight:600; line-height:.85; letter-spacing:-.045em; color:var(--ink);
       display:flex; align-items:center; gap:.12em;
     }
-    .xhead__years i{ font-style:normal; font-weight:300; color:rgba(var(--ink-rgb),.35); }
+    .xhead__years i{ font-style:normal; font-weight:300; color:var(--ink-faint); }
     .xhead__n{ margin:0 0 .4em; font-size:16px; color:var(--ink-faint); }
     .xhead__n b{ font-weight:500; color:var(--ink); font-size:22px; margin-right:4px; }
 
@@ -347,7 +347,7 @@
     .xrun__track{ display:flex; width:max-content; animation:xrun 60s linear infinite; }
     .xrun:hover .xrun__track{ animation-play-state:paused; }
     .xrun__dup{ display:contents; }
-    .xrun__c{ padding:0; border:0; background:none; cursor:pointer; font:inherit; font-size:clamp(20px, 2vw, 28px); color:rgba(var(--ink-rgb),.55); white-space:nowrap; transition:color .2s ease; }
+    .xrun__c{ padding:0; border:0; background:none; cursor:pointer; font:inherit; font-size:clamp(20px, 2vw, 28px); color:var(--ink-faint); white-space:nowrap; transition:color .2s ease; }
     .xrun__c::after{ content:"✦"; display:inline-block; margin:0 28px; font-size:.5em; vertical-align:middle; color:var(--accent); }
     .xrun__c:hover, .xrun__c.is-on{ color:var(--ink); }
     @keyframes xrun{ to{ transform:translateX(-50%); } }
@@ -434,7 +434,7 @@
 
     .xrun{ margin-top:56px !important; padding:22px 0 !important; }
     .xrun__track{ animation-duration:110s !important; }
-    .xrun__c{ font-size:clamp(28px, 3.2vw, 46px) !important; font-weight:200 !important; font-stretch:125%; letter-spacing:-.02em; color:rgba(var(--ink-rgb),.38) !important; }
+    .xrun__c{ font-size:clamp(28px, 3.2vw, 46px) !important; font-weight:200 !important; font-stretch:125%; letter-spacing:-.02em; color:var(--ink-faint) !important; }   /* gris discret (contraste suffisant), blanc au survol */
     .xrun__c::after{ content:"" !important; display:inline-block; width:.9em; height:1px; margin:0 .55em !important; vertical-align:middle; background:rgba(var(--ink-rgb),.25) !important; }
     .xrun__c:hover, .xrun__c.is-on{ color:var(--ink) !important; }
 
@@ -583,17 +583,20 @@
   <link rel="alternate" hreflang="it" href="https://annickbouvattier.art/it/expositions" />
   <link rel="alternate" hreflang="x-default" href="https://annickbouvattier.art/fr/expositions" />
   <meta property="og:url" content="https://annickbouvattier.art/en/expositions" />
-  <meta property="og:image" content="https://annickbouvattier.art/images/Enigma.jpg" />
+  <meta property="og:image" content="https://annickbouvattier.art/images/og-default.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Exhibitions — Annick Bouvattier" />
   <meta name="twitter:description" content="Solo shows, group shows and art fairs by Annick Bouvattier since 1992." />
-  <meta name="twitter:image" content="https://annickbouvattier.art/images/Enigma.jpg" />
+  <meta name="twitter:image" content="https://annickbouvattier.art/images/og-default.jpg" />
   <!-- /seo:head -->
 </head>
 
 <body class="expositions salle salle--expositions">
   <div class="page">
   <div class="container">
+    <a class="skip" href="#contenu">Aller au contenu</a>
     <header class="top">
       <a class="brand" href="./">ANNICK&nbsp;BOUVATTIER</a>
       <nav class="top__nav" aria-label="Navigation principale">
@@ -606,7 +609,9 @@
       </nav>
     </header>
 
-    <h1 class="sr-only">Expositions</h1>
+    <main id="contenu" class="pageMain">
+
+    <h1 class="sr-only" id="pageTitle">Expositions</h1>
 
     <!-- En ce moment (optionnel : voir nowExpo dans le script) -->
     <section class="now" id="now" hidden>
@@ -615,7 +620,7 @@
         <div class="kicker">En ce moment</div>
         <h2 class="now__title" id="nowTitle"></h2>
         <div class="now__line" id="nowLine"></div>
-        <a class="btn" id="nowBtn" href="#" target="_blank" rel="noopener noreferrer">Voir les infos</a>
+        <a class="btn" id="nowBtn" href="#" target="_blank" rel="noopener noreferrer">Voir les infos<span class="sr-only"> (nouvel onglet)</span></a>
       </div>
     </section>
 
@@ -709,10 +714,12 @@
     <!-- Vue carte : une pastille par ville, avec son nombre d'expositions -->
     <p class="empty" id="empty" hidden>Aucune exposition ne correspond aux filtres.</p>
 
+    </main>
+
     <footer class="bottom">
         <div class="bottom__left">
-          <a class="bottom__link" href="https://www.instagram.com/annick.bouvattier/" target="_blank" rel="noopener noreferrer">instagram</a>
-          <a class="bottom__link" href="https://www.facebook.com/annick.bouvattier/" target="_blank" rel="noopener noreferrer">facebook</a>
+          <a class="bottom__link" href="https://www.instagram.com/annick.bouvattier/" target="_blank" rel="noopener noreferrer">instagram<span class="sr-only"> (nouvel onglet)</span></a>
+          <a class="bottom__link" href="https://www.facebook.com/annick.bouvattier/" target="_blank" rel="noopener noreferrer">facebook<span class="sr-only"> (nouvel onglet)</span></a>
         </div>
         <a class="bottom__link bottom__link--legal" href="mentions-legales">mentions légales</a>
       </footer>
@@ -1017,10 +1024,11 @@
         const seq = (hidden) => `<div class="xrun__seq"${hidden ? ' aria-hidden="true"' : ""}>${cities.map(c =>
           `<span class="xrun__c" data-city="${escapeHtml(c)}">${escapeHtml(t(c))}</span>`).join("")}</div>`;
         box.innerHTML = `
-          <h2 class="xtitle">${t("Expositions")}<sup></sup></h2>
+          <h1 class="xtitle">${t("Expositions")}<sup aria-hidden="true"></sup></h1>
           <p class="xfilter" hidden></p>
           <div class="xrun" aria-hidden="true"><div class="xrun__track">${seq(false)}${seq(true)}</div></div>
           ${overview(list)}`;
+        document.getElementById("pageTitle")?.remove();   // le titre visible ci-dessus le remplace
         box.querySelector(".xfilter").addEventListener("click", (e) => { if (e.target.closest("button")) goCity(filters.q); });
         // décennies : on glisse de l'une à l'autre (doigt, pavé tactile, flèches, onglets) ; l'onglet suit
         const grid = box.querySelector(".xall__grid"), colsEl = [...grid.children], tabsEl = [...box.querySelectorAll(".xall__tab")];

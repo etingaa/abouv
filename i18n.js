@@ -25,6 +25,13 @@
   const EN = {
     /* ---------- Commun : titre, menu, pied de page ---------- */
     "Navigation principale": "Main navigation",
+    "Aller au contenu": "Skip to content",
+    "(nouvel onglet)": "(new tab)",
+    "Envoi…": "Sending…",
+    "Rechercher…": "Search…",
+    "texte complet dans le PDF": "full text in the PDF",
+    "Lire l'article du magazine Artistes (mai/juin 2019)": "Read the article in Artistes magazine (May/June 2019)",
+    "Votre message a bien été envoyé à Annick Bouvattier.": "Your message has been sent to Annick Bouvattier.",
     "Accueil": "Home",
     "Galeries": "Galleries",
     "Expositions": "Exhibitions",

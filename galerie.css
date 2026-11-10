@@ -149,10 +149,14 @@ html[data-theme="light"] .g3d-ctrl__play[aria-pressed="true"]{ color:#c84034; }
 .g3d-ctrl__path::-moz-range-progress{ height:2px; background:#ec7668; }
 .g3d-ctrl__path::-webkit-slider-thumb{ -webkit-appearance:none; width:14px; height:14px; margin-top:-6px; border-radius:50%; background:#ec7668; border:2px solid #efe9df; box-shadow:0 0 0 4px rgba(236,118,104,.2); }
 .g3d-ctrl__path::-moz-range-thumb{ width:12px; height:12px; border-radius:50%; background:#ec7668; border:2px solid #efe9df; }
-.g3d-ctrl__path:focus-visible{ outline:none; }
+.g3d-ctrl__path:focus-visible{ outline:none; }   /* le repère clavier est sur la pastille (ci-dessous) */
+.g3d-ctrl__path:focus-visible::-webkit-slider-thumb{ box-shadow:0 0 0 3px #0b1120, 0 0 0 5px #efe9df; }
+.g3d-ctrl__path:focus-visible::-moz-range-thumb{ box-shadow:0 0 0 3px #0b1120, 0 0 0 5px #efe9df; }
 html[data-theme="light"] .g3d-ctrl__path::-webkit-slider-runnable-track{ background:rgba(22,30,56,.25); }
 html[data-theme="light"] .g3d-ctrl__path::-moz-range-track{ background:rgba(22,30,56,.25); }
 html[data-theme="light"] .g3d-ctrl__path::-webkit-slider-thumb{ background:#c84034; border-color:#efebe3; }
+html[data-theme="light"] .g3d-ctrl__path:focus-visible::-webkit-slider-thumb{ box-shadow:0 0 0 3px #efebe3, 0 0 0 5px #161e38; }
+html[data-theme="light"] .g3d-ctrl__path:focus-visible::-moz-range-thumb{ box-shadow:0 0 0 3px #efebe3, 0 0 0 5px #161e38; }
 /* téléphone : la capsule prend la largeur de l'écran, le curseur s'étire (et on peut glisser sur l'image) */
 @media (max-width:760px){
   .g3d-ctrl{ left:16px; right:16px; transform:none; justify-content:space-between; height:44px; }

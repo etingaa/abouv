@@ -108,7 +108,7 @@
     if (!box) return;
 
     box.innerHTML = `
-      <h2 class="gx__title">${t("Galeries")}<sup>${GALLERIES.length}</sup></h2>
+      <h1 class="gx__title">${t("Galeries")}<sup aria-hidden="true">${GALLERIES.length}</sup></h1>
       <div class="gx__map">${mapSVG()}</div>
       <figure class="gm" aria-hidden="true"><figcaption class="gm__cap"></figcaption>${mobileMapSVG()}
         <div class="gm__nav">
@@ -128,8 +128,8 @@
             <p class="gx__addr">${escapeHtml(g.address)}</p>
             ${exposLine(g)}
             <div class="gx__acts">
-              ${g.website ? `<a href="${escapeHtml(g.website)}" target="_blank" rel="noopener noreferrer">${t("Site")}</a>` : ""}
-              <a href="https://www.google.com/maps/dir/?api=1&destination=${g.lat},${g.lng}" target="_blank" rel="noopener noreferrer">${t("Itinéraire")}</a>
+              ${g.website ? `<a href="${escapeHtml(g.website)}" target="_blank" rel="noopener noreferrer">${t("Site")}<span class="sr-only"> ${t("(nouvel onglet)")}</span></a>` : ""}
+              <a href="https://www.google.com/maps/dir/?api=1&destination=${g.lat},${g.lng}" target="_blank" rel="noopener noreferrer">${t("Itinéraire")}<span class="sr-only"> ${t("(nouvel onglet)")}</span></a>
               ${g.phone ? `<a href="tel:${g.phone.replace(/[^\d+]/g, "")}">${t("Appeler")}</a>` : ""}
             </div>
           </div>

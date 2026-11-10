@@ -25,7 +25,8 @@ import { fileURLToPath } from "node:url";
 
 /* ====== réglages ====== */
 const SITE_URL = "https://annickbouvattier.art";          // adresse du site, sans « / » final
-const DEFAULT_OG_IMAGE = "images/Enigma.jpg";             // image de partage des pages principales (une toile disponible)
+const DEFAULT_OG_IMAGE = "images/og-default.jpg";        // image de partage des pages principales : « Enigma » centrée,
+                                                          // 1200 × 630 (= images/og/Enigma.jpg, faite par make-thumbs.py)
 const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSmK-RAKlpq_VMnhd78eWdWeMTnCkU3_-411IzeTyzO9j0zbJdkkhzfxlRDZpqzKixpoUgTtAAI_Auw/pub?output=csv";
 const ARTIST = "Annick Bouvattier";
 const LANGS = ["fr", "en", "es", "it"];                    // une copie de chaque page par langue : fr/…, en/…, es/…, it/…
@@ -187,14 +188,17 @@ function clip(s, n = 160){
   return out.trim() || s.slice(0, n - 1).replace(/\s+\S*$/, "") + "…";
 }
 
-function workPage(a, i, list, tpl, sizes, D){
+function workPage(a, i, list, tpl, sizes, D, big = {}){
   const prev = list[(i - 1 + list.length) % list.length], next = list[(i + 1) % list.length];
-  const d = dims(a), url = abs(`fr/oeuvres/${a.slug}`), img = abs(`images/${a.file}`);
+  const d = dims(a), url = abs(`fr/oeuvres/${a.slug}`), img = abs(`images/og/${a.file}`);
   const title = `${a.title} — ${[a.technique, d].filter(Boolean).join(" ")} | ${ARTIST}`;
   const fr = describe(a, D);
-  const alt = `${a.title}${a.technique ? `, ${a.technique.toLowerCase()}` : ""}, par ${ARTIST}`;
+  // texte alternatif : titre, technique, année (l'année n'est pas affichée sur la page, mais lue par les lecteurs d'écran)
+  const alt = [a.title, a.technique && a.technique.toLowerCase(), a.year, `par ${ARTIST}`].filter(Boolean).join(", ");
   const wh = sizes[a.file] ? ` width="${sizes[a.file][0]}" height="${sizes[a.file][1]}"` : "";
   const thumb = `../images/thumbs/${a.file}`;
+  // grande image : version 2000 px (images/2000/, faite par make-thumbs.py) ; l'original peut dépasser 100 mégapixels
+  const large = `../images/${big[a.file] ? "2000/" : ""}${a.file}`;
   const ld = {
     "@context": "https://schema.org", "@type": "VisualArtwork",
     name: a.title, url, image: img,
@@ -230,6 +234,8 @@ function workPage(a, i, list, tpl, sizes, D){
   <meta property="og:description" content="${esc(clip(fr))}" />
   <meta property="og:url" content="${url}" />
   <meta property="og:image" content="${img}" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
   <meta property="og:image:alt" content="${esc(alt)}" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="${esc(`${a.title} — ${ARTIST}`)}" />
@@ -255,13 +261,14 @@ ${jsonld(ld)}
 <body class="oeuvre salle salle--portfolio">
   <div class="page">
     <div class="container">
+      <a class="skip" href="#contenu">Aller au contenu</a>
       ${tpl.header}
 
-      <main class="ov">
+      <main class="ov" id="contenu">
         <a class="ov__back" href="../portfolio"><span aria-hidden="true">← </span><span>Portfolio</span></a>
         <article class="ov__grid">
           <figure class="ov__media">
-            <img src="../images/${encodeURI(a.file)}" srcset="${encodeURI(thumb)} ${sizes[a.file] ? sizes[a.file][0] : 1100}w, ../images/${encodeURI(a.file)} 2000w" sizes="(max-width:900px) 100vw, 75vw" alt="${esc(alt)}"${wh} fetchpriority="high" decoding="async" />
+            <picture>${sizes[a.file] && sizes[a.file][2] && big[a.file] ? `<source type="image/webp" srcset="${encodeURI(thumb.replace(/\.jpg$/i, ".webp"))} ${sizes[a.file][0]}w, ${encodeURI(large.replace(/\.jpg$/i, ".webp"))} ${big[a.file][0]}w" sizes="(max-width:900px) 100vw, 75vw">` : ""}<img src="${encodeURI(large)}" srcset="${encodeURI(thumb)} ${sizes[a.file] ? sizes[a.file][0] : 1100}w, ${encodeURI(large)} ${big[a.file] ? big[a.file][0] : 2000}w" sizes="(max-width:900px) 100vw, 75vw" alt="${esc(alt)}"${wh} fetchpriority="high" decoding="async" /></picture>
             <a class="ov__more" href="#infos"><span>Informations</span><svg viewBox="0 0 14 8" aria-hidden="true"><path d="M1 1l6 6 6-6"/></svg></a>
           </figure>
           <div class="ov__info" id="infos">
@@ -388,6 +395,8 @@ function headBlock(html, page, tpl, list){
     ...(hasOgTitle ? [] : [`<meta property="og:title" content="${title}" />`, `<meta property="og:description" content="${desc}" />`]),
     `<meta property="og:url" content="${url}" />`,
     `<meta property="og:image" content="${abs(DEFAULT_OG_IMAGE)}" />`,
+    `<meta property="og:image:width" content="1200" />`,
+    `<meta property="og:image:height" content="630" />`,
     `<meta name="twitter:card" content="summary_large_image" />`,
     `<meta name="twitter:title" content="${title}" />`,
     `<meta name="twitter:description" content="${desc}" />`,
@@ -408,12 +417,15 @@ function headBlock(html, page, tpl, list){
 function worksBlock(list, sizes){
   const tech = (a) => a.technique ? `<span class="capTech">${esc(a.technique)}</span>` : "";
   const size = (a) => a.size ? `<span class="capSize">${esc(a.size.replace(/\s*x\s*/i, " × "))}</span>` : "";
-  return list.map(a => {
+  return list.map((a, i) => {
     const wh = sizes[a.file] ? ` width="${sizes[a.file][0]}" height="${sizes[a.file][1]}"` : "";
     const m = tech(a) && size(a) ? `${tech(a)}<span class="capTech"> · </span>${size(a)}` : tech(a) || size(a);
-    const f = encodeURI(a.file);
+    const f = encodeURI(a.file), w = f.replace(/\.jpg$/i, ".webp");
+    // WebP quand make-thumbs.py l'a fait (3e valeur de sizes.json) ; les 4 premières œuvres (visibles d'emblée) sans attendre
+    const webp = sizes[a.file] && sizes[a.file][2] ? `<source type="image/webp" srcset="images/thumbs/s/${w} 640w, images/thumbs/${w} 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px">` : "";
+    const load = i < 4 ? `loading="eager"${i === 0 ? ' fetchpriority="high"' : ""}` : 'loading="lazy"';
     return `
-        <a class="piece" href="oeuvres/${a.slug}"><div class="imgWrap"><img src="images/thumbs/s/${f}" srcset="images/thumbs/s/${f} 640w, images/thumbs/${f} 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="${esc(a.title)}"${wh} loading="lazy" decoding="async"></div><div class="cap"><p class="capTitle">${esc(a.title)}</p>${m ? `<p class="capMeta">${m}</p>` : ""}<span class="badge ${a.status}">${a.status === "vendue" ? "Vendue" : "Disponible"}</span></div></a>`;
+        <a class="piece" href="oeuvres/${a.slug}"><div class="imgWrap"><picture>${webp}<img src="images/thumbs/s/${f}" srcset="images/thumbs/s/${f} 640w, images/thumbs/${f} 1100w" sizes="(max-width:600px) 50vw, (max-width:900px) 46vw, (max-width:1200px) 31vw, 320px" alt="${esc([a.title, a.technique, a.year].filter(Boolean).join(", "))}"${wh} ${load} decoding="async"></picture></div><div class="cap"><p class="capTitle">${esc(a.title)}</p>${m ? `<p class="capMeta">${m}</p>` : ""}<span class="badge ${a.status}">${a.status === "vendue" ? "Vendue" : "Disponible"}</span></div></a>`;
   }).join("") + "\n      ";
 }
 
@@ -423,9 +435,9 @@ async function galleriesBlock(){
   if (!arr) return null;
   const G = new Function("return " + arr[1])();
   return `
-      <h2 class="gx__title">Galeries<sup>${G.length}</sup></h2>
+      <h1 class="gx__title">Galeries<sup aria-hidden="true">${G.length}</sup></h1>
       <ul class="gx__static">${G.map(g => `
-        <li><h3>${esc(g.city)}</h3><p>${esc(g.name)}</p><p>${esc(g.address)} · ${esc(g.country)}</p>${g.website ? `<a href="${esc(g.website)}" target="_blank" rel="noopener noreferrer">${esc(g.website.replace(/^https?:\/\/(www\.)?/, ""))}</a>` : ""}</li>`).join("")}
+        <li><h3>${esc(g.city)}</h3><p>${esc(g.name)}</p><p>${esc(g.address)} · ${esc(g.country)}</p>${g.website ? `<a href="${esc(g.website)}" target="_blank" rel="noopener noreferrer">${esc(g.website.replace(/^https?:\/\/(www\.)?/, ""))}<span class="sr-only"> (nouvel onglet)</span></a>` : ""}</li>`).join("")}
       </ul>
       `;
 }
@@ -446,12 +458,13 @@ async function exposBlock(){
 async function main(){
   const [list, tpl, D] = await Promise.all([loadArtworks(), loadTemplate(), loadDicts()]);
   let sizes = {}; try { sizes = JSON.parse(await rd("images/thumbs/sizes.json")); } catch (_) {}
+  let big = {}; try { big = JSON.parse(await rd("images/2000/sizes.json")); } catch (_) {}
 
   // 1. pages des œuvres (les anciennes pages d'œuvres disparues sont supprimées)
   await mkdir(OUT_DIR, { recursive: true });
   const keep = new Set(list.map(a => a.slug + ".html"));
   for (const f of await readdir(OUT_DIR)) if (f.endsWith(".html") && !keep.has(f)) await unlink(path.join(OUT_DIR, f));
-  await Promise.all(list.map((a, i) => writeFile(path.join(OUT_DIR, a.slug + ".html"), workPage(a, i, list, tpl, sizes, D))));
+  await Promise.all(list.map((a, i) => writeFile(path.join(OUT_DIR, a.slug + ".html"), workPage(a, i, list, tpl, sizes, D, big))));
 
   // 2. pages principales : balises SEO, listes en HTML
   for (const page of PAGES){
@@ -478,7 +491,7 @@ async function main(){
       const texts = (t) => t.startsWith(`${a.title} — `) && t.endsWith(` | ${ARTIST}`)
         ? `${a.title} — ${[tr(D, lang, a.technique), dims(a)].filter(Boolean).join(" ")} | ${ARTIST}`
         : t.startsWith(`« ${a.title} »`) ? clip(describe(a, D, lang)) : t;
-      return writeFile(path.join(odir, a.slug + ".html"), localize(workPage(a, i, list, tpl, sizes, D), lang, `oeuvres/${a.slug}`, texts));
+      return writeFile(path.join(odir, a.slug + ".html"), localize(workPage(a, i, list, tpl, sizes, D, big), lang, `oeuvres/${a.slug}`, texts));
     }));
   }
 
